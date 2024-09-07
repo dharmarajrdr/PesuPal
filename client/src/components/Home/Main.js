@@ -4,7 +4,7 @@ import ChatLayout from '../Chat/ChatLayout'
 
 const Main = () => {
     return (
-        <div className='FRSS'>
+        <div className='FRSS' style={{height:'100%'}}>
             <LeftNavigation />
             <ChatLayout />
         </div>

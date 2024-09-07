@@ -4,7 +4,7 @@ import './LeftNavigation.css'
 
 const Nav = ({ icon, title, route }) => {
     return (
-        <NavLink to={route} className={`LeftNavigationItem cursP FCCC ${document.location.pathname == route ? 'activeNav' : ''}`}>
+        <NavLink to={route} className={`LeftNavigationItem cursP FCCC selectNone ${document.location.pathname == route ? 'activeNav' : ''}`}>
             <i className={`fas ${icon} colorFFF`}></i>
             <span className='colorFFF'>{title}</span>
         </NavLink>
