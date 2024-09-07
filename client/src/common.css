@@ -1,0 +1,59 @@
+.FRCC {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+.FRCB {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.FCSC {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.FCCC {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.w100 {
+  width: 100%;
+}
+
+.pT10 {
+  padding-top: 10px;
+}
+
+.mT10 {
+  margin-top: 10px;
+}
+
+.pR10{
+    padding-right: 10px;
+}
+
+.pL10{
+    padding-left: 10px;
+}
+
+.color777 {
+  color: #777;
+}
+
+.cursP {
+  cursor: pointer;
+}
+
+.selectNone {
+  user-select: none;
+}
