@@ -24,3 +24,52 @@
   cursor: default;
   background-color: rgb(104, 1, 104);
 }
+
+#closeLeftNav {
+  display: none;
+}
+
+@media screen and (max-width: 768px) {
+  #LeftNavigationOverlay {
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 9999;
+    height: 100%;
+  }
+  #LeftNavigation {
+    width: 50%;
+    height: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    /* display: none; */
+  }
+
+  .LeftNavigationItem {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 20px;
+  }
+
+  .LeftNavigationItem i {
+    padding-bottom: 0px;
+    padding-right: 20px;
+  }
+
+  .LeftNavigationItem:hover {
+    background-color: purple;
+    border-radius: 0px;
+  }
+
+  #closeLeftNav {
+    display: block;
+    padding: 20px;
+    color: #fff;
+    text-align: right;
+  }
+}
