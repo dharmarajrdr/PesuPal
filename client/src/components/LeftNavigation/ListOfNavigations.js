@@ -23,7 +23,7 @@ export default {
         {
             'id': 4,
             'title': 'Me',
-            'icon': 'fa-regular fa-user-circle',
+            'image':'/images/Users/user_10.jpg',
             'route': '/profile'
         },
 
