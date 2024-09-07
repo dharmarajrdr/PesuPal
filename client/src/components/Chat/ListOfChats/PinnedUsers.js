@@ -8,8 +8,8 @@ const PinnedUsers = () => {
     return (
         <div id='PinnedUsers' className='noScollbar selectNone'>
             <div id='PinnedUsersFrame'>
-                {pinnedUsersList.map(({ name, image }, index) => (
-                    <PinnedUser name={name} image={image} key={index} />
+                {pinnedUsersList.map(({ name, status, image }, index) => (
+                    <PinnedUser name={name} status={status} image={image} key={index} />
                 ))}
             </div>
         </div>

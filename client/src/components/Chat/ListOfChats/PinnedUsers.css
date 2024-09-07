@@ -12,10 +12,15 @@
 
 .PinnedUserContainer {
   width: 50px;
-  height: 65px;
+  height: 70px;
   margin: 5px;
   cursor: pointer;
   overflow: hidden;
+}
+
+.PinnedUserContainer div {
+  width: 100%;
+  height: 50px;
 }
 
 .PinnedUserContainer img {
@@ -31,4 +36,27 @@
   font-size: 11px;
   padding-top: 3px;
   color: #555;
+}
+
+
+@media screen and (max-width: 768px) {
+  #PinnedUsers {
+    padding: 0px 5px;
+  }
+
+  .PinnedUserContainer {
+    width: 50px;
+    height: 70px;
+  }
+
+  .PinnedUserContainer img {
+    width: 100%;
+    height: 100%;
+    border-radius: 100%;
+  }
+
+  .PinnedUserContainer span {
+    font-size: 10px;
+  }
+    
 }
