@@ -4,7 +4,7 @@ import Signup from './components/Auth/Signup';
 import Signin from './components/Auth/Signin';
 import { BrowserRouter, Route, Routes, useNavigate } from 'react-router-dom';
 import { hasCookie } from './components/Auth/utils';
-import Home from './components/Home/Home';
+import Main from './components/Home/Main';
 
 function Navigation() {
     const navigate = useNavigate();
@@ -22,7 +22,7 @@ function App() {
             <BrowserRouter>
                 <Navigation />
                 <Routes>
-                    <Route path='/home' element={<Home />} />
+                    <Route path='/feeds' element={<Main />} />
                     <Route path='/signup' element={<Signup />} />
                     <Route path='/signin' element={<Signin />} />
                 </Routes>

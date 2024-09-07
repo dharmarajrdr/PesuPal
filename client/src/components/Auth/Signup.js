@@ -10,7 +10,7 @@ const Signup = () => {
 
     useEffect(() => {
         if (hasCookie()) {
-            navigate('/home');
+            navigate('/feeds');
         }
     }, []);
 
