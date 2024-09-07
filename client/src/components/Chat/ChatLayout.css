@@ -1,5 +1,10 @@
 .ChatLayout {
   width: calc(100% - 75px);
-  border: 1px solid red;
   overflow: hidden;
+}
+
+@media screen and (max-width: 768px) {
+  .ChatLayout {
+    width: 100%;
+  }
 }
