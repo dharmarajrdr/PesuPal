@@ -1,0 +1,34 @@
+#PinnedUsers {
+  width: 100%;
+  padding: 0px 10px;
+  overflow-x: scroll;
+}
+
+#PinnedUsersFrame {
+  display: flex;
+  flex-direction: row;
+  width: max-content;
+}
+
+.PinnedUserContainer {
+  width: 50px;
+  height: 65px;
+  margin: 5px;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.PinnedUserContainer img {
+  width: 100%;
+  height: 100%;
+  border-radius: 100%;
+}
+
+.PinnedUserContainer span {
+  text-wrap: nowrap;
+  text-align: left;
+  width: 100%;
+  font-size: 11px;
+  padding-top: 3px;
+  color: #555;
+}
