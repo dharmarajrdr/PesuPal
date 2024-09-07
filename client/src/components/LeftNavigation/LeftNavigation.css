@@ -38,14 +38,17 @@
     left: 0;
     z-index: 9999;
     height: 100%;
+    display: none;
   }
+
   #LeftNavigation {
     width: 50%;
     height: 100%;
     display: flex;
+    position: relative;
+    right: 50%;
     justify-content: space-between;
     align-items: center;
-    /* display: none; */
   }
 
   .LeftNavigationItem {

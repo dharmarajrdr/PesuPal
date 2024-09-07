@@ -9,10 +9,12 @@ const LeftNavigation = () => {
             leftNavContainer = document.getElementById('LeftNavigation');
         leftNavContainer.style.transition = 'transform 0.25s ease-in-out';
         leftNavContainer.style.transform = 'translateX(-100%)';
-        setTimeout(() => {
+        const timer = setTimeout(() => {
             LeftNavigationOverlay.style.display = 'none';
+            clearTimeout(timer);
         }, 100);
     }
+
     return (
         <div id='LeftNavigationOverlay'>
             <div id='LeftNavigation' className='FCCB'>
