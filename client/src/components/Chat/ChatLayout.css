@@ -1,0 +1,5 @@
+.ChatLayout {
+  width: calc(100% - 75px);
+  border: 1px solid red;
+  overflow: hidden;
+}

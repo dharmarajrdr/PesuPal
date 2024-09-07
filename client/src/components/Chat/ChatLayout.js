@@ -1,15 +1,11 @@
 import React from 'react'
 import ConversationScreen from './ConversationScreen/ConversationScreen'
-import ListOfChats from './ListOfChats/ListOfChats'
+import ListOfChats from './ListOfChats/ListOfChats';
+import './ChatLayout.css'
 
 const ChatLayout = () => {
-    const chatLayoutStyle = {
-        width: 'calc(100% - 75px)',
-        border: '1px solid red',
-        overflow: 'hidden'
-    }
     return (
-        <div className='h100' style={chatLayoutStyle}>
+        <div className='h100 ChatLayout'>
             <ListOfChats />
             <ConversationScreen />
         </div>
