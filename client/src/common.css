@@ -12,6 +12,13 @@
   justify-content: space-between;
 }
 
+.FRCE {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+}
+
 .FRSS {
   display: flex;
   flex-direction: row;
@@ -51,6 +58,13 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: flex-start;
+}
+
+.FCSS {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
   justify-content: flex-start;
 }
 
@@ -102,12 +116,12 @@
 }
 
 /* Hide scrollbar for Chrome, Safari and Opera */
-.noScollbar::-webkit-scrollbar {
+.noScrollbar::-webkit-scrollbar {
   display: none;
 }
 
 /* Hide scrollbar for IE, Edge and Firefox */
-.noScollbar {
+.noScrollbar {
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
 }
@@ -116,18 +130,18 @@
   position: relative;
 }
 
-.mY5{
-    margin: 0px 5px;
+.mY5 {
+  margin: 0px 5px;
 }
 
-.mL5{
-    margin-left: 5px;
+.mL5 {
+  margin-left: 5px;
 }
 
-.mR5{
-    margin-right: 5px;
+.mR5 {
+  margin-right: 5px;
 }
 
-.fs10{
-    font-size: 10px;
+.fs10 {
+  font-size: 10px;
 }
