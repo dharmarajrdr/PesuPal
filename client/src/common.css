@@ -19,6 +19,20 @@
   justify-content: flex-start;
 }
 
+.FRSC {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.FRCS {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+}
+
 .FCCB {
   display: flex;
   flex-direction: column;
@@ -33,11 +47,11 @@
   justify-content: center;
 }
 
-.FRCS {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: flex-start;
+.FCCS{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
 }
 
 .FCCC {
@@ -51,8 +65,8 @@
   width: 100%;
 }
 
-.h100{
-    height: 100vh;
+.h100 {
+  height: 100vh;
 }
 
 .pT10 {
@@ -85,4 +99,15 @@
 
 .selectNone {
   user-select: none;
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.noScollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.noScollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
 }
