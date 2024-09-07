@@ -12,11 +12,32 @@
   justify-content: space-between;
 }
 
+.FRSS {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+
+.FCCB {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+}
+
 .FCSC {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   justify-content: center;
+}
+
+.FRCS {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
 }
 
 .FCCC {
@@ -38,16 +59,20 @@
   margin-top: 10px;
 }
 
-.pR10{
-    padding-right: 10px;
+.pR10 {
+  padding-right: 10px;
 }
 
-.pL10{
-    padding-left: 10px;
+.pL10 {
+  padding-left: 10px;
 }
 
 .color777 {
   color: #777;
+}
+
+.colorFFF {
+  color: #fff;
 }
 
 .cursP {
