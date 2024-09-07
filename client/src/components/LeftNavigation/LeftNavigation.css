@@ -1,0 +1,24 @@
+#LeftNavigation {
+  width: 75px;
+  height: 100vh;
+  overflow: hidden;
+  background-color: purple;
+}
+
+.LeftNavigationItem {
+  padding: 20px 0px;
+  width: 100%;
+}
+
+.LeftNavigationItem i {
+  padding-bottom: 10px;
+}
+
+.LeftNavigationItem:hover {
+  background-color: rgb(104, 1, 104);
+}
+
+.activeNav {
+  cursor: default;
+  background-color: rgb(104, 1, 104);
+}
