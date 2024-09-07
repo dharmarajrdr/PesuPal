@@ -16,5 +16,5 @@ export const hasCookie = () => {
             icon = 'fa-phone';
             break;
     }
-    return <i class={`fa-solid ${icon} user_status`} style={{ ...style, color, backgroundColor: '#fff', 'borderRadius': '50%', padding: '5px' }}></i>;
+    return <i className={`fa-solid ${icon} user_status`} style={{ ...style, color, backgroundColor: '#fff', 'borderRadius': '50%', padding: '5px' }}></i>;
 }
