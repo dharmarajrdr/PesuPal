@@ -25,6 +25,10 @@
   padding-bottom: 10px;
 }
 
+.LeftNavigationItem span {
+  font-size: 12px;
+}
+
 .LeftNavigationItem:hover {
   background-color: #273144;
   border-radius: 0px;

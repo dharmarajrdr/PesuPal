@@ -20,6 +20,9 @@
 .RecentChatContainer .name {
   font-size: 13px;
   line-height: 20px;
+  text-wrap: nowrap;
+  max-width: 85%;
+  overflow: hidden;
   font-weight: 600;
 }
 
@@ -33,8 +36,30 @@
   color: #555;
   line-height: 20px;
   text-wrap: nowrap;
-  max-width: 100%;
-  text-overflow: ellipsis;
+  max-width: 90%;
+  overflow: hidden;
+}
+
+.RecentChatContainer .profile_picture {
+  position: relative;
+}
+
+.number_of_unread_messages {
+  font-size: 10px;
+  background-color: #999;
+  color: #fff;
+  border-radius: 50px;
+  width: 15px;
+  height: 15px;
+  line-height: 15px;
+  text-align: center;
+}
+
+.user_status {
+  position: absolute;
+  bottom: 5%;
+  right: 5%;
+  font-size: 12px;
 }
 
 .sent_by_me {
@@ -43,4 +68,43 @@
 
 .name_message_date {
   overflow: hidden;
+}
+
+@media screen and (max-width: 768px) {
+  #RecentChats {
+    padding-top: 5px;
+  }
+
+  .RecentChatContainer {
+    padding: 10px 15px;
+  }
+
+  .RecentChatContainer img {
+    width: 40px;
+    height: 40px;
+  }
+
+  .RecentChatContainer .name {
+    font-size: 12px;
+  }
+
+  .RecentChatContainer .date_time {
+    font-size: 9px;
+  }
+
+  .RecentChatContainer .message {
+    font-size: 10px;
+  }
+
+  .number_of_unread_messages {
+    font-size: 8px;
+    width: 10px;
+    height: 10px;
+    line-height: 10px;
+  }
+
+  .user_status {
+    font-size: 10px;
+    padding: 0px;
+  }
 }
