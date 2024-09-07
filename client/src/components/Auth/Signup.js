@@ -23,23 +23,23 @@ const Signup = () => {
                     <div className='FCSC auth_component_form_field w100'>
                         <label className='field_name selectNone'>User Name</label>
                         <div className='auth_component_form_input w100'>
-                            <i class="fa-regular fa-user input_icon"></i>
+                            <i className="fa-regular fa-user input_icon"></i>
                             <input type="email" placeholder='Type your Name' className='w100' />
                         </div>
                     </div>
                     <div className='FCSC auth_component_form_field w100'>
                         <label className='field_name selectNone'>Email</label>
                         <div className='auth_component_form_input w100'>
-                            <i class="fa-regular fa-user input_icon"></i>
+                            <i className="fa-regular fa-user input_icon"></i>
                             <input type="email" placeholder='Type Email Address' className='w100' />
                         </div>
                     </div>
                     <div className='FCSC auth_component_form_field w100'>
                         <label className='field_name selectNone'>Password</label>
                         <div className='auth_component_form_input w100'>
-                            <i class="fa-solid fa-key input_icon"></i>
+                            <i className="fa-solid fa-key input_icon"></i>
                             <input type="email" placeholder='Type Password' className='w100' />
-                            <i class="fa-regular fa-eye showHidePassword cursP"></i>
+                            <i className="fa-regular fa-eye showHidePassword cursP"></i>
                         </div>
                     </div>
                     <div className='auth_component_form_field w100 mT10'>
