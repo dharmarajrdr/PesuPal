@@ -1,0 +1,46 @@
+.RecentChatContainer {
+  width: 100%;
+  overflow: hidden;
+  border-bottom: 1px solid #ddd;
+  padding: 10px;
+}
+
+.RecentChatContainer:hover {
+  background-color: #eee;
+  transition-duration: 0.25s;
+}
+
+.RecentChatContainer img {
+  width: 50px;
+  height: 50px;
+  border-radius: 100%;
+  margin-right: 10px;
+}
+
+.RecentChatContainer .name {
+  font-size: 13px;
+  line-height: 20px;
+  font-weight: 600;
+}
+
+.RecentChatContainer .date_time {
+  font-size: 10px;
+  line-height: 20px;
+}
+
+.RecentChatContainer .message {
+  font-size: 12px;
+  color: #555;
+  line-height: 20px;
+  text-wrap: nowrap;
+  max-width: 100%;
+  text-overflow: ellipsis;
+}
+
+.sent_by_me {
+  font-weight: 400;
+}
+
+.name_message_date {
+  overflow: hidden;
+}
