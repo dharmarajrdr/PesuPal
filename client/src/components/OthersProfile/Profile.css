@@ -1,0 +1,179 @@
+#ProfileOverlay {
+  width: 100%;
+  height: 100vh;
+  background-color: #00000077;
+  position: fixed;
+  z-index: 3;
+}
+
+#closeProfileOverlay {
+  top: 50px;
+  position: absolute;
+  right: 500px;
+  padding: 20px 15px 20px 20px;
+  border-top-left-radius: 100%;
+  border-bottom-left-radius: 100%;
+  cursor: pointer;
+  background-color: #fff;
+}
+
+#ProfileCard {
+  background-color: #fff;
+  width: 500px;
+  height: 100vh;
+  overflow-y: scroll;
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+  right: 0;
+}
+
+#ProfileCard #user_image_basic_info {
+  width: 100%;
+  min-height: 50%;
+  height: 50%;
+  position: sticky;
+  top: 0;
+  background-color: #fff;
+  overflow: hidden;
+  border-bottom: 1px solid #ddd;
+}
+
+#user_image_basic_info #user_photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+}
+
+#user_image_basic_info #user_basic_info {
+  background-color: #fff;
+  position: relative;
+  top: -100px;
+  border-radius: 20px;
+  width: 80%;
+  padding: 25px 0px;
+}
+
+#user_basic_info .row {
+  padding: 5px 0px;
+}
+
+#user_basic_info .row #profile_name {
+  font-size: 20px;
+  color: #222;
+  font-weight: 500;
+}
+
+#user_basic_info .row #profile_designation {
+  font-size: 15px;
+  color: #555;
+}
+
+#user_basic_info .row #profile_dept {
+  font-size: 14px;
+  color: #555;
+}
+
+#user_basic_info .row .profile_contacts {
+  margin: 0px 10px;
+  border-radius: 100%;
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  line-height: 40px;
+  text-align: center;
+  color: #fff;
+}
+
+#contact_info {
+  padding: 15px 30px;
+  border-bottom: 1px solid #ddd;
+}
+
+#contact_info h4 {
+  font-size: 18px;
+  font-weight: bold;
+  user-select: none;
+  font-weight: 300;
+  margin: 10px 0px 20px 0px;
+}
+
+#contact_info .phone_email {
+  padding: 10px 0px;
+  margin: 5px 0px;
+}
+
+#contact_info .phone_email label {
+  margin-bottom: 15px;
+  user-select: none;
+  color: #777;
+}
+
+.social_accounts {
+  padding: 5px 0px;
+  font-size: 20px;
+  cursor: pointer;
+  margin-right: 25px;
+}
+
+#contact_info .phone_email b {
+  font-weight: 400;
+  font-size: 16px;
+  color: #333;
+  user-select: all;
+}
+
+.copy_contact_info {
+  color: #aaa;
+  cursor: pointer;
+}
+
+.copy_contact_info:hover {
+  color: #333;
+  transition-duration: 0.25s;
+}
+
+@media screen and (max-width: 768px) {
+  #user_basic_info .row #profile_name {
+    font-size: 18px;
+  }
+
+  #user_basic_info .row #profile_designation {
+    font-size: 12px;
+  }
+
+  #user_basic_info .row #profile_dept {
+    font-size: 12px;
+  }
+
+  #contact_info h4 {
+    font-size: 14px;
+    margin: 5px 0px;
+  }
+
+  #contact_info .phone_email {
+    margin: 0px;
+  }
+
+  #contact_info .phone_email label {
+    font-size: 12px;
+    margin-bottom: 7px;
+  }
+
+  #contact_info .phone_email b {
+    font-size: 14px;
+  }
+
+  #ProfileCard {
+    width: 100%;
+    height: 100vh;
+    border-top-left-radius: 0px;
+    border-bottom-left-radius: 0px;
+  }
+
+  #closeProfileOverlay {
+    right: 0;
+  }
+}
