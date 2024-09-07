@@ -14,10 +14,15 @@ const LeftNavigation = () => {
             LeftNavigationOverlay.style.display = 'none';
             clearTimeout(timer);
         }, 100);
+    }, clickedOverlay = () => {
+        if (window.outerWidth < 769) {
+            hideNavContainer();
+        }
     }, { LeftNavigationStyles } = themes;
 
+
     return (
-        <div id='LeftNavigationOverlay'>
+        <div id='LeftNavigationOverlay' onClick={clickedOverlay}>
             <div id='LeftNavigation' className='FCCB' style={LeftNavigationStyles}>
                 <div className='w100'>
                     <div id='app_logo'>
