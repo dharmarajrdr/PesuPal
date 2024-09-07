@@ -1,8 +1,18 @@
+#app_logo {
+  width: 75px;
+  height: 75px;
+  margin: 10px 0px;
+  cursor: pointer;
+}
+
+#app_logo img {
+  width: 100%;
+}
+
 #LeftNavigation {
   width: 75px;
   height: 100vh;
   overflow: hidden;
-  background-color: purple;
 }
 
 .LeftNavigationItem {
@@ -16,13 +26,12 @@
 }
 
 .LeftNavigationItem:hover {
-  background-color: rgb(104, 1, 104);
+  background-color: #273144;
   border-radius: 0px;
 }
 
 .activeNav {
   cursor: default;
-  background-color: rgb(104, 1, 104);
 }
 
 #closeLeftNav {
@@ -30,6 +39,10 @@
 }
 
 @media screen and (max-width: 768px) {
+  #app_logo {
+    display: none;
+  }
+
   #LeftNavigationOverlay {
     width: 100%;
     background-color: rgba(0, 0, 0, 0.5);
@@ -65,7 +78,7 @@
   }
 
   .LeftNavigationItem:hover {
-    background-color: purple;
+    background-color: #3f4c68;
     border-radius: 0px;
   }
 

@@ -2,6 +2,7 @@ import React from 'react'
 import './LeftNavigation.css'
 import ListOfNavigations from './ListOfNavigations'
 import Nav from './Nav'
+import themes from '../../theme';
 
 const LeftNavigation = () => {
     const hideNavContainer = () => {
@@ -13,14 +14,17 @@ const LeftNavigation = () => {
             LeftNavigationOverlay.style.display = 'none';
             clearTimeout(timer);
         }, 100);
-    }
+    }, { LeftNavigationStyles } = themes;
 
     return (
         <div id='LeftNavigationOverlay'>
-            <div id='LeftNavigation' className='FCCB'>
+            <div id='LeftNavigation' className='FCCB' style={LeftNavigationStyles}>
                 <div className='w100'>
+                    <div id='app_logo'>
+                        <img src='/logo512.png' />
+                    </div>
                     <div>
-                        <i class="fa-solid fa-angles-left" id='closeLeftNav' onClick={hideNavContainer}></i>
+                        <i className="fa-solid fa-angles-left" id='closeLeftNav' onClick={hideNavContainer}></i>
                     </div>
                     {ListOfNavigations.top.map((navigation, index) => {
                         return (
