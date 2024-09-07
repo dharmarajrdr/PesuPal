@@ -1,0 +1,38 @@
+#SearchUserQuickAction {
+  padding: 10px;
+}
+
+.searchBox {
+  width: calc(100% - 40px);
+  position: relative;
+}
+
+.searchBox i {
+  position: absolute;
+  left: 15px;
+  top: 55%;
+  color: #888;
+  font-size: 12px;
+  transform: translateY(-50%);
+}
+
+.searchBox input {
+  padding: 10px 10px 10px 40px;
+  background-color: #eee;
+  border: none;
+  border-radius: 5px;
+  border: 1px solid #eee;
+}
+
+.searchBox input:focus {
+  border-color: #aaa;
+  transition-duration: 0.25s;
+}
+
+.quickActions {
+  padding: 10px;
+  background-color: #eee;
+  text-align: center;
+  border-radius: 5px;
+  color: #777;
+}

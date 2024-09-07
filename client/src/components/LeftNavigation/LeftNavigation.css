@@ -6,8 +6,9 @@
 }
 
 .LeftNavigationItem {
-  padding: 20px 0px;
+  padding: 15px 0px;
   width: 100%;
+  border-radius: 10px;
 }
 
 .LeftNavigationItem i {
@@ -16,6 +17,7 @@
 
 .LeftNavigationItem:hover {
   background-color: rgb(104, 1, 104);
+  border-radius: 0px;
 }
 
 .activeNav {
