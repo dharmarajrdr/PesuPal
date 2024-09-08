@@ -5,7 +5,7 @@ import themes from '../../theme';
 
 const Nav = ({ icon, image, title, route }) => {
     const { activeNav } = themes,
-        isActive = document.location.pathname == route;
+        isActive = document.location.pathname.toLowerCase() == route.toLowerCase();
     return (
         <NavLink to={route} style={isActive ? activeNav : null} className={`LeftNavigationItem cursP FCCC selectNone ${isActive ? 'activeNav' : ''}`}  >
             {
