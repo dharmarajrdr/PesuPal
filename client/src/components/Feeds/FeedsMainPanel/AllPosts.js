@@ -5,7 +5,7 @@ import Post from './Post'
 
 const AllPosts = () => {
     return (
-        <div className='FCSS'>
+        <div className='FCSS AllPosts'>
             {PostsList.map((post, index) => <Post key={index} post={post} />)}
         </div>
     )
