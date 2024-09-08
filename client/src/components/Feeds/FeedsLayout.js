@@ -1,6 +1,6 @@
 import React from 'react'
 import './FeedsLayout.css'
-import FeedsLeftPanel from './FeedsLeftPanel'
+import FeedsLeftPanel from './FeedsLeftPanel/FeedsLeftPanel'
 import FeedList from './FeedList'
 import FeedsRightPanel from './FeedsRightPanel'
 

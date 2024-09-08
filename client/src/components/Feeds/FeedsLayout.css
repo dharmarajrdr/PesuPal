@@ -1,10 +1,9 @@
 #FeedsLayout {
-  border: 1px solid red;
   overflow: hidden;
+  background-color: #e3e8ee;
 }
 
 #FeedsMain {
-    border: 1px solid blue;
     width: 100%;
     height: 100%;
     display: flex;
