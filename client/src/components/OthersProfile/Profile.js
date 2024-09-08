@@ -17,7 +17,7 @@ const Profile = ({ Profile }) => {
     return (
         <div id='ProfileOverlay' className='FRCE'>
             <div id='ProfileCard' className='noScrollbar'>
-                <i class="fa-solid fa-xmark" id='closeProfileOverlay' onClick={closeProfileOverlay}></i>
+                <i className="fa-solid fa-xmark" id='closeProfileOverlay' onClick={closeProfileOverlay}></i>
                 <div id='user_image_basic_info' className='FCCC'>
                     <img src='/images/Users/user_10.jpg' id='user_photo' />
                     <div id='user_basic_info' className='FCCC'>
