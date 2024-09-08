@@ -11,20 +11,24 @@ const PostYourThoughts = () => {
             </div>
             <div className='w100 FRCB'>
                 <div className='FRCS'>
-                    <span class='actions_post_creation'>
+                    <span className='actions_post_creation'>
                         <i className='fa-regular fa-image'></i>
                         Add attachment
                     </span>
-                    <span class='actions_post_creation'>
+                    <span className='actions_post_creation'>
                         <i className='fa-regular fa-hashtag'></i>
                         Add tag
                     </span>
-                    <span class='actions_post_creation'>
+                    {/* <span className='actions_post_creation'>
                         <i className='fa-regular fa-at'></i>
                         Add mentions
+                    </span> */}
+                    <span className='actions_post_creation'>
+                        <i className='fa-solid fa-t'></i>
+                        Add title
                     </span>
-                    <span class='actions_post_creation'>
-                        <i class="fa-solid fa-square-poll-vertical"></i>
+                    <span className='actions_post_creation'>
+                        <i className="fa-solid fa-square-poll-vertical"></i>
                         Add poll
                     </span>
                 </div>
