@@ -1,5 +1,23 @@
-#FeedsLeftPanel{
-    width: 20%;
-    padding: 15px;
-    background-color: #fff;
+#FeedsLeftPanel {
+  width: 20%;
+  overflow: hidden;
+  padding: 15px;
+  background-color: #fff;
+}
+
+#subtitle {
+  padding: 10px 20px;
+  font-size: 15px;
+  font-weight: 400;
+  border-left: 5px solid #eee;
+  margin: 25px 0px 10px 0px;
+}
+
+#subtitle:hover {
+  border-left: 5px solid #007bff;
+  transition-duration: 0.25s;
+}
+
+#subtitle:hover span {
+  color: #007bff;
 }
