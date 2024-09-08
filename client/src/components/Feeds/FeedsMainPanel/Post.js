@@ -1,9 +1,11 @@
 import React from 'react'
 import './Post.css'
+import { useState } from 'react';
 
 const Post = ({ post }) => {
     const { title, author, content, created_at, likes, comments, media, mentions, tags } = post,
         { name, image } = author,
+        [fullScreenImage, setFullScreenImage] = useState(null),
         convertDateAndTime = function (str) {
             try {
                 const toTwoDigits = function (str) {
@@ -25,14 +27,28 @@ const Post = ({ post }) => {
             try {
                 if (target.classList.contains('media_image')) {
                     const mediaContainer = target.parentNode;
-                    mediaContainer.style.maxHeight = mediaContainer.style.maxHeight === '100%' ? null : '100%';
+                    if (mediaContainer.style.maxHeight === '100%') {
+                        setFullScreenImage(target.src)
+                    } else {
+                        mediaContainer.style.maxHeight = '100%';
+                    }
                 }
             } catch (error) {
                 console.error({ 'module': toggleMaxHeight, error });  //eslint-disable-line no-console
             }
-        }
+        }, closeFullScreen = function () {
+            setFullScreenImage(null);
+        };
     return (
         <div className='Post w100'>
+            {fullScreenImage ?
+                <div id='view_image_full_screen' className='FRCC'>
+                    <div id='closeFullScreen' className='FRCC' onClick={closeFullScreen}>
+                        <span>Close</span>
+                        <i className="fa-solid fa-xmark"></i>
+                    </div>
+                    <img src={fullScreenImage} />
+                </div> : null}
             <div className='PostHeader FRCB'>
                 <div className='FRCS'>
                     <img src={image} alt={name} className='img_40_40 user_photo' />

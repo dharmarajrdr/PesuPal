@@ -71,10 +71,10 @@
 }
 
 .Post .PostFooter .rightFooter {
-    margin-left: 5px;
-    border-left: 1px solid #ddd;
-    padding-left: 10px;
-  }
+  margin-left: 5px;
+  border-left: 1px solid #ddd;
+  padding-left: 10px;
+}
 
 .mediaContainer {
   margin-top: 15px;
@@ -91,9 +91,62 @@
   cursor: pointer;
 }
 
+#view_image_full_screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  z-index: 5;
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
+#view_image_full_screen img {
+  max-width: 90%;
+  max-height: 90%;
+  box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.1);
+}
+
+#closeFullScreen {
+  position: fixed;
+  top: 50px;
+  right: 50px;
+  font-size: 15px;
+  color: #333;
+  cursor: pointer;
+  background-color: blue;
+  padding: 8px 20px;
+  border-radius: 10px;
+  box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.2);
+}
+
+#closeFullScreen i {
+  width: 20px;
+  height: 20px;
+  line-height: 20px;
+  text-align: center;
+  color: #fff;
+}
+
+#closeFullScreen span {
+  color: #fff;
+  line-height: 20px;
+  padding-right: 5px;
+}
+
+#closeFullScreen:hover {
+  color: #000;
+  transition-duration: 0.25s;
+}
+
 @media screen and (max-width: 768px) {
-  .Post{
-    /* padding: 20px; */
+  #view_image_full_screen {
+    height: 669px;
+    background-color: rgba(0, 0, 0, 0.75);
   }
-    
+  #closeFullScreen {
+    top: 20px;
+    right: 20px;
+  }
 }
