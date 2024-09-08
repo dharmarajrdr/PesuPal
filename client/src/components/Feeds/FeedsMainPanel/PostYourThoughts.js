@@ -13,11 +13,11 @@ const PostYourThoughts = () => {
                 <div className='FRCS'>
                     <span className='actions_post_creation'>
                         <i className='fa-regular fa-image'></i>
-                        Add attachment
+                        <span>Add attachment</span>
                     </span>
                     <span className='actions_post_creation'>
                         <i className='fa-regular fa-hashtag'></i>
-                        Add tag
+                        <span>Add tag</span>
                     </span>
                     {/* <span className='actions_post_creation'>
                         <i className='fa-regular fa-at'></i>
@@ -25,17 +25,17 @@ const PostYourThoughts = () => {
                     </span> */}
                     <span className='actions_post_creation'>
                         <i className='fa-solid fa-t'></i>
-                        Add title
+                        <span>Add title</span>
                     </span>
                     <span className='actions_post_creation'>
                         <i className="fa-solid fa-square-poll-vertical"></i>
-                        Add poll
+                        <span>Add poll</span>
                     </span>
                 </div>
                 <div>
                     <span className='actions_post_creation'>
                         <i className='fa-regular fa-calendar-days'></i>
-                        Schedule post
+                        <span>Schedule post</span>
                     </span>
                     <button id='shareMyThoughtButton'>Share</button>
                 </div>

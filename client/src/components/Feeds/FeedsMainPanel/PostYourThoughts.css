@@ -51,3 +51,14 @@
 #PostYourThoughts .actions_post_creation:hover {
   background-color: #f0f0f0;
 }
+
+@media screen and (max-width: 768px) {
+  .actions_post_creation span {
+    display: none;
+  }
+
+  #shareMyThoughtButton {
+    padding: 5px 12px;
+    font-size: 13px;
+  }
+}
