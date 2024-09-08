@@ -1,0 +1,91 @@
+.Post {
+  background-color: #fff;
+  margin-top: 15px;
+  border-radius: 10px;
+  padding: 20px;
+}
+
+.Post .PostHeader {
+  border-bottom: 1px solid #ddd;
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+  position: sticky;
+  top: 0px;
+  background-color: #fff;
+}
+
+.Post .PostHeader .user_name {
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 2px;
+  cursor: pointer;
+}
+
+.Post .PostHeader .user_photo {
+  margin-right: 10px;
+  cursor: pointer;
+}
+
+.Post .PostHeader .created_at {
+  font-size: 12px;
+  color: #999;
+  margin-top: 2px;
+}
+
+.Post .PostBody .postTitle {
+  font-size: 18px;
+  margin-top: 10px;
+  font-weight: 500;
+}
+
+.Post .PostBody .postContent {
+  font-size: 14px;
+  margin-top: 10px;
+  color: #333;
+}
+
+.Post .PostFooter {
+  margin-top: 10px;
+  padding-top: 10px;
+}
+
+.Post .PostFooter .postActions {
+  cursor: pointer;
+  font-size: 13px;
+  color: #555;
+}
+
+.Post .PostFooter .postActions i {
+  width: 20px;
+}
+
+.Post .PostFooter .postActions:hover {
+  transform: scale(1.1);
+}
+
+.Post .PostFooter .leftFooter {
+  margin-right: 5px;
+  border-right: 1px solid #ddd;
+  padding-right: 10px;
+}
+
+.Post .PostFooter .rightFooter {
+    margin-left: 5px;
+    border-left: 1px solid #ddd;
+    padding-left: 10px;
+  }
+
+.mediaContainer {
+  margin-top: 15px;
+  max-height: 200px;
+  overflow: hidden;
+}
+
+.media_image {
+  padding-bottom: 25px;
+  max-height: 450px;
+  height: 100%;
+  object-fit: scale-down;
+  object-position: top;
+  cursor: pointer;
+}
