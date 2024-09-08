@@ -5,7 +5,7 @@ const Quote = ({ quote, author }) => {
     return (
         <div id='Quote' className='w100'>
             <p id='title' className='w100 selectNone'>
-                <i className='fa-solid fa-quote-left mR5' style={{ color: 'orange' }} ></i>Quote of the day
+                <i className='fa-solid fa-quote-left w20 mR5' style={{ color: 'orange' }} ></i>Quote of the day
             </p>
             <div className='FCSS'>
                 <p id='QuoteText'>{quote}</p>

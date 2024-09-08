@@ -7,7 +7,7 @@ const TrendingPosts = () => {
     return (
         <div id='TrendingPosts' className='FCSS selectNone'>
             <p id='title' className='w100'>
-                <i className='fa-regular fa-newspaper mR5' style={{ color: 'orange' }} ></i>Trending posts
+                <i className='fa-regular fa-newspaper w20 mR5' style={{ color: 'orange' }} ></i>Trending posts
             </p>
             <div className='FRCC' id='TrendingPostsList'>
                 {TrendingPostsList.map(({ title, route, author }, index) => {
