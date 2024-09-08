@@ -142,6 +142,24 @@
   margin-right: 5px;
 }
 
+.mR10 {
+  margin-right: 10px;
+}
+
 .fs10 {
   font-size: 10px;
+}
+
+.fs14 {
+  font-size: 14;
+}
+
+.fs12 {
+  font-size: 12;
+}
+
+.img_20_20 {
+  width: 20px;
+  height: 20px;
+  border-radius: 100%;
 }
