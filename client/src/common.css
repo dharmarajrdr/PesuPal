@@ -12,6 +12,13 @@
   justify-content: space-between;
 }
 
+.FRSB{
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-between;
+}
+
 .FRCE {
   display: flex;
   flex-direction: row;
@@ -169,5 +176,17 @@
 .img_20_20 {
   width: 20px;
   height: 20px;
+  border-radius: 100%;
+}
+
+.img_30_30 {
+  width: 30px;
+  height: 30px;
+  border-radius: 100%;
+}
+
+.img_40_40 {
+  width: 40px;
+  height: 40px;
   border-radius: 100%;
 }
