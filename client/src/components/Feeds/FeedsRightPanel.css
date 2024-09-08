@@ -1,0 +1,8 @@
+#FeedsRightPanel{
+    border: 1px solid green;
+    width: 25%;
+    height: 80%;
+    position: sticky;
+    top: 10%;
+    margin: 0px 5px;
+}
