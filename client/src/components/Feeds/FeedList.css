@@ -4,3 +4,10 @@
     margin: 0px 5px;
     background-color: #fff;
 }
+
+@media screen and (max-width: 768px) {
+    #FeedList {
+        width: 100%;
+    }
+    
+}

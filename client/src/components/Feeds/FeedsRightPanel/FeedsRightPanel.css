@@ -6,3 +6,10 @@
     margin: 0px 10px;
     overflow-y: scroll;
 }
+
+@media screen and (max-width: 768px) {
+    #FeedsRightPanel {
+        display: none;
+    }
+    
+}
