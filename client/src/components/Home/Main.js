@@ -10,8 +10,8 @@ const Main = () => {
         <div className='FRSS' style={{ height: '100%' }}>
             <LeftNavigation />
             <FeedsLayout />
-            {/* <ChatLayout />
-            <Profile Profile={SomeProfile} /> */}
+            {/* <ChatLayout /> */}
+            {/* <Profile Profile={SomeProfile} /> */}
         </div>
     )
 }

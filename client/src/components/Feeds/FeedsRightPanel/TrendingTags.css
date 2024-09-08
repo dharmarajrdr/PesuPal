@@ -27,7 +27,7 @@
   margin: 5px;
   border-radius: 5px;
   font-size: 14px;
-  color: #333;
+  color: #555;
 }
 
 #TrendingTagsList {
@@ -35,4 +35,8 @@
   flex-wrap: wrap;
   align-items: center;
   justify-content: flex-start;
+}
+
+.TrendingTag:hover {
+  color: #000;
 }
