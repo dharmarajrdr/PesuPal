@@ -15,8 +15,8 @@
 }
 
 #FeedsLeftPanelItem i {
-  padding-right: 20px;
   color: #555;
+  width: 40px;
 }
 
 #FeedsLeftPanelItem span {
