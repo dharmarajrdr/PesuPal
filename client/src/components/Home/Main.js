@@ -3,13 +3,15 @@ import LeftNavigation from '../LeftNavigation/LeftNavigation'
 import ChatLayout from '../Chat/ChatLayout'
 import Profile from '../OthersProfile/Profile'
 import SomeProfile from '../OthersProfile/SomeProfile'
+import FeedsLayout from '../Feeds/FeedsLayout'
 
 const Main = () => {
     return (
         <div className='FRSS' style={{ height: '100%' }}>
             <LeftNavigation />
-            <ChatLayout />
-            <Profile Profile={SomeProfile} />
+            <FeedsLayout />
+            {/* <ChatLayout />
+            <Profile Profile={SomeProfile} /> */}
         </div>
     )
 }
