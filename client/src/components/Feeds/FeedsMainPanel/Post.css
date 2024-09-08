@@ -56,7 +56,8 @@
 }
 
 .Post .PostFooter .postActions i {
-  width: 20px;
+  width: 18px;
+  text-align: center;
 }
 
 .Post .PostFooter .postActions:hover {
@@ -88,4 +89,11 @@
   object-fit: scale-down;
   object-position: top;
   cursor: pointer;
+}
+
+@media screen and (max-width: 768px) {
+  .Post{
+    /* padding: 20px; */
+  }
+    
 }
