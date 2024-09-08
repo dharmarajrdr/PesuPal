@@ -2,7 +2,7 @@ import React from 'react'
 import './FeedsLayout.css'
 import FeedsLeftPanel from './FeedsLeftPanel/FeedsLeftPanel'
 import FeedList from './FeedList'
-import FeedsRightPanel from './FeedsRightPanel'
+import FeedsRightPanel from './FeedsRightPanel/FeedsRightPanel'
 
 const FeedsLayout = () => {
     return (
