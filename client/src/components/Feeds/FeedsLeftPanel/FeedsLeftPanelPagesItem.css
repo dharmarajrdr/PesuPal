@@ -1,0 +1,40 @@
+#FeedsLeftPanelPagesItem {
+  padding: 15px 20px;
+  cursor: pointer;
+  border-radius: 10px;
+  margin: 5px 0px;
+}
+
+#FeedsLeftPanelPagesItem:hover {
+  background-color: #f0f0f0;
+}
+
+#FeedsLeftPanelPagesItem.active {
+  background-color: #f0f0f0;
+  cursor: default;
+}
+
+#FeedsLeftPanelPagesItem i {
+  width: 40px;
+  color: #555;
+}
+
+#FeedsLeftPanelPagesItem .title {
+  color: #555;
+}
+
+#FeedsLeftPanelPagesItem:hover .title,
+#FeedsLeftPanelPagesItem:hover i {
+  color: #333;
+}
+
+.icon_pagetitle {
+  max-width: 90%;
+  overflow: hidden;
+  text-wrap: nowrap;
+}
+
+.participants_count {
+  font-size: 10px;
+  color: #888;
+}
