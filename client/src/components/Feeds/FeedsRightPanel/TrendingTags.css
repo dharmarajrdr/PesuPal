@@ -1,0 +1,35 @@
+#TrendingTags {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  background-color: #fff;
+  border-radius: 10px;
+  margin: 15px 0px;
+  padding: 20px;
+}
+
+#TrendingTags #title {
+  font-size: 16px;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 10px;
+  margin-left: 5px;
+}
+
+.TrendingTag {
+  background-color: #eee;
+  display: inline;
+  padding: 3px 5px;
+  margin: 5px;
+  border-radius: 5px;
+  font-size: 14px;
+  color: #333;
+}
+
+#TrendingTagsList {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-start;
+}
