@@ -7,6 +7,10 @@ import { hasCookie } from './components/Auth/utils';
 import LeftNavigation from './components/LeftNavigation/LeftNavigation';
 import FeedsLayout from './components/Feeds/FeedsLayout';
 import ChatLayout from './components/Chat/ChatLayout';
+import { configureStore } from '@reduxjs/toolkit';
+import { combineReducers } from 'redux';
+import { Provider } from 'react-redux';
+import { NavigationReducers } from './store/reducers/Navigation';
 
 function Navigation() {
     const navigate = useNavigate();
@@ -19,19 +23,27 @@ function Navigation() {
 }
 
 function App() {
+    const store = configureStore({
+        'reducer': combineReducers({
+            Navigation: NavigationReducers
+        }),
+        'devTools': true
+    });
     return (
-        <div className="App FRCC">
-            <BrowserRouter>
-                {/* <Navigation /> */}
-                <LeftNavigation />
-                <Routes>
-                    <Route path='/feeds' element={<FeedsLayout />} />
-                    <Route path='/chat' element={<ChatLayout />} />
-                    <Route path='/signup' element={<Signup />} />
-                    <Route path='/signin' element={<Signin />} />
-                </Routes>
-            </BrowserRouter>
-        </div>
+        <Provider store={store}>
+            <div className="App FRCS">
+                <BrowserRouter>
+                    {/* <Navigation /> */}
+                    <LeftNavigation />
+                    <Routes>
+                        <Route path='/feeds' element={<FeedsLayout />} />
+                        <Route path='/chat' element={<ChatLayout />} />
+                        <Route path='/signup' element={<Signup />} />
+                        <Route path='/signin' element={<Signin />} />
+                    </Routes>
+                </BrowserRouter>
+            </div>
+        </Provider>
     );
 }
 

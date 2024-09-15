@@ -3,8 +3,8 @@ import { Link } from 'react-router-dom'
 import './Profile.css'
 
 const Profile = ({ Profile }) => {
-    const { Name, Designation, Department, Contact, Social } = Profile,
-        { Phone, Email } = Contact, closeProfileOverlay = () => {
+    const { Name, Designation, Department, Contact, Social } = Profile || {},
+        { Phone, Email } = Contact || {}, closeProfileOverlay = () => {
             const ProfileCardOverlay = document.getElementById('ProfileOverlay'),
                 ProfileCard = document.getElementById('ProfileCard');
             ProfileCard.style.transition = 'transform 0.25s ease-in-out';
@@ -14,7 +14,8 @@ const Profile = ({ Profile }) => {
                 clearTimeout(timer);
             }, 250);
         }
-    return (
+
+    return Profile ? (
         <div id='ProfileOverlay' className='FRCE'>
             <div id='ProfileCard' className='noScrollbar'>
                 <i className="fa-solid fa-xmark" id='closeProfileOverlay' onClick={closeProfileOverlay}></i>
@@ -69,7 +70,7 @@ const Profile = ({ Profile }) => {
                 </div>
             </div>
         </div>
-    )
+    ) : null;
 }
 
 export default Profile

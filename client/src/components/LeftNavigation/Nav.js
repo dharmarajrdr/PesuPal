@@ -1,13 +1,21 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { NavLink } from 'react-router-dom';
 import './LeftNavigation.css'
 import themes from '../../theme';
+import { useDispatch } from 'react-redux';
+import { setActiveNavigation } from '../../store/actions/Navigation';
 
-const Nav = ({ icon, image, title, route }) => {
+const Nav = ({ icon, image, title, route, isActive }) => {
+
     const { activeNav } = themes,
-        isActive = document.location.pathname.toLowerCase() == route.toLowerCase();
+        dispatch = useDispatch(),
+        handleNavClick = (event) => {
+            // event.preventDefault();
+            dispatch(setActiveNavigation({ route }));
+        }
+
     return (
-        <NavLink to={route} style={isActive ? activeNav : null} className={`LeftNavigationItem cursP FCCC selectNone ${isActive ? 'activeNav' : ''}`}  >
+        <NavLink to={route} style={isActive ? activeNav : null} className={`LeftNavigationItem cursP FCCC selectNone ${isActive ? 'activeNav' : ''}`} onClick={handleNavClick}  >
             {
                 icon ? <i className={`fas ${icon} colorFFF`}></i> : <img src={image} />
             }

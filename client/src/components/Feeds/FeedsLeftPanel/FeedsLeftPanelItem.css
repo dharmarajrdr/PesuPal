@@ -21,4 +21,5 @@
 
 #FeedsLeftPanelItem span {
   color: #555;
+  overflow: hidden;
 }

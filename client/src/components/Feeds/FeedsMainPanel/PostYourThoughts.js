@@ -12,29 +12,29 @@ const PostYourThoughts = () => {
             <div className='w100 FRCB'>
                 <div className='FRCS'>
                     <span className='actions_post_creation'>
-                        <i className='fa-regular fa-image'></i>
+                        <i className='w20 fa-regular fa-image'></i>
                         <span>Add attachment</span>
                     </span>
                     <span className='actions_post_creation'>
-                        <i className='fa-regular fa-hashtag'></i>
+                        <i className='w20 fa-regular fa-hashtag'></i>
                         <span>Add tag</span>
                     </span>
                     {/* <span className='actions_post_creation'>
-                        <i className='fa-regular fa-at'></i>
+                        <i className='w20 fa-regular fa-at'></i>
                         Add mentions
                     </span> */}
                     <span className='actions_post_creation'>
-                        <i className='fa-solid fa-t'></i>
+                        <i className='w20 fa-solid fa-t'></i>
                         <span>Add title</span>
                     </span>
                     <span className='actions_post_creation'>
-                        <i className="fa-solid fa-square-poll-vertical"></i>
+                        <i className="w20 fa-solid fa-square-poll-vertical"></i>
                         <span>Add poll</span>
                     </span>
                 </div>
                 <div>
                     <span className='actions_post_creation'>
-                        <i className='fa-regular fa-calendar-days'></i>
+                        <i className='w20 fa-regular fa-calendar-days'></i>
                         <span>Schedule post</span>
                     </span>
                     <button id='shareMyThoughtButton'>Share</button>

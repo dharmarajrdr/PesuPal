@@ -1,11 +1,14 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import './LeftNavigation.css'
-import ListOfNavigations from './ListOfNavigations'
 import Nav from './Nav'
+import { useDispatch, useSelector } from 'react-redux';
 import themes from '../../theme';
 
 const LeftNavigation = () => {
-    const hideNavContainer = () => {
+
+    const ListOfNavigations = useSelector((state) => {
+        return state.Navigation;
+    }), hideNavContainer = () => {
         const LeftNavigationOverlay = document.getElementById('LeftNavigationOverlay'),
             leftNavContainer = document.getElementById('LeftNavigation');
         leftNavContainer.style.transition = 'transform 0.25s ease-in-out';
@@ -18,8 +21,14 @@ const LeftNavigation = () => {
         if (window.outerWidth < 769) {
             hideNavContainer();
         }
-    }, { LeftNavigationStyles } = themes;
+    }, { LeftNavigationStyles } = themes,
+        dispatch = useDispatch();
 
+    useEffect(() => {
+        const { pathname } = document.location;
+        const route = '/' + pathname.split('/')[1];
+        dispatch({ type: 'UPDATE_NAVIGATION', payload: { route } });
+    }, []);
 
     return (
         <div id='LeftNavigationOverlay' onClick={clickedOverlay}>
@@ -33,14 +42,14 @@ const LeftNavigation = () => {
                     </div>
                     {ListOfNavigations.top.map((navigation, index) => {
                         return (
-                            <Nav key={index} icon={navigation.icon} image={navigation.image} title={navigation.title} route={navigation.route} />
+                            <Nav key={index} icon={navigation.icon} image={navigation.image} title={navigation.title} route={navigation.route} isActive={navigation.isActive} />
                         )
                     })}
                 </div>
                 <div className='w100'>
                     {ListOfNavigations.bottom.map((navigation, index) => {
                         return (
-                            <Nav key={index} icon={navigation.icon} image={navigation.image} title={navigation.title} route={navigation.route} />
+                            <Nav key={index} icon={navigation.icon} image={navigation.image} title={navigation.title} route={navigation.route} isActive={navigation.isActive} />
                         )
                     })}
                 </div>

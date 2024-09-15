@@ -7,7 +7,7 @@ const FeedsLeftPanelItem = ({ item }) => {
     return (
         <Link to={route} id='FeedsLeftPanelItem' className={`FRCS w100 ${is_active ? 'active' : ''}`}>
             <i className={icon} style={{ color }} ></i>
-            <span>{title}</span>
+            <span className='noTextWrap'>{title}</span>
             <span>{participants}</span>
         </Link>
     )

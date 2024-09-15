@@ -12,11 +12,11 @@
   justify-content: space-between;
 }
 
-.FRSB{
-    display: flex;
-    flex-direction: row;
-    align-items: flex-start;
-    justify-content: space-between;
+.FRSB {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: space-between;
 }
 
 .FRCE {
@@ -84,6 +84,10 @@
 
 .w20 {
   width: 20px;
+}
+
+.h20 {
+  height: 20px;
 }
 
 .w30 {
@@ -189,4 +193,8 @@
   width: 40px;
   height: 40px;
   border-radius: 100%;
+}
+
+.noTextWrap {
+  text-wrap: nowrap;
 }
