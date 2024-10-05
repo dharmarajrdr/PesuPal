@@ -50,7 +50,7 @@
   display: none;
 }
 
-.notifyCount {
+.LeftNavigationItem .notifyCount {
   position: absolute;
   top: 10px;
   right: 17px;
