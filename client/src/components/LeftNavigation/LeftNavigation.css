@@ -16,6 +16,7 @@
 }
 
 .LeftNavigationItem {
+  position: relative;
   padding: 15px 0px;
   width: 100%;
   border-radius: 10px;
@@ -47,6 +48,23 @@
 
 #closeLeftNav {
   display: none;
+}
+
+.notifyCount {
+  position: absolute;
+  top: 10px;
+  right: 17px;
+  background-color: rgba(255, 0, 0, 0.493);
+  color: #fff;
+  border-radius: 100%;
+  min-width: 15px;
+  min-height: 15px;
+  max-width: 18px;
+  max-height: 18px;
+  line-height: 15px;
+  text-align: center;
+  font-size: 9px;
+  overflow: hidden;
 }
 
 @media screen and (max-width: 768px) {

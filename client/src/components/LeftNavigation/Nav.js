@@ -5,7 +5,7 @@ import themes from '../../theme';
 import { useDispatch } from 'react-redux';
 import { setActiveNavigation } from '../../store/actions/Navigation';
 
-const Nav = ({ icon, image, title, route, isActive }) => {
+const Nav = ({ icon, image, title, route, isActive, notifyCount }) => {
 
     const { activeNav } = themes,
         dispatch = useDispatch(),
@@ -19,6 +19,7 @@ const Nav = ({ icon, image, title, route, isActive }) => {
             {
                 icon ? <i className={`fas ${icon} colorFFF`}></i> : <img src={image} />
             }
+            {notifyCount && <b className='notifyCount'>{notifyCount}</b>}
             <span className='colorFFF'>{title}</span>
         </NavLink>
     )
