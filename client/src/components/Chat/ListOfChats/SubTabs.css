@@ -1,0 +1,37 @@
+#subtab_container {
+  padding: 5px 0px;
+}
+
+.subtabs {
+  position: relative;
+}
+
+.subtabs span {
+  font-size: 12px;
+  color: #777;
+  margin: 0px 7px;
+  border: 1px solid #ddd;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.subtabs span:hover {
+  background-color: #f5f5f5;
+  color: #222;
+}
+
+.subtabs .notifyCount {
+    position: absolute;
+    top: -5px;
+    right: 2px;
+    background-color: #ff4646;
+    width: 12px;
+    height: 12px;
+    line-height: 12px;
+    color: #fff;
+    border-radius: 100%;
+    text-align: center;
+    font-size: 8px;
+    overflow: hidden;
+}
