@@ -37,7 +37,7 @@
 }
 
 .user_name {
-  font-size: 16px;
+  font-size: 14px;
   text-wrap: nowrap;
   text-overflow: ellipsis;
   width: 185px;
