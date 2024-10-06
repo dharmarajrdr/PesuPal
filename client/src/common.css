@@ -107,7 +107,7 @@
 }
 
 .mT5 {
-    margin-top: 5px;
+  margin-top: 5px;
 }
 
 .mT10 {
@@ -116,6 +116,10 @@
 
 .mB10 {
   margin-bottom: 10px;
+}
+
+.mB5 {
+  margin-bottom: 5px;
 }
 
 .pR10 {
