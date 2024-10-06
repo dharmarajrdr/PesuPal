@@ -1,12 +1,12 @@
 import React from 'react'
-import ListOfPeople from './ListOfPeople/ListOfPeople'
 import SearchPeople from './ListOfPeople/SearchPeople'
+import PeopleCards from './ListOfPeople/PeopleCards'
 
 const PeopleLayout = () => {
   return (
     <div className='h100 Layout'>
         <SearchPeople />
-        <ListOfPeople />
+        <PeopleCards />
     </div>
   )
 }
