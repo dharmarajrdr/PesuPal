@@ -8,10 +8,11 @@ const PeopleCard = ({ person }) => {
     const { name, profile_image, department, status, id } = person;
     return (
         <div className='FCCC PeopleCard'>
+            <i className="fa fa-ellipsis-vertical three_dots"></i>
             <div className='FCCC'>
                 <div className='FRCC profile_picture_container'>
                     <img src={profile_image} className='img_75_75 mB10' />
-                    <StatusIndicator status={status}/>
+                    <StatusIndicator status={status} />
                 </div>
                 <b className='mx5 user_name'>{name}</b>
                 <span className='color777 fs10'>{department}</span>

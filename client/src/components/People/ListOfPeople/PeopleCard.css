@@ -7,14 +7,37 @@
   margin: 5px;
   border-radius: 10px;
   user-select: none;
+  position: relative;
 }
 
 .profile_picture_container {
   position: relative;
 }
 
+.PeopleCard .three_dots {
+  position: absolute;
+  right: 15px;
+  top: 15px;
+  cursor: pointer;
+  font-size: 13px;
+  color: #555;
+}
+
+.PeopleCard .three_dots:hover {
+  color: #333;
+}
+
 .user_name {
   font-size: 16px;
+  text-wrap: nowrap;
+  text-overflow: ellipsis;
+  width: 200px;
+  text-align: center;
+  padding: 0px 20px;
+  overflow: hidden;
+  height: 25px;
+  max-width: 100%;
+  line-height: 25px;
   font-weight: 600;
   color: #3f4c68;
 }
@@ -35,7 +58,7 @@
   font-size: 12px;
   border-radius: 100px;
   cursor: pointer;
-  padding: 7px 15px;
+  padding: 7px 25px;
   background-color: #375ba8;
   color: #fff;
 }
