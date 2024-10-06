@@ -2,9 +2,9 @@
   background-color: #fff;
   box-shadow: 2px 2px 4px #ddd;
   padding: 10px;
-  width: 200px;
-  height: 250px;
-  margin: 5px;
+  width: 185px;
+  box-sizing: border-box;
+  height: 200px;
   border-radius: 10px;
   user-select: none;
   position: relative;
@@ -35,9 +35,9 @@
   text-align: center;
   padding: 0px 20px;
   overflow: hidden;
-  height: 25px;
   max-width: 100%;
-  line-height: 25px;
+  height: 20px;
+  line-height: 20px;
   font-weight: 600;
   color: #3f4c68;
 }
