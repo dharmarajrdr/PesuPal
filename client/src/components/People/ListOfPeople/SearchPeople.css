@@ -1,0 +1,26 @@
+#search_people {
+  padding: 10px 20px;
+  background-color: #fff;
+  height: 55px;
+  z-index: 10;
+  border-bottom: 1px solid #ddd;
+}
+
+#search_people_input_container {
+  width: 500px;
+}
+
+#search_people_input {
+  border: none;
+  border-bottom: 1px solid #ddd;
+  background-color: transparent;
+  padding: 10px 20px;
+  width: 300px;
+  color: #555;
+}
+
+#search_people_input:focus {
+  border-color: #888;
+  transition-duration: 0.25s;
+  width: 500px;
+}
