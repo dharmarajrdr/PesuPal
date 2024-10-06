@@ -1,10 +1,20 @@
 import React from 'react';
 import PeopleData from './PeopleData';
 import PeopleCard from './PeopleCard';
+import './PeopleCards.css';
 
 const PeopleCards = () => {
     return (
-        <div className='FRSS'>
+        <div className='FRSS' id='list_of_people'>
+            {PeopleData.map((person, index) =>
+                <PeopleCard key={index} person={person} />
+            )}
+            {PeopleData.map((person, index) =>
+                <PeopleCard key={index} person={person} />
+            )}
+            {PeopleData.map((person, index) =>
+                <PeopleCard key={index} person={person} />
+            )}
             {PeopleData.map((person, index) =>
                 <PeopleCard key={index} person={person} />
             )}
