@@ -22,7 +22,7 @@ export default {
             'icon': 'fa-regular fa-address-card',
             'route': '/people',
             'isActive': false,
-            'notifyCount': '2'
+            'notifyCount': '0'
         },
         {
             'id': 4,
