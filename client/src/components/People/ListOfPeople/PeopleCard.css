@@ -1,0 +1,45 @@
+.PeopleCard {
+  background-color: #fff;
+  box-shadow: 2px 2px 4px #ddd;
+  padding: 10px;
+  width: 200px;
+  height: 250px;
+  margin: 5px;
+  border-radius: 10px;
+  user-select: none;
+}
+
+.profile_picture_container {
+  position: relative;
+}
+
+.user_name {
+  font-size: 16px;
+  font-weight: 600;
+  color: #3f4c68;
+}
+
+.profile_contacts {
+  margin: 0px 5px;
+  border-radius: 100%;
+  cursor: pointer;
+  width: 25px;
+  height: 25px;
+  font-size: 10px;
+  line-height: 25px;
+  text-align: center;
+  color: #fff;
+}
+
+.view_profile_button {
+  font-size: 12px;
+  border-radius: 100px;
+  cursor: pointer;
+  padding: 7px 15px;
+  background-color: #375ba8;
+  color: #fff;
+}
+
+.view_profile_button:hover {
+  background-color: #2e4a8e;
+}
