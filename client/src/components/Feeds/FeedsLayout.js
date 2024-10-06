@@ -6,7 +6,7 @@ import FeedsMainPanel from './FeedsMainPanel/FeedsMainPanel'
 
 const FeedsLayout = () => {
     return (
-        <div id='FeedsLayout' className='w100 h100 FRSS'>
+        <div id='FeedsLayout' className='h100 Layout w100 FRCS'>
             <FeedsLeftPanel />
             <div className='FRSC w100 h100' id='FeedsMain'>
                 <FeedsMainPanel />
