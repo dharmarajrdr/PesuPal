@@ -5,7 +5,7 @@ import './ChatLayout.css'
 
 const ChatLayout = () => {
     return (
-        <div className='h100 ChatLayout'>
+        <div className='h100 Layout'>
             <ListOfChats />
             <ConversationScreen />
         </div>
