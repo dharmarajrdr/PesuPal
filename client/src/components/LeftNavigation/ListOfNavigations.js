@@ -18,9 +18,9 @@ export default {
         },
         {
             'id': 3,
-            'title': 'Contact',
+            'title': 'People',
             'icon': 'fa-regular fa-address-card',
-            'route': '/contact',
+            'route': '/people',
             'isActive': false,
             'notifyCount': '2'
         },
