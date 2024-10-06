@@ -15,9 +15,9 @@ const PeopleCard = ({ person }) => {
                     <StatusIndicator status={status} />
                 </div>
                 <b className='mx5 user_name'>{name}</b>
-                <span className='color777 fs10'>{department}</span>
+                <span className='color777 fs10 mB5'>{department}</span>
             </div>
-            <div className='mT10 FRCC'>
+            <div className='mT5 FRCC'>
                 <i className='profile_contacts fa fa-comment' style={{ backgroundColor: 'blue' }} />
                 <i className='profile_contacts fa fa-phone' style={{ backgroundColor: 'green' }} />
                 <i className='profile_contacts fa fa-video' style={{ backgroundColor: 'red' }} />

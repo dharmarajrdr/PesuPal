@@ -5,7 +5,7 @@ import './PeopleCards.css';
 
 const PeopleCards = () => {
     return (
-        <div className='FRSS' id='list_of_people'>
+        <div className='FRSS custom-scrollbar' id='list_of_people'>
             {PeopleData.map((person, index) =>
                 <PeopleCard key={index} person={person} />
             )}
