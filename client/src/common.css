@@ -285,6 +285,7 @@
 
 .Layout {
   width: calc(100% - 75px);
+  height: 100vh;
   background-color: #e3e8ee;
   overflow: hidden;
 }
