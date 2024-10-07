@@ -31,13 +31,21 @@ export default {
             'route': '/team',
             'isActive': false,
             'notifyCount': '5'
+        },
+        {
+            'id': 5,
+            'title': 'Form',
+            'icon': 'fa-regular fa-file-alt',
+            'route': '/form',
+            'isActive': false,
+            'notifyCount': '0'
         }
     ],
     'bottom': [
         {
             'id': 5,
             'title': 'Me',
-            'image':'/images/Users/user_10.jpg',
+            'image': '/images/Users/user_10.jpg',
             'route': '/profile',
             'isActive': false
         },
