@@ -5,19 +5,21 @@ import './PeopleCards.css';
 
 const PeopleCards = () => {
     return (
-        <div className='FRSS custom-scrollbar' id='list_of_people'>
-            {PeopleData.map((person, index) =>
-                <PeopleCard key={index} person={person} />
-            )}
-            {PeopleData.map((person, index) =>
-                <PeopleCard key={index} person={person} />
-            )}
-            {PeopleData.map((person, index) =>
-                <PeopleCard key={index} person={person} />
-            )}
-            {PeopleData.map((person, index) =>
-                <PeopleCard key={index} person={person} />
-            )}
+        <div className='FCSS custom-scrollbar' id='PeopleCards'>
+            <div id='list_of_people'>
+                {PeopleData.map((person, index) =>
+                    <PeopleCard key={index} person={person} />
+                )}
+                {PeopleData.map((person, index) =>
+                    <PeopleCard key={index} person={person} />
+                )}
+                {PeopleData.map((person, index) =>
+                    <PeopleCard key={index} person={person} />
+                )}
+                {PeopleData.map((person, index) =>
+                    <PeopleCard key={index} person={person} />
+                )}
+            </div>
         </div>
     )
 }
