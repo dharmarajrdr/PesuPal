@@ -19,6 +19,13 @@
   justify-content: space-between;
 }
 
+.FRCB {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
 .FRCE {
   display: flex;
   flex-direction: row;
@@ -48,10 +55,10 @@
 }
 
 .FRES {
-    display: flex;
-    flex-direction: row;
-    align-items: flex-end;
-    justify-content: flex-start;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  justify-content: flex-start;
 }
 
 .FCCB {
@@ -130,7 +137,7 @@
 }
 
 .pR5 {
-    padding-right: 5px;
+  padding-right: 5px;
 }
 
 .pR10 {
@@ -141,16 +148,30 @@
   padding-left: 10px;
 }
 
+.pX10 {
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.pY10 {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
 .p10 {
-    padding: 10px;
+  padding: 10px;
+}
+
+.p20 {
+  padding: 20px;
 }
 
 .colorAAA {
-    color: #aaa;
+  color: #aaa;
 }
 
 .color555 {
-    color: #555;
+  color: #555;
 }
 
 .color777 {
