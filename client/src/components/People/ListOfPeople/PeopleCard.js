@@ -9,9 +9,9 @@ const PeopleCard = ({ person }) => {
     return (
         <div className='FCCC PeopleCard'>
             <i className="fa fa-ellipsis-vertical three_dots"></i>
-            <div className='FCCC mB5'>
-                <div className='FRCC profile_picture_container'>
-                    <img src={profile_image} className='img_75_75 mB10' />
+            <div className='FCCC mB5 img_name_dept'>
+                <div className='FRCC profile_picture_container mB10'>
+                    <img src={profile_image} className='img_75_75' />
                     <StatusIndicator status={status} />
                 </div>
                 <b className='mx5 user_name'>{name}</b>
