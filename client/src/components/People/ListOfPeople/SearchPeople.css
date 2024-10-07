@@ -10,6 +10,12 @@
   width: 500px;
 }
 
+#search_people_input_container #search_count {
+  font-size: 12px;
+  color: #555;
+  margin-left: 10px;
+}
+
 #search_people_input {
   border: none;
   border-bottom: 1px solid #ddd;
@@ -22,5 +28,5 @@
 #search_people_input:focus {
   border-color: #888;
   transition-duration: 0.25s;
-  width: 500px;
+  /* width: 500px; */
 }
