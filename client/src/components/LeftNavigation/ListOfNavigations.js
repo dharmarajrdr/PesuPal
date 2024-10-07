@@ -14,7 +14,7 @@ export default {
             'icon': 'fa-regular fa-comments',
             'route': '/chat',
             'isActive': false,
-            'notifyCount': '5'
+            'notifyCount': '21'
         },
         {
             'id': 3,
@@ -29,7 +29,8 @@ export default {
             'title': 'Team',
             'icon': 'fa-regular fa-people-group',
             'route': '/team',
-            'isActive': false
+            'isActive': false,
+            'notifyCount': '5'
         }
     ],
     'bottom': [
