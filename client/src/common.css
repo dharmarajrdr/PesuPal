@@ -47,6 +47,13 @@
   justify-content: flex-start;
 }
 
+.FRES {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: flex-start;
+}
+
 .FCCB {
   display: flex;
   flex-direction: column;
@@ -122,12 +129,28 @@
   margin-bottom: 5px;
 }
 
+.pR5 {
+    padding-right: 5px;
+}
+
 .pR10 {
   padding-right: 10px;
 }
 
 .pL10 {
   padding-left: 10px;
+}
+
+.p10 {
+    padding: 10px;
+}
+
+.colorAAA {
+    color: #aaa;
+}
+
+.color555 {
+    color: #555;
 }
 
 .color777 {
