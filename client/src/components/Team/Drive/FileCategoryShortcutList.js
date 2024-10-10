@@ -24,7 +24,7 @@ export default [
     {
         "id": 3,
         "title": "Documents",
-        "icon": "fas fa-file",
+        "icon": "fas fa-file-alt",
         "icon_color": "#8081ff",
         "bg_color": "rgb(32, 33, 165)",
         "count": 273,
