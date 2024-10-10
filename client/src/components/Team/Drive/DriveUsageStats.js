@@ -32,14 +32,16 @@ const DriveUsageStats = () => {
         tooltip: {
             showColorCode: true
         },
-        chartArea: { left: 25, top: 0, width: "100%", height: "100%" },
+        chartArea: { left: "10%", top: 0, width: "80%", height: "100%" },
     };
 
     return (
         <div id='DriveUsageStats'>
 
-            <Chart chartType="PieChart" data={usageStats_data} options={usageStats_options} width={"100%"} height={"250px"} />
-            <p className='w100 fs14 mT20 alignCenter color555'>Shows the usage stats of the drive.</p>
+            <div style={{ width: '100%', height: '250px' }}>
+                <Chart chartType="PieChart" data={usageStats_data} options={usageStats_options} width={"100%"} height={"250px"} />
+            </div>
+            <p className='w100 mT20 alignCenter color555' style={{ fontSize: '12px' }}>Shows the usage stats of the drive.</p>
 
         </div>
     )
