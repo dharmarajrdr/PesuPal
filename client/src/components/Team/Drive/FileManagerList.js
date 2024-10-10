@@ -10,7 +10,7 @@ export default [
     {
         "id": 2,
         "title": "Files",
-        "icon": "fas fa-file",
+        "icon": "fas fa-file-alt",
         "icon_color": "#ff7bff",
         "route": "/team/drive/files",
         "active": false
