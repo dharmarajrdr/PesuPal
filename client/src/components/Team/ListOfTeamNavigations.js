@@ -40,9 +40,9 @@ export default [
         has_access: true
     },
     {
-        title: 'Files (workdrive)',
-        route: '/team/files',
-        icon: 'fa fa-folder',
+        title: 'Drive (workdrive)',
+        route: '/team/drive',
+        icon: 'fa fa-store',
         active: false,
         notify_count: 1,
         has_access: true
