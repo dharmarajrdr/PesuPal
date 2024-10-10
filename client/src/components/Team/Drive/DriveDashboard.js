@@ -3,6 +3,7 @@ import FileManager from './FileManager'
 import FileCategoryShortcut from './FileCategoryShortcut'
 import PreviewFolderFileList from './PreviewFolderFileList'
 import './DriveDashboard.css'
+import DriveDashboardList from './DriveDashboardList';
 import DriveUsageStats from './DriveUsageStats'
 
 const DriveDashboard = () => {
@@ -10,14 +11,11 @@ const DriveDashboard = () => {
         <div className='FCSS p20 w100'>
             <FileManager />
             <FileCategoryShortcut />
-            <div className='FRSB w100'>
-                <div>
-                    <PreviewFolderFileList />
-                    <PreviewFolderFileList />
+            <div className='FRSB pY20 w100' id='previews_stats'>
+                <div id='list_of_previews'>
+                    {DriveDashboardList.map((item, index) => <PreviewFolderFileList key={index} item={item} />)}
                 </div>
-                <div>
-                    <DriveUsageStats />
-                </div>
+                <DriveUsageStats />
             </div>
         </div>
     )
