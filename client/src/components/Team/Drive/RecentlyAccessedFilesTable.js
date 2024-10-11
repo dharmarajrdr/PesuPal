@@ -9,7 +9,7 @@ const Col = ({ item }) => {
     return <td className='FRCS' style={{ width }} >
         {category && <i className={icon + " img_20_20 mR10"} style={{ color: icon_color }} ></i>}
         <span>{data}</span>
-        {option_icon && <i className={option_icon + " color777"}></i>}
+        {option_icon && <i className={option_icon + " color777 mR10"}></i>}
     </td>
 }
 
