@@ -1,40 +1,10 @@
 import React from 'react'
 import './PreviewFolderFileList.css'
+import utils from '../../../utils';
 
 const PreviewFolderFileListItem = ({ item }) => {
     const { id, title, size, members, files, category } = item,
-        icon = {
-            "icon": "fas fa-question",
-            "icon_color": "#555"
-        }
-
-    switch (category) {
-        case "Document": {
-            icon.icon = "fas fa-file-alt"
-            icon.icon_color = "#ff7bff"
-            break;
-        }
-        case "Video": {
-            icon.icon = "fas fa-video"
-            icon.icon_color = "#ff7bff"
-            break;
-        }
-        case "Audio": {
-            icon.icon = "fas fa-music"
-            icon.icon_color = "#ff7bff"
-            break;
-        }
-        case "Image": {
-            icon.icon = "fas fa-file-image"
-            icon.icon_color = "#ff7bff"
-            break;
-        }
-        case "Folder": {
-            icon.icon = "fas fa-folder"
-            icon.icon_color = "#8081ff"
-            break;
-        }
-    }
+        icon = utils.getIconBasedOnCategory(category);
 
     return <div className='FCSS PreviewFolderFileListItem mR10 p10 cursP'>
         <div className='FRSB w100 mb5'>
