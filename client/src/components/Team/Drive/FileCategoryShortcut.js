@@ -1,9 +1,11 @@
 import React from 'react'
+import utils from '../../../utils.js';
 import FileCategoryShortcutList from './FileCategoryShortcutList.js'
 import './FileCategoryShortcutItem.css';
 
 const FileCategoryShortcutItem = ({ item }) => {
-    const { title, icon, route, active, icon_color, size, count, bg_color } = item;
+    const { title, route, active, size, count } = item,
+        { icon, icon_color, bg_color } = utils.getIconBasedOnCategory(title);
     return (
         <div className={(active ? 'FileManagerItemActive ' : '') + 'FRCC FileCategoryShortcutList mR10 cursP'} style={{ backgroundColor: bg_color }}>
             <div className='icon_parent FRCC'>
