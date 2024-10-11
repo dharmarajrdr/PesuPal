@@ -31,7 +31,7 @@
 #RecentlyAccessedFiles #table tr td span {
   height: 100%;
   overflow: hidden;
-  width: calc(100%);
+  width: 100%;
   color: #555;
   text-overflow: ellipsis;
 }
