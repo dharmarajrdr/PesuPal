@@ -386,6 +386,15 @@ span {
   padding-left: 5px;
 }
 
+.topMinus3 {
+  position: relative;
+  top: -3px;
+}
+
+.fw400 {
+  font-weight: 400;
+}
+
 @media screen and (max-width: 768px) {
   .Layout {
     width: 100%;
