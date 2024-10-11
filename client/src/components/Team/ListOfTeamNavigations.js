@@ -24,8 +24,8 @@ export default [
         has_access: true
     },
     {
-        title: 'Tasks (crm)',
-        route: '/team/tasks',
+        title: 'Manage Work (crm)',
+        route: '/team/manage_work',
         icon: 'fa fa-tasks',
         active: false,
         notify_count: 1,
