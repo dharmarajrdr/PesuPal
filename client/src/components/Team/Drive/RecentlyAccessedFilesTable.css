@@ -1,0 +1,56 @@
+#RecentlyAccessedFilesTable {
+  height: calc(100vh - 490px);
+  padding-right: 20px;
+  overflow: hidden;
+}
+
+#RecentlyAccessedFilesTable #table {
+  background-color: #fff;
+  border-radius: 10px;
+  border-top: 1px solid #ddd;
+  height: calc(100% - 35px);
+  overflow: scroll;
+}
+
+#RecentlyAccessedFilesTable #table .body_row:hover {
+  background-color: #f5f5f5;
+}
+
+#RecentlyAccessedFilesTable #table tr {
+  cursor: pointer;
+}
+
+#RecentlyAccessedFilesTable #table tr td {
+  border-bottom: 1px solid #ddd;
+  height: 50px;
+  line-height: 50px;
+  font-size: 14px;
+  padding: 0px 20px;
+}
+
+#RecentlyAccessedFilesTable #table tr td span {
+  height: 100%;
+  overflow: hidden;
+  width: calc(100%);
+  color: #555;
+  text-overflow: ellipsis;
+}
+
+#RecentlyAccessedFilesTable #table #header {
+  background-color: rgb(196, 201, 216);
+  position: sticky;
+  top: 0;
+}
+
+#RecentlyAccessedFilesTable #table #header span {
+  color: #333;
+}
+
+#RecentlyAccessedFilesTable #table .body_row {
+  transition-duration: 0.25s;
+}
+
+#RecentlyAccessedFilesTable #table .body_row td i {
+  line-height: 20px;
+  text-align: center;
+}
