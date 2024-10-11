@@ -1,0 +1,21 @@
+.CustomModulesItem {
+  border: 1px solid #aaa;
+  cursor: pointer;
+  padding: 5px 15px;
+  border-radius: 5px;
+}
+
+#create_record {
+  border-radius: 10px;
+  border: none;
+  padding: 10px 20px;
+  background-color: rgb(63, 76, 104);
+}
+
+#create_record i {
+  color: white;
+}
+
+#create_record span {
+  color: white;
+}
