@@ -1,0 +1,50 @@
+#FileManager {
+  margin: 20px 0px;
+}
+
+#uploadButton {
+  background-color: rgb(153, 103, 11);
+  padding: 10px 20px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+}
+
+#uploadButton i,
+#uploadButton span {
+  color: #fff;
+  font-size: 14px;
+}
+
+.FileManagerItem {
+  border: 1px solid #aaa;
+  padding: 7px 15px;
+  border-radius: 10px;
+}
+
+.FileManagerItem i,
+.FileManagerItem span {
+  color: #555;
+  font-size: 14px;
+}
+
+.FileManagerItem span {
+  font-family: system-ui;
+}
+
+.FileManagerItem:not(.FileManagerItemActive):hover {
+}
+
+.FileManagerItemActive {
+  background-color: rgb(70, 92, 138);
+  color: #fff;
+  border-color: transparent;
+}
+
+.FileManagerItemActive i {
+  color: #fff;
+}
+
+.FileManagerItemActive span {
+  color: #fff;
+}

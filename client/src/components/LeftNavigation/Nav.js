@@ -19,7 +19,7 @@ const Nav = ({ icon, image, title, route, isActive, notifyCount }) => {
             {
                 icon ? <i className={`fas ${icon} colorFFF`}></i> : <img src={image} />
             }
-            {notifyCount && <b className='notifyCount'>{notifyCount}</b>}
+            {notifyCount && notifyCount != '0' && <b className='notifyCount'>{notifyCount}</b>}
             <span className='colorFFF'>{title}</span>
         </NavLink>
     )

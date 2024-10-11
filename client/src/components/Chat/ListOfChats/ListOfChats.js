@@ -7,7 +7,7 @@ import SubTabs from './SubTabs'
 
 const ListOfChats = () => {
     return (
-        <div id='ListOfChats'>
+        <div id='ListOfChats' className='custom-scrollbar'>
             <div id='searchPinnedFixedContainer'>
                 <SearchUsers />
                 <PinnedUsers />

@@ -14,29 +14,38 @@ export default {
             'icon': 'fa-regular fa-comments',
             'route': '/chat',
             'isActive': false,
-            'notifyCount': '5'
+            'notifyCount': '21'
         },
         {
             'id': 3,
-            'title': 'Contact',
+            'title': 'People',
             'icon': 'fa-regular fa-address-card',
-            'route': '/contact',
+            'route': '/people',
             'isActive': false,
-            'notifyCount': '2'
+            'notifyCount': '0'
         },
         {
             'id': 4,
             'title': 'Team',
             'icon': 'fa-regular fa-people-group',
             'route': '/team',
-            'isActive': false
+            'isActive': false,
+            'notifyCount': '5'
+        },
+        {
+            'id': 5,
+            'title': 'Form',
+            'icon': 'fa-regular fa-file-alt',
+            'route': '/form',
+            'isActive': false,
+            'notifyCount': '0'
         }
     ],
     'bottom': [
         {
             'id': 5,
             'title': 'Me',
-            'image':'/images/Users/user_10.jpg',
+            'image': '/images/Users/user_10.jpg',
             'route': '/profile',
             'isActive': false
         },

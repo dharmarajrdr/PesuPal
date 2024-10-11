@@ -11,6 +11,8 @@ import { configureStore } from '@reduxjs/toolkit';
 import { combineReducers } from 'redux';
 import { Provider } from 'react-redux';
 import { NavigationReducers } from './store/reducers/Navigation';
+import PeopleLayout from './components/People/PeopleLayout';
+import TeamLayout from './components/Team/TeamLayout';
 
 function Navigation() {
     const navigate = useNavigate();
@@ -38,6 +40,8 @@ function App() {
                     <Routes>
                         <Route path='/feeds' element={<FeedsLayout />} />
                         <Route path='/chat' element={<ChatLayout />} />
+                        <Route path='/people' element={<PeopleLayout />} />
+                        <Route path='/team' element={<TeamLayout />} />
                         <Route path='/signup' element={<Signup />} />
                         <Route path='/signin' element={<Signin />} />
                     </Routes>

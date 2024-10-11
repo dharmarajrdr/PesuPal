@@ -1,0 +1,18 @@
+.FileCategoryShortcutList {
+  padding: 12px 15px;
+  border-radius: 10px;
+}
+
+.FileCategoryShortcutList .icon_parent {
+  width: 30px;
+  height: 30px;
+}
+
+.FileCategoryShortcutList .icon_parent i {
+  font-size: 25px;
+}
+
+.FileCategoryShortcutList .name_count_size {
+  margin-left: 10px;
+  width: 111px;
+}
