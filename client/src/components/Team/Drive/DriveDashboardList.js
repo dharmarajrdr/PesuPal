@@ -48,7 +48,7 @@ export default [
         "subHeadings": [
             {
                 "id": 1,
-                "title": "All folders",
+                "title": "All files",
                 "active": true
             },
             {

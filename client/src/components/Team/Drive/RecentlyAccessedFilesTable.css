@@ -42,8 +42,9 @@
   top: 0;
 }
 
-#RecentlyAccessedFilesTable #table #header span {
+#RecentlyAccessedFilesTable #table #header td b {
   color: #333;
+  text-wrap: nowrap;
 }
 
 #RecentlyAccessedFilesTable #table .body_row {
