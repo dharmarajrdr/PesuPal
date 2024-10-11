@@ -7,6 +7,7 @@
 }
 
 #previews_stats #list_of_previews {
-  width: 100%;
+  width: calc(100% - 350px);
+  height: 50%;
   overflow: hidden;
 }
