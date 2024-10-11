@@ -18,7 +18,7 @@ const DriveUsageStats = () => {
         pieHole: 0.5,
         is3D: false,
         slices: [
-            { color: "#999" }, { color: "#42aa1b" }, { color: "#ff7bff" }, { color: "#8081ff" }, { color: "#fa23ac" }
+            { color: "#999" }, { color: "#42aa1b" }, { color: "#ccbb12" }, { color: "#8081ff" }, { color: "#fa23ac" }
         ],
         legend: {
             position: "bottom",

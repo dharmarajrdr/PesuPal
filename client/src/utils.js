@@ -10,8 +10,8 @@ export default {
             }
             case "Video": {
                 icon.icon = "fas fa-video"
-                icon.icon_color = "#ff7bff"
-                icon.bg_color = "rgb(131, 15, 131)";
+                icon.icon_color = "#ccbb12"
+                icon.bg_color = "rgb(131, 115, 31)";
                 break;
             }
             case "Audio": {
