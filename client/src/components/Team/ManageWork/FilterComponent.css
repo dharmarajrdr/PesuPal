@@ -1,0 +1,34 @@
+#FilterComponent {
+  width: 80%;
+  overflow-x: scroll;
+}
+
+.FilterComponentItem {
+  background-color: #fff;
+  border-radius: 5px;
+  margin: 5px;
+  position: relative;
+  left: -5px;
+}
+
+.FilterComponentItem i {
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  color: #aaa;
+}
+
+.FilterComponentItem select {
+  border: none;
+  padding: 5px 10px 5px 30px;
+  background-color: #fff;
+  cursor: pointer;
+  color: #555;
+  width: 150px;
+}
+
+.FilterComponentItem select option {
+  background-color: #fff;
+  color: #555;
+  cursor: pointer;
+}
