@@ -1,11 +1,12 @@
 import React from 'react'
 import './TeamMainContainer.css';
-import DriveLayout from './Drive/DriveLayout';
+import ManageWorkLayout from './ManageWork/ManageWorkLayout';
 
 const TeamMainContainer = () => {
   return (
     <div id='TeamMainContainer'>
-        <DriveLayout />
+        {/* <DriveLayout /> */}
+        <ManageWorkLayout />
     </div>
   )
 }
