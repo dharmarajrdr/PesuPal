@@ -1,0 +1,80 @@
+import React from 'react'
+import { Link } from 'react-router-dom';
+import './KanbanView.css'
+
+const RowComponent = ({ item }) => {
+
+    const { title, route, tag, priority, owner } = item,
+        getPriortyColorAndIcon = (priority) => {
+            switch (priority) {
+                case 'High':
+                    return { priorityColor: 'red', priorityIcon: 'fa-solid fa-bolt' }
+                case 'Medium':
+                    return { priorityColor: 'orange', priorityIcon: 'fa-solid fa-circle-exclamation' }
+                case 'Low':
+                    return { priorityColor: 'green', priorityIcon: 'fa-solid fa-gamepad' }
+                default:
+                    return { priorityColor: 'black', priorityIcon: 'fa-solid fa-circle-exclamation' }
+            }
+        },
+        getTagColor = (tag) => {
+            switch (tag) {
+                case 'Bug':
+                    return 'red';
+                case 'Feature':
+                    return 'skyblue';
+                case 'Task':
+                    return 'magenta';
+                default:
+                    return 'black';
+            }
+        },
+        { priorityColor, priorityIcon } = getPriortyColorAndIcon(priority),
+        tag_color = getTagColor(tag),
+        { ownerImage, ownerName } = owner;
+
+    return <Link to={route} className='kanbanviewItem' draggable="true">
+        {tag && <div class="tag" style={{ backgroundColor: tag_color }}>{tag}</div>}
+        <p className='mB10 kanbanviewItemTitle'>{title}</p>
+        <div className='FRCB creator_owner_div'>
+            <div className='FRCS'>
+                <img src={ownerImage} className='img_20_20' alt="edit" />
+                <span className='mL5 color777' style={{ fontSize: '13px' }}>{ownerName}</span>
+            </div>
+            <div className='priority'>
+                <i class={priorityIcon} style={{ color: priorityColor }}></i>
+                <span className='mL5'>{priority}</span>
+            </div>
+        </div>
+    </Link>
+
+};
+
+const ColumnComponent = ({ column }) => {
+    const { id, status, items } = column,
+        itemCount = items?.length || 0;
+    return <div className='kanbanviewColumn FCSS'>
+        <div className='kanbanviewStage FRCB'>
+            <span className='alignCenter'>{status}</span>
+            <span>{itemCount}</span>
+        </div>
+        <div className='FCSS kanbanviewItems noScrollbar'>
+            {
+                items.length ?
+                    items.map((item, index) => <RowComponent item={item} key={index} />) :
+                    <div className='w100 alignCenter colorAAA selectNone h100 FRCC'>No records</div>
+            }
+        </div>
+    </div>
+
+}
+
+const KanbanView = ({ ManageWorkList }) => {
+    return (
+        <div id='KanbanviewFrame' className='FRSS'>
+            {ManageWorkList.map((column, index) => <ColumnComponent column={column} key={index} />)}
+        </div>
+    )
+}
+
+export default KanbanView

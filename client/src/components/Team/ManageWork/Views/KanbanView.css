@@ -1,0 +1,123 @@
+#KanbanviewFrame {
+  flex-wrap: nowrap;
+  height: 100%;
+  overflow: hidden;
+  width: max-content;
+  border: 1px solid #ccc;
+}
+
+.kanbanviewColumn {
+  width: 400px;
+  height: 100%;
+  border-right: 1px solid #ccc;
+  position: relative;
+}
+
+.kanbanviewColumn:last-child {
+  margin-right: 0;
+  border: none;
+}
+
+.kanbanviewStage {
+  height: 50px;
+  width: 104%;
+  z-index: 1;
+  position: sticky;
+  padding: 0px 15%;
+  left: 0px;
+  top: 0px;
+  background-color: #fff;
+  clip-path: polygon(97% 0, 100% 50%, 97% 100%, 0% 100%, 4% 51%, 0% 0%);
+}
+
+.kanbanviewStage span {
+  text-align: center;
+  color: #fff;
+}
+
+.kanbanviewColumn:first-child .kanbanviewStage {
+  clip-path: none;
+}
+
+.kanbanviewStage:before {
+  content: "";
+  background-color: rgb(83, 133, 83);
+  height: calc(100% - 2px);
+  width: calc(100% - 2px);
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  clip-path: polygon(97% 0, 100% 50%, 97% 100%, 0% 100%, 0% 51%, 0% 0%);
+}
+
+.kanbanviewStage span {
+  z-index: 2;
+  position: relative;
+}
+
+.kanbanviewItems {
+  flex-wrap: nowrap;
+  width: 100%;
+  height: calc(100% - 50px);
+  margin-top: 10px;
+  padding-top: 10px;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+
+.kanbanviewItem {
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  margin: 15px;
+  margin-top: 0;
+  padding: 20px;
+  cursor: pointer;
+  width: calc(100% - 30px);
+  box-sizing: border-box;
+  position: relative;
+}
+
+.creator_owner_div div {
+  width: 40%;
+}
+
+.creator_owner_div div span {
+  width: 100%;
+  overflow: hidden;
+  text-wrap: nowrap;
+  text-overflow: ellipsis;
+}
+
+.creator_owner_div .priority {
+  width: 75px;
+  text-wrap: nowrap;
+  overflow: hidden;
+  text-align: right;
+  font-size: 13px;
+  font-weight: 400;
+  color: #555;
+}
+
+.tag {
+  position: absolute;
+  top: -7px;
+  right: 5px;
+  color: white;
+  padding: 5px 0px;
+  width: 100px;
+  text-align: center;
+  font-size: 10px;
+  font-weight: bold;
+  text-transform: uppercase;
+  clip-path: polygon(0% 0%, 100% 0%, 80% 100%, 15% 100%);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  border-radius: 100%;
+}
+
+.kanbanviewItemTitle {
+  text-wrap: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
