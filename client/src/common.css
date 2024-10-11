@@ -152,6 +152,10 @@
   padding-right: 20px;
 }
 
+.pL5 {
+  padding-left: 5px;
+}
+
 .pL10 {
   padding-left: 10px;
 }
@@ -163,6 +167,11 @@
 .pX10 {
   padding-left: 10px;
   padding-right: 10px;
+}
+
+.pY5 {
+    padding-top: 5px;
+    padding-bottom: 5px;
 }
 
 .pY10 {
@@ -181,6 +190,10 @@
 
 .pB10 {
   padding-bottom: 10px;
+}
+
+.p5 {
+    padding: 5px;
 }
 
 .p10 {
@@ -301,24 +314,28 @@
 .img_20_20 {
   width: 20px;
   height: 20px;
+  line-height: 20px;
   border-radius: 100%;
 }
 
 .img_30_30 {
   width: 30px;
   height: 30px;
+  line-height: 30px;
   border-radius: 100%;
 }
 
 .img_40_40 {
   width: 40px;
   height: 40px;
+  line-height: 40px;
   border-radius: 100%;
 }
 
 .img_75_75 {
   width: 75px;
   height: 75px;
+  line-height: 75px;
   border-radius: 100%;
 }
 
