@@ -1,0 +1,13 @@
+#createRecord {
+  background-color: rgb(63, 76, 104);
+  padding: 10px 20px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+}
+
+#createRecord i,
+#createRecord span {
+  color: #fff;
+  font-size: 14px;
+}
