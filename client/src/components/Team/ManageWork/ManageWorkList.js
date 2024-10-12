@@ -7,7 +7,7 @@ export default [
                 "id": 1,
                 "title": "[Issue] Component not rendering. Some long text here",
                 "owner": {
-                    "ownerName": "Dharmaraj Rathinavel kumar",
+                    "ownerName": "Dharmaraj Rathinavel",
                     "ownerImage": "/images/Users/user_5.jpg"
                 },
                 "tag": "Bug",
@@ -16,7 +16,7 @@ export default [
                 "created_by": "Bala Sundar C",
                 "created_date": "2020-12-01",
                 "route": "/team/manage_work/item/2",
-
+                "draggable": true
             },
             {
                 "id": 2,
@@ -31,7 +31,7 @@ export default [
                 "created_by": "Bala Sundar C",
                 "created_date": "2021-02-01",
                 "route": "/team/manage_work/item/3",
-
+                "draggable": false
             },
             {
                 "id": 1,
@@ -46,7 +46,7 @@ export default [
                 "created_by": "Bala Sundar C",
                 "created_date": "2020-12-01",
                 "route": "/team/manage_work/item/4",
-
+                "draggable": true
             },
             {
                 "id": 2,
@@ -61,7 +61,7 @@ export default [
                 "created_by": "Bala Sundar C",
                 "created_date": "2021-02-01",
                 "route": "/team/manage_work/item/1",
-
+                "draggable": false
             },
             {
                 "id": 1,
@@ -76,7 +76,7 @@ export default [
                 "created_by": "Bala Sundar C",
                 "created_date": "2020-12-01",
                 "route": "/team/manage_work/item/1",
-
+                "draggable": true
             },
             {
                 "id": 2,
@@ -91,7 +91,7 @@ export default [
                 "created_by": "Bala Sundar C",
                 "created_date": "2021-02-01",
                 "route": "/team/manage_work/item/5",
-
+                "draggable": true
             },
             {
                 "id": 1,
@@ -106,7 +106,7 @@ export default [
                 "created_by": "Bala Sundar C",
                 "created_date": "2020-12-01",
                 "route": "/team/manage_work/item/1",
-
+                "draggable": true
             },
             {
                 "id": 2,
@@ -121,7 +121,7 @@ export default [
                 "created_by": "Bala Sundar C",
                 "created_date": "2021-02-01",
                 "route": "/team/manage_work/item/1",
-
+                "draggable": true
             },
             {
                 "id": 1,
@@ -136,7 +136,7 @@ export default [
                 "created_by": "Bala Sundar C",
                 "created_date": "2020-12-01",
                 "route": "/team/manage_work/item/1",
-
+                "draggable": true
             },
             {
                 "id": 2,
@@ -151,7 +151,7 @@ export default [
                 "created_by": "Bala Sundar C",
                 "created_date": "2021-02-01",
                 "route": "/team/manage_work/item/1",
-
+                "draggable": true
             },
             {
                 "id": 1,
@@ -166,7 +166,7 @@ export default [
                 "created_by": "Bala Sundar C",
                 "created_date": "2020-12-01",
                 "route": "/team/manage_work/item/1",
-
+                "draggable": true
             },
             {
                 "id": 2,
@@ -181,7 +181,7 @@ export default [
                 "created_by": "Bala Sundar C",
                 "created_date": "2021-02-01",
                 "route": "/team/manage_work/item/1",
-
+                "draggable": true
             },
             {
                 "id": 1,
@@ -196,7 +196,7 @@ export default [
                 "created_by": "Bala Sundar C",
                 "created_date": "2020-12-01",
                 "route": "/team/manage_work/item/1",
-
+                "draggable": true
             },
             {
                 "id": 2,
@@ -211,7 +211,7 @@ export default [
                 "created_by": "Bala Sundar C",
                 "created_date": "2021-02-01",
                 "route": "/team/manage_work/item/1",
-
+                "draggable": true
             },
         ]
     },
@@ -232,14 +232,7 @@ export default [
                 "created_by": "Pradheep",
                 "created_date": "2024-12-11",
                 "route": "/team/manage_work/item/1",
-                "comments": [
-                    {
-                        "id": 2,
-                        "comment": "Started working on this feature. Will update once completed.",
-                        "commented_by": "Praveen",
-                        "commented_date": "2024-12-11"
-                    }
-                ]
+                "draggable": true
             }
         ]
     },
@@ -265,14 +258,7 @@ export default [
                 "created_by": "Pradheep",
                 "created_date": "2024-12-11",
                 "route": "/team/manage_work/item/1",
-                "comments": [
-                    {
-                        "id": 3,
-                        "comment": "Completed updating the app logo.",
-                        "commented_by": "Pradheep",
-                        "commented_date": "2024-12-11"
-                    }
-                ]
+                "draggable": true
             }
         ]
     },
@@ -293,7 +279,7 @@ export default [
                 "created_by": "Bala Sundar C",
                 "created_date": "2020-12-01",
                 "route": "/team/manage_work/item/1",
-
+                "draggable": true
             },
             {
                 "id": 2,
@@ -308,7 +294,7 @@ export default [
                 "created_by": "Bala Sundar C",
                 "created_date": "2021-02-01",
                 "route": "/team/manage_work/item/1",
-
+                "draggable": true
             },
         ]
     },
