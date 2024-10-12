@@ -9,10 +9,10 @@ import RecentlyAccessedFiles from './RecentlyAccessedFiles'
 
 const DriveDashboard = () => {
     return (
-        <div className='FCSS p20 w100'>
+        <div className='FCSS p20 w100' id='DriveDashboard'>
             <FileManager />
             <FileCategoryShortcut />
-            <div className='FRSB pY20 w100' id='previews_stats'>
+            <div className='FRSB w100' id='previews_stats'>
                 <div id='list_of_previews'>
                     {DriveDashboardList.map((item, index) => <PreviewFolderFileList key={index} item={item} />)}
                     <RecentlyAccessedFiles />
