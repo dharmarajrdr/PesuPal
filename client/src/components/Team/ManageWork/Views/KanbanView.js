@@ -34,7 +34,7 @@ const RowComponent = ({ item }) => {
         { ownerImage, ownerName } = owner;
 
     return <Link to={route} className='kanbanviewItem' draggable={draggable}>
-        {tag && <div class="tag" style={{ backgroundColor: tag_color }}>{tag}</div>}
+        {tag && <div className="tag" style={{ backgroundColor: tag_color }}>{tag}</div>}
         <p className='mB10 kanbanviewItemTitle'>{title}</p>
         <div className='FRCB creator_owner_div'>
             <div className='FRCS ownerDiv'>
@@ -42,7 +42,7 @@ const RowComponent = ({ item }) => {
                 <span className='mL5 color777' style={{ fontSize: '13px' }}>{ownerName}</span>
             </div>
             <div className='priority FRCE'>
-                <i class={priorityIcon} style={{ color: priorityColor }}></i>
+                <i className={priorityIcon} style={{ color: priorityColor }}></i>
                 <span className='mL5' >{priority}</span>
             </div>
         </div>
@@ -69,10 +69,10 @@ const ColumnComponent = ({ column }) => {
 
 }
 
-const KanbanView = ({ ManageWorkList }) => {
+const KanbanView = ({ ManageWorkListKanban }) => {
     return (
         <div id='KanbanviewFrame' className='FRSS'>
-            {ManageWorkList.map((column, index) => <ColumnComponent column={column} key={index} />)}
+            {ManageWorkListKanban.map((column, index) => <ColumnComponent column={column} key={index} />)}
         </div>
     )
 }
