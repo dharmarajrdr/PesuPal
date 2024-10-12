@@ -41,7 +41,7 @@ export default {
         {
             "id": 1,
             "subject": "[Bug] Component not rendering. Some long text here",
-            "status": "In Progress",
+            "status": "On Hold",
             "priority": {
                 "name": "High"
             },
@@ -83,7 +83,7 @@ export default {
         {
             "id": 3,
             "subject": "Analyse the data and provide the report",
-            "status": "Todo",
+            "status": "Yet to Start",
             "priority": {
                 "name": "Medium"
             },
@@ -104,7 +104,7 @@ export default {
         {
             "id": 4,
             "subject": "Generate the invoice for the client",
-            "status": "Done",
+            "status": "Released",
             "priority": {
                 "name": "Low"
             },
