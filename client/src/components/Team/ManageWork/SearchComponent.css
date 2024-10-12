@@ -1,12 +1,27 @@
 #SearchComponent {
-  width: 20%;
-  background-color: #fff;
+  width: 30%;
   position: relative;
   border-radius: 8px;
   overflow: hidden;
 }
 
-#SearchComponent i {
+#change_view {
+  padding: 10px;
+  border-radius: 5px;
+  width: 60px;
+  cursor: pointer;
+  border: none;
+  margin-right: 10px;
+  color: #555;
+  background-color: #fff;
+}
+
+#searchDiv {
+  position: relative;
+  width: 100%;
+}
+
+#searchDiv i {
   position: absolute;
   top: 12px;
   left: 15px;
@@ -14,15 +29,15 @@
   color: #999;
 }
 
-#SearchComponent input {
+#searchDiv input {
   border: 1px solid transparent;
-  border-radius: 10px;
+  border-radius: 5px;
   width: 100%;
   transition-duration: 0.25s;
   padding: 10px 10px 10px 40px;
   outline: none;
 }
 
-#SearchComponent input:focus {
+#searchDiv input:focus {
   border-color: #aaa;
 }
