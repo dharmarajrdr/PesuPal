@@ -19,7 +19,7 @@ export default {
         {
             "title": "Priority",
             "width": "150px",
-            "type": "string"
+            "type": "object"
         },
         {
             "title": "Created_By",
@@ -34,15 +34,17 @@ export default {
         {
             "title": "Tag",
             "width": "150px",
-            "type": "string"
+            "type": "object"
         }
     ],
     "data": [
         {
             "id": 1,
-            "subject": "[Issue] Component not rendering. Some long text here",
+            "subject": "[Bug] Component not rendering. Some long text here",
             "status": "In Progress",
-            "priority": "High",
+            "priority": {
+                "name": "High"
+            },
             "owner": {
                 "name": "John Doe",
                 "image": '/images/Users/user_3.jpg'
@@ -52,14 +54,18 @@ export default {
                 "image": "/images/Users/user_8.jpg"
             },
             "created_at": "01-09-2023 03:45PM",
-            "tag": "Issue",
+            "tag": {
+                "name": "Bug"
+            },
             "route": "/team/manage_work/item/1"
         },
         {
             "id": 2,
             "subject": "Implement add photo feature",
             "status": "In Progress",
-            "priority": "Medium",
+            "priority": {
+                "name": "Medium"
+            },
             "owner": {
                 "name": "Kevin Smith",
                 "image": '/images/Users/user_2.jpg'
@@ -69,14 +75,18 @@ export default {
                 "image": "/images/Users/user_3.jpg"
             },
             "created_at": "01-09-2023 03:45PM",
-            "tag": "Task",
+            "tag": {
+                "name": "Feature"
+            },
             "route": "/team/manage_work/item/2"
         },
         {
             "id": 3,
             "subject": "Analyse the data and provide the report",
             "status": "Todo",
-            "priority": "Medium",
+            "priority": {
+                "name": "Medium"
+            },
             "owner": {
                 "name": "Kevin Smith",
                 "image": '/images/Users/user_2.jpg'
@@ -86,14 +96,18 @@ export default {
                 "image": "/images/Users/user_6.jpg"
             },
             "created_at": "01-09-2023 03:45PM",
-            "tag": "Task",
+            "tag": {
+                "name": "Task"
+            },
             "route": "/team/manage_work/item/2"
         },
         {
             "id": 4,
             "subject": "Generate the invoice for the client",
             "status": "Done",
-            "priority": "Low",
+            "priority": {
+                "name": "Low"
+            },
             "owner": {
                 "name": "Martin Lopez",
                 "image": '/images/Users/user_1.jpg'
@@ -103,7 +117,9 @@ export default {
                 "image": "/images/Users/user_1.jpg"
             },
             "created_at": "01-09-2023 03:45PM",
-            "tag": "Task",
+            "tag": {
+                "name": "Task"
+            },
             "route": "/team/manage_work/item/2"
         }
     ]
