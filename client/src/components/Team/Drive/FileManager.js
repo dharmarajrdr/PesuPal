@@ -1,18 +1,24 @@
 import React from 'react'
-import { Link } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import utils from '../../../utils';
 import FileManagerList from './FileManagerList'
 import './FileManagerItem.css';
 
 const FileManagerItem = ({ item }) => {
-    const { id, title, route, active } = item,
+    const { id, title, route } = item,
         { icon_color, icon } = utils.getIconBasedOnCategory(title);
     return (
-        <Link className={(active ? 'FileManagerItemActive ' : '') + 'FRCC FileManagerItem mR10'} to={route}>
-            <i className={icon + " pR5 w_20 alignCenter"} style={active ? {} : { color: icon_color }}></i>
-            <span>{title}</span>
-        </Link>
+        <NavLink
+            className={({ isActive }) => (isActive ? 'FileManagerItemActive ' : '') + 'FRCC FileManagerItem mR10'} to={route}>
+            {({ isActive }) => (
+                <>
+                    <i className={icon + " pR5 w_20 alignCenter"} style={isActive ? {} : { color: icon_color }} ></i>
+                    <span>{title}</span>
+                </>
+            )}
+        </NavLink>
     )
+
 }
 
 const FileManager = () => {
