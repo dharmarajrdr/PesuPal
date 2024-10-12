@@ -41,8 +41,14 @@
 }
 
 #ListView #listview_table #listview_table_header {
-  background-color: #eee;
+  background-color: rgb(83, 133, 83);
   width: max-content;
+}
+
+#ListView #listview_table #listview_table_header b,
+#ListView #listview_table #listview_table_header i {
+  color: #fff;
+  font-size: 14px;
 }
 
 #ListView #listview_table .rows {
