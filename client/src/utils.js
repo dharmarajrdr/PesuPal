@@ -80,7 +80,7 @@ export default {
             case "Feature": {
                 return {
                     "icon": "fas fa-star",
-                    "icon_color": "#ff9800"
+                    "icon_color": "#3a94ac"
                 }
             }
             case "Task": {

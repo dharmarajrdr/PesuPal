@@ -40,7 +40,7 @@ export default [
                     "ownerName": "Dharmaraj",
                     "ownerImage": "/images/Users/user_1.jpg"
                 },
-                "tag": "Bug",
+                "tag": "Task",
                 "priority": "High",
                 "project": "PesuPal",
                 "created_by": "Bala Sundar C",
@@ -55,7 +55,7 @@ export default [
                     "ownerName": "Sudharshan",
                     "ownerImage": "/images/Users/user_5.jpg"
                 },
-                "tag": "Task",
+                "tag": "Bug",
                 "priority": "High",
                 "project": "PesuPal",
                 "created_by": "Bala Sundar C",
@@ -85,7 +85,7 @@ export default [
                     "ownerName": "Sudharshan",
                     "ownerImage": "/images/Users/user_2.jpg"
                 },
-                "tag": "Feature",
+                "tag": "Task",
                 "priority": "High",
                 "project": "PesuPal",
                 "created_by": "Bala Sundar C",
@@ -130,7 +130,7 @@ export default [
                     "ownerName": "Dharmaraj",
                     "ownerImage": "/images/Users/user_5.jpg"
                 },
-                "tag": "Bug",
+                "tag": "Task",
                 "priority": "High",
                 "project": "PesuPal",
                 "created_by": "Bala Sundar C",
@@ -205,7 +205,7 @@ export default [
                     "ownerName": "Sudharshan",
                     "ownerImage": "/images/Users/user_5.jpg"
                 },
-                "tag": "Feature",
+                "tag": "Bug",
                 "priority": "High",
                 "project": "PesuPal",
                 "created_by": "Bala Sundar C",
