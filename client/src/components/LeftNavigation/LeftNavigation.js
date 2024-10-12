@@ -42,14 +42,14 @@ const LeftNavigation = () => {
                     </div>
                     {ListOfNavigations.top.map((navigation, index) => {
                         return (
-                            <Nav key={index} icon={navigation.icon} image={navigation.image} title={navigation.title} route={navigation.route} isActive={navigation.isActive} notifyCount={navigation.notifyCount} />
+                            <Nav key={index} icon={navigation.icon} image={navigation.image} title={navigation.title} route={navigation.route} notifyCount={navigation.notifyCount} />
                         )
                     })}
                 </div>
                 <div className='w100'>
                     {ListOfNavigations.bottom.map((navigation, index) => {
                         return (
-                            <Nav key={index} icon={navigation.icon} image={navigation.image} title={navigation.title} route={navigation.route} isActive={navigation.isActive} />
+                            <Nav key={index} icon={navigation.icon} image={navigation.image} title={navigation.title} route={navigation.route} />
                         )
                     })}
                 </div>

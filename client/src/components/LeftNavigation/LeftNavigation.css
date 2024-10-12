@@ -44,6 +44,7 @@
 
 .activeNav {
   cursor: default;
+  background-color: #273144;
 }
 
 #closeLeftNav {
