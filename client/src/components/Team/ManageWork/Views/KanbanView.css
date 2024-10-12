@@ -79,19 +79,26 @@
   position: relative;
 }
 
-.creator_owner_div div {
-  width: 40%;
+.creator_owner_div {
+  align-items: stretch;
+}
+
+.creator_owner_div .ownerDiv {
+  width: 70%;
+}
+
+.creator_owner_div .ownerDiv img {
+  margin-right: 5px;
 }
 
 .creator_owner_div div span {
-  width: 100%;
   overflow: hidden;
   text-wrap: nowrap;
   text-overflow: ellipsis;
 }
 
 .creator_owner_div .priority {
-  width: 75px;
+  width: 25%;
   text-wrap: nowrap;
   overflow: hidden;
   text-align: right;
@@ -120,4 +127,5 @@
   text-wrap: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  font-size: 14px;
 }
