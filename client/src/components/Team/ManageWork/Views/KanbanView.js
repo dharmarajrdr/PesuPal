@@ -1,36 +1,13 @@
 import React from 'react'
 import { Link } from 'react-router-dom';
+import utils from '../../../../utils';
 import './KanbanView.css'
 
 const RowComponent = ({ item }) => {
 
     const { title, route, tag, priority, owner, draggable } = item,
-        getPriortyColorAndIcon = (priority) => {
-            switch (priority) {
-                case 'High':
-                    return { priorityColor: 'red', priorityIcon: 'fa-solid fa-bolt' }
-                case 'Medium':
-                    return { priorityColor: 'orange', priorityIcon: 'fa-solid fa-circle-exclamation' }
-                case 'Low':
-                    return { priorityColor: 'green', priorityIcon: 'fa-solid fa-gamepad' }
-                default:
-                    return { priorityColor: 'black', priorityIcon: 'fa-solid fa-circle-exclamation' }
-            }
-        },
-        getTagColor = (tag) => {
-            switch (tag) {
-                case 'Bug':
-                    return 'red';
-                case 'Feature':
-                    return 'skyblue';
-                case 'Task':
-                    return 'magenta';
-                default:
-                    return 'black';
-            }
-        },
-        { priorityColor, priorityIcon } = getPriortyColorAndIcon(priority),
-        tag_color = getTagColor(tag),
+        { icon_color: priority_color, icon } = utils.getPriortyColorAndIcon(priority),
+        { icon_color: tag_color } = utils.getIconForTagWithColor(tag),
         { ownerImage, ownerName } = owner;
 
     return <Link to={route} className='kanbanviewItem' draggable={draggable}>
@@ -42,7 +19,7 @@ const RowComponent = ({ item }) => {
                 <span className='mL5 color777' style={{ fontSize: '13px' }}>{ownerName}</span>
             </div>
             <div className='priority FRCE'>
-                <i className={priorityIcon} style={{ color: priorityColor }}></i>
+                <i className={icon} style={{ color: priority_color }}></i>
                 <span className='mL5' >{priority}</span>
             </div>
         </div>
