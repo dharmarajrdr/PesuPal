@@ -1,16 +1,33 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import './SearchComponent.css'
+import { useNavigate, useLocation } from 'react-router-dom';
 
-const SearchComponent = ({ viewState }) => {
+const SearchComponent = () => {
 
-    const [, setView] = viewState,
+    const navigate = useNavigate(),
+        location = useLocation(),
         changeView = (e) => {
-            setView(e.target.value);
+            const route = "/team/manage_work/" + e.target.value;
+            navigate(route);
+        }, [view, setView] = useState(null);
+
+    useEffect(() => {
+        const { pathname } = location;
+        switch (true) {
+            case pathname.includes('/list'):
+                setView('list');
+                break;
+            case pathname.includes('/kanban'):
+                setView('kanban');
+                break;
+            default:
+                break;
         }
+    }, []);
 
     return (
         <div id='SearchComponent' className='FRCE'>
-            <select onChange={changeView} id='change_view'>
+            <select onChange={changeView} id='change_view' value={view}>
                 <option value='list'>List</option>
                 <option value='kanban'>Kanban</option>
             </select>
