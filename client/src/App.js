@@ -41,7 +41,7 @@ function App() {
                         <Route path='/feeds' element={<FeedsLayout />} />
                         <Route path='/chat' element={<ChatLayout />} />
                         <Route path='/people' element={<PeopleLayout />} />
-                        <Route path='/team' element={<TeamLayout />} />
+                        <Route path='/team/*' element={<TeamLayout />} />
                         <Route path='/signup' element={<Signup />} />
                         <Route path='/signin' element={<Signin />} />
                     </Routes>
