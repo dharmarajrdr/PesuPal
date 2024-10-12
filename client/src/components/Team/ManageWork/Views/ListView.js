@@ -1,4 +1,5 @@
 import React from 'react'
+import utils from '../../../../utils';
 import { Link } from 'react-router-dom';
 import './ListView.css'
 
@@ -38,9 +39,17 @@ const ListviewBody = ({ header, data }) => {
                     {header.map(({ title, type, width }, index) => {
                         const value = item[title.toLowerCase()];
                         if (type == 'object') {
+                            const { image, name } = value, icon_info = {};
+                            if (title == 'Tag') {
+                                Object.assign(icon_info, utils.getIconForTagWithColor(name) || {});
+                            } else if (title == 'Priority') {
+                                Object.assign(icon_info, utils.getPriortyColorAndIcon(name) || {});
+                            }
+                            const { icon, icon_color } = icon_info;
                             return <div className='col FRCS' key={index} style={{ minWidth: width }}>
-                                <img src={value.image} className='img_20_20 mR10' />
-                                <span>{value.name}</span>
+                                {image && <img src={image} className='img_20_20 mR10' />}
+                                {icon && <i className={icon + ' img_20_20 mR5 alignCenter'} style={{ color: icon_color }}></i>}
+                                <span>{name}</span>
                             </div>
                         }
                         return <div className='col FRCS' key={index} style={{ minWidth: width }}>
