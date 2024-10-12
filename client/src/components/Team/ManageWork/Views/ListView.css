@@ -1,5 +1,4 @@
 #ListView {
-  border: 1px solid red;
   width: 100%;
   height: 100%;
 }
@@ -30,4 +29,61 @@
   cursor: pointer;
   border-color: #888;
   border-radius: 5px;
+}
+
+#ListView #listview_table {
+  overflow-x: scroll;
+  overflow-y: hidden;
+  height: calc(100% - 40px);
+  max-width: max-content;
+  min-width: 100%;
+  background-color: #fff;
+}
+
+#ListView #listview_table #listview_table_header {
+  background-color: #eee;
+  width: max-content;
+}
+
+#ListView #listview_table .rows {
+  border-bottom: 1px solid #ddd;
+  transition-duration: 0.25s;
+  cursor: pointer;
+  min-width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  justify-content: space-between;
+}
+
+#ListView #listview_table .rows:hover {
+  background-color: #f5f5f5;
+}
+
+#ListView #listview_table .rows .col {
+  padding: 15px 20px;
+  overflow: hidden;
+  text-wrap: nowrap;
+  color: #555;
+  text-overflow: ellipsis;
+}
+
+#ListView #listview_table .rows .col i,
+#ListView #listview_table .rows .col b,
+#ListView #listview_table .rows .col span {
+  font-size: 14px;
+}
+
+#ListView #listview_table .rows .col b {
+  color: #555;
+  font-weight: 500;
+}
+
+#ListView #listview_table .rows .col span {
+  color: #333;
+}
+
+#ListView #listview_table .rows .col .sortIcon {
+  color: #555;
+  margin-left: 10px;
 }
