@@ -1,6 +1,5 @@
 import React from 'react'
 
-import './TeamLayout.css'
 import TeamLeftContainer from './TeamLeftContainer'
 import TeamMainContainer from './TeamMainContainer'
 
