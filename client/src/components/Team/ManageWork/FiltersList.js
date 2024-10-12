@@ -6,6 +6,10 @@ export default [
         "dom_type": "select",
         "options": [
             {
+                "id": 0,
+                "title": "All Owners"
+            },
+            {
                 "id": 1,
                 "title": "Dharmaraj"
             },
@@ -34,6 +38,10 @@ export default [
         "dom_type": "select",
         "options": [
             {
+                "id": 0,
+                "title": "All Tags"
+            },
+            {
                 "id": 1,
                 "title": "Bug"
             },
@@ -54,6 +62,10 @@ export default [
         "dom_type": "select",
         "options": [
             {
+                "id": 0,
+                "title": "All Projects"
+            },
+            {
                 "id": 1,
                 "title": "PesuPal"
             },
@@ -73,6 +85,10 @@ export default [
         "icon": "fas fa-exclamation-circle",
         "dom_type": "select",
         "options": [
+            {
+                "id": 0,
+                "title": "All Priorities"
+            },
             {
                 "id": 1,
                 "title": "High"
