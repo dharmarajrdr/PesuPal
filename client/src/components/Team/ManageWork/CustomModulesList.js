@@ -9,7 +9,8 @@ export default [
             "created_by": "John Doe",
             "created_date": "2021-07-01"
         },
-        "update_permission": false
+        "update_permission": false,
+        "active": true
     },
     {
         "id": 1,
