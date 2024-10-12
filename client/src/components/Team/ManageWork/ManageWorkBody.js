@@ -5,11 +5,17 @@ import ManageWorkListKanban from './ManageWorkListKanban';
 import ListView from './Views/ListView';
 import ManageWorkList from './ManageWorkList';
 
-const ManageWorkBody = () => {
+const ManageWorkBody = ({ viewState }) => {
+    const [view] = viewState;
     return (
         <div id='ManageWorkBody' className='w100 custom-scrollbar'>
-            {/* <KanbanView ManageWorkListKanban={ManageWorkListKanban} /> */}
-            <ListView ManageWorkList={ManageWorkList} />
+            {
+                view == 'list' ?
+                    <ListView ManageWorkList={ManageWorkList} />
+                    :
+                    view == 'kanban' ?
+                        <KanbanView ManageWorkListKanban={ManageWorkListKanban} /> : null
+            }
         </div>
     )
 }
