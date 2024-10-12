@@ -6,7 +6,7 @@ import FilterComponent from './FilterComponent';
 import FiltersList from './FiltersList'
 import SearchComponent from './SearchComponent';
 
-const Header = () => {
+const Header = ({ viewState }) => {
     return (
         <div id='task_header' className='FCSS w100'>
             <div className='FRCB w100 mB10'>
@@ -17,8 +17,8 @@ const Header = () => {
                 </div>
             </div>
             <div className='mT5 mB10 FRCB w100'>
-                <FilterComponent FiltersList={FiltersList} />
-                <SearchComponent />
+                <FilterComponent FiltersList={FiltersList} viewState={viewState} />
+                <SearchComponent viewState={viewState} />
             </div>
         </div>
     )
