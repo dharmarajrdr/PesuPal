@@ -4,7 +4,7 @@ import './KanbanView.css'
 
 const RowComponent = ({ item }) => {
 
-    const { title, route, tag, priority, owner } = item,
+    const { title, route, tag, priority, owner, draggable } = item,
         getPriortyColorAndIcon = (priority) => {
             switch (priority) {
                 case 'High':
@@ -33,15 +33,15 @@ const RowComponent = ({ item }) => {
         tag_color = getTagColor(tag),
         { ownerImage, ownerName } = owner;
 
-    return <Link to={route} className='kanbanviewItem' draggable="true">
+    return <Link to={route} className='kanbanviewItem' draggable={draggable}>
         {tag && <div class="tag" style={{ backgroundColor: tag_color }}>{tag}</div>}
         <p className='mB10 kanbanviewItemTitle'>{title}</p>
         <div className='FRCB creator_owner_div'>
-            <div className='FRCS'>
+            <div className='FRCS ownerDiv'>
                 <img src={ownerImage} className='img_20_20' alt="edit" />
                 <span className='mL5 color777' style={{ fontSize: '13px' }}>{ownerName}</span>
             </div>
-            <div className='priority'>
+            <div className='priority FRCE'>
                 <i class={priorityIcon} style={{ color: priorityColor }}></i>
                 <span className='mL5'>{priority}</span>
             </div>
