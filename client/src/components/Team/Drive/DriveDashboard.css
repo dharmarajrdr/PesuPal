@@ -1,13 +1,18 @@
+#DriveDashboard {
+    height: 100%;
+}
+
 #DriveUsageStats {
   background-color: #fff;
 }
 
 #previews_stats {
   overflow: hidden;
+  height: 100%;
 }
 
 #previews_stats #list_of_previews {
   width: calc(100% - 350px);
-  height: 50%;
+  height: 100%;
   overflow: hidden;
 }
