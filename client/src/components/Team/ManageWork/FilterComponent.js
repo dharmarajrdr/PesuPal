@@ -7,7 +7,7 @@ const FilterComponentItem = ({ item }) => {
         <div className='FilterComponentItem p5 FRCC'>
             <i className={icon + ' img_40_40 alignCenter'}></i>
             <select>
-                <option value='' disabled selected>Select {title}</option>
+                <option value='' disabled>Select {title}</option>
                 {options.map((option, index) => <option key={index} value={option.id}>{option.title}</option>)}
             </select>
         </div>
