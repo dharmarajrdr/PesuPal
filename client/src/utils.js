@@ -74,5 +74,39 @@ export default {
                 return "fa-solid fa-sort-down";
             }
         }
+    },
+    "getIconForTagWithColor": function (tag) {
+        switch (tag) {
+            case "Feature": {
+                return {
+                    "icon": "fas fa-star",
+                    "icon_color": "#ff9800"
+                }
+            }
+            case "Task": {
+                return {
+                    "icon": "fas fa-tasks",
+                    "icon_color": "#4caf50"
+                }
+            }
+            case "Bug": {
+                return {
+                    "icon": "fas fa-bug",
+                    "icon_color": "#f44336"
+                }
+            }
+        }
+    },
+    "getPriortyColorAndIcon": (priority) => {
+        switch (priority) {
+            case 'High':
+                return { icon_color: 'red', icon: 'fa-solid fa-bolt' }
+            case 'Medium':
+                return { icon_color: 'orange', icon: 'fa-solid fa-circle-exclamation' }
+            case 'Low':
+                return { icon_color: 'green', icon: 'fa-regular fa-face-smile' }
+            default:
+                return { icon_color: 'black', icon: 'fa-solid fa-question' }
+        }
     }
 }
