@@ -9,7 +9,7 @@ const TeamMainContainer = () => {
         <div id='TeamMainContainer'>
             <Routes>
                 <Route path="" element={<Navigate to="/team/drive" />} />
-                <Route path="drive" element={<DriveLayout />} />
+                <Route path="/drive/*" element={<DriveLayout />} />
                 <Route path="/manage_work/*" element={<ManageWorkLayout />} />
             </Routes>
         </div>

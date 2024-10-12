@@ -58,7 +58,7 @@ export default {
             }
             case "Home": {
                 icon.icon = "fas fa-home"
-                icon.icon_color = "#42aa1b"
+                icon.icon_color = "#007bff"
                 icon.bg_color = "rgb(32, 33, 165)";
                 break;
             }
