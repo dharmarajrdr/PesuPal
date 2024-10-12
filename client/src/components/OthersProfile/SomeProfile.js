@@ -6,6 +6,7 @@ export default {
         'Phone': '+91 6383392245',
         'Email': 'dharmaraj.171215@gmail.com'
     },
+    "Profile_picture": "/images/Users/user_1.jpg",
     'Social': [
         {
             'Name': 'Facebook',
