@@ -2,17 +2,10 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import './Profile.css'
 
-const Profile = ({ Profile }) => {
-    const { Name, Designation, Department, Contact, Social } = Profile || {},
+const Profile = ({ Profile, setShowProfile }) => {
+    const { Name, Designation, Department, Profile_picture, Contact, Social } = Profile || {},
         { Phone, Email } = Contact || {}, closeProfileOverlay = () => {
-            const ProfileCardOverlay = document.getElementById('ProfileOverlay'),
-                ProfileCard = document.getElementById('ProfileCard');
-            ProfileCard.style.transition = 'transform 0.25s ease-in-out';
-            ProfileCard.style.transform = 'translateX(100%)';
-            const timer = setTimeout(() => {
-                ProfileCardOverlay.style.display = 'none';
-                clearTimeout(timer);
-            }, 250);
+            setShowProfile(false);
         }
 
     return Profile ? (
@@ -20,7 +13,7 @@ const Profile = ({ Profile }) => {
             <div id='ProfileCard' className='noScrollbar'>
                 <i className="fa-solid fa-xmark" id='closeProfileOverlay' onClick={closeProfileOverlay}></i>
                 <div id='user_image_basic_info' className='FCCC'>
-                    <img src='/images/Users/user_10.jpg' id='user_photo' />
+                    <img src={Profile_picture} id='user_photo' />
                     <div id='user_basic_info' className='FCCC'>
                         <div className='row'>
                             <h4 id='profile_name'>{Name}</h4>
