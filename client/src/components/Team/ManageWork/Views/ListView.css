@@ -33,8 +33,7 @@
 }
 
 #ListView #listview_table {
-  overflow-x: scroll;
-  overflow-y: hidden;
+  overflow: auto;
   height: calc(100% - 40px);
   max-width: max-content;
   min-width: 100%;
@@ -44,6 +43,8 @@
 #ListView #listview_table #listview_table_header {
   background-color: rgb(83, 133, 83);
   width: max-content;
+  position: sticky;
+  top: 0;
 }
 
 #ListView #listview_table #listview_table_header b,
