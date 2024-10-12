@@ -17,7 +17,7 @@ const FileManagerItem = ({ item }) => {
 
 const FileManager = () => {
     return (
-        <div className='FRCB w100' id='FileManager'>
+        <div className='FRCB w100 mb20' id='FileManager'>
             <div className='FRCC'>
                 {FileManagerList.map((item, index) => <FileManagerItem key={index} item={item} />)}
             </div>
