@@ -2,6 +2,8 @@ import React from 'react'
 import utils from '../../../../utils';
 import { Link } from 'react-router-dom';
 import './ListView.css'
+import Profile from '../../../OthersProfile/Profile';
+import SomeProfile from '../../../OthersProfile/SomeProfile';
 
 const ListviewTopHeader = ({ item }) => {
     const { totalRecords, currentPage, totalPages } = item;
@@ -31,7 +33,13 @@ const ListviewHeader = ({ header }) => {
     </div>
 }
 
-const ListviewBody = ({ header, data }) => {
+const ListviewBody = ({ header, data, setShowProfile }) => {
+
+    const handleProfile = (e) => {
+        e.preventDefault();
+        setShowProfile(true);
+    }
+
     return <>
         {
             data.map((item, item_index) => {
@@ -47,7 +55,7 @@ const ListviewBody = ({ header, data }) => {
                             }
                             const { icon, icon_color } = icon_info;
                             return <div className='col FRCS' key={index} style={{ minWidth: width }}>
-                                {image && <img src={image} className='img_20_20 mR10' />}
+                                {image && <img src={image} className='img_20_20 mR10' onClick={handleProfile} />}
                                 {icon && <i className={icon + ' img_20_20 mR5 alignCenter'} style={{ color: icon_color }}></i>}
                                 <span>{name}</span>
                             </div>
@@ -67,14 +75,16 @@ const ListView = ({ ManageWorkList }) => {
         totalRecords: 102,
         currentPage: 2,
         totalPages: 3
-    }, { header, data } = ManageWorkList;
+    }, { header, data } = ManageWorkList,
+        [showProfile, setShowProfile] = React.useState(false);
     return (
         <div id='ListView'>
             <ListviewTopHeader item={item} />
             <div id='listview_table' className='custom-scrollbar'>
                 <ListviewHeader header={header} />
-                <ListviewBody header={header} data={data} />
+                <ListviewBody header={header} data={data} setShowProfile={setShowProfile} />
             </div>
+            {showProfile && <Profile Profile={SomeProfile} setShowProfile={setShowProfile} />}
         </div>
     )
 }
