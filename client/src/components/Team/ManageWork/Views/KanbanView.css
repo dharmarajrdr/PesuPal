@@ -30,6 +30,16 @@
   clip-path: polygon(97% 0, 100% 50%, 97% 100%, 0% 100%, 4% 51%, 0% 0%);
 }
 
+.kanbanviewStage .columnCount {
+  border: 1px solid #fff;
+  border-radius: 5px;
+  width: 20px;
+  height: 20px;
+  line-height: 20px;
+  font-size: 12px;
+  text-align: center;
+}
+
 .kanbanviewStage span {
   text-align: center;
   color: #fff;

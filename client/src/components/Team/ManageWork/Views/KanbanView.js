@@ -51,12 +51,12 @@ const RowComponent = ({ item }) => {
 };
 
 const ColumnComponent = ({ column }) => {
-    const { id, status, items } = column,
+    const { status, items } = column,
         itemCount = items?.length || 0;
     return <div className='kanbanviewColumn FCSS'>
         <div className='kanbanviewStage FRCB'>
             <span className='alignCenter'>{status}</span>
-            <span>{itemCount}</span>
+            <span className='columnCount'>{itemCount}</span>
         </div>
         <div className='FCSS kanbanviewItems noScrollbar'>
             {
