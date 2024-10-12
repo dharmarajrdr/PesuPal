@@ -45,11 +45,11 @@ export default {
             "priority": "High",
             "owner": {
                 "name": "John Doe",
-                "image": '/images/Users/user_7.jpg'
+                "image": '/images/Users/user_3.jpg'
             },
             "created_by": {
-                "name": "Kevin Jackson",
-                "image": "/images/Users/user_1.jpg"
+                "name": "Sara Smith",
+                "image": "/images/Users/user_8.jpg"
             },
             "created_at": "01-09-2023 03:45PM",
             "tag": "Issue",
@@ -62,11 +62,11 @@ export default {
             "priority": "Medium",
             "owner": {
                 "name": "Kevin Smith",
-                "image": '/images/Users/user_7.jpg'
+                "image": '/images/Users/user_2.jpg'
             },
             "created_by": {
-                "name": "Kevin Jackson",
-                "image": "/images/Users/user_1.jpg"
+                "name": "Robert Williams",
+                "image": "/images/Users/user_3.jpg"
             },
             "created_at": "01-09-2023 03:45PM",
             "tag": "Task",
@@ -79,7 +79,24 @@ export default {
             "priority": "Medium",
             "owner": {
                 "name": "Kevin Smith",
-                "image": '/images/Users/user_7.jpg'
+                "image": '/images/Users/user_2.jpg'
+            },
+            "created_by": {
+                "name": "Donna Evans",
+                "image": "/images/Users/user_6.jpg"
+            },
+            "created_at": "01-09-2023 03:45PM",
+            "tag": "Task",
+            "route": "/team/manage_work/item/2"
+        },
+        {
+            "id": 4,
+            "subject": "Generate the invoice for the client",
+            "status": "Done",
+            "priority": "Low",
+            "owner": {
+                "name": "Martin Lopez",
+                "image": '/images/Users/user_1.jpg'
             },
             "created_by": {
                 "name": "Kevin Jackson",
