@@ -19,3 +19,14 @@
 #create_record span {
   color: white;
 }
+
+.ActiveCustomView {
+  background-color: rgb(70, 92, 138);
+  color: #fff;
+  border-color: transparent;
+}
+
+.ActiveCustomView i,
+.ActiveCustomView span {
+  color: #fff;
+}
