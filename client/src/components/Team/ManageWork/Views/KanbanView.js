@@ -43,7 +43,7 @@ const RowComponent = ({ item }) => {
             </div>
             <div className='priority FRCE'>
                 <i class={priorityIcon} style={{ color: priorityColor }}></i>
-                <span className='mL5'>{priority}</span>
+                <span className='mL5' >{priority}</span>
             </div>
         </div>
     </Link>

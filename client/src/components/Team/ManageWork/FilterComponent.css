@@ -14,7 +14,7 @@
 .FilterComponentItem i {
   position: absolute;
   left: 0px;
-  top: 0px;
+  top: -1px;
   color: #aaa;
 }
 
