@@ -1,7 +1,3 @@
-#FileManager {
-  margin: 20px 0px;
-}
-
 #uploadButton {
   background-color: rgb(153, 103, 11);
   padding: 10px 20px;
@@ -30,9 +26,6 @@
 
 .FileManagerItem span {
   font-family: system-ui;
-}
-
-.FileManagerItem:not(.FileManagerItemActive):hover {
 }
 
 .FileManagerItemActive {
