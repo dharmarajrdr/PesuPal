@@ -5,7 +5,7 @@ import './TeamLeftContainerItem.css'
 const TeamLeftContainerItem = ({ item }) => {
     const { title, route, icon, notify_count } = item;
     return (
-        <Link to={route} class='TeamLeftContainerItem FRCS w100 pX10 pY10 mx5'>
+        <Link to={route} className='TeamLeftContainerItem FRCS w100 pX10 pY10 mx5'>
             <i className={icon}></i>
             <div className='FRCB w100 pL10 title_notify'>
                 <span className='color555 title'>{title}</span>
