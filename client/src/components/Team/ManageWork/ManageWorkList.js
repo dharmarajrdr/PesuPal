@@ -35,6 +35,11 @@ export default {
             "title": "Tag",
             "width": "150px",
             "type": "object"
+        },
+        {
+            "title": "Project",
+            "width": "150px",
+            "type": "string"
         }
     ],
     "data": [
@@ -57,7 +62,8 @@ export default {
             "tag": {
                 "name": "Bug"
             },
-            "route": "/team/manage_work/item/1"
+            "route": "/team/manage_work/item/1",
+            "project": "E-commerce"
         },
         {
             "id": 2,
@@ -78,7 +84,8 @@ export default {
             "tag": {
                 "name": "Feature"
             },
-            "route": "/team/manage_work/item/2"
+            "route": "/team/manage_work/item/2",
+            "project": "CRT"
         },
         {
             "id": 3,
@@ -99,7 +106,8 @@ export default {
             "tag": {
                 "name": "Task"
             },
-            "route": "/team/manage_work/item/2"
+            "route": "/team/manage_work/item/2",
+            "project": "Shredder"
         },
         {
             "id": 4,
@@ -120,7 +128,8 @@ export default {
             "tag": {
                 "name": "Task"
             },
-            "route": "/team/manage_work/item/2"
+            "route": "/team/manage_work/item/2",
+            "project": "E-commerce"
         }
     ]
 }
