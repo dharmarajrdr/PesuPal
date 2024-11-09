@@ -13,6 +13,7 @@ import { Provider } from 'react-redux';
 import { NavigationReducers } from './store/reducers/Navigation';
 import PeopleLayout from './components/People/PeopleLayout';
 import TeamLayout from './components/Team/TeamLayout';
+import TrackerLayout from './components/Tracker/TrackerLayout';
 
 function Navigation() {
     const navigate = useNavigate();
@@ -42,6 +43,7 @@ function App() {
                         <Route path='/chat' element={<ChatLayout />} />
                         <Route path='/people' element={<PeopleLayout />} />
                         <Route path='/team/*' element={<TeamLayout />} />
+                        <Route path='/tracker' element={<TrackerLayout />} />
                         <Route path='/signup' element={<Signup />} />
                         <Route path='/signin' element={<Signin />} />
                     </Routes>
