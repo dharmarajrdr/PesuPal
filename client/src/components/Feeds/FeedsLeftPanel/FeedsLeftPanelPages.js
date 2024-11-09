@@ -3,7 +3,7 @@ import './FeedsLeftPanel.css'
 import PagesList from './PagesList'
 import FeedsLeftPanelPagesItem from './FeedsLeftPanelPagesItem'
 
-const FeedsLeftPanelPages = () => {
+const FeedsLeftPanelPages = ({ leftNavOpened }) => {
     const [toggleState, setToggleState] = useState('show'),
         [toggleIcon, setToggleIcon] = useState('fas fa-chevron-up'),
         toggleHandler = () => {
@@ -26,7 +26,7 @@ const FeedsLeftPanelPages = () => {
                         </h6>
                         {
                             toggleState === 'show' ?
-                                PagesList.map((item, index) => <FeedsLeftPanelPagesItem key={index} item={item} />)
+                                PagesList.map((item, index) => <FeedsLeftPanelPagesItem key={index} item={item} leftNavOpened={leftNavOpened} />)
                                 :
                                 null
                         }
