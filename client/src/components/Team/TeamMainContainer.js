@@ -4,9 +4,9 @@ import './TeamMainContainer.css';
 import ManageWorkLayout from './ManageWork/ManageWorkLayout';
 import DriveLayout from './Drive/DriveLayout';
 
-const TeamMainContainer = () => {
+const TeamMainContainer = ({ width }) => {
     return (
-        <div id='TeamMainContainer'>
+        <div id='TeamMainContainer' style={{ width }}>
             <Routes>
                 <Route path="" element={<Navigate to="/team/drive" />} />
                 <Route path="/drive/*" element={<DriveLayout />} />
