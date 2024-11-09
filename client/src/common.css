@@ -116,6 +116,10 @@
   height: 100vh;
 }
 
+.h100P {
+  height: 100%;
+}
+
 .pT10 {
   padding-top: 10px;
 }
@@ -245,6 +249,10 @@
 
 .mx5 {
   margin: 5px 0px;
+}
+
+.m10 {
+    margin: 10px;
 }
 
 .mx10 {
