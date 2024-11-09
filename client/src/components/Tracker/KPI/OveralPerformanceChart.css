@@ -1,0 +1,6 @@
+.OveralPerformanceChart {
+  width: calc(50% - 10px);
+  height: 100%;
+  background-color: green;
+  overflow: hidden;
+}
