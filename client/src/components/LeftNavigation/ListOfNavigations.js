@@ -39,11 +39,27 @@ export default {
             'route': '/form',
             'isActive': false,
             'notifyCount': '0'
+        },
+        {
+            "id": 6,
+            "title": "Tracker",
+            "icon": "fa-solid fa-chart-gantt",
+            "route": "/tracker",
+            "isActive": false,
+            "notifyCount": "0"
+        },
+        {
+            "id": 7,
+            "title": "more",
+            "icon": "fa-regular fa-ellipsis-h",
+            "route": "/more",
+            "isActive": false,
+            "notifyCount": "0"
         }
     ],
     'bottom': [
         {
-            'id': 5,
+            'id': 8,
             'title': 'Me',
             'image': '/images/Users/user_10.jpg',
             'route': '/profile',
@@ -51,14 +67,14 @@ export default {
         },
 
         {
-            'id': 6,
+            'id': 9,
             'title': 'Orgs',
             'icon': 'fa-solid fa-sitemap',
             'route': '/organisations',
             'isActive': false
         },
         {
-            'id': 7,
+            'id': 10,
             'title': 'Settings',
             'icon': 'fa-regular fa-gear',
             'route': '/settings',
