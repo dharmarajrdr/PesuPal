@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.pesupal.server.enums.Days;
 
 import jakarta.persistence.Column;
@@ -21,10 +22,10 @@ public class Tracker {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int habitId;
+    private Integer habitId;
 
     @Column(nullable = false)
-    private int userId;
+    private Integer userId;
 
     @Column(nullable = false)
     private String title;
@@ -38,11 +39,18 @@ public class Tracker {
     private String frequency;
 
     @OneToMany(mappedBy = "tracker")
+    @JsonManagedReference
     private List<Streak> streaks;
 
     public void setFrequency(ArrayList<Days> days) {
         this.frequency = days.stream()
                 .map(Days::name) // Converts enum to String using its name
                 .collect(Collectors.joining(","));
+    }
+
+    public List<Days> getFrequency() {
+        return List.of(frequency.split(",")).stream()
+                .map(Days::valueOf) // Converts String to enum using its valueOf method
+                .collect(Collectors.toList());
     }
 }
