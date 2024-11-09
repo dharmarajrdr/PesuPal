@@ -11,7 +11,7 @@ const TeamLeftContainer = ({ leftNavigationState, width }) => {
             <div id='openCloseLeftNavigationContainer' className='w100 FRCE'>
                 <i class={"fa-solid fa-angles-" + (leftNavOpened ? 'left' : 'right')} onClick={openCloseLeftNav}></i>
             </div>
-            {ListOfTeamNavigations.map((item, index) => <TeamLeftContainerItem key={index} item={item} />)}
+            {ListOfTeamNavigations.map((item, index) => <TeamLeftContainerItem key={index} item={item} leftNavOpened={leftNavOpened} />)}
         </div>
     )
 }
