@@ -27,7 +27,7 @@ public class Users {
 
     private String name;
 
-    private String displayName;
+    private String profilePicture;
 
     private Long contactId;
 
