@@ -31,12 +31,12 @@ const PostYourThoughts = () => {
                         <i className="w20 fa-solid fa-square-poll-vertical"></i>
                         <span>Add poll</span>
                     </span>
-                </div>
-                <div>
                     <span className='actions_post_creation'>
                         <i className='w20 fa-regular fa-calendar-days'></i>
                         <span>Schedule post</span>
                     </span>
+                </div>
+                <div>
                     <button id='shareMyThoughtButton'>Share</button>
                 </div>
             </div>
