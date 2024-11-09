@@ -1,0 +1,18 @@
+#TrackerLayout {
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+#TrackerLayout .row {
+  height: calc(50vh - 50px);
+}
+
+#TrackerLayout #header {
+  height: 50px;
+}
+
+#TrackerLayout .row .KPI_group {
+  width: calc(100% - 5px);
+  padding: 10px 10px;
+  height: 100%;
+}
