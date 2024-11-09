@@ -170,8 +170,8 @@
 }
 
 .pY5 {
-    padding-top: 5px;
-    padding-bottom: 5px;
+  padding-top: 5px;
+  padding-bottom: 5px;
 }
 
 .pY10 {
@@ -193,7 +193,7 @@
 }
 
 .p5 {
-    padding: 5px;
+  padding: 5px;
 }
 
 .p10 {
@@ -410,6 +410,26 @@ span {
 
 .fw400 {
   font-weight: 400;
+}
+
+#openCloseLeftNavigationContainer {
+  border-bottom: 1px solid #eee;
+  position: sticky;
+  background-color: inherit;
+  top: 0;
+}
+
+#openCloseLeftNavigationContainer i {
+  font-size: 20px;
+  color: #aaa;
+  cursor: pointer;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+#openCloseLeftNavigationContainer i:hover {
+  color: #777;
+  transition-duration: 0.25s;
 }
 
 @media screen and (max-width: 768px) {

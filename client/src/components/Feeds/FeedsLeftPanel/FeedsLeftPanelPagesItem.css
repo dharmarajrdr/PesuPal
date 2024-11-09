@@ -29,8 +29,6 @@
 }
 
 .icon_pagetitle {
-  max-width: 90%;
-  overflow: hidden;
   text-wrap: nowrap;
 }
 

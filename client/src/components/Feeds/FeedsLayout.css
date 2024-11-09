@@ -4,6 +4,10 @@
   background-color: #e3e8ee;
 }
 
+#FeedsLayout div {
+  transition-duration: 0.5s;
+}
+
 #FeedsMain {
   width: 100%;
   height: 100%;

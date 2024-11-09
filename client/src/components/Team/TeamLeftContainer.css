@@ -5,19 +5,3 @@
   overflow-y: auto;
 }
 
-#openCloseLeftNavigationContainer {
-  border-bottom: 1px solid #eee;
-}
-
-#openCloseLeftNavigationContainer i {
-  font-size: 20px;
-  color: #aaa;
-  cursor: pointer;
-  padding: 10px;
-  margin-bottom: 10px;
-}
-
-#openCloseLeftNavigationContainer i:hover {
-  color: #777;
-  transition-duration: 0.25s;
-}
