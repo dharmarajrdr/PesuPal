@@ -5,11 +5,15 @@ import TeamMainContainer from './TeamMainContainer'
 
 const TeamLayout = () => {
     const leftNavigationState = useState(true),
-        [leftNavOpened,] = leftNavigationState;
+        [leftNavOpened,] = leftNavigationState,
+        width = {
+            'leftNavOpened': "20%",
+            "leftNavClosed": "70px"
+        }
     return (
         <div id='TeamLayout' className='Layout FRSS'>
-            <TeamLeftContainer leftNavigationState={leftNavigationState} width={leftNavOpened ? "20%" : "75px"} />
-            <TeamMainContainer width={leftNavOpened ? "calc(100% - 20%)" : "calc(100% - 75px)"} />
+            <TeamLeftContainer leftNavigationState={leftNavigationState} width={leftNavOpened ? width.leftNavOpened : width.leftNavClosed} />
+            <TeamMainContainer width={leftNavOpened ? `calc(100% - ${width.leftNavOpened})` : `calc(100% - ${width.leftNavClosed})`} />
         </div>
     )
 }
