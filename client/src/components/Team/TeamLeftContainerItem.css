@@ -52,3 +52,18 @@
 .active-tab i {
   color: #fff;
 }
+
+.TeamLeftContainerItem div .notifyCount {
+  position: absolute;
+  top: 0px;
+  right: -3px;
+  background-color: #ff4646;
+  width: 12px;
+  height: 12px;
+  line-height: 12px;
+  color: #fff;
+  border-radius: 100%;
+  text-align: center;
+  font-size: 8px;
+  overflow: hidden;
+}
