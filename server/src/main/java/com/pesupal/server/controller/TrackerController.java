@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.pesupal.server.dto.StreakDTO;
 import com.pesupal.server.dto.TrackerDTO;
 import com.pesupal.server.model.Tracker;
 import com.pesupal.server.service.TrackerService;
@@ -21,15 +22,21 @@ public class TrackerController {
     @Autowired
     private TrackerService trackerService;
 
-    @GetMapping("/tracker/{id}")
-    public List<Tracker> getTrackers(@PathVariable Integer id) {
-        return trackerService.findAllByUserId(id);
+    @GetMapping("/tracker/{user_id}")
+    public List<Tracker> getTrackers(@PathVariable Integer user_id) {
+        return trackerService.findAllByUserId(user_id);
     }
 
-    @PostMapping("/tracker/{id}")
-    public String setTracker(@PathVariable Integer id, @RequestBody TrackerDTO tracker) {
-        tracker.setUserId(id);
+    @PostMapping("/tracker/{user_id}")
+    public String setTracker(@PathVariable Integer user_id, @RequestBody TrackerDTO tracker) {
+        tracker.setUserId(user_id);
         trackerService.save(tracker);
         return "Tracker added";
+    }
+
+    @PostMapping("/tracker/{user_id}/streak")
+    public String setStreak(@PathVariable Integer user_id, @RequestBody StreakDTO streak) {
+        trackerService.saveStreak(user_id, streak);
+        return "Streak added";
     }
 }
