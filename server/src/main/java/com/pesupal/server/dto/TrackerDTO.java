@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.pesupal.server.enums.Days;
 
 import lombok.AllArgsConstructor;
