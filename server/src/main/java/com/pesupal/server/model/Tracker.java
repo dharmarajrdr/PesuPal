@@ -15,9 +15,11 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Entity
+@NoArgsConstructor
 public class Tracker {
 
     @Id
@@ -52,5 +54,10 @@ public class Tracker {
         return List.of(frequency.split(",")).stream()
                 .map(Days::valueOf) // Converts String to enum using its valueOf method
                 .collect(Collectors.toList());
+    }
+
+    // Tracker constructor for ID-based association
+    public Tracker(Integer habitId) {
+        this.habitId = habitId;
     }
 }
