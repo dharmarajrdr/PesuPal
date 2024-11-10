@@ -15,4 +15,5 @@ public interface TrackerRepository extends JpaRepository<Tracker, Integer> {
     @Query("SELECT DISTINCT t FROM Tracker t WHERE t.userId = :userId")
     List<Tracker> findAllByUserId(Integer userId, Pageable pageable);
 
+    Tracker findByUserIdAndHabitId(Integer userId, Integer habitId);
 }
