@@ -21,6 +21,7 @@
 
 #FeedsLeftPanelPagesItem .title {
   color: #555;
+  font-size: 14px;
 }
 
 #FeedsLeftPanelPagesItem:hover .title,
