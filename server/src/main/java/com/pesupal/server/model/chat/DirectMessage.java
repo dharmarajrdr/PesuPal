@@ -34,5 +34,5 @@ public class DirectMessage extends CreationTimeAuditable {
     private ReadReceipt readReceipt;
 
     @OneToMany(mappedBy = "directMessage", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<DirectMessageMediaFile> directMessageMediaFiles;
+    private List<DirectMessageMediaFile> media;
 }

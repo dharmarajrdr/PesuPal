@@ -39,7 +39,7 @@ public class DirectMessageResponseDto {
         }
         responseDto.setDeleted(directMessage.isDeleted());
         responseDto.setReadReceipt(directMessage.getReadReceipt());
-        responseDto.setDirectMessageMediaFiles(directMessage.getDirectMessageMediaFiles());
+        responseDto.setDirectMessageMediaFiles(directMessage.getMedia());
         return responseDto;
     }
 }
