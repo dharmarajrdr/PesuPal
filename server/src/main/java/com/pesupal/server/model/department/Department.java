@@ -1,8 +1,12 @@
 package com.pesupal.server.model.department;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.pesupal.server.model.CreationTimeAuditable;
 import com.pesupal.server.model.org.Org;
+import com.pesupal.server.model.user.User;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.ManyToOne;
 import lombok.Data;
 
@@ -10,10 +14,16 @@ import lombok.Data;
 @Entity
 public class Department extends CreationTimeAuditable {
 
+    @Column(nullable = false)
     private String name;
 
     private String description;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
     private Org org;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
+    private User head;
 }

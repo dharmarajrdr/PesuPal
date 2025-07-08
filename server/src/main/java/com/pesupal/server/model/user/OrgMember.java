@@ -1,13 +1,11 @@
 package com.pesupal.server.model.user;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.pesupal.server.enums.Role;
 import com.pesupal.server.model.CreationTimeAuditable;
 import com.pesupal.server.model.department.Department;
 import com.pesupal.server.model.org.Org;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.Data;
 
 @Data
@@ -20,27 +18,39 @@ public class OrgMember extends CreationTimeAuditable {
     @ManyToOne
     private User user;
 
+    @Column(unique = true, nullable = false)
     private String userName;
 
+    @Column(nullable = false)
     private String displayName;
 
-    private Long employeeId;
+    @Column(nullable = false)
+    private Integer employeeId;
 
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
     private Designation designation;
 
+    @Column(nullable = false)
     private String status;
 
+    @Column(nullable = false)
     private String displayPicture;
 
-    @ManyToOne
-    private User managedBy;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
+    private User manager;
 
-    private Boolean isRemoved;
+    private boolean archived;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
     private Department department;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
+    private User addedBy;
 }

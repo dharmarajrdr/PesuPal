@@ -34,5 +34,38 @@ public class OrgConfiguration extends BaseModel {
 
     private Boolean createGroup;
 
-    private Boolean showEmployeeId;
+    public static OrgConfiguration getInitialConfiguration(Role role) {
+
+        OrgConfiguration orgConfiguration = new OrgConfiguration();
+        orgConfiguration.setCreateGroup(true);
+        switch (role) {
+            case ADMIN: {
+                orgConfiguration.setRole(role);
+                orgConfiguration.setInviteMember(true);
+                orgConfiguration.setAddMember(true);
+                orgConfiguration.setRemoveMember(true);
+                orgConfiguration.setUpdateMember(true);
+                orgConfiguration.setUpdateOrg(true);
+                orgConfiguration.setDeleteOrg(true);
+                orgConfiguration.setLeaveOrg(true);
+                break;
+            }
+            case USER: {
+                orgConfiguration.setRole(role);
+                orgConfiguration.setInviteMember(false);
+                orgConfiguration.setAddMember(false);
+                orgConfiguration.setRemoveMember(false);
+                orgConfiguration.setUpdateMember(false);
+                orgConfiguration.setUpdateOrg(false);
+                orgConfiguration.setDeleteOrg(false);
+                orgConfiguration.setLeaveOrg(true);
+                break;
+            }
+            default: {
+                throw new IllegalArgumentException("Default configuration not found for role: " + role);
+            }
+        }
+        return orgConfiguration;
+    }
+
 }

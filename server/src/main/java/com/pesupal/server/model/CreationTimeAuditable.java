@@ -13,7 +13,7 @@ public class CreationTimeAuditable extends BaseModel {
     private LocalDateTime createdAt;
 
     @PrePersist
-    public void setCreationTime() {
+    private void setCreationTime() {
         this.createdAt = LocalDateTime.now();
     }
 }

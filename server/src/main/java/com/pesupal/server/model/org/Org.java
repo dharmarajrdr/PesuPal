@@ -27,5 +27,7 @@ public class Org extends CreationTimeAuditable {
 
     private String displayPicture;
 
-    private Boolean isActive;
+    private boolean active;
+
+    private boolean showEmployeeId;
 }
