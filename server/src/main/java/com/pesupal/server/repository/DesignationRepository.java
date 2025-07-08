@@ -11,4 +11,6 @@ import java.util.List;
 public interface DesignationRepository extends JpaRepository<Designation, Long> {
 
     List<DesignationProjection> findAllByOrgId(Long orgId);
+
+    Boolean existsByNameAndOrgId(String name, Long orgId);
 }
