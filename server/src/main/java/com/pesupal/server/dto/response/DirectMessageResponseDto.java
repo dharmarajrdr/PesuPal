@@ -1,11 +1,13 @@
 package com.pesupal.server.dto.response;
 
+import com.pesupal.server.enums.Reaction;
 import com.pesupal.server.enums.ReadReceipt;
 import com.pesupal.server.model.chat.DirectMessage;
 import com.pesupal.server.model.chat.DirectMessageMediaFile;
 import lombok.Data;
 
 import java.util.List;
+import java.util.Map;
 
 @Data
 public class DirectMessageResponseDto {
@@ -21,6 +23,8 @@ public class DirectMessageResponseDto {
     private Boolean deleted;
 
     private ReadReceipt readReceipt;
+
+    private Map<Reaction, Integer> reactions;
 
     private List<DirectMessageMediaFile> directMessageMediaFiles;
 
