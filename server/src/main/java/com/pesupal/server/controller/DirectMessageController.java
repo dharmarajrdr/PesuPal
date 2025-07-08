@@ -1,8 +1,11 @@
 package com.pesupal.server.controller;
 
+import com.pesupal.server.dto.request.AddReactionDto;
 import com.pesupal.server.dto.request.GetConversationBetweenUsers;
 import com.pesupal.server.dto.response.ApiResponseDto;
 import com.pesupal.server.dto.response.DirectMessageResponseDto;
+import com.pesupal.server.dto.response.ReactMessageResponseDto;
+import com.pesupal.server.service.interfaces.DirectMessageReactionService;
 import com.pesupal.server.service.interfaces.DirectMessageService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +19,7 @@ import java.util.List;
 public class DirectMessageController {
 
     private final DirectMessageService directMessageService;
+    private final DirectMessageReactionService directMessageReactionService;
 
     @GetMapping("/{chatId}")
     public ResponseEntity<ApiResponseDto> getDirectMessagesByUserId(@PathVariable String chatId, @RequestParam Integer page, @RequestParam Integer size) {
@@ -37,5 +41,12 @@ public class DirectMessageController {
 
         directMessageService.deleteMessage(userId, messageId);
         return ResponseEntity.ok(new ApiResponseDto("Message deleted successfully"));
+    }
+
+    @PostMapping("/{messageId}/react")
+    public ResponseEntity<ApiResponseDto> reactToMessage(@PathVariable Long messageId, @RequestBody AddReactionDto addReactionDto) {
+
+        ReactMessageResponseDto reactMessageResponseDto = directMessageReactionService.reactToMessage(messageId, addReactionDto);
+        return ResponseEntity.ok(new ApiResponseDto("Reaction added successfully", reactMessageResponseDto));
     }
 }
