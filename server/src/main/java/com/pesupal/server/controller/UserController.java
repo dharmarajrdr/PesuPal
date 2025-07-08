@@ -18,7 +18,7 @@ public class UserController {
 
     private final UserService userService;
 
-    @PostMapping("/")
+    @PostMapping()
     public ResponseEntity<ApiResponseDto> createUser(@RequestBody CreateUserDto createUserDto) {
 
         User createdUser = userService.createUser(createUserDto);

@@ -36,6 +36,8 @@ public class UserServiceImpl implements UserService {
     public User createUser(CreateUserDto createUserDto) {
 
         User user = createUserDto.toUser();
-        return userRepository.save(user);
+        user = userRepository.save(user);
+        user.setPassword(null);
+        return user;
     }
 }
