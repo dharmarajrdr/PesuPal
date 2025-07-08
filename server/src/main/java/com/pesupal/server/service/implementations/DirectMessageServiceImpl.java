@@ -51,6 +51,18 @@ public class DirectMessageServiceImpl implements DirectMessageService {
     }
 
     /**
+     * Retrieves a specific direct message by its ID.
+     *
+     * @param messageId
+     * @return
+     */
+    @Override
+    public DirectMessage getDirectMessageById(Long messageId) {
+
+        return directMessageRepository.findById(messageId).orElseThrow(() -> new DataNotFoundException("Message with ID " + messageId + " not found"));
+    }
+
+    /**
      * Deletes a specific message in a chat by its ID.
      *
      * @param userId
@@ -59,7 +71,7 @@ public class DirectMessageServiceImpl implements DirectMessageService {
     @Override
     public void deleteMessage(Long userId, Long messageId) {
 
-        DirectMessage directMessage = directMessageRepository.findById(messageId).orElseThrow(() -> new DataNotFoundException("Message with ID " + messageId + " not found"));
+        DirectMessage directMessage = getDirectMessageById(messageId);
 
         if (directMessage.getSender().getId() != userId) {
             throw new PermissionDeniedException("You do not have permission to delete this message.");
@@ -71,4 +83,5 @@ public class DirectMessageServiceImpl implements DirectMessageService {
 
         directMessageRepository.delete(directMessage);
     }
+
 }
