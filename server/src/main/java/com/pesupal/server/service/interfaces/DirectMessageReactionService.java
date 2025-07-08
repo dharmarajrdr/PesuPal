@@ -2,7 +2,11 @@ package com.pesupal.server.service.interfaces;
 
 import com.pesupal.server.dto.request.AddReactionDto;
 import com.pesupal.server.dto.response.ReactMessageResponseDto;
+import com.pesupal.server.enums.Reaction;
+import com.pesupal.server.model.chat.DirectMessage;
 import com.pesupal.server.model.chat.DirectMessageReaction;
+
+import java.util.Map;
 
 public interface DirectMessageReactionService {
 
@@ -11,4 +15,6 @@ public interface DirectMessageReactionService {
     ReactMessageResponseDto reactToMessage(Long messageId, AddReactionDto addReactionDto);
 
     void unreactToMessage(Long reactionId, Long userId);
+
+    Map<Reaction, Integer> getReactionsCountForMessage(DirectMessage directMessage);
 }

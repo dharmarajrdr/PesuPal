@@ -8,8 +8,9 @@ import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.exceptions.PermissionDeniedException;
 import com.pesupal.server.model.chat.DirectMessage;
 import com.pesupal.server.repository.DirectMessageRepository;
+import com.pesupal.server.service.interfaces.DirectMessageReactionService;
 import com.pesupal.server.service.interfaces.DirectMessageService;
-import lombok.AllArgsConstructor;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -19,10 +20,15 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-@AllArgsConstructor
 public class DirectMessageServiceImpl implements DirectMessageService {
 
     private final DirectMessageRepository directMessageRepository;
+    private final DirectMessageReactionService directMessageReactionService;
+
+    public DirectMessageServiceImpl(DirectMessageRepository directMessageRepository, @Lazy DirectMessageReactionService directMessageReactionService) {
+        this.directMessageRepository = directMessageRepository;
+        this.directMessageReactionService = directMessageReactionService;
+    }
 
     /**
      * Retrieves direct messages between two users by their IDs.
@@ -35,7 +41,11 @@ public class DirectMessageServiceImpl implements DirectMessageService {
 
         Pageable pageable = PageRequest.of(getConversationBetweenUsers.getPage(), getConversationBetweenUsers.getSize(), Sort.by("createdAt").descending());
         Page<DirectMessage> messages = directMessageRepository.findByChatId(getConversationBetweenUsers.getChatId(), pageable);
-        return messages.stream().map(DirectMessageResponseDto::fromDirectMessage).toList();
+        return messages.stream().map(dm -> {
+            DirectMessageResponseDto directMessageResponseDto = DirectMessageResponseDto.fromDirectMessage(dm);
+            directMessageResponseDto.setReactions(directMessageReactionService.getReactionsCountForMessage(dm));
+            return directMessageResponseDto;
+        }).toList();
     }
 
     /**
