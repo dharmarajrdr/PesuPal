@@ -8,6 +8,7 @@ import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -41,5 +42,11 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponseDto> handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponseDto("Data integrity violation: " + ex.getMessage(), ResponseStatus.FAILURE));
+    }
+
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    public ResponseEntity<ApiResponseDto> handleMissingServletRequestParameterException(MissingServletRequestParameterException ex) {
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponseDto("Missing request parameter: " + ex.getParameterName(), ResponseStatus.FAILURE));
     }
 }
