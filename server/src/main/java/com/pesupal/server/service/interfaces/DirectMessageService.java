@@ -8,4 +8,8 @@ import java.util.List;
 public interface DirectMessageService {
 
     List<DirectMessageResponseDto> getDirectMessagesBetweenUsers(GetConversationBetweenUsers getConversationBetweenUsers);
+
+    void markAllMessagesAsRead(String chatId, Long userId);
+
+    void deleteMessage(Long userId, Long messageId);
 }
