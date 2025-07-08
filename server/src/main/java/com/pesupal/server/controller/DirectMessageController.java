@@ -24,4 +24,18 @@ public class DirectMessageController {
         List<DirectMessageResponseDto> directMessageResponseDtos = directMessageService.getDirectMessagesBetweenUsers(getConversationBetweenUsers);
         return ResponseEntity.ok(new ApiResponseDto("Direct messages retrieved successfully", directMessageResponseDtos));
     }
+
+    @PutMapping("/{chatId}/read_all")
+    public ResponseEntity<ApiResponseDto> markAllMessagesAsRead(@PathVariable String chatId, @RequestParam Long userId) {
+
+        directMessageService.markAllMessagesAsRead(chatId, userId);
+        return ResponseEntity.ok(new ApiResponseDto("All messages marked as read successfully"));
+    }
+
+    @DeleteMapping("/{messageId}")
+    public ResponseEntity<ApiResponseDto> deleteMessage(@PathVariable Long messageId, @RequestParam Long userId) {
+
+        directMessageService.deleteMessage(userId, messageId);
+        return ResponseEntity.ok(new ApiResponseDto("Message deleted successfully"));
+    }
 }
