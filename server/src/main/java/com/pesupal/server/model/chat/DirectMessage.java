@@ -22,11 +22,13 @@ public class DirectMessage extends CreationTimeAuditable {
     @ManyToOne
     private User receiver;
 
+    private String chatId;
+
     private String message;
 
     private Boolean containsMedia;
 
-    private Boolean deleted;
+    private boolean deleted;
 
     @Enumerated(EnumType.STRING)
     private ReadReceipt readReceipt;

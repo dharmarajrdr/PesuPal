@@ -1,5 +1,6 @@
 package com.pesupal.server.model.chat;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.pesupal.server.enums.FileType;
 import com.pesupal.server.model.CreationTimeAuditable;
 import jakarta.persistence.Entity;
@@ -11,6 +12,7 @@ import lombok.Data;
 public class DirectMessageMediaFile extends CreationTimeAuditable {
 
     @ManyToOne
+    @JsonIgnore
     private DirectMessage directMessage;
 
     private FileType fileType;
