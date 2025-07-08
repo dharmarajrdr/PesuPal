@@ -18,7 +18,7 @@ public class OrgController {
 
     private final OrgService orgService;
 
-    @PostMapping("/")
+    @PostMapping()
     public ResponseEntity<ApiResponseDto> createOrg(@RequestBody CreateOrgDto createOrgDto) {
 
         Org createdOrg = orgService.createOrg(createOrgDto);
