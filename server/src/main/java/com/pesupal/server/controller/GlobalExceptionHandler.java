@@ -3,7 +3,9 @@ package com.pesupal.server.controller;
 import com.pesupal.server.dto.response.ApiResponseDto;
 import com.pesupal.server.enums.ResponseStatus;
 import com.pesupal.server.exceptions.BaseException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -24,7 +26,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(InvalidDataAccessApiUsageException.class)
     public ResponseEntity<ApiResponseDto> handleInvalidDataAccessApiUsageException(InvalidDataAccessApiUsageException ex) {
 
-        return ResponseEntity.badRequest().body(new ApiResponseDto("Invalid data access usage: " + ex.getMessage(), ResponseStatus.FAILURE));
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponseDto("Invalid data access usage: " + ex.getMessage(), ResponseStatus.FAILURE));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -32,6 +34,12 @@ public class GlobalExceptionHandler {
 
         Map<String, String> errors = new HashMap<>();
         ex.getBindingResult().getFieldErrors().forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));
-        return ResponseEntity.badRequest().body(new ApiResponseDto("Validation errors occurred.", errors, ResponseStatus.FAILURE));
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponseDto("Validation errors occurred.", errors, ResponseStatus.FAILURE));
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ApiResponseDto> handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponseDto("Data integrity violation: " + ex.getMessage(), ResponseStatus.FAILURE));
     }
 }
