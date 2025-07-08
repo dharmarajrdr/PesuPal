@@ -12,4 +12,8 @@ import java.util.Optional;
 public interface OrgMemberRepository extends JpaRepository<OrgMember, Long> {
 
     Optional<OrgMember> findByUserAndOrg(User user, Org org);
+
+    Integer countByOrg(Org org);
+
+    Boolean existsByUserAndOrg(User user, Org org);
 }
