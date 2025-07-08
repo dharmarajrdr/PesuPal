@@ -49,4 +49,11 @@ public class DirectMessageController {
         ReactMessageResponseDto reactMessageResponseDto = directMessageReactionService.reactToMessage(messageId, addReactionDto);
         return ResponseEntity.ok(new ApiResponseDto("Reaction added successfully", reactMessageResponseDto));
     }
+
+    @DeleteMapping("/react/{reactionId}")
+    public ResponseEntity<ApiResponseDto> unReactMessage(@RequestParam Long userId, @PathVariable Long reactionId) {
+
+        directMessageReactionService.unreactToMessage(reactionId, userId);
+        return ResponseEntity.ok(new ApiResponseDto("Reaction removed successfully"));
+    }
 }

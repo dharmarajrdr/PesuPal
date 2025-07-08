@@ -4,6 +4,7 @@ import com.pesupal.server.dto.request.AddReactionDto;
 import com.pesupal.server.dto.response.ReactMessageResponseDto;
 import com.pesupal.server.dto.response.UserBasicInfoDto;
 import com.pesupal.server.exceptions.ActionProhibitedException;
+import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.exceptions.PermissionDeniedException;
 import com.pesupal.server.model.chat.DirectMessage;
 import com.pesupal.server.model.chat.DirectMessageReaction;
@@ -33,6 +34,18 @@ public class DirectMessageReactionServiceImpl implements DirectMessageReactionSe
     public Optional<DirectMessageReaction> getDirectMessageReactionByMessageIdAndUser(DirectMessage directMessage, User user) {
 
         return directMessageReactionRepository.findByDirectMessageAndUser(directMessage, user);
+    }
+
+    /**
+     * Retrieves a DirectMessageReaction by its ID.
+     *
+     * @param reactionId
+     * @return DirectMessageReaction
+     */
+    @Override
+    public DirectMessageReaction getDirectMessageReactionById(Long reactionId) {
+
+        return directMessageReactionRepository.findById(reactionId).orElseThrow(() -> new DataNotFoundException("Reaction with ID " + reactionId + " not found."));
     }
 
     /**
@@ -72,5 +85,24 @@ public class DirectMessageReactionServiceImpl implements DirectMessageReactionSe
 
         return new ReactMessageResponseDto(directMessageReaction.getId(), addReactionDto.getReaction(), directMessageReaction.getCreatedAt(), UserBasicInfoDto.fromOrgMember(orgMember));
 
+    }
+
+    /**
+     * Removes a reaction from a specific message.
+     *
+     * @param reactionId
+     * @param userId
+     * @return
+     */
+    @Override
+    public void unreactToMessage(Long reactionId, Long userId) {
+
+        DirectMessageReaction directMessageReaction = getDirectMessageReactionById(reactionId);
+
+        if (!Objects.equals(directMessageReaction.getUser().getId(), userId)) {
+            throw new PermissionDeniedException("You do not have permission to remove this reaction.");
+        }
+
+        directMessageReactionRepository.delete(directMessageReaction);
     }
 }
