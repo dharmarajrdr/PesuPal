@@ -2,7 +2,6 @@ package com.pesupal.server.service.implementations;
 
 import com.pesupal.server.dto.request.GetConversationBetweenUsers;
 import com.pesupal.server.dto.response.DirectMessageResponseDto;
-import com.pesupal.server.helpers.Chat;
 import com.pesupal.server.model.chat.DirectMessage;
 import com.pesupal.server.repository.DirectMessageRepository;
 import com.pesupal.server.service.interfaces.DirectMessageService;
@@ -30,14 +29,8 @@ public class DirectMessageServiceImpl implements DirectMessageService {
     @Override
     public List<DirectMessageResponseDto> getDirectMessagesBetweenUsers(GetConversationBetweenUsers getConversationBetweenUsers) {
 
-        Long userId1 = getConversationBetweenUsers.getUserId1();
-        Long userId2 = getConversationBetweenUsers.getUserId2();
-        Long orgId = getConversationBetweenUsers.getOrgId();
-
-        String chatId = Chat.getChatId(userId1, userId2, orgId);
         Pageable pageable = PageRequest.of(getConversationBetweenUsers.getPage(), getConversationBetweenUsers.getSize(), Sort.by("createdAt").descending());
-        Page<DirectMessage> messages = directMessageRepository.findByChatIdAndOrgId(chatId, orgId, pageable);
-
+        Page<DirectMessage> messages = directMessageRepository.findByChatId(getConversationBetweenUsers.getChatId(), pageable);
         return messages.stream().map(DirectMessageResponseDto::fromDirectMessage).toList();
     }
 }

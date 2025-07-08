@@ -9,5 +9,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface DirectMessageRepository extends JpaRepository<DirectMessage, Long> {
 
-    Page<DirectMessage> findByChatIdAndOrgId(String chatId, Long orgId, Pageable pageable);
+    Page<DirectMessage> findByChatId(String chatId, Pageable pageable);
 }

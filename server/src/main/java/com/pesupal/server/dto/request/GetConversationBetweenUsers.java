@@ -7,11 +7,7 @@ import lombok.Data;
 @AllArgsConstructor
 public class GetConversationBetweenUsers {
 
-    private Long userId1;
-
-    private Long userId2;
-
-    private Long orgId;
+    private String chatId;
 
     private Integer page;
 

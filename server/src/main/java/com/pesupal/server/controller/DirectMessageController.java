@@ -17,10 +17,10 @@ public class DirectMessageController {
 
     private final DirectMessageService directMessageService;
 
-    @GetMapping("/{orgId}/users/{userId1}/{userId2}")
-    public ResponseEntity<ApiResponseDto> getDirectMessagesByUserId(@PathVariable Long userId1, @PathVariable Long userId2, @PathVariable Long orgId, @RequestParam Integer page, @RequestParam Integer size) {
+    @GetMapping("/{chatId}")
+    public ResponseEntity<ApiResponseDto> getDirectMessagesByUserId(@PathVariable String chatId, @RequestParam Integer page, @RequestParam Integer size) {
 
-        GetConversationBetweenUsers getConversationBetweenUsers = new GetConversationBetweenUsers(userId1, userId2, orgId, page, size);
+        GetConversationBetweenUsers getConversationBetweenUsers = new GetConversationBetweenUsers(chatId, page, size);
         List<DirectMessageResponseDto> directMessageResponseDtos = directMessageService.getDirectMessagesBetweenUsers(getConversationBetweenUsers);
         return ResponseEntity.ok(new ApiResponseDto("Direct messages retrieved successfully", directMessageResponseDtos));
     }
