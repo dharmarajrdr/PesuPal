@@ -2,6 +2,7 @@ package com.pesupal.server.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.User;
@@ -20,9 +21,11 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
 
         httpSecurity.authorizeHttpRequests(authorize ->
-                authorize.requestMatchers("/api/v1/user/**").permitAll()    // Allow unauthenticated access to user endpoints
+                authorize.requestMatchers(HttpMethod.POST, "/api/v1/user").permitAll()    // No authentication required to create a new user
                         .anyRequest().authenticated()   // All other requests require authentication
         );
+
+        httpSecurity.csrf(csrf -> csrf.disable());  // Disabling CSRF protection to allow POST requests without CSRF tokens
 
         httpSecurity.formLogin(form ->
                 form.permitAll().defaultSuccessUrl("/login-successful")
