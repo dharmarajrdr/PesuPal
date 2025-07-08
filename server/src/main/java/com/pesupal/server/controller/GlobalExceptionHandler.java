@@ -7,6 +7,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -48,5 +49,11 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponseDto> handleMissingServletRequestParameterException(MissingServletRequestParameterException ex) {
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponseDto("Missing request parameter: " + ex.getParameterName(), ResponseStatus.FAILURE));
+    }
+    
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ApiResponseDto> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponseDto("Malformed JSON request: " + ex.getMessage(), ResponseStatus.FAILURE));
     }
 }
