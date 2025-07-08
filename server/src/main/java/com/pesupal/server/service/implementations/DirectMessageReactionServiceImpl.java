@@ -20,7 +20,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
-import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -30,11 +29,6 @@ public class DirectMessageReactionServiceImpl implements DirectMessageReactionSe
     private final OrgMemberService orgMemberService;
     private final DirectMessageService directMessageService;
     private final DirectMessageReactionRepository directMessageReactionRepository;
-
-    public Optional<DirectMessageReaction> getDirectMessageReactionByMessageIdAndUser(DirectMessage directMessage, User user) {
-
-        return directMessageReactionRepository.findByDirectMessageAndUser(directMessage, user);
-    }
 
     /**
      * Retrieves a DirectMessageReaction by its ID.
@@ -53,6 +47,7 @@ public class DirectMessageReactionServiceImpl implements DirectMessageReactionSe
      *
      * @param messageId
      * @param addReactionDto
+     * @return ReactMessageResponseDto
      */
     @Override
     public ReactMessageResponseDto reactToMessage(Long messageId, AddReactionDto addReactionDto) {
@@ -73,7 +68,7 @@ public class DirectMessageReactionServiceImpl implements DirectMessageReactionSe
 
         User reactor = userService.getUserById(addReactionDto.getUserId());
 
-        DirectMessageReaction directMessageReaction = getDirectMessageReactionByMessageIdAndUser(directMessage, reactor).orElse(new DirectMessageReaction());
+        DirectMessageReaction directMessageReaction = directMessageReactionRepository.findByDirectMessageAndUser(directMessage, reactor).orElse(new DirectMessageReaction());
         directMessageReaction.setDirectMessage(directMessage);
         directMessageReaction.setUser(reactor);
         directMessageReaction.setReaction(addReactionDto.getReaction());
@@ -92,7 +87,7 @@ public class DirectMessageReactionServiceImpl implements DirectMessageReactionSe
      *
      * @param reactionId
      * @param userId
-     * @return
+     * @return void
      */
     @Override
     public void unreactToMessage(Long reactionId, Long userId) {
