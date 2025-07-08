@@ -6,6 +6,7 @@ import com.pesupal.server.model.user.User;
 import com.pesupal.server.repository.UserRepository;
 import com.pesupal.server.service.interfaces.UserService;
 import lombok.AllArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -13,6 +14,8 @@ import org.springframework.stereotype.Service;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+
+    private final PasswordEncoder passwordEncoder;
 
     /**
      * Gets a user by their ID.
@@ -36,6 +39,7 @@ public class UserServiceImpl implements UserService {
     public User createUser(CreateUserDto createUserDto) {
 
         User user = createUserDto.toUser();
+        user.setPassword(passwordEncoder.encode(user.getPassword()));   // Encode the password before saving
         user = userRepository.save(user);
         user.setPassword(null);
         return user;

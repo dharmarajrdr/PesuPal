@@ -18,5 +18,5 @@ public class User extends CreationTimeAuditable {
     private String phone;
 
     @Column(nullable = false)
-    private Long password;
+    private String password;
 }
