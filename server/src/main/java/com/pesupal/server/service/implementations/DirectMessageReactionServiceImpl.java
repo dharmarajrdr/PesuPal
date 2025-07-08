@@ -3,6 +3,7 @@ package com.pesupal.server.service.implementations;
 import com.pesupal.server.dto.request.AddReactionDto;
 import com.pesupal.server.dto.response.ReactMessageResponseDto;
 import com.pesupal.server.dto.response.UserBasicInfoDto;
+import com.pesupal.server.enums.Reaction;
 import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.exceptions.PermissionDeniedException;
@@ -11,6 +12,7 @@ import com.pesupal.server.model.chat.DirectMessageReaction;
 import com.pesupal.server.model.org.Org;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.model.user.User;
+import com.pesupal.server.projections.ReactionCountProjection;
 import com.pesupal.server.repository.DirectMessageReactionRepository;
 import com.pesupal.server.service.interfaces.DirectMessageReactionService;
 import com.pesupal.server.service.interfaces.DirectMessageService;
@@ -19,7 +21,10 @@ import com.pesupal.server.service.interfaces.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -100,4 +105,18 @@ public class DirectMessageReactionServiceImpl implements DirectMessageReactionSe
 
         directMessageReactionRepository.delete(directMessageReaction);
     }
+
+    /**
+     * Retrieves all reactions for a specific direct message.
+     *
+     * @param directMessage
+     * @return Map
+     */
+    @Override
+    public Map<Reaction, Integer> getReactionsCountForMessage(DirectMessage directMessage) {
+
+        List<ReactionCountProjection> results = directMessageReactionRepository.findReactionCountsByMessageId(directMessage.getId());
+        return results.stream().collect(Collectors.toMap(ReactionCountProjection::getReaction, ReactionCountProjection::getCount));
+    }
+
 }
