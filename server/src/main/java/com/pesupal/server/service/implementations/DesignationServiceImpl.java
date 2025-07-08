@@ -40,9 +40,7 @@ public class DesignationServiceImpl implements DesignationService {
         Org org = orgService.getOrgById(createDesignationDto.getOrgId());
         Designation designation = createDesignationDto.getDesignation();
         designation.setOrg(org);
-        designation = designationRepository.save(designation);
-        designation.setOrg(null);
-        return designation;
+        return designationRepository.save(designation);
     }
 
     /**
