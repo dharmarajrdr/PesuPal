@@ -1,16 +1,20 @@
 package com.pesupal.server.controller;
 
+import com.pesupal.server.config.RequestContext;
 import com.pesupal.server.dto.request.AddReactionDto;
+import com.pesupal.server.dto.request.ChatMessageDto;
 import com.pesupal.server.dto.request.GetConversationBetweenUsers;
 import com.pesupal.server.dto.response.ApiResponseDto;
 import com.pesupal.server.dto.response.DirectMessageResponseDto;
 import com.pesupal.server.dto.response.ReactMessageResponseDto;
+import com.pesupal.server.dto.response.RecentChatPagedDto;
 import com.pesupal.server.exceptions.PermissionDeniedException;
 import com.pesupal.server.helpers.Chat;
 import com.pesupal.server.security.SecurityUtil;
 import com.pesupal.server.service.interfaces.DirectMessageReactionService;
 import com.pesupal.server.service.interfaces.DirectMessageService;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,6 +39,24 @@ public class DirectMessageController {
         GetConversationBetweenUsers getConversationBetweenUsers = new GetConversationBetweenUsers(chatId, page, size);
         List<DirectMessageResponseDto> directMessageResponseDtos = directMessageService.getDirectMessagesBetweenUsers(getConversationBetweenUsers);
         return ResponseEntity.ok(new ApiResponseDto("Direct messages retrieved successfully", directMessageResponseDtos));
+    }
+
+    @GetMapping("/recent")
+    public ResponseEntity<ApiResponseDto> getRecentChats(@RequestParam Integer page, @RequestParam Integer size) {
+
+        Long userId = securityUtil.getCurrentUserId();
+        Long orgId = RequestContext.getLong("X-ORG-ID");
+
+        Pageable pageable = Pageable.ofSize(size).withPage(page);
+        RecentChatPagedDto recentChats = directMessageService.getRecentChatsPaged(userId, orgId, pageable);
+        return ResponseEntity.ok(new ApiResponseDto("Recent chats retrieved successfully", recentChats.getChats(), recentChats.getPageable()));
+    }
+
+    @PostMapping("")
+    public ResponseEntity<ApiResponseDto> sendDirectMessage(@RequestBody ChatMessageDto chatMessageDto) {
+
+        directMessageService.save(chatMessageDto);
+        return ResponseEntity.ok(new ApiResponseDto("Direct message sent successfully"));
     }
 
     @PutMapping("/{chatId}/read_all")

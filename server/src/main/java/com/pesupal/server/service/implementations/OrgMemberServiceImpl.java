@@ -88,7 +88,8 @@ public class OrgMemberServiceImpl implements OrgMemberService {
      * @param org
      * @return Boolean
      */
-    private Boolean existsByUserAndOrg(User user, Org org) {
+    @Override
+    public Boolean existsByUserAndOrg(User user, Org org) {
 
         return orgMemberRepository.existsByUserAndOrg(user, org);
     }

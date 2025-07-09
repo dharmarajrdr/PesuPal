@@ -2,11 +2,13 @@ package com.pesupal.server.service.interfaces;
 
 import com.pesupal.server.dto.request.GetConversationBetweenUsers;
 import com.pesupal.server.dto.response.DirectMessageResponseDto;
+import com.pesupal.server.dto.response.RecentChatPagedDto;
 import com.pesupal.server.model.chat.DirectMessage;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
-public interface DirectMessageService {
+public interface DirectMessageService extends ChatService {
 
     List<DirectMessageResponseDto> getDirectMessagesBetweenUsers(GetConversationBetweenUsers getConversationBetweenUsers);
 
@@ -15,4 +17,6 @@ public interface DirectMessageService {
     DirectMessage getDirectMessageById(Long messageId);
 
     void deleteMessage(Long userId, Long messageId);
+
+    RecentChatPagedDto getRecentChatsPaged(Long userId, Long orgId, Pageable pageable);
 }
