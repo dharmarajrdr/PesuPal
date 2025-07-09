@@ -1,6 +1,5 @@
 package com.pesupal.server.service.implementations;
 
-import com.pesupal.server.dto.request.AddSubscriptionDto;
 import com.pesupal.server.dto.request.CreateOrgDto;
 import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.model.org.Org;
@@ -48,16 +47,16 @@ public class OrgServiceImpl implements OrgService {
      */
     @Override
     @Transactional
-    public Org createOrg(CreateOrgDto createOrgDto) {
+    public Org createOrg(CreateOrgDto createOrgDto, Long userId) {
 
-        User owner = userService.getUserById(createOrgDto.getOwnerId());
+        User owner = userService.getUserById(userId);
         Org org = createOrgDto.toOrg();
         org.setOwner(owner);
         org.setActive(true);
         org = orgRepository.save(org);
         orgConfigurationService.initializeOrgConfiguration(org);
         orgMemberService.joinOrgAsFirstMember(owner, org);
-        orgSubscriptionHistoryService.addSubscription(org.getId(), new AddSubscriptionDto("FREE_TRIAL"));
+        orgSubscriptionHistoryService.addSubscription(org.getId(), "FREE_TRIAL");
         return org;
     }
 }
