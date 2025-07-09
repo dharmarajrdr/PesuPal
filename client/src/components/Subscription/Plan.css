@@ -1,0 +1,116 @@
+.plan {
+    border-right: 1px solid #eee;
+    min-width: 225px;
+    overflow: hidden;
+    padding-top: 30vh;
+    height: 100vh;
+    position: relative;
+    cursor: pointer;
+}
+
+.plan[active="false"] {
+    background-color: #eee;
+}
+
+.plan[active="false"] .tryButton {
+    background-color: #f3f6ff8b;
+    color: #6085f4;
+    cursor: not-allowed;
+}
+
+.plan:hover {
+    background-color: #6085f4;
+}
+
+.plan:hover .black-text {
+    color: #fff;
+}
+
+.plan:hover .plan-features {
+    background-color: #6e90f8;
+}
+
+.tryButton {
+    padding: 10px 20px;
+    border: none;
+    outline: none;
+    border: 1px solid #6085f4;
+    border-radius: 5px;
+    color: #6085f4;
+    font-weight: 400;
+    cursor: pointer;
+    margin: 30px 0px;
+    width: 80%;
+}
+
+.tryButton.disabled {
+    background-color: #f3f6ff8b;
+    color: #6085f4;
+    cursor: not-allowed;
+}
+
+.ribbon {
+    user-select: none;
+    position: absolute;
+    top: 15px;
+    left: -30px;
+    transform: rotate(-25deg);
+    background-color: #ff9800;
+    color: white;
+    font-weight: bold;
+    padding: 5px 40px;
+    font-size: 12px;
+    z-index: 10;
+    width: 200px;
+    cursor: default;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.plan-code {
+    padding-bottom: 20px;
+    margin-bottom: 30px;
+    width: 80%;
+    text-align: center;
+    border-bottom: 1px solid #eee;
+}
+
+.plan-price {
+    font-size: 20px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.plan-validity-days {
+    font-size: 14px;
+    color: #666;
+    font-weight: 400;
+    margin-bottom: 20px;
+}
+
+.plan-features {
+    background-color: #f3f6ff8b;
+    text-decoration: none;
+    list-style: none;
+    width: 100%;
+    padding: 10px 20px;
+}
+
+.plan-features li {
+    padding: 5px 0px;
+    font-size: 14px;
+    color: #333;
+}
+
+.plan-features li i {
+    color: #6085f4;
+    margin-right: 7px;
+    font-size: 12px;
+}
+
+.plan-description {
+    font-size: 14px;
+    color: #999;
+    margin: 20px 0px;
+    padding: 0 20px;
+}

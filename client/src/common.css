@@ -416,6 +416,10 @@ span {
   top: -3px;
 }
 
+.bgFFF {
+  background-color: #fff;
+}
+
 .fw400 {
   font-weight: 400;
 }
