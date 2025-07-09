@@ -27,7 +27,7 @@
   font-weight: 600;
 }
 
-.RecentChatContainer .date_time {
+.RecentChatContainer .createdAt {
   font-size: 10px;
   line-height: 20px;
 }
@@ -90,7 +90,7 @@
     font-size: 12px;
   }
 
-  .RecentChatContainer .date_time {
+  .RecentChatContainer .createdAt {
     font-size: 9px;
   }
 

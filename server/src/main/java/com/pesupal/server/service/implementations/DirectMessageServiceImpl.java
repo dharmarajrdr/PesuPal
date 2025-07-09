@@ -12,6 +12,7 @@ import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.exceptions.PermissionDeniedException;
 import com.pesupal.server.helpers.Chat;
+import com.pesupal.server.helpers.TimeFormatterUtil;
 import com.pesupal.server.model.chat.DirectMessage;
 import com.pesupal.server.model.org.Org;
 import com.pesupal.server.model.user.User;
@@ -147,16 +148,16 @@ public class DirectMessageServiceImpl implements DirectMessageService {
 
             LastMessageDto lastMessage = new LastMessageDto();
             lastMessage.setSender(sender);
-            lastMessage.setContent(content);
-            lastMessage.setIncludedMedia(includedMedia);
-            lastMessage.setCreatedAt(createdAt);
+            lastMessage.setMessage(content);
+            lastMessage.setMedia(includedMedia);
+            lastMessage.setCreatedAt(TimeFormatterUtil.formatShort(createdAt));
             lastMessage.setReadReceipt(readReceipt);
 
             RecentChatDto dto = new RecentChatDto();
-            dto.setUserName(userName);
-            dto.setDisplayPicture(displayPicture);
-            dto.setUserStatus(userStatus);
-            dto.setLastMessage(lastMessage);
+            dto.setName(userName);
+            dto.setImage(displayPicture);
+            dto.setStatus(userStatus);
+            dto.setRecentMessage(lastMessage);
 
             return dto;
         }).toList();

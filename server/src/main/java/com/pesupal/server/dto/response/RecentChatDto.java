@@ -5,11 +5,11 @@ import lombok.Data;
 @Data
 public class RecentChatDto {
 
-    private String userName;
+    private String name;
 
-    private String displayPicture;
+    private String image;
 
-    private String userStatus;
+    private String status;
 
-    private LastMessageDto lastMessage;
+    private LastMessageDto recentMessage;
 }

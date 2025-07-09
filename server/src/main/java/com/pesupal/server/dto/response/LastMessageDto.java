@@ -4,19 +4,17 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.pesupal.server.enums.ReadReceipt;
 import lombok.Data;
 
-import java.time.LocalDateTime;
-
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class LastMessageDto {
 
     private String sender;
 
-    private String content;
+    private String message;
 
-    private boolean includedMedia;
+    private boolean media;
 
-    private LocalDateTime createdAt;
+    private String createdAt;
 
     private ReadReceipt readReceipt;
 }

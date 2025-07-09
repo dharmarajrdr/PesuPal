@@ -3,10 +3,10 @@ export default [
         'name': 'Kevin Johnson',
         'image': '/images/Users/user_1.jpg',
         'status': 'offline',
-        'recent_message': {
+        'recentMessage': {
             'message': 'Hi da, enna pandra?',
-            'is_media': true,
-            'date_time': 'Fri',
+            'media': true,
+            'createdAt': 'Fri',
             'sender': 'me',
             'number_of_unread_messages': 1
         }
@@ -15,10 +15,10 @@ export default [
         'name': 'John Doe',
         'image': '/images/Users/user_2.jpg',
         'status': 'call',
-        'recent_message': {
+        'recentMessage': {
             'message': 'Unakkena pa, jolly ah irukka. Naa apdiya?',
-            'is_media': true,
-            'date_time': 'Fri',
+            'media': true,
+            'createdAt': 'Fri',
             'sender': 'John Doe',
             'number_of_unread_messages': 1
         }
@@ -27,10 +27,10 @@ export default [
         'name': 'Jane Smith',
         'image': '/images/Users/user_3.jpg',
         'status': 'available',
-        'recent_message': {
+        'recentMessage': {
             'message': 'lorem ipsum dolor sit amet, consectetur adipiscing elit',
-            'is_media': false,
-            'date_time': 'Fri',
+            'media': false,
+            'createdAt': 'Fri',
             'sender': 'Jane Smith',
             'number_of_unread_messages': 1
         }
@@ -39,10 +39,10 @@ export default [
         'name': 'Alex Clark',
         'image': '/images/Users/user_4.jpg',
         'status': 'available',
-        'recent_message': {
+        'recentMessage': {
             'message': 'Hello',
-            'is_media': false,
-            'date_time': 'Fri',
+            'media': false,
+            'createdAt': 'Fri',
             'sender': 'me',
             'number_of_unread_messages': 1
         }
@@ -51,10 +51,10 @@ export default [
         'name': 'Emily Davis',
         'image': '/images/Users/user_5.jpg',
         'status': 'available',
-        'recent_message': {
+        'recentMessage': {
             'message': 'Hello',
-            'is_media': false,
-            'date_time': 'Fri',
+            'media': false,
+            'createdAt': 'Fri',
             'sender': 'me',
             'number_of_unread_messages': 1
         }
@@ -63,10 +63,10 @@ export default [
         'name': 'Michael Brown',
         'image': '/images/Users/user_6.jpg',
         'status': 'available',
-        'recent_message': {
+        'recentMessage': {
             'message': 'Hello',
-            'is_media': false,
-            'date_time': 'Fri',
+            'media': false,
+            'createdAt': 'Fri',
             'sender': 'me',
             'number_of_unread_messages': 1
         }
@@ -75,10 +75,10 @@ export default [
         'name': 'Olivia Wilson',
         'image': '/images/Users/user_7.jpg',
         'status': 'available',
-        'recent_message': {
+        'recentMessage': {
             'message': 'Hello',
-            'is_media': false,
-            'date_time': 'Fri',
+            'media': false,
+            'createdAt': 'Fri',
             'sender': 'me',
             'number_of_unread_messages': 1
         }
@@ -87,10 +87,10 @@ export default [
         'name': 'William Taylor',
         'image': '/images/Users/user_8.jpg',
         'status': 'available',
-        'recent_message': {
+        'recentMessage': {
             'message': 'Hello',
-            'is_media': false,
-            'date_time': 'Fri',
+            'media': false,
+            'createdAt': 'Fri',
             'sender': 'me',
             'number_of_unread_messages': 1
         }
@@ -99,10 +99,10 @@ export default [
         'name': 'Sophia Anderson',
         'image': '/images/Users/user_9.jpg',
         'status': 'available',
-        'recent_message': {
+        'recentMessage': {
             'message': 'Hello',
-            'is_media': false,
-            'date_time': 'Fri',
+            'media': false,
+            'createdAt': 'Fri',
             'sender': 'me',
             'number_of_unread_messages': 1
         }
@@ -111,10 +111,10 @@ export default [
         'name': 'James Martinez',
         'image': '/images/Users/user_10.jpg',
         'status': 'available',
-        'recent_message': {
+        'recentMessage': {
             'message': 'Hello',
-            'is_media': false,
-            'date_time': 'Fri',
+            'media': false,
+            'createdAt': 'Fri',
             'sender': 'me',
             'number_of_unread_messages': 1
         }
@@ -123,10 +123,10 @@ export default [
         'name': 'Kevin Johnson',
         'image': '/images/Users/user_1.jpg',
         'status': 'available',
-        'recent_message': {
+        'recentMessage': {
             'message': 'Hello',
-            'is_media': false,
-            'date_time': 'Fri',
+            'media': false,
+            'createdAt': 'Fri',
             'sender': 'me',
             'number_of_unread_messages': 1
         }
@@ -135,10 +135,10 @@ export default [
         'name': 'John Doe',
         'image': '/images/Users/user_2.jpg',
         'status': 'available',
-        'recent_message': {
+        'recentMessage': {
             'message': 'Hello',
-            'is_media': false,
-            'date_time': 'Fri',
+            'media': false,
+            'createdAt': 'Fri',
             'sender': 'me',
             'number_of_unread_messages': 1
         }
@@ -147,10 +147,10 @@ export default [
         'name': 'Jane Smith',
         'image': '/images/Users/user_3.jpg',
         'status': 'available',
-        'recent_message': {
+        'recentMessage': {
             'message': 'Hello',
-            'is_media': false,
-            'date_time': 'Fri',
+            'media': false,
+            'createdAt': 'Fri',
             'sender': 'me',
             'number_of_unread_messages': 1
         }
@@ -159,10 +159,10 @@ export default [
         'name': 'Alex Clark',
         'image': '/images/Users/user_4.jpg',
         'status': 'available',
-        'recent_message': {
+        'recentMessage': {
             'message': 'Hello',
-            'is_media': false,
-            'date_time': 'Fri',
+            'media': false,
+            'createdAt': 'Fri',
             'sender': 'me',
             'number_of_unread_messages': 1
         }
@@ -171,10 +171,10 @@ export default [
         'name': 'Emily Davis',
         'image': '/images/Users/user_5.jpg',
         'status': 'available',
-        'recent_message': {
+        'recentMessage': {
             'message': 'Hello',
-            'is_media': false,
-            'date_time': 'Fri',
+            'media': false,
+            'createdAt': 'Fri',
             'sender': 'me',
             'number_of_unread_messages': 1
         }
@@ -183,10 +183,10 @@ export default [
         'name': 'Michael Brown',
         'image': '/images/Users/user_6.jpg',
         'status': 'available',
-        'recent_message': {
+        'recentMessage': {
             'message': 'Hello',
-            'is_media': false,
-            'date_time': 'Fri',
+            'media': false,
+            'createdAt': 'Fri',
             'sender': 'me',
             'number_of_unread_messages': 1
         }
@@ -195,10 +195,10 @@ export default [
         'name': 'Olivia Wilson',
         'image': '/images/Users/user_7.jpg',
         'status': 'available',
-        'recent_message': {
+        'recentMessage': {
             'message': 'Hello',
-            'is_media': false,
-            'date_time': 'Fri',
+            'media': false,
+            'createdAt': 'Fri',
             'sender': 'me',
             'number_of_unread_messages': 1
         }
@@ -207,10 +207,10 @@ export default [
         'name': 'William Taylor',
         'image': '/images/Users/user_8.jpg',
         'status': 'available',
-        'recent_message': {
+        'recentMessage': {
             'message': 'Hello',
-            'is_media': false,
-            'date_time': 'Fri',
+            'media': false,
+            'createdAt': 'Fri',
             'sender': 'me',
             'number_of_unread_messages': 1
         }
@@ -219,10 +219,10 @@ export default [
         'name': 'Sophia Anderson',
         'image': '/images/Users/user_9.jpg',
         'status': 'available',
-        'recent_message': {
+        'recentMessage': {
             'message': 'Hello',
-            'is_media': false,
-            'date_time': 'Fri',
+            'media': false,
+            'createdAt': 'Fri',
             'sender': 'me',
             'number_of_unread_messages': 1
         }
@@ -231,10 +231,10 @@ export default [
         'name': 'James Martinez',
         'image': '/images/Users/user_10.jpg',
         'status': 'available',
-        'recent_message': {
+        'recentMessage': {
             'message': 'Hello',
-            'is_media': false,
-            'date_time': 'Fri',
+            'media': false,
+            'createdAt': 'Fri',
             'sender': 'me',
             'number_of_unread_messages': 1
         }
@@ -243,10 +243,10 @@ export default [
         'name': 'Kevin Johnson',
         'image': '/images/Users/user_1.jpg',
         'status': 'available',
-        'recent_message': {
+        'recentMessage': {
             'message': 'Hello',
-            'is_media': false,
-            'date_time': 'Fri',
+            'media': false,
+            'createdAt': 'Fri',
             'sender': 'me',
             'number_of_unread_messages': 1
         }
@@ -255,10 +255,10 @@ export default [
         'name': 'John Doe',
         'image': '/images/Users/user_2.jpg',
         'status': 'available',
-        'recent_message': {
+        'recentMessage': {
             'message': 'Hello',
-            'is_media': false,
-            'date_time': 'Fri',
+            'media': false,
+            'createdAt': 'Fri',
             'sender': 'me',
             'number_of_unread_messages': 1
         }
@@ -267,10 +267,10 @@ export default [
         'name': 'Jane Smith',
         'image': '/images/Users/user_3.jpg',
         'status': 'available',
-        'recent_message': {
+        'recentMessage': {
             'message': 'Hello',
-            'is_media': false,
-            'date_time': 'Fri',
+            'media': false,
+            'createdAt': 'Fri',
             'sender': 'me',
             'number_of_unread_messages': 1
         }
@@ -279,10 +279,10 @@ export default [
         'name': 'Alex Clark',
         'image': '/images/Users/user_4.jpg',
         'status': 'available',
-        'recent_message': {
+        'recentMessage': {
             'message': 'Hello',
-            'is_media': false,
-            'date_time': 'Fri',
+            'media': false,
+            'createdAt': 'Fri',
             'sender': 'me',
             'number_of_unread_messages': 1
         }
@@ -291,10 +291,10 @@ export default [
         'name': 'Emily Davis',
         'image': '/images/Users/user_5.jpg',
         'status': 'available',
-        'recent_message': {
+        'recentMessage': {
             'message': 'Hello',
-            'is_media': false,
-            'date_time': 'Fri',
+            'media': false,
+            'createdAt': 'Fri',
             'sender': 'me',
             'number_of_unread_messages': 1
         }
@@ -303,10 +303,10 @@ export default [
         'name': 'Michael Brown',
         'image': '/images/Users/user_6.jpg',
         'status': 'available',
-        'recent_message': {
+        'recentMessage': {
             'message': 'Hello',
-            'is_media': false,
-            'date_time': 'Fri',
+            'media': false,
+            'createdAt': 'Fri',
             'sender': 'me',
             'number_of_unread_messages': 1
         }
@@ -315,10 +315,10 @@ export default [
         'name': 'Olivia Wilson',
         'image': '/images/Users/user_7.jpg',
         'status': 'available',
-        'recent_message': {
+        'recentMessage': {
             'message': 'Hello',
-            'is_media': false,
-            'date_time': 'Fri',
+            'media': false,
+            'createdAt': 'Fri',
             'sender': 'me',
             'number_of_unread_messages': 1
         }
@@ -327,10 +327,10 @@ export default [
         'name': 'William Taylor',
         'image': '/images/Users/user_8.jpg',
         'status': 'available',
-        'recent_message': {
+        'recentMessage': {
             'message': 'Hello',
-            'is_media': false,
-            'date_time': 'Fri',
+            'media': false,
+            'createdAt': 'Fri',
             'sender': 'me',
             'number_of_unread_messages': 1
         }
@@ -339,10 +339,10 @@ export default [
         'name': 'Sophia Anderson',
         'image': '/images/Users/user_9.jpg',
         'status': 'available',
-        'recent_message': {
+        'recentMessage': {
             'message': 'Hello',
-            'is_media': false,
-            'date_time': 'Fri',
+            'media': false,
+            'createdAt': 'Fri',
             'sender': 'me',
             'number_of_unread_messages': 1
         }
@@ -351,10 +351,10 @@ export default [
         'name': 'James Martinez',
         'image': '/images/Users/user_10.jpg',
         'status': 'available',
-        'recent_message': {
+        'recentMessage': {
             'message': 'Hello',
-            'is_media': false,
-            'date_time': 'Fri',
+            'media': false,
+            'createdAt': 'Fri',
             'sender': 'me',
             'number_of_unread_messages': 1
         }
@@ -363,10 +363,10 @@ export default [
         'name': 'Kevin Johnson',
         'image': '/images/Users/user_1.jpg',
         'status': 'available',
-        'recent_message': {
+        'recentMessage': {
             'message': 'Hello',
-            'is_media': false,
-            'date_time': 'Fri',
+            'media': false,
+            'createdAt': 'Fri',
             'sender': 'me',
             'number_of_unread_messages': 1
         }
@@ -375,10 +375,10 @@ export default [
         'name': 'John Doe',
         'image': '/images/Users/user_2.jpg',
         'status': 'available',
-        'recent_message': {
+        'recentMessage': {
             'message': 'Hello',
-            'is_media': false,
-            'date_time': 'Fri',
+            'media': false,
+            'createdAt': 'Fri',
             'sender': 'me',
             'number_of_unread_messages': 1
         }
@@ -387,10 +387,10 @@ export default [
         'name': 'Jane Smith',
         'image': '/images/Users/user_3.jpg',
         'status': 'available',
-        'recent_message': {
+        'recentMessage': {
             'message': 'Hello',
-            'is_media': false,
-            'date_time': 'Fri',
+            'media': false,
+            'createdAt': 'Fri',
             'sender': 'me',
             'number_of_unread_messages': 1
         }
@@ -399,10 +399,10 @@ export default [
         'name': 'Alex Clark',
         'image': '/images/Users/user_4.jpg',
         'status': 'available',
-        'recent_message': {
+        'recentMessage': {
             'message': 'Hello',
-            'is_media': false,
-            'date_time': 'Fri',
+            'media': false,
+            'createdAt': 'Fri',
             'sender': 'me',
             'number_of_unread_messages': 1
         }
@@ -411,10 +411,10 @@ export default [
         'name': 'Emily Davis',
         'image': '/images/Users/user_5.jpg',
         'status': 'available',
-        'recent_message': {
+        'recentMessage': {
             'message': 'Hello',
-            'is_media': false,
-            'date_time': 'Fri',
+            'media': false,
+            'createdAt': 'Fri',
             'sender': 'me',
             'number_of_unread_messages': 1
         }
@@ -423,10 +423,10 @@ export default [
         'name': 'Michael Brown',
         'image': '/images/Users/user_6.jpg',
         'status': 'available',
-        'recent_message': {
+        'recentMessage': {
             'message': 'Hello',
-            'is_media': false,
-            'date_time': 'Fri',
+            'media': false,
+            'createdAt': 'Fri',
             'sender': 'me',
             'number_of_unread_messages': 1
         }
@@ -435,10 +435,10 @@ export default [
         'name': 'Olivia Wilson',
         'image': '/images/Users/user_7.jpg',
         'status': 'available',
-        'recent_message': {
+        'recentMessage': {
             'message': 'Hello',
-            'is_media': false,
-            'date_time': 'Fri',
+            'media': false,
+            'createdAt': 'Fri',
             'sender': 'me',
             'number_of_unread_messages': 1
         }
@@ -447,10 +447,10 @@ export default [
         'name': 'William Taylor',
         'image': '/images/Users/user_8.jpg',
         'status': 'available',
-        'recent_message': {
+        'recentMessage': {
             'message': 'Hello',
-            'is_media': false,
-            'date_time': 'Fri',
+            'media': false,
+            'createdAt': 'Fri',
             'sender': 'me',
             'number_of_unread_messages': 1
         }
@@ -459,10 +459,10 @@ export default [
         'name': 'Sophia Anderson',
         'image': '/images/Users/user_9.jpg',
         'status': 'available',
-        'recent_message': {
+        'recentMessage': {
             'message': 'Hello',
-            'is_media': false,
-            'date_time': 'Fri',
+            'media': false,
+            'createdAt': 'Fri',
             'sender': 'me',
             'number_of_unread_messages': 1
         }
@@ -471,10 +471,10 @@ export default [
         'name': 'James Martinez',
         'image': '/images/Users/user_10.jpg',
         'status': 'available',
-        'recent_message': {
+        'recentMessage': {
             'message': 'Hello',
-            'is_media': false,
-            'date_time': 'Fri',
+            'media': false,
+            'createdAt': 'Fri',
             'sender': 'me',
             'number_of_unread_messages': 1
         }
