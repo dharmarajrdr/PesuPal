@@ -41,6 +41,9 @@ public class DirectMessageController {
     public ResponseEntity<ApiResponseDto> markAllMessagesAsRead(@PathVariable String chatId) {
 
         Long userId = securityUtil.getCurrentUserId();
+        if (!Chat.isUserInChat(chatId, userId)) {
+            throw new PermissionDeniedException("You do not have permission to access this chat.");
+        }
         directMessageService.markAllMessagesAsRead(chatId, userId);
         return ResponseEntity.ok(new ApiResponseDto("All messages marked as read successfully"));
     }
