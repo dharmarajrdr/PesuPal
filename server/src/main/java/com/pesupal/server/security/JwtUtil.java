@@ -3,10 +3,12 @@ package com.pesupal.server.security;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
 
+@Component
 public class JwtUtil {
 
     private static final String SECRET_KEY_STRING = "ZSM6vDEdLoH7zWvBRkjjQQ2pyuP6ZgOU"; // Generated in https://acte.ltd/utils/randomkeygen

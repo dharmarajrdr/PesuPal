@@ -4,6 +4,8 @@ import com.pesupal.server.service.implementations.CustomUserDetailsServiceImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -11,6 +13,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -20,7 +24,8 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
 
         httpSecurity.authorizeHttpRequests(authorize ->
-                authorize.requestMatchers(HttpMethod.POST, "/api/v1/user").permitAll()    // No authentication required to create a new user
+                authorize.requestMatchers(HttpMethod.POST, "/api/v1/user").permitAll()    // No authentication required for sign-up
+                        .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()    // No authentication required for login
                         .anyRequest().authenticated()   // All other requests require authentication
         );
 
@@ -57,6 +62,19 @@ public class SecurityConfig {
         daoAuthenticationProvider.setUserDetailsService(userDetailsService());
         daoAuthenticationProvider.setPasswordEncoder(passwordEncoder());
         return daoAuthenticationProvider;
+    }
+
+    /**
+     * Authentication manager bean for managing authentication
+     *
+     * @return AuthenticationManager
+     */
+    @Bean
+    public AuthenticationManager authenticationManager() {
+
+        return new ProviderManager(
+                List.of(authenticationProvider())   // We only have one authentication provider
+        );
     }
 
     /**
