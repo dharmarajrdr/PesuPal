@@ -132,7 +132,6 @@ public class OrgMemberServiceImpl implements OrgMemberService {
     public OrgMember joinOrgAsFirstMember(User user, Org org) {
 
         AddOrgMemberDto addOrgMemberDto = new AddOrgMemberDto();
-        addOrgMemberDto.setOrgId(org.getId());
         addOrgMemberDto.setUserId(user.getId()); // Assuming the first user has ID 1
         addOrgMemberDto.setUserName("user_" + user.getId()); // Assuming a default username format
         addOrgMemberDto.setDisplayName("Org Owner");
@@ -140,7 +139,7 @@ public class OrgMemberServiceImpl implements OrgMemberService {
         addOrgMemberDto.setDesignationId(createDummyDesignationForNewOrg(org).getId()); // Assuming a default designation
         addOrgMemberDto.setDepartmentId(createDummyDepartmentForNewOrg(org, user).getId()); // Assuming a default department
         addOrgMemberDto.setManagerId(user.getId()); // Assuming the first member is their own manager
-        return addMemberToOrg(addOrgMemberDto, user.getId(), true);
+        return addMemberToOrg(addOrgMemberDto, user.getId(), org.getId(), true);
     }
 
     /**
@@ -151,10 +150,10 @@ public class OrgMemberServiceImpl implements OrgMemberService {
      * @return OrgMember
      */
     @Override
-    public OrgMember addMemberToOrg(AddOrgMemberDto addOrgMemberDto, Long adminId, boolean firstMember) {
+    public OrgMember addMemberToOrg(AddOrgMemberDto addOrgMemberDto, Long adminId, Long orgId, boolean firstMember) {
 
         User user = userService.getUserById(addOrgMemberDto.getUserId());
-        Org org = orgService.getOrgById(addOrgMemberDto.getOrgId());
+        Org org = orgService.getOrgById(orgId);
 
         OrgMember orgAdmin = firstMember ? null : getOrgMemberByUserAndOrg(userService.getUserById(adminId), org);
 

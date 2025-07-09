@@ -7,7 +7,6 @@ import com.pesupal.server.helpers.OrgSubscriptionManager;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.security.SecurityUtil;
 import com.pesupal.server.service.interfaces.OrgMemberService;
-import com.pesupal.server.service.interfaces.OrgSubscriptionHistoryService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,13 +18,13 @@ public class OrgMemberController extends OrgSubscriptionManager {
 
     private final SecurityUtil securityUtil;
     private final OrgMemberService orgMemberService;
-    private final OrgSubscriptionHistoryService orgSubscriptionHistoryService;
 
     @PostMapping("/new_member")
     public ResponseEntity<ApiResponseDto> addMemberToOrg(@RequestBody AddOrgMemberDto addOrgMemberDto) {
 
         Long userId = securityUtil.getCurrentUserId();
-        OrgMember orgMember = orgMemberService.addMemberToOrg(addOrgMemberDto, userId, false);
+        Long orgId = RequestContext.getLong("X-ORG-ID");
+        OrgMember orgMember = orgMemberService.addMemberToOrg(addOrgMemberDto, userId, orgId, false);
         return ResponseEntity.ok(new ApiResponseDto("Member added to organization successfully.", orgMember));
     }
 

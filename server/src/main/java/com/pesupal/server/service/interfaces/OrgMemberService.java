@@ -13,5 +13,5 @@ public interface OrgMemberService {
 
     OrgMember joinOrgAsFirstMember(User user, Org org);
 
-    OrgMember addMemberToOrg(AddOrgMemberDto addOrgMemberDto, Long adminId, boolean firstMember);
+    OrgMember addMemberToOrg(AddOrgMemberDto addOrgMemberDto, Long adminId, Long orgId, boolean firstMember);
 }
