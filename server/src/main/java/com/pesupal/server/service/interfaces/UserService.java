@@ -12,5 +12,7 @@ public interface UserService {
 
     User createUser(CreateUserDto createUserDto);
 
-    Optional<UserLoginCheckDto> getUserByEmail(String email);
+    Optional<UserLoginCheckDto> getUserLoginCheckByEmail(String email);
+
+    User getUserByEmail(String email);
 }

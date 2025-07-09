@@ -55,9 +55,21 @@ public class UserServiceImpl implements UserService {
      * @return UserLoginCheckDto
      */
     @Override
-    public Optional<UserLoginCheckDto> getUserByEmail(String email) {
+    public Optional<UserLoginCheckDto> getUserLoginCheckByEmail(String email) {
 
         Optional<User> user = userRepository.findByEmail(email);
         return user.map(UserLoginCheckDto::fromUser);
+    }
+
+    /**
+     * Retrieves a user by their email address.
+     *
+     * @param email
+     * @return
+     */
+    @Override
+    public User getUserByEmail(String email) {
+
+        return userRepository.findByEmail(email).orElseThrow(() -> new DataNotFoundException("User with email '" + email + "' not found"));
     }
 }
