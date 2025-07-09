@@ -9,6 +9,7 @@ import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -31,9 +32,16 @@ public class SecurityConfig {
 
         httpSecurity.csrf(csrf -> csrf.disable());  // Disabling CSRF protection to allow POST requests without CSRF tokens
 
+        httpSecurity.sessionManagement(sessionManagementCustomizer -> {
+            sessionManagementCustomizer.sessionCreationPolicy(SessionCreationPolicy.STATELESS); // Don't maintain session state
+        });
+
+        // This login form is only for testing purposes and so commenting it out.
+        /*
         httpSecurity.formLogin(form ->
-                form.permitAll().defaultSuccessUrl("/login-successful")
-        );   // Configuring "No authentication required" for Login form
+                form.permitAll().defaultSuccessUrl("/login-successful")     // Configuring "No authentication required" for Login form
+        );
+        */
 
         return httpSecurity.build();
     }
