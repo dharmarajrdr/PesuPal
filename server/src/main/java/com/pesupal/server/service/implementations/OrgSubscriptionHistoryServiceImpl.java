@@ -28,7 +28,7 @@ public class OrgSubscriptionHistoryServiceImpl implements OrgSubscriptionHistory
     @Override
     public Boolean isOrgActive(Long orgId) {
 
-        String key = "subscription:org:" + orgId;
+        String key = "org:subscription:active:" + orgId;
         Boolean active = (Boolean) redisTemplate.opsForValue().get(key);
         Duration TTL = Duration.ofMinutes(StaticConfig.MAXIMUM_TTL_MINUTES);
 
