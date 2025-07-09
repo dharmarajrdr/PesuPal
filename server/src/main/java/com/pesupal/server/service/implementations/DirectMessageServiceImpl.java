@@ -4,6 +4,9 @@ import com.pesupal.server.config.RequestContext;
 import com.pesupal.server.dto.request.ChatMessageDto;
 import com.pesupal.server.dto.request.GetConversationBetweenUsers;
 import com.pesupal.server.dto.response.DirectMessageResponseDto;
+import com.pesupal.server.dto.response.LastMessageDto;
+import com.pesupal.server.dto.response.RecentChatDto;
+import com.pesupal.server.dto.response.RecentChatPagedDto;
 import com.pesupal.server.enums.ReadReceipt;
 import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.exceptions.DataNotFoundException;
@@ -22,6 +25,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -105,6 +110,53 @@ public class DirectMessageServiceImpl implements DirectMessageService {
         }
 
         directMessageRepository.delete(directMessage);
+    }
+
+    /**
+     * Retrieves recent chats for a user in a specific organization.
+     *
+     * @param orgId
+     * @param userId
+     * @return
+     */
+    @Override
+    public RecentChatPagedDto getRecentChatsPaged(Long userId, Long orgId, Pageable pageable) {
+
+        int page = pageable.getPageNumber();
+        int size = pageable.getPageSize();
+        int offset = page * size;
+
+        List<Object[]> rows = directMessageRepository.findRecentChatsPaged(userId, orgId, size, offset);
+
+        List<RecentChatDto> chats = rows.stream().map(row -> {
+            String displayPicture = (String) row[0];
+            String userName = (String) row[1];
+            String userStatus = (String) row[2];
+            String sender = String.valueOf(row[3]);
+            String content = (String) row[4];
+            Boolean includedMedia = (Boolean) row[5];
+            LocalDateTime createdAt = ((Timestamp) row[6]).toLocalDateTime();
+            ReadReceipt readReceipt = ReadReceipt.valueOf((String) row[7]);
+
+            LastMessageDto lastMessage = new LastMessageDto();
+            lastMessage.setSender(sender);
+            lastMessage.setContent(content);
+            lastMessage.setIncludedMedia(includedMedia);
+            lastMessage.setCreatedAt(createdAt);
+            lastMessage.setReadReceipt(readReceipt);
+
+            RecentChatDto dto = new RecentChatDto();
+            dto.setUserName(userName);
+            dto.setDisplayPicture(displayPicture);
+            dto.setUserStatus(userStatus);
+            dto.setLastMessage(lastMessage);
+
+            return dto;
+        }).toList();
+
+        Long total = directMessageRepository.countRecentChats(userId, orgId);
+
+        return new RecentChatPagedDto(chats, pageable, total);
     }
 
     /**
