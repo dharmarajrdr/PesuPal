@@ -1,12 +1,18 @@
 package com.pesupal.server.security;
 
 import com.pesupal.server.exceptions.PermissionDeniedException;
+import com.pesupal.server.service.interfaces.UserService;
+import lombok.AllArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Component;
 
-
+@Component
+@AllArgsConstructor
 public class SecurityUtil {
+
+    private final UserService userService;
 
     /**
      * Retrieves the email of the currently authenticated user.
@@ -14,7 +20,7 @@ public class SecurityUtil {
      * @return String - the email of the current user
      * @throws PermissionDeniedException if the user is not authenticated or if the email cannot be retrieved
      */
-    public static String getCurrentUserEmail() {
+    public String getCurrentUserEmail() {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
@@ -31,5 +37,15 @@ public class SecurityUtil {
         }
 
         throw new PermissionDeniedException("Unable to retrieve user email from authentication principal.");
+    }
+
+    /**
+     * Retrieves the currently authenticated user.
+     *
+     * @return User - the current user entity
+     */
+    public Long getCurrentUserId() {
+
+        return userService.getUserByEmail(getCurrentUserEmail()).getId();
     }
 }
