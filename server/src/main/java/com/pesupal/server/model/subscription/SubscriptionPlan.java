@@ -30,6 +30,9 @@ public class SubscriptionPlan extends CreationTimeAuditable {
     private String description;
 
     @Column(nullable = false)
-    private Boolean active;
-    
+    private boolean active;
+
+    @Column(nullable = false)
+    private Long numberOfDays;
+
 }
