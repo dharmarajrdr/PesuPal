@@ -1,14 +1,12 @@
 package com.pesupal.server.service.implementations;
 
+import com.pesupal.server.dto.request.AddSubscriptionDto;
 import com.pesupal.server.dto.request.CreateOrgDto;
 import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.model.org.Org;
 import com.pesupal.server.model.user.User;
 import com.pesupal.server.repository.OrgRepository;
-import com.pesupal.server.service.interfaces.OrgConfigurationService;
-import com.pesupal.server.service.interfaces.OrgMemberService;
-import com.pesupal.server.service.interfaces.OrgService;
-import com.pesupal.server.service.interfaces.UserService;
+import com.pesupal.server.service.interfaces.*;
 import jakarta.transaction.Transactional;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -20,12 +18,14 @@ public class OrgServiceImpl implements OrgService {
     private final OrgRepository orgRepository;
     private final OrgConfigurationService orgConfigurationService;
     private final OrgMemberService orgMemberService;
+    private final OrgSubscriptionHistoryService orgSubscriptionHistoryService;
 
-    public OrgServiceImpl(UserService userService, OrgRepository orgRepository, OrgConfigurationService orgConfigurationService, @Lazy OrgMemberService orgMemberService) {
+    public OrgServiceImpl(UserService userService, OrgRepository orgRepository, OrgConfigurationService orgConfigurationService, @Lazy OrgMemberService orgMemberService, @Lazy OrgSubscriptionHistoryService orgSubscriptionHistoryService) {
         this.userService = userService;
         this.orgRepository = orgRepository;
         this.orgConfigurationService = orgConfigurationService;
         this.orgMemberService = orgMemberService;
+        this.orgSubscriptionHistoryService = orgSubscriptionHistoryService;
     }
 
     /**
@@ -57,6 +57,7 @@ public class OrgServiceImpl implements OrgService {
         org = orgRepository.save(org);
         orgConfigurationService.initializeOrgConfiguration(org);
         orgMemberService.joinOrgAsFirstMember(owner, org);
+        orgSubscriptionHistoryService.addSubscription(org.getId(), new AddSubscriptionDto("FREE_TRIAL"));
         return org;
     }
 }
