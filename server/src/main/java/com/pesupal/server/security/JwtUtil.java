@@ -1,5 +1,7 @@
 package com.pesupal.server.security;
 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,6 +22,12 @@ public class JwtUtil {
         return hours * 60 * 60 * 1000;
     }
 
+    /**
+     * Generates a JWT token for the given user details.
+     *
+     * @param userDetails
+     * @return String - JWT token
+     */
     public String generateToken(UserDetails userDetails) {
 
         return Jwts.builder()
@@ -29,5 +37,30 @@ public class JwtUtil {
                 .signWith(secretKey, Jwts.SIG.HS256)
                 .compact();
 
+    }
+
+    /**
+     * Validates the JWT token against the provided user details.
+     *
+     * @param token
+     * @param userDetails
+     */
+    public Boolean validateToken(String token, UserDetails userDetails) {
+
+        String email = extractEmail(token);
+        return email.equals(userDetails.getUsername());
+    }
+
+    /**
+     * Extracts the email from the JWT token.
+     *
+     * @param token
+     * @return String - Email extracted from the token
+     */
+    public String extractEmail(String token) {
+
+        JwtParser jwtParser = Jwts.parser().verifyWith(secretKey).build();
+        Claims claims = jwtParser.parseSignedClaims(token).getPayload();
+        return claims.getSubject(); // Subject is the email in this case
     }
 }
