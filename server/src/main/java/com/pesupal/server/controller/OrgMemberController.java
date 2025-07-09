@@ -25,7 +25,8 @@ public class OrgMemberController extends OrgSubscriptionManager {
     public ResponseEntity<ApiResponseDto> addMemberToOrg(@RequestBody AddOrgMemberDto addOrgMemberDto) {
 
         Long userId = securityUtil.getCurrentUserId();
-        OrgMember orgMember = orgMemberService.addMemberToOrg(addOrgMemberDto, userId, false);
+        Long orgId = RequestContext.getLong("X-ORG-ID");
+        OrgMember orgMember = orgMemberService.addMemberToOrg(addOrgMemberDto, userId, orgId, false);
         return ResponseEntity.ok(new ApiResponseDto("Member added to organization successfully.", orgMember));
     }
 

@@ -12,8 +12,6 @@ public class AddOrgMemberDto {
 
     String displayName;
 
-    Long orgId;
-
     Long designationId;
 
     Long departmentId;
