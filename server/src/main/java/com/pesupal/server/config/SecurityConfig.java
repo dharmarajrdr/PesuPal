@@ -1,8 +1,10 @@
 package com.pesupal.server.config;
 
+import com.pesupal.server.security.JwtFilter;
 import com.pesupal.server.service.implementations.CustomUserDetailsServiceImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
@@ -14,12 +16,19 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import java.util.List;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+
+    private final JwtFilter jwtFilter;
+
+    public SecurityConfig(@Lazy JwtFilter jwtFilter) {
+        this.jwtFilter = jwtFilter;
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
@@ -35,6 +44,8 @@ public class SecurityConfig {
         httpSecurity.sessionManagement(sessionManagementCustomizer -> {
             sessionManagementCustomizer.sessionCreationPolicy(SessionCreationPolicy.STATELESS); // Don't maintain session state
         });
+
+        httpSecurity.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);    // Adding JWT filter before UsernamePasswordAuthenticationFilter
 
         // This login form is only for testing purposes and so commenting it out.
         /*
@@ -94,3 +105,4 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 }
+
