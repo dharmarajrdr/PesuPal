@@ -6,7 +6,7 @@ import com.pesupal.server.model.chat.DirectMessage;
 
 import java.util.List;
 
-public interface DirectMessageService {
+public interface DirectMessageService extends ChatService {
 
     List<DirectMessageResponseDto> getDirectMessagesBetweenUsers(GetConversationBetweenUsers getConversationBetweenUsers);
 
