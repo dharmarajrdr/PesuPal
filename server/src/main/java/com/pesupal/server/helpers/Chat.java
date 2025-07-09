@@ -12,7 +12,7 @@ public class Chat {
      */
     public static String getChatId(Long userId1, Long userId2, Long orgId) {
 
-        return String.format("chat_%d_%d_%d", Math.min(userId1, userId2), Math.max(userId1, userId2), orgId);
+        return String.format("%d_%d_%d", Math.min(userId1, userId2), Math.max(userId1, userId2), orgId);
     }
 
     /**
