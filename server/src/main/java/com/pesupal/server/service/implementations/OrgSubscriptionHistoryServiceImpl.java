@@ -1,22 +1,28 @@
 package com.pesupal.server.service.implementations;
 
 import com.pesupal.server.config.StaticConfig;
+import com.pesupal.server.dto.request.AddSubscriptionDto;
+import com.pesupal.server.model.org.Org;
 import com.pesupal.server.model.org.OrgSubscriptionHistory;
+import com.pesupal.server.model.subscription.SubscriptionPlan;
 import com.pesupal.server.repository.OrgSubscriptionHistoryRepository;
+import com.pesupal.server.service.interfaces.OrgService;
 import com.pesupal.server.service.interfaces.OrgSubscriptionHistoryService;
+import com.pesupal.server.service.interfaces.SubscriptionPlanService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Service
 @AllArgsConstructor
 public class OrgSubscriptionHistoryServiceImpl implements OrgSubscriptionHistoryService {
 
+    private final OrgService orgService;
     private final RedisTemplate<String, Object> redisTemplate;
+    private final SubscriptionPlanService subscriptionPlanService;
     private final OrgSubscriptionHistoryRepository orgSubscriptionHistoryRepository;
 
     /**
@@ -33,13 +39,12 @@ public class OrgSubscriptionHistoryServiceImpl implements OrgSubscriptionHistory
         Duration TTL = Duration.ofMinutes(StaticConfig.MAXIMUM_TTL_MINUTES);
 
         if (active == null) {
-            List<OrgSubscriptionHistory> history = orgSubscriptionHistoryRepository.findByOrgId(orgId);
-            if (history.isEmpty()) {
+            LocalDateTime latestSubscriptionEndDate = getLatestSubscriptionEndDate(orgId);
+            if (latestSubscriptionEndDate == null) {
                 active = false; // No history means no subscription, hence not active
             } else {
                 LocalDateTime currentTime = LocalDateTime.now();
-                OrgSubscriptionHistory latestHistory = history.get(history.size() - 1);
-                long minutesLeftForSubscription = Duration.between(currentTime, latestHistory.getEndDate()).toMinutes();
+                long minutesLeftForSubscription = Duration.between(currentTime, latestSubscriptionEndDate).toMinutes();
                 active = minutesLeftForSubscription > 0; // Active if subscription end date is in the future
                 TTL = Duration.ofMinutes(Math.min(minutesLeftForSubscription, StaticConfig.MAXIMUM_TTL_MINUTES)); // Set TTL to the remaining minutes or 30 minutes, whichever is smaller
             }
@@ -47,5 +52,40 @@ public class OrgSubscriptionHistoryServiceImpl implements OrgSubscriptionHistory
         }
 
         return active;
+    }
+
+    /**
+     * Retrieves the latest subscription end date for an organization.
+     *
+     * @param orgId
+     * @return
+     */
+    @Override
+    public LocalDateTime getLatestSubscriptionEndDate(Long orgId) {
+
+        return orgSubscriptionHistoryRepository.findLatestEndDateByOrgId(orgId);
+    }
+
+    /**
+     * Adds a new subscription for an organization.
+     *
+     * @param addSubscriptionDto
+     */
+    @Override
+    public OrgSubscriptionHistory addSubscription(Long orgId, AddSubscriptionDto addSubscriptionDto) {
+
+        Org org = orgService.getOrgById(orgId);
+
+        SubscriptionPlan subscriptionPlan = subscriptionPlanService.getSubscriptionByCode(addSubscriptionDto.getCode());
+        LocalDateTime latestSubscriptionEndDate = getLatestSubscriptionEndDate(orgId);
+        if (latestSubscriptionEndDate == null) {
+            latestSubscriptionEndDate = LocalDateTime.now();
+        }
+        OrgSubscriptionHistory orgSubscriptionHistory = new OrgSubscriptionHistory();
+        orgSubscriptionHistory.setOrg(org);
+        orgSubscriptionHistory.setSubscriptionPlan(subscriptionPlan);
+        orgSubscriptionHistory.setStartDate(latestSubscriptionEndDate);
+        orgSubscriptionHistory.setEndDate(latestSubscriptionEndDate.plusDays(StaticConfig.FREE_TRIAL_DAYS));
+        return orgSubscriptionHistoryRepository.save(orgSubscriptionHistory);
     }
 }
