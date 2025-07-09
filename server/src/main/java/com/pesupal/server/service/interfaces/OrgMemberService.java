@@ -11,6 +11,8 @@ public interface OrgMemberService {
 
     OrgMember getOrgMemberByUserIdAndOrgId(Long userId, Long orgId);
 
+    Boolean existsByUserAndOrg(User user, Org org);
+
     OrgMember joinOrgAsFirstMember(User user, Org org);
 
     OrgMember addMemberToOrg(AddOrgMemberDto addOrgMemberDto, Long adminId, Long orgId, boolean firstMember);

@@ -14,10 +14,7 @@ import com.pesupal.server.model.org.Org;
 import com.pesupal.server.model.user.User;
 import com.pesupal.server.repository.DirectMessageRepository;
 import com.pesupal.server.security.SecurityUtil;
-import com.pesupal.server.service.interfaces.DirectMessageReactionService;
-import com.pesupal.server.service.interfaces.DirectMessageService;
-import com.pesupal.server.service.interfaces.OrgService;
-import com.pesupal.server.service.interfaces.UserService;
+import com.pesupal.server.service.interfaces.*;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -35,13 +32,15 @@ public class DirectMessageServiceImpl implements DirectMessageService {
     private final SecurityUtil securityUtil;
     private final UserService userService;
     private final OrgService orgService;
+    private final OrgMemberService orgMemberService;
 
-    public DirectMessageServiceImpl(DirectMessageRepository directMessageRepository, @Lazy DirectMessageReactionService directMessageReactionService, SecurityUtil securityUtil, UserService userService, OrgService orgService) {
+    public DirectMessageServiceImpl(DirectMessageRepository directMessageRepository, @Lazy DirectMessageReactionService directMessageReactionService, SecurityUtil securityUtil, UserService userService, OrgService orgService, OrgMemberService orgMemberService) {
         this.directMessageRepository = directMessageRepository;
         this.directMessageReactionService = directMessageReactionService;
         this.securityUtil = securityUtil;
         this.userService = userService;
         this.orgService = orgService;
+        this.orgMemberService = orgMemberService;
     }
 
     /**
@@ -116,14 +115,20 @@ public class DirectMessageServiceImpl implements DirectMessageService {
     @Override
     public void save(ChatMessageDto chatMessageDto) {
 
+        Long orgId = RequestContext.getLong("X-ORG-ID");
+        Org org = orgService.getOrgById(orgId);
+
         Long senderId = securityUtil.getCurrentUserId();
         User sender = userService.getUserById(senderId);
+        if (!orgMemberService.existsByUserAndOrg(sender, org)) {
+            throw new ActionProhibitedException("You are not a member of this organization.");
+        }
 
         Long receiverId = chatMessageDto.getReceiverId();
         User receiver = userService.getUserById(receiverId);
-
-        Long orgId = RequestContext.getLong("X-ORG-ID");
-        Org org = orgService.getOrgById(orgId);
+        if (!orgMemberService.existsByUserAndOrg(receiver, org)) {
+            throw new ActionProhibitedException("The receiver is not a member of this organization.");
+        }
 
         String chatId = Chat.getChatId(senderId, receiverId, orgId);
         DirectMessage directMessage = new DirectMessage();

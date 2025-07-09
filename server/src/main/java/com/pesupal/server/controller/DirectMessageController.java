@@ -1,6 +1,7 @@
 package com.pesupal.server.controller;
 
 import com.pesupal.server.dto.request.AddReactionDto;
+import com.pesupal.server.dto.request.ChatMessageDto;
 import com.pesupal.server.dto.request.GetConversationBetweenUsers;
 import com.pesupal.server.dto.response.ApiResponseDto;
 import com.pesupal.server.dto.response.DirectMessageResponseDto;
@@ -35,6 +36,13 @@ public class DirectMessageController {
         GetConversationBetweenUsers getConversationBetweenUsers = new GetConversationBetweenUsers(chatId, page, size);
         List<DirectMessageResponseDto> directMessageResponseDtos = directMessageService.getDirectMessagesBetweenUsers(getConversationBetweenUsers);
         return ResponseEntity.ok(new ApiResponseDto("Direct messages retrieved successfully", directMessageResponseDtos));
+    }
+
+    @PostMapping("")
+    public ResponseEntity<ApiResponseDto> sendDirectMessage(@RequestBody ChatMessageDto chatMessageDto) {
+
+        directMessageService.save(chatMessageDto);
+        return ResponseEntity.ok(new ApiResponseDto("Direct message sent successfully"));
     }
 
     @PutMapping("/{chatId}/read_all")
