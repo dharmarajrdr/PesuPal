@@ -1,6 +1,5 @@
 package com.pesupal.server.service.interfaces;
 
-import com.pesupal.server.dto.request.AddSubscriptionDto;
 import com.pesupal.server.model.org.OrgSubscriptionHistory;
 
 import java.time.LocalDateTime;
@@ -11,5 +10,5 @@ public interface OrgSubscriptionHistoryService {
 
     LocalDateTime getLatestSubscriptionEndDate(Long orgId);
 
-    public OrgSubscriptionHistory addSubscription(Long orgId, AddSubscriptionDto addSubscriptionDto);
+    public OrgSubscriptionHistory addSubscription(Long orgId, String code);
 }

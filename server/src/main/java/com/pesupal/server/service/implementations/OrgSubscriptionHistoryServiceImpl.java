@@ -1,7 +1,7 @@
 package com.pesupal.server.service.implementations;
 
 import com.pesupal.server.config.StaticConfig;
-import com.pesupal.server.dto.request.AddSubscriptionDto;
+import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.model.org.Org;
 import com.pesupal.server.model.org.OrgSubscriptionHistory;
 import com.pesupal.server.model.subscription.SubscriptionPlan;
@@ -69,14 +69,19 @@ public class OrgSubscriptionHistoryServiceImpl implements OrgSubscriptionHistory
     /**
      * Adds a new subscription for an organization.
      *
-     * @param addSubscriptionDto
+     * @param code
      */
     @Override
-    public OrgSubscriptionHistory addSubscription(Long orgId, AddSubscriptionDto addSubscriptionDto) {
+    public OrgSubscriptionHistory addSubscription(Long orgId, String code) {
 
         Org org = orgService.getOrgById(orgId);
 
-        SubscriptionPlan subscriptionPlan = subscriptionPlanService.getSubscriptionByCode(addSubscriptionDto.getCode());
+        SubscriptionPlan subscriptionPlan = subscriptionPlanService.getSubscriptionByCode(code);
+
+        if (!subscriptionPlan.isActive()) {
+            throw new ActionProhibitedException("The subscription plan with code '" + code + "' is not active. Please choose an active plan.");
+        }
+
         LocalDateTime latestSubscriptionEndDate = getLatestSubscriptionEndDate(orgId);
         if (latestSubscriptionEndDate == null) {
             latestSubscriptionEndDate = LocalDateTime.now();
@@ -85,7 +90,7 @@ public class OrgSubscriptionHistoryServiceImpl implements OrgSubscriptionHistory
         orgSubscriptionHistory.setOrg(org);
         orgSubscriptionHistory.setSubscriptionPlan(subscriptionPlan);
         orgSubscriptionHistory.setStartDate(latestSubscriptionEndDate);
-        orgSubscriptionHistory.setEndDate(latestSubscriptionEndDate.plusDays(StaticConfig.FREE_TRIAL_DAYS));
+        orgSubscriptionHistory.setEndDate(latestSubscriptionEndDate.plusDays(subscriptionPlan.getNumberOfDays()));
         return orgSubscriptionHistoryRepository.save(orgSubscriptionHistory);
     }
 }
