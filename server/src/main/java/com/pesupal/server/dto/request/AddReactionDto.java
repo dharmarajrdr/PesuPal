@@ -6,7 +6,5 @@ import lombok.Data;
 @Data
 public class AddReactionDto {
 
-    Long userId;
-
     Reaction reaction;
 }

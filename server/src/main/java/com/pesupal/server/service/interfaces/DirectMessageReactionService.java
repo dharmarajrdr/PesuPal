@@ -1,6 +1,5 @@
 package com.pesupal.server.service.interfaces;
 
-import com.pesupal.server.dto.request.AddReactionDto;
 import com.pesupal.server.dto.response.ReactMessageResponseDto;
 import com.pesupal.server.enums.Reaction;
 import com.pesupal.server.model.chat.DirectMessage;
@@ -12,7 +11,7 @@ public interface DirectMessageReactionService {
 
     DirectMessageReaction getDirectMessageReactionById(Long reactionId);
 
-    ReactMessageResponseDto reactToMessage(Long messageId, AddReactionDto addReactionDto);
+    ReactMessageResponseDto reactToMessage(Long messageId, Long userid, Reaction reaction);
 
     void unreactToMessage(Long reactionId, Long userId);
 
