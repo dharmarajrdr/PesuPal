@@ -126,6 +126,13 @@ public class DirectMessageServiceImpl implements DirectMessageService {
         int size = pageable.getPageSize();
         int offset = page * size;
 
+        User user = userService.getUserById(userId);
+        Org org = orgService.getOrgById(orgId);
+
+        if (!orgMemberService.existsByUserAndOrg(user, org)) {
+            throw new PermissionDeniedException("You are not a member of this organization.");
+        }
+
         List<Object[]> rows = directMessageRepository.findRecentChatsPaged(userId, orgId, size, offset);
 
         List<RecentChatDto> chats = rows.stream().map(row -> {

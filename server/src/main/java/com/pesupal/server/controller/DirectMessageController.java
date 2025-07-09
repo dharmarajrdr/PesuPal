@@ -48,7 +48,7 @@ public class DirectMessageController {
         Long orgId = RequestContext.getLong("X-ORG-ID");
 
         Pageable pageable = Pageable.ofSize(size).withPage(page);
-        RecentChatPagedDto recentChats = directMessageService.getRecentChatsPaged(orgId, userId, pageable);
+        RecentChatPagedDto recentChats = directMessageService.getRecentChatsPaged(userId, orgId, pageable);
         return ResponseEntity.ok(new ApiResponseDto("Recent chats retrieved successfully", recentChats.getChats(), recentChats.getPageable()));
     }
 
