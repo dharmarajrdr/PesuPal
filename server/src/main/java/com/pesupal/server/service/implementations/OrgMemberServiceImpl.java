@@ -3,6 +3,8 @@ package com.pesupal.server.service.implementations;
 import com.pesupal.server.dto.request.AddOrgMemberDto;
 import com.pesupal.server.dto.request.CreateDepartmentDto;
 import com.pesupal.server.dto.request.CreateDesignationDto;
+import com.pesupal.server.dto.response.LatestSubscriptionDto;
+import com.pesupal.server.dto.response.OrgDetailDto;
 import com.pesupal.server.enums.Role;
 import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.exceptions.DataNotFoundException;
@@ -10,6 +12,7 @@ import com.pesupal.server.exceptions.PermissionDeniedException;
 import com.pesupal.server.model.department.Department;
 import com.pesupal.server.model.org.Org;
 import com.pesupal.server.model.org.OrgConfiguration;
+import com.pesupal.server.model.org.OrgSubscriptionHistory;
 import com.pesupal.server.model.user.Designation;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.model.user.User;
@@ -17,6 +20,9 @@ import com.pesupal.server.repository.OrgMemberRepository;
 import com.pesupal.server.service.interfaces.*;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -28,6 +34,7 @@ public class OrgMemberServiceImpl implements OrgMemberService {
     private final DesignationService designationService;
     private final OrgMemberRepository orgMemberRepository;
     private final OrgConfigurationService orgConfigurationService;
+    private final OrgSubscriptionHistoryService orgSubscriptionHistoryService;
 
     /**
      * Retrieves an organization member by user and organization.
@@ -141,6 +148,32 @@ public class OrgMemberServiceImpl implements OrgMemberService {
         addOrgMemberDto.setDepartmentId(createDummyDepartmentForNewOrg(org, user).getId()); // Assuming a default department
         addOrgMemberDto.setManagerId(user.getId()); // Assuming the first member is their own manager
         return addMemberToOrg(addOrgMemberDto, user.getId(), org.getId(), true);
+    }
+
+    /**
+     * Lists all organizations that a user is part of.
+     *
+     * @param userId
+     * @return List<OrgDetailDto>
+     */
+    @Override
+    public List<OrgDetailDto> listOfOrgUserPartOf(Long userId) {
+
+        List<OrgDetailDto> orgDetailDtos = new ArrayList<>();
+        User user = userService.getUserById(userId);
+        List<OrgMember> orgMembers = orgMemberRepository.findByUser(user);
+        orgMembers.sort((o1, o2) -> o1.getOrg().getDisplayName().compareToIgnoreCase(o2.getOrg().getDisplayName()));
+        for (OrgMember orgMember : orgMembers) {
+            Org org = orgMember.getOrg();
+            Integer membersCount = countOrgMembersByOrg(org);
+            OrgDetailDto orgDetailDto = OrgDetailDto.fromOrg(org);
+            orgDetailDto.setRole(orgMember.getRole());
+            orgDetailDto.setMembers(membersCount);
+            OrgSubscriptionHistory orgSubscriptionHistory = orgSubscriptionHistoryService.getLatestSubscription(org.getId()).orElseThrow(() -> new DataNotFoundException("No subscription history found for org with ID: " + org.getId()));
+            orgDetailDto.setSubscription(LatestSubscriptionDto.fromOrgSubscriptionHistory(orgSubscriptionHistory));
+            orgDetailDtos.add(orgDetailDto);
+        }
+        return orgDetailDtos;
     }
 
     /**
