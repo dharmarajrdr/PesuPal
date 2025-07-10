@@ -2,6 +2,7 @@ package com.pesupal.server.service.implementations;
 
 import com.pesupal.server.config.StaticConfig;
 import com.pesupal.server.enums.Extension;
+import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.service.interfaces.MediaService;
 import lombok.AllArgsConstructor;
 import org.springframework.core.io.Resource;
@@ -27,7 +28,7 @@ public class MediaServiceImpl implements MediaService {
      * Retrieves a media resource by its unique identifier.
      *
      * @param mediaId
-     * @return
+     * @return Resource
      */
     @Override
     public Resource getResourceById(UUID mediaId, String contentType) throws MalformedURLException, FileNotFoundException {
@@ -42,18 +43,31 @@ public class MediaServiceImpl implements MediaService {
     }
 
     /**
+     * Ensures that the file size does not exceed the maximum allowed size.
+     *
+     * @param file
+     * @throws IOException
+     */
+    private void ensureFileSize(MultipartFile file) {
+        if (file.getSize() > StaticConfig.MAX_FILE_SIZE_IN_MB * 1024 * 1024) {
+            throw new ActionProhibitedException("File size exceeds the maximum limit of " + StaticConfig.MAX_FILE_SIZE_IN_MB + "MB");
+        }
+    }
+
+    /**
      * Saves a media file and returns its unique identifier.
      *
      * @param file
-     * @return
+     * @return UUID
      */
     @Override
     public UUID saveMedia(MultipartFile file) throws IOException {
 
+        ensureFileSize(file);
         UUID mediaId = UUID.randomUUID();
         String extension = Objects.requireNonNull(file.getOriginalFilename()).substring(file.getOriginalFilename().lastIndexOf('.'));
         Path uploadPath = Paths.get(StaticConfig.MEDIA_PATH);
-        Path filePath = uploadPath.resolve(mediaId.toString() + extension);
+        Path filePath = uploadPath.resolve(mediaId + extension);
         Files.write(filePath, file.getBytes());
         return mediaId;
     }

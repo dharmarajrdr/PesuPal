@@ -10,6 +10,8 @@ public class StaticConfig {
 
     public static final String MEDIA_PATH = "/Users/dharma-13910/Videos/";
 
+    public static final int MAX_FILE_SIZE_IN_MB = 5;
+
     public static boolean eligibleToCreateSubscriptionPlan(Role role) {
 
         return role.equals(Role.SUPER_ADMIN);
