@@ -45,4 +45,8 @@ public class Post extends CreationTimeAuditable {
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
     private List<PostMedia> postMedia = new ArrayList<>();
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
+    private List<PostTag> tags = new ArrayList<>();
 }

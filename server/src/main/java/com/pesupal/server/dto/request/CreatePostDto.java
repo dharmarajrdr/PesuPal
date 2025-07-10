@@ -26,6 +26,8 @@ public class CreatePostDto {
 
     private Set<UUID> mediaIds = new HashSet<>();
 
+    private Set<String> tags = new HashSet<>();
+
     public Post toPost() {
 
         Post post = new Post();

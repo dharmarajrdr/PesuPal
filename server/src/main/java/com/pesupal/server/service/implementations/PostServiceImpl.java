@@ -5,12 +5,10 @@ import com.pesupal.server.enums.PostStatus;
 import com.pesupal.server.model.org.Org;
 import com.pesupal.server.model.post.Post;
 import com.pesupal.server.model.post.PostMedia;
+import com.pesupal.server.model.post.PostTag;
 import com.pesupal.server.model.user.User;
 import com.pesupal.server.repository.PostRepository;
-import com.pesupal.server.service.interfaces.OrgMemberService;
-import com.pesupal.server.service.interfaces.OrgService;
-import com.pesupal.server.service.interfaces.PostService;
-import com.pesupal.server.service.interfaces.UserService;
+import com.pesupal.server.service.interfaces.*;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +23,7 @@ public class PostServiceImpl implements PostService {
     private final UserService userService;
     private final PostRepository postRepository;
     private final OrgMemberService orgMemberService;
+    private final TagService tagService;
 
     /**
      * Creates a new post.
@@ -46,6 +45,8 @@ public class PostServiceImpl implements PostService {
         List<PostMedia> postMedia = createPostDto.getMediaIds().stream().map(mediaId -> PostMedia.builder().post(post).mediaId(mediaId).build()).collect(Collectors.toList());
         post.setMedia(!postMedia.isEmpty());
         post.setPostMedia(postMedia);
+        List<PostTag> postTags = createPostDto.getTags().stream().map(tagName -> PostTag.builder().post(post).tag(tagService.createOrGet(tagName)).build()).collect(Collectors.toList());
+        post.setTags(postTags);
         postRepository.save(post);
     }
 }
