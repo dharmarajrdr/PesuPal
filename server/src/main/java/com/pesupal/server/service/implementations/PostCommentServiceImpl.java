@@ -104,4 +104,18 @@ public class PostCommentServiceImpl implements PostCommentService {
             return PostCommentDto.fromPostCommentAndOrgMember(postComment, orgMember);
         }).toList();
     }
+
+    /**
+     * Retrieves a specific comment by its ID.
+     *
+     * @param commentId
+     * @param userId
+     * @param orgId
+     * @return PostComment
+     */
+    @Override
+    public PostComment getPostCommentById(Long commentId, Long userId, Long orgId) {
+
+        return postCommentRepository.findById(commentId).orElseThrow(() -> new DataNotFoundException("Comment with ID " + commentId + " not found."));
+    }
 }
