@@ -81,6 +81,19 @@ public class PostServiceImpl implements PostService {
     }
 
     /**
+     * Checks if a post exists in the organization.
+     *
+     * @param postId
+     * @param orgId
+     * @return
+     */
+    @Override
+    public boolean isPostExistInOrg(Long postId, Long orgId) {
+
+        return postRepository.existsByIdAndOrgId(postId, orgId);
+    }
+
+    /**
      * Retrieves a post by its ID.
      *
      * @param postId

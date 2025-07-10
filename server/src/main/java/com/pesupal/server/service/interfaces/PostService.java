@@ -11,6 +11,8 @@ public interface PostService {
 
     Post createPost(CreatePostDto createPostDto, Long userId, Long orgId);
 
+    boolean isPostExistInOrg(Long postId, Long orgId);
+
     Post getPostByIdAndOrgId(Long postId, Long orgId);
 
     PostDto getPostByIdAndOrgId(Long postId, Long userId, Long orgId);
