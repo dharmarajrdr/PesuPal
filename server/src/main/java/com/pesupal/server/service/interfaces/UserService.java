@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public interface UserService {
 
-    User getUserById(Long ownerId);
+    User getUserById(Long userId);
 
     User createUser(CreateUserDto createUserDto);
 
