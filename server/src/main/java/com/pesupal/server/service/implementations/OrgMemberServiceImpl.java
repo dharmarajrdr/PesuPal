@@ -226,4 +226,18 @@ public class OrgMemberServiceImpl implements OrgMemberService {
         return orgMemberRepository.save(newOrgMember);
     }
 
+    /**
+     * Validates if a user is a member of an organization.
+     *
+     * @param user
+     * @param org
+     */
+    @Override
+    public void validateUserIsOrgMember(User user, Org org) {
+
+        if (!existsByUserAndOrg(user, org)) {
+            throw new DataNotFoundException("User with ID " + user.getId() + " is not a member of this org.");
+        }
+    }
+
 }
