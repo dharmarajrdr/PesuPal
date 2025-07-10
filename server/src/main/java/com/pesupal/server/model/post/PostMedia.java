@@ -1,5 +1,6 @@
 package com.pesupal.server.model.post;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.pesupal.server.model.CreationTimeAuditable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -19,6 +20,7 @@ import java.util.UUID;
 public class PostMedia extends CreationTimeAuditable {
 
     @ManyToOne
+    @JsonIgnore
     private Post post;
 
     @Column(nullable = false, unique = true)
