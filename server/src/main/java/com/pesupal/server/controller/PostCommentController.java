@@ -25,7 +25,7 @@ public class PostCommentController extends CurrentValueRetriever {
         return ResponseEntity.ok().body(new ApiResponseDto("Comments retrieved successfully.", comments));
     }
 
-    @PostMapping("/{postId}/comment")
+    @PostMapping("/comment")
     public ResponseEntity<ApiResponseDto> createPostComment(@RequestBody CreatePostCommentDto createPostCommentDto) {
 
         PostCommentDto postCommentDto = postCommentService.createPostComment(createPostCommentDto, getCurrentUserId(), getCurrentOrgId());
