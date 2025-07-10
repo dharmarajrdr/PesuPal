@@ -14,6 +14,7 @@ import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -57,7 +58,19 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponseDto("Missing request parameter: " + ex.getParameterName(), ResponseStatus.FAILURE));
     }
-    
+
+    @ExceptionHandler(FileNotFoundException.class)
+    public ResponseEntity<ApiResponseDto> handleFileNotFoundException(FileNotFoundException ex) {
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponseDto(ex.getMessage(), ResponseStatus.FAILURE));
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ApiResponseDto> handleIllegalArgumentException(IllegalArgumentException ex) {
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponseDto(ex.getMessage(), ResponseStatus.FAILURE));
+    }
+
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ApiResponseDto> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
 

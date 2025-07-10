@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -64,6 +65,18 @@ public class OrgSubscriptionHistoryServiceImpl implements OrgSubscriptionHistory
     public LocalDateTime getLatestSubscriptionEndDate(Long orgId) {
 
         return orgSubscriptionHistoryRepository.findLatestEndDateByOrgId(orgId);
+    }
+
+    /**
+     * Retrieves the latest subscription history for an organization.
+     *
+     * @param orgId
+     * @return
+     */
+    @Override
+    public Optional<OrgSubscriptionHistory> getLatestSubscription(Long orgId) {
+
+        return orgSubscriptionHistoryRepository.findTopByOrgIdOrderByEndDateDesc(orgId);
     }
 
     /**

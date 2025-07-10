@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface OrgSubscriptionHistoryRepository extends JpaRepository<OrgSubscriptionHistory, Long> {
@@ -16,4 +17,6 @@ public interface OrgSubscriptionHistoryRepository extends JpaRepository<OrgSubsc
 
     @Query("SELECT MAX(o.endDate) FROM OrgSubscriptionHistory o WHERE o.org.id = :orgId")
     LocalDateTime findLatestEndDateByOrgId(@Param("orgId") Long orgId);
+
+    Optional<OrgSubscriptionHistory> findTopByOrgIdOrderByEndDateDesc(Long orgId);
 }
