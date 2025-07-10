@@ -1,0 +1,26 @@
+package com.pesupal.server.model.post;
+
+import com.pesupal.server.model.CreationTimeAuditable;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.ManyToOne;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.util.UUID;
+
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@Entity
+public class PostMedia extends CreationTimeAuditable {
+
+    @ManyToOne
+    private Post post;
+
+    @Column(nullable = false, unique = true)
+    private UUID mediaId;
+}
