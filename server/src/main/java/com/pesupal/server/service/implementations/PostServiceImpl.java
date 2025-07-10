@@ -6,7 +6,9 @@ import com.pesupal.server.dto.response.PostImpressionDto;
 import com.pesupal.server.dto.response.UserBasicInfoDto;
 import com.pesupal.server.enums.PostStatus;
 import com.pesupal.server.enums.SortOrder;
+import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.exceptions.DataNotFoundException;
+import com.pesupal.server.exceptions.PermissionDeniedException;
 import com.pesupal.server.model.org.Org;
 import com.pesupal.server.model.post.Post;
 import com.pesupal.server.model.post.PostMedia;
@@ -23,6 +25,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -81,15 +84,28 @@ public class PostServiceImpl implements PostService {
      * Retrieves a post by its ID.
      *
      * @param postId
+     * @param orgId
+     * @return Post
+     */
+    @Override
+    public Post getPostByIdAndOrgId(Long postId, Long orgId) {
+
+        return postRepository.findByIdAndOrgId(postId, orgId).orElseThrow(() -> new DataNotFoundException("Post with ID " + postId + " does not exist."));
+    }
+
+    /**
+     * Retrieves a post by its ID.
+     *
+     * @param postId
      * @param userId
      * @param orgId
      * @return PostDto
      */
     @Override
-    public PostDto getPostById(Long postId, Long userId, Long orgId) {
+    public PostDto getPostByIdAndOrgId(Long postId, Long userId, Long orgId) {
 
         OrgMember orgMember = orgMemberService.getOrgMemberByUserIdAndOrgId(userId, orgId);
-        Post post = postRepository.findByIdAndOrgId(postId, orgId).orElseThrow(() -> new DataNotFoundException("Post not found with ID: " + postId));
+        Post post = getPostByIdAndOrgId(postId, orgId);
         return getPostDtoFromPostAndOrgMember(post, orgMember);
     }
 
@@ -111,5 +127,26 @@ public class PostServiceImpl implements PostService {
         Pageable pageable = PageRequest.of(page, size, sort);
         Page<Post> postPage = postRepository.findAllByOrgIdAndUserIdAndStatus(orgId, postOwnerId, pageable, PostStatus.PUBLISHED);
         return postPage.getContent().stream().map(post -> getPostDtoFromPostAndOrgMember(post, orgMember)).toList();
+    }
+
+    /**
+     * Archives a post by its ID.
+     *
+     * @param postId
+     * @param userId
+     * @param orgId
+     */
+    @Override
+    public void archivePost(Long postId, Long userId, Long orgId) {
+
+        Post post = getPostByIdAndOrgId(postId, orgId);
+        if (!Objects.equals(post.getUser().getId(), userId)) {
+            throw new PermissionDeniedException("You do not have permission to archive this post.");
+        }
+        if (post.getStatus().equals(PostStatus.ARCHIVED)) {
+            throw new ActionProhibitedException("Post is already archived.");
+        }
+        post.setStatus(PostStatus.ARCHIVED);
+        postRepository.save(post);
     }
 }

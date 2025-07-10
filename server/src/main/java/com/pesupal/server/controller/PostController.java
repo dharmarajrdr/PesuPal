@@ -30,7 +30,7 @@ public class PostController extends CurrentValueRetriever {
     @GetMapping("/{postId}")
     public ResponseEntity<ApiResponseDto> getPostById(@PathVariable Long postId) {
 
-        PostDto post = postService.getPostById(postId, getCurrentUserId(), getCurrentOrgId());
+        PostDto post = postService.getPostByIdAndOrgId(postId, getCurrentUserId(), getCurrentOrgId());
         return ResponseEntity.ok().body(new ApiResponseDto("Post retrieved successfully.", post));
     }
 
@@ -43,5 +43,12 @@ public class PostController extends CurrentValueRetriever {
 
         List<PostDto> posts = postService.getPostByUserId(getCurrentUserId(), getCurrentOrgId(), postOwnerId, page, size, SortOrder.valueOf(sortOrder));
         return ResponseEntity.ok().body(new ApiResponseDto("Posts retrieved successfully.", posts));
+    }
+
+    @PutMapping("/archive/{postId}")
+    public ResponseEntity<ApiResponseDto> archivePost(@PathVariable Long postId) {
+
+        postService.archivePost(postId, getCurrentUserId(), getCurrentOrgId());
+        return ResponseEntity.ok().body(new ApiResponseDto("Post archived successfully"));
     }
 }
