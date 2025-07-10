@@ -8,6 +8,8 @@ public class StaticConfig {
 
     public static final int FREE_TRIAL_DAYS = 5;
 
+    public static final String MEDIA_PATH = "/Users/dharma-13910/Videos/";
+
     public static boolean eligibleToCreateSubscriptionPlan(Role role) {
 
         return role.equals(Role.SUPER_ADMIN);
