@@ -5,6 +5,7 @@ import com.pesupal.server.dto.response.PostDto;
 import com.pesupal.server.dto.response.PostImpressionDto;
 import com.pesupal.server.dto.response.UserBasicInfoDto;
 import com.pesupal.server.enums.PostStatus;
+import com.pesupal.server.enums.SortOrder;
 import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.model.org.Org;
 import com.pesupal.server.model.post.Post;
@@ -15,6 +16,10 @@ import com.pesupal.server.model.user.User;
 import com.pesupal.server.repository.PostRepository;
 import com.pesupal.server.service.interfaces.*;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -56,6 +61,23 @@ public class PostServiceImpl implements PostService {
     }
 
     /**
+     * Converts a Post entity and OrgMember to a PostDto.
+     *
+     * @param post
+     * @param orgMember
+     * @return PostDto
+     */
+    private PostDto getPostDtoFromPostAndOrgMember(Post post, OrgMember orgMember) {
+
+        PostDto postDto = PostDto.fromPost(post);
+        postDto.setTags(post.getTags().stream().map(postTag -> postTag.getTag().getName()).toList());
+        postDto.setMedia(post.getPostMedia().stream().map(PostMedia::getMediaId).toList());
+        postDto.setOwner(UserBasicInfoDto.fromOrgMember(orgMember));
+        postDto.setImpression(PostImpressionDto.builder().likes(post.getLikes().size()).comments(post.getComments().size()).build());
+        return postDto;
+    }
+
+    /**
      * Retrieves a post by its ID.
      *
      * @param postId
@@ -67,13 +89,27 @@ public class PostServiceImpl implements PostService {
     public PostDto getPostById(Long postId, Long userId, Long orgId) {
 
         OrgMember orgMember = orgMemberService.getOrgMemberByUserIdAndOrgId(userId, orgId);
-
         Post post = postRepository.findByIdAndOrgId(postId, orgId).orElseThrow(() -> new DataNotFoundException("Post not found with ID: " + postId));
-        PostDto postDto = PostDto.fromPost(post);
-        postDto.setTags(post.getTags().stream().map(postTag -> postTag.getTag().getName()).toList());
-        postDto.setMedia(post.getPostMedia().stream().map(PostMedia::getMediaId).toList());
-        postDto.setOwner(UserBasicInfoDto.fromOrgMember(orgMember));
-        postDto.setImpression(PostImpressionDto.builder().likes(post.getLikes().size()).comments(post.getComments().size()).build());
-        return postDto;
+        return getPostDtoFromPostAndOrgMember(post, orgMember);
+    }
+
+    /**
+     * Retrieves a list of posts by user ID and organization ID.
+     *
+     * @param userId
+     * @param orgId
+     * @return
+     */
+    @Override
+    public List<PostDto> getPostByUserId(Long userId, Long orgId, Long postOwnerId, int page, int size, SortOrder sortOrder) {
+
+        OrgMember orgMember = orgMemberService.getOrgMemberByUserIdAndOrgId(userId, orgId);
+
+        orgMemberService.validateUserIsOrgMember(postOwnerId, orgId);
+
+        Sort sort = Sort.by(sortOrder == SortOrder.ASC ? Sort.Direction.ASC : Sort.Direction.DESC, "createdAt");
+        Pageable pageable = PageRequest.of(page, size, sort);
+        Page<Post> postPage = postRepository.findAllByOrgIdAndUserIdAndStatus(orgId, postOwnerId, pageable, PostStatus.PUBLISHED);
+        return postPage.getContent().stream().map(post -> getPostDtoFromPostAndOrgMember(post, orgMember)).toList();
     }
 }
