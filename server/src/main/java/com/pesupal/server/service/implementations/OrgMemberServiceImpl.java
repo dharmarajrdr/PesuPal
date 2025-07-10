@@ -240,4 +240,19 @@ public class OrgMemberServiceImpl implements OrgMemberService {
         }
     }
 
+    /**
+     * Validates if a user is a member of an organization.
+     *
+     * @param userId
+     * @param orgId
+     */
+    @Override
+    public void validateUserIsOrgMember(Long userId, Long orgId) {
+
+        Org org = orgService.getOrgById(orgId);
+        User user = userService.getUserById(userId);
+
+        validateUserIsOrgMember(user, org);
+    }
+
 }
