@@ -40,7 +40,9 @@ public class DirectMessageServiceImpl implements DirectMessageService {
     private final OrgService orgService;
     private final OrgMemberService orgMemberService;
 
-    public DirectMessageServiceImpl(DirectMessageRepository directMessageRepository, @Lazy DirectMessageReactionService directMessageReactionService, SecurityUtil securityUtil, UserService userService, OrgService orgService, OrgMemberService orgMemberService) {
+    public DirectMessageServiceImpl(DirectMessageRepository directMessageRepository,
+            @Lazy DirectMessageReactionService directMessageReactionService, SecurityUtil securityUtil,
+            UserService userService, OrgService orgService, OrgMemberService orgMemberService) {
         this.directMessageRepository = directMessageRepository;
         this.directMessageReactionService = directMessageReactionService;
         this.securityUtil = securityUtil;
@@ -56,10 +58,13 @@ public class DirectMessageServiceImpl implements DirectMessageService {
      * @return List of DirectMessageResponseDto
      */
     @Override
-    public List<DirectMessageResponseDto> getDirectMessagesBetweenUsers(GetConversationBetweenUsers getConversationBetweenUsers) {
+    public List<DirectMessageResponseDto> getDirectMessagesBetweenUsers(
+            GetConversationBetweenUsers getConversationBetweenUsers) {
 
-        Pageable pageable = PageRequest.of(getConversationBetweenUsers.getPage(), getConversationBetweenUsers.getSize(), Sort.by("createdAt").descending());
-        Page<DirectMessage> messages = directMessageRepository.findByChatId(getConversationBetweenUsers.getChatId(), pageable);
+        Pageable pageable = PageRequest.of(getConversationBetweenUsers.getPage(), getConversationBetweenUsers.getSize(),
+                Sort.by("createdAt").descending());
+        Page<DirectMessage> messages = directMessageRepository.findByChatId(getConversationBetweenUsers.getChatId(),
+                pageable);
         return messages.stream().map(dm -> {
             DirectMessageResponseDto directMessageResponseDto = DirectMessageResponseDto.fromDirectMessage(dm);
             directMessageResponseDto.setReactions(directMessageReactionService.getReactionsCountForMessage(dm));
@@ -88,7 +93,8 @@ public class DirectMessageServiceImpl implements DirectMessageService {
     @Override
     public DirectMessage getDirectMessageById(Long messageId) {
 
-        return directMessageRepository.findById(messageId).orElseThrow(() -> new DataNotFoundException("Message with ID " + messageId + " not found"));
+        return directMessageRepository.findById(messageId)
+                .orElseThrow(() -> new DataNotFoundException("Message with ID " + messageId + " not found"));
     }
 
     /**
@@ -130,9 +136,7 @@ public class DirectMessageServiceImpl implements DirectMessageService {
         User user = userService.getUserById(userId);
         Org org = orgService.getOrgById(orgId);
 
-        if (!orgMemberService.existsByUserAndOrg(user, org)) {
-            throw new PermissionDeniedException("You are not a member of this organization.");
-        }
+        orgMemberService.validateUserIsOrgMember(user, org);
 
         List<Object[]> rows = directMessageRepository.findRecentChatsPaged(userId, orgId, size, offset);
 
@@ -180,15 +184,11 @@ public class DirectMessageServiceImpl implements DirectMessageService {
 
         Long senderId = securityUtil.getCurrentUserId();
         User sender = userService.getUserById(senderId);
-        if (!orgMemberService.existsByUserAndOrg(sender, org)) {
-            throw new ActionProhibitedException("You are not a member of this organization.");
-        }
+        orgMemberService.validateUserIsOrgMember(sender, org);
 
         Long receiverId = chatMessageDto.getReceiverId();
         User receiver = userService.getUserById(receiverId);
-        if (!orgMemberService.existsByUserAndOrg(receiver, org)) {
-            throw new ActionProhibitedException("The receiver is not a member of this organization.");
-        }
+        orgMemberService.validateUserIsOrgMember(receiver, org);
 
         String chatId = Chat.getChatId(senderId, receiverId, orgId);
         DirectMessage directMessage = new DirectMessage();

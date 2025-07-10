@@ -21,4 +21,8 @@ public interface OrgMemberService {
     List<OrgDetailDto> listOfOrgUserPartOf(Long userId);
 
     OrgMember addMemberToOrg(AddOrgMemberDto addOrgMemberDto, Long adminId, Long orgId, boolean firstMember);
+
+    void validateUserIsOrgMember(User user, Org org);
+
+    void validateUserIsOrgMember(Long userId, Long orgId);
 }
