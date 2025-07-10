@@ -16,6 +16,7 @@ import java.util.List;
 public class Post extends CreationTimeAuditable {
 
     @ManyToOne
+    @JsonIgnore
     private Org org;
 
     @ManyToOne
@@ -37,6 +38,10 @@ public class Post extends CreationTimeAuditable {
     private boolean shareable;
 
     private boolean bookmarkable;
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
+    private List<PostLike> likes = new ArrayList<>();
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
