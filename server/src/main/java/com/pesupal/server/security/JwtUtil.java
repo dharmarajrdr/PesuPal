@@ -1,5 +1,6 @@
 package com.pesupal.server.security;
 
+import com.pesupal.server.config.StaticConfig;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
@@ -17,10 +18,7 @@ public class JwtUtil {
 
     private final SecretKey secretKey = Keys.hmacShaKeyFor(SECRET_KEY_STRING.getBytes());
 
-    private int hourToMilliseconds(int hours) {
-
-        return hours * 60 * 60 * 1000;
-    }
+    private static final int JWT_EXPIRATION_IN_MILLISECONDS = StaticConfig.JWT_EXPIRATION_IN_HOURS * 60 * 60 * 1000;
 
     /**
      * Generates a JWT token for the given user details.
@@ -33,7 +31,7 @@ public class JwtUtil {
         return Jwts.builder()
                 .subject(userDetails.getUsername())
                 .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + hourToMilliseconds(1)))
+                .expiration(new Date(System.currentTimeMillis() + JWT_EXPIRATION_IN_MILLISECONDS))
                 .signWith(secretKey, Jwts.SIG.HS256)
                 .compact();
 
