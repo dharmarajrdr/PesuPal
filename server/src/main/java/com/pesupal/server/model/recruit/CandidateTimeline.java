@@ -12,8 +12,5 @@ public class CandidateTimeline extends CreationTimeAuditable {
     @ManyToOne
     private Candidate candidate;
 
-    @ManyToOne
-    private JobOpening job;
-
     private String description;
 }

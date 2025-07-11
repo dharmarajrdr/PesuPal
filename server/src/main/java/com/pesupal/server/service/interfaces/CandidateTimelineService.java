@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface CandidateTimelineService {
 
-    CandidateTimelineDto createCandidateTimeline(CreateCandidateTimelineDto createCandidateTimelineDto, Long userId, Long orgId);
+    void createCandidateTimeline(CreateCandidateTimelineDto createCandidateTimelineDto);
 
     List<CandidateTimelineDto> getTimelineByCandidateIdAndJobId(Long candidateId, Long jobId, Long userId, Long orgId);
 }
