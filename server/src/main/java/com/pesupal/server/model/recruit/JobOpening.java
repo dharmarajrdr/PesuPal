@@ -36,7 +36,7 @@ public class JobOpening extends CreationTimeAuditable {
     @Enumerated(EnumType.STRING)
     private JobOpeningStatus status;
 
-    private int positionsAvailable;
+    private Integer positionsAvailable;
 
     @Enumerated(EnumType.STRING)
     private JobType jobType;
