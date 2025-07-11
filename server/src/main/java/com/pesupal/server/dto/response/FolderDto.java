@@ -10,15 +10,15 @@ import java.util.List;
 
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class FolderDto {
+public class FolderDto extends FileOrFolderDto {
 
     private Long id;
 
     private String name;
 
-    private Security security;
-
     private UserBasicInfoDto owner;
+
+    private Security security;
 
     private List<FolderDto> subFolders;
 
