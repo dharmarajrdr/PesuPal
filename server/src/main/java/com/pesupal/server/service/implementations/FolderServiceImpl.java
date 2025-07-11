@@ -3,6 +3,7 @@ package com.pesupal.server.service.implementations;
 import com.pesupal.server.dto.request.CreateFolderDto;
 import com.pesupal.server.dto.response.FileOrFolderDto;
 import com.pesupal.server.dto.response.FolderDto;
+import com.pesupal.server.enums.Arithmetic;
 import com.pesupal.server.enums.Workspace;
 import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.exceptions.DataNotFoundException;
@@ -144,5 +145,32 @@ public class FolderServiceImpl implements FolderService {
         }
 
         folderRepository.delete(folder);
+    }
+
+    /**
+     * Updates the size of a folder recursively, adjusting its size based on the specified arithmetic operation.
+     *
+     * @param folder
+     * @param size
+     * @param arithmetic
+     */
+    @Override
+    public void updateFolderSizeRecursively(Folder folder, Long size, Arithmetic arithmetic) {
+
+        if (folder == null) {
+            return;     // root folder reached
+        }
+
+        /**
+         * Prevents infinite recursion if the folder's parent is itself.
+         * This can happen if the folder is incorrectly set to be its own parent.
+         */
+        if (folder.getParentFolder() != null && folder.getParentFolder().getId().equals(folder.getId())) {
+            return;
+        }
+
+        folder.setSize(folder.getSize() + (arithmetic == Arithmetic.PLUS ? size : -size));
+        folderRepository.save(folder);
+        updateFolderSizeRecursively(folder.getParentFolder(), size, arithmetic);
     }
 }
