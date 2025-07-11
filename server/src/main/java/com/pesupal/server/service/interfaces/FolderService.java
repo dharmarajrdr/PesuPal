@@ -15,6 +15,8 @@ public interface FolderService {
 
     Folder getFolderByIdAndOrgId(Long folderId, Long orgId);
 
+    List<FolderDto> getAllFolders(Long parentFolderId, Long userId, Long orgId);
+
     List<FolderDto> getAllFolders(Workspace space, Long userId, Long orgId);
 
     void deleteFolder(Long folderId, Long userId, Long orgId);

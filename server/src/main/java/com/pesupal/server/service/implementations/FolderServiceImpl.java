@@ -87,6 +87,19 @@ public class FolderServiceImpl implements FolderService {
     }
 
     /**
+     * Retrieves all folders under a specific parent folder for a user in an organization.
+     *
+     * @param parentFolderId
+     * @param userId
+     * @param orgId
+     * @return
+     */
+    @Override
+    public List<FolderDto> getAllFolders(Long parentFolderId, Long userId, Long orgId) {
+        return List.of();
+    }
+
+    /**
      * Retrieves all folders in the specified workspace for a user.
      *
      * @param space
