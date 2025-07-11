@@ -77,28 +77,25 @@ public class MediaServiceImpl implements MediaService {
      * @return Long
      */
     @Override
-    public Long getFileSizeInKB(UUID mediaId) {
+    public Long getFileSizeInKB(UUID mediaId) throws Exception {
 
         String partialName = StaticConfig.MEDIA_PATH + "/" + mediaId.toString();
 
-        try {
-            // Build the shell command
-            String[] cmd = {
-                    "bash", "-c",
-                    "du -k -- " + partialName + ".* 2>/dev/null | awk '{print $1}'"
-            };
+        // Build the shell command
+        String[] cmd = {
+                "bash", "-c",
+                "du -k -- " + partialName + ".* 2>/dev/null | awk '{print $1}'"
+        };
 
-            // Execute command
-            Process process = Runtime.getRuntime().exec(cmd);
-            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            String line = reader.readLine();
+        // Execute command
+        Process process = Runtime.getRuntime().exec(cmd);
+        BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+        String line = reader.readLine();
 
-            // Parse result
-            if (line != null && !line.isEmpty()) {
-                return Long.parseLong(line.trim());
-            }
-        } catch (Exception e) {
+        // Parse result
+        if (line != null && !line.isEmpty()) {
+            return Long.parseLong(line.trim());
         }
-        return null; // Return 0 if an error occurs or no size is found
+        throw new Exception("File size could not be determined for media ID: " + mediaId);
     }
 }

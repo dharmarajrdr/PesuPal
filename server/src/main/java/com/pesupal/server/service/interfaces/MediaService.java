@@ -14,5 +14,5 @@ public interface MediaService {
 
     UUID saveMedia(MultipartFile file) throws IOException;
 
-    Long getFileSizeInKB(UUID mediaId);
+    Long getFileSizeInKB(UUID mediaId) throws Exception;
 }
