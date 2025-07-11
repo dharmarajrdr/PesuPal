@@ -12,6 +12,7 @@ import com.pesupal.server.repository.FolderRepository;
 import com.pesupal.server.service.interfaces.FolderService;
 import com.pesupal.server.service.interfaces.OrgMemberService;
 import com.pesupal.server.service.interfaces.WorkdriveSpace;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -34,6 +35,7 @@ public class FolderServiceImpl implements FolderService {
      * @return FolderDto
      */
     @Override
+    @Transactional
     public FolderDto createFolder(CreateFolderDto createFolderDto, Long userId, Long orgId) {
 
         OrgMember orgMember = orgMemberService.getOrgMemberByUserIdAndOrgId(userId, orgId);
@@ -46,7 +48,11 @@ public class FolderServiceImpl implements FolderService {
         folder.setOrg(orgMember.getOrg());
         folder.setOwner(orgMember.getUser());
         if (createFolderDto.getParentFolderId() != null) {
-            folder.setParentFolder(getFolderById(createFolderDto.getParentFolderId()));
+            Folder parentFolder = getFolderByIdAndOrgId(createFolderDto.getParentFolderId(), orgId);
+            if (parentFolder != null && !parentFolder.getSpace().equals(createFolderDto.getSpace())) {
+                throw new IllegalArgumentException("Folder '" + parentFolder.getName() + "' does not belong to " + createFolderDto.getSpace().getValue() + " space.");
+            }
+            folder.setParentFolder(parentFolder);
         }
         WorkdriveSpace workdriveSpace = workspaceFactory.getFactory(createFolderDto.getSpace());
         folder = workdriveSpace.save(folder, createFolderDto, orgMember);
@@ -59,12 +65,25 @@ public class FolderServiceImpl implements FolderService {
      * Retrieves a folder by its ID.
      *
      * @param folderId
-     * @return
+     * @return Folder
      */
     @Override
     public Folder getFolderById(Long folderId) {
 
         return folderRepository.findById(folderId).orElseThrow(() -> new DataNotFoundException("Folder with ID " + folderId + " not found."));
+    }
+
+    /**
+     * Retrieves a folder by its ID and organization ID.
+     *
+     * @param folderId
+     * @param orgId
+     * @return Folder
+     */
+    @Override
+    public Folder getFolderByIdAndOrgId(Long folderId, Long orgId) {
+
+        return folderRepository.findByIdAndOrgId(folderId, orgId).orElseThrow(() -> new DataNotFoundException("Folder with ID " + folderId + " not found in this org."));
     }
 
     /**
@@ -90,5 +109,13 @@ public class FolderServiceImpl implements FolderService {
     @Override
     public void deleteFolder(Long folderId, Long userId, Long orgId) {
 
+        OrgMember orgMember = orgMemberService.getOrgMemberByUserIdAndOrgId(userId, orgId);
+        Folder folder = getFolderById(folderId);
+
+        if (!folder.getOwner().getId().equals(orgMember.getUser().getId())) {
+            throw new ActionProhibitedException("You do not have permission to delete this folder.");
+        }
+
+        folderRepository.delete(folder);
     }
 }
