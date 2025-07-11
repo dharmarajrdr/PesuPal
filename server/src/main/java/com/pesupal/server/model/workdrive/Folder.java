@@ -27,12 +27,15 @@ public class Folder extends CreationTimeAuditable {
     @Column(nullable = false)
     private Workspace space;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.REMOVE)
     private Folder parentFolder;
 
     @OneToMany(mappedBy = "parentFolder", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
     private List<Folder> subFolders;
+
+    @OneToOne(mappedBy = "folder", cascade = CascadeType.ALL)
+    private PublicFolder publicFolder;
 
     @OneToMany(mappedBy = "folder", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
