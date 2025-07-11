@@ -76,4 +76,10 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponseDto("Malformed JSON request: " + ex.getMessage(), ResponseStatus.FAILURE));
     }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ApiResponseDto> handleGenericException(Exception ex) {
+
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponseDto(ex.getMessage(), ResponseStatus.FAILURE));
+    }
 }
