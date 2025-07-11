@@ -48,7 +48,7 @@ public class OrgSpace extends WorkspaceSupportsPublicFolder implements Workdrive
      * @return
      */
     @Override
-    public List<FileOrFolderDto> findAllFilesAndFoldersByOrgMember(OrgMember orgMember, Folder folder) {
+    public List<FileOrFolderDto> findAllFilesAndFoldersByOrgMemberAndFolder(OrgMember orgMember, Folder folder) {
 
         ensureReadAccessToSecuredFolder(folder, orgMember, securedFolderPermissionService);
 

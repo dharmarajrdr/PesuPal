@@ -54,7 +54,7 @@ public class TeamSpace extends WorkspaceSupportsPublicFolder implements Workdriv
      * @return List of FolderDto
      */
     @Override
-    public List<FileOrFolderDto> findAllFilesAndFoldersByOrgMember(OrgMember orgMember, Folder folder) {
+    public List<FileOrFolderDto> findAllFilesAndFoldersByOrgMemberAndFolder(OrgMember orgMember, Folder folder) {
 
         ensureReadAccessToSecuredFolder(folder, orgMember, securedFolderPermissionService);
 

@@ -16,7 +16,7 @@ public interface FolderService {
 
     Folder getFolderByIdAndOrgId(Long folderId, Long orgId);
 
-    List<FileOrFolderDto> getAllFolders(Long parentFolderId, Long userId, Long orgId);
+    List<FileOrFolderDto> getAllFolders(Long folderId, Long userId, Long orgId);
 
     List<FileOrFolderDto> getAllFolders(Workspace space, Long userId, Long orgId);
 

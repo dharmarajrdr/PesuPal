@@ -90,19 +90,19 @@ public class FolderServiceImpl implements FolderService {
     /**
      * Retrieves all folders under a specific parent folder for a user in an organization.
      *
-     * @param parentFolderId
+     * @param folderId
      * @param userId
      * @param orgId
      * @return List of FolderDto
      */
     @Override
-    public List<FileOrFolderDto> getAllFolders(Long parentFolderId, Long userId, Long orgId) {
+    public List<FileOrFolderDto> getAllFolders(Long folderId, Long userId, Long orgId) {
 
-        Folder parentFolder = getFolderByIdAndOrgId(parentFolderId, orgId);
+        Folder parentFolder = getFolderByIdAndOrgId(folderId, orgId);
         Workspace workspace = parentFolder.getSpace();
         WorkdriveSpace workdriveSpace = workspaceFactory.getFactory(workspace);
         OrgMember orgMember = orgMemberService.getOrgMemberByUserIdAndOrgId(userId, orgId);
-        return workdriveSpace.findAllFilesAndFoldersByOrgMember(orgMember, parentFolder);
+        return workdriveSpace.findAllFilesAndFoldersByOrgMemberAndFolder(orgMember, parentFolder);
     }
 
     /**
@@ -118,7 +118,7 @@ public class FolderServiceImpl implements FolderService {
 
         WorkdriveSpace workdriveSpace = workspaceFactory.getFactory(space);
         OrgMember orgMember = orgMemberService.getOrgMemberByUserIdAndOrgId(userId, orgId);
-        return workdriveSpace.findAllFilesAndFoldersByOrgMember(orgMember, null);
+        return workdriveSpace.findAllFilesAndFoldersByOrgMemberAndFolder(orgMember, null);  // `null` indicates root folder
     }
 
     /**

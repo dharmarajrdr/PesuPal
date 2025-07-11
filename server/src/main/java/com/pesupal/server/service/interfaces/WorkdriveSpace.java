@@ -11,5 +11,5 @@ public interface WorkdriveSpace {
 
     Folder save(Folder folder, CreateFolderDto createFolderDto, OrgMember orgMember);
 
-    List<FileOrFolderDto> findAllFilesAndFoldersByOrgMember(OrgMember orgMember, Folder folder);
+    List<FileOrFolderDto> findAllFilesAndFoldersByOrgMemberAndFolder(OrgMember orgMember, Folder folder);
 }

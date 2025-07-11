@@ -45,7 +45,7 @@ public class PersonalSpace implements WorkdriveSpace {
      * @return
      */
     @Override
-    public List<FileOrFolderDto> findAllFilesAndFoldersByOrgMember(OrgMember orgMember, Folder parentFolder) {
+    public List<FileOrFolderDto> findAllFilesAndFoldersByOrgMemberAndFolder(OrgMember orgMember, Folder parentFolder) {
 
         List<FileOrFolderDto> filesAndFolders = new ArrayList<>();
 
