@@ -25,6 +25,8 @@ public class Folder extends CreationTimeAuditable {
     @ManyToOne
     private User owner;
 
+    private Long size;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Workspace space;

@@ -19,6 +19,8 @@ public class File extends CreationTimeAuditable {
     @ManyToOne
     private Folder folder;
 
+    private Long size;
+
     @ManyToOne
     private User creator;
 
