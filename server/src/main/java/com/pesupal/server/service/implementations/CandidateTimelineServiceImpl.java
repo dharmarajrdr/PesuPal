@@ -2,6 +2,8 @@ package com.pesupal.server.service.implementations;
 
 import com.pesupal.server.dto.request.CreateCandidateTimelineDto;
 import com.pesupal.server.dto.response.CandidateTimelineDto;
+import com.pesupal.server.model.recruit.CandidateTimeline;
+import com.pesupal.server.repository.CandidateTimelineRepository;
 import com.pesupal.server.service.interfaces.CandidateTimelineService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -12,17 +14,19 @@ import java.util.List;
 @AllArgsConstructor
 public class CandidateTimelineServiceImpl implements CandidateTimelineService {
 
+    private final CandidateTimelineRepository candidateTimelineRepository;
+
     /**
      * Creates a new candidate timeline entry.
      *
      * @param createCandidateTimelineDto
-     * @param userId
-     * @param orgId
      * @return
      */
     @Override
-    public CandidateTimelineDto createCandidateTimeline(CreateCandidateTimelineDto createCandidateTimelineDto, Long userId, Long orgId) {
-        return null;
+    public void createCandidateTimeline(CreateCandidateTimelineDto createCandidateTimelineDto) {
+
+        CandidateTimeline candidateTimeline = createCandidateTimelineDto.toCandidateTimeline();
+        candidateTimelineRepository.save(candidateTimeline);
     }
 
     /**
