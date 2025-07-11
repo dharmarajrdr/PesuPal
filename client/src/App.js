@@ -14,7 +14,6 @@ import { NavigationReducers } from './store/reducers/Navigation';
 import PeopleLayout from './components/People/PeopleLayout';
 import TeamLayout from './components/Team/TeamLayout';
 import TrackerLayout from './components/Tracker/TrackerLayout';
-import OrgList from './components/Org/OrgList';
 
 function Navigation() {
     const navigate = useNavigate();
@@ -47,7 +46,6 @@ function App() {
                         <Route path='/tracker' element={<TrackerLayout />} />
                         <Route path='/signup' element={<Signup />} />
                         <Route path='/signin' element={<Signin />} />
-                        <Route element={<OrgList />} />
                     </Routes>
                 </BrowserRouter>
             </div>

@@ -1,0 +1,13 @@
+#org-list-modal {
+
+    position: absolute;
+    bottom: 0px;
+    width: fit-content;
+    background-color: #fff;
+    box-shadow: 4px 4px 8px #aaa;
+    left: 75px;
+    overflow: auto;
+    max-height: 460px;
+    border-radius: 5px;
+    z-index: 10;
+}

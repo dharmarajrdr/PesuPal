@@ -1,15 +1,15 @@
 import React from 'react'
 import './OrgPreview.css';
 
-const OrgPreview = ({ org }) => {
+const OrgPreview = ({ org, toggleOrgList }) => {
 
-    const { id, displayName, role, displayPicture, members, status, subscription } = org;
+    const { id, active, displayName, role, displayPicture, members, status, subscription } = org;
     const { planName, expiresAt, status: subscriptionStatus } = subscription || {};
     const isOwner = role === 'ADMIN';
     const isTrial = planName == 'FREE_TRIAL';
 
     return (
-        <div className='FRCB org-preview p20' key={id}>
+        <div className={`FRCB org-preview p20 ${active ? 'active' : ''}`} key={id} onClick={toggleOrgList} >
             {isTrial && (
                 <h5 className='trial-badge'>
                     TRIAL

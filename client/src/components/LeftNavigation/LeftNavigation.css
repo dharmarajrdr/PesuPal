@@ -20,6 +20,7 @@
   padding: 15px 0px;
   width: 100%;
   border-radius: 10px;
+  cursor: pointer;
 }
 
 .LeftNavigationItem i {

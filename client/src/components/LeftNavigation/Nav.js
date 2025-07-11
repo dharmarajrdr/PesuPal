@@ -2,7 +2,7 @@ import React from 'react'
 import { NavLink } from 'react-router-dom';
 import './LeftNavigation.css'
 
-const Nav = ({ icon, image, title, route, notifyCount }) => {
+const Nav = ({ icon, image, title, route, notifyCount, showOrgListHandler }) => {
 
     return route ? (
         <NavLink to={route} className={({ isActive }) => (isActive ? 'activeNav' : '') + ` LeftNavigationItem cursP FCCC selectNone`}  >
@@ -13,7 +13,7 @@ const Nav = ({ icon, image, title, route, notifyCount }) => {
             <span className='colorFFF'>{title}</span>
         </NavLink>
     ) : (
-        <div className='LeftNavigationItem FCCC selectNone'>
+        <div className='LeftNavigationItem FCCC selectNone' onClick={showOrgListHandler} >
             {
                 icon ? <i className={`fas ${icon} colorFFF`}></i> : <img src={image} />
             }
