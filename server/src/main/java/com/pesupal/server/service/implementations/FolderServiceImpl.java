@@ -1,6 +1,7 @@
 package com.pesupal.server.service.implementations;
 
 import com.pesupal.server.dto.request.CreateFolderDto;
+import com.pesupal.server.dto.response.FileOrFolderDto;
 import com.pesupal.server.dto.response.FolderDto;
 import com.pesupal.server.enums.Workspace;
 import com.pesupal.server.exceptions.ActionProhibitedException;
@@ -92,11 +93,16 @@ public class FolderServiceImpl implements FolderService {
      * @param parentFolderId
      * @param userId
      * @param orgId
-     * @return
+     * @return List of FolderDto
      */
     @Override
-    public List<FolderDto> getAllFolders(Long parentFolderId, Long userId, Long orgId) {
-        return List.of();
+    public List<FileOrFolderDto> getAllFolders(Long parentFolderId, Long userId, Long orgId) {
+
+        Folder parentFolder = getFolderByIdAndOrgId(parentFolderId, orgId);
+        Workspace workspace = parentFolder.getSpace();
+        WorkdriveSpace workdriveSpace = workspaceFactory.getFactory(workspace);
+        OrgMember orgMember = orgMemberService.getOrgMemberByUserIdAndOrgId(userId, orgId);
+        return workdriveSpace.findAllFilesAndFoldersByOrgMember(orgMember, parentFolder);
     }
 
     /**
@@ -105,11 +111,14 @@ public class FolderServiceImpl implements FolderService {
      * @param space
      * @param userId
      * @param orgId
-     * @return
+     * @return List of FolderDto
      */
     @Override
-    public List<FolderDto> getAllFolders(Workspace space, Long userId, Long orgId) {
-        return List.of();
+    public List<FileOrFolderDto> getAllFolders(Workspace space, Long userId, Long orgId) {
+
+        WorkdriveSpace workdriveSpace = workspaceFactory.getFactory(space);
+        OrgMember orgMember = orgMemberService.getOrgMemberByUserIdAndOrgId(userId, orgId);
+        return workdriveSpace.findAllFilesAndFoldersByOrgMember(orgMember, null);
     }
 
     /**
