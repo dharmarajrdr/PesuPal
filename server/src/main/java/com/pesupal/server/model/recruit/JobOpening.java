@@ -41,7 +41,7 @@ public class JobOpening extends CreationTimeAuditable {
     @Enumerated(EnumType.STRING)
     private JobType jobType;
 
-    @OneToMany
+    @ElementCollection
     private List<JobOpeningCriteria> criteria;
 
     @OneToMany(mappedBy = "jobOpening", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
