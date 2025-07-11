@@ -1,7 +1,6 @@
 package com.pesupal.server.strategies.workspace;
 
 import com.pesupal.server.dto.request.CreateFolderDto;
-import com.pesupal.server.dto.response.FileDto;
 import com.pesupal.server.dto.response.FileOrFolderDto;
 import com.pesupal.server.dto.response.FolderDto;
 import com.pesupal.server.enums.CRUD;
@@ -11,28 +10,27 @@ import com.pesupal.server.exceptions.PermissionDeniedException;
 import com.pesupal.server.helpers.WorkspaceSupportsPublicFolder;
 import com.pesupal.server.model.department.Department;
 import com.pesupal.server.model.user.OrgMember;
-import com.pesupal.server.model.workdrive.File;
 import com.pesupal.server.model.workdrive.Folder;
 import com.pesupal.server.model.workdrive.PublicFolder;
 import com.pesupal.server.model.workdrive.TeamFolder;
-import com.pesupal.server.repository.FileRepository;
 import com.pesupal.server.repository.FolderRepository;
 import com.pesupal.server.repository.PublicFolderRepository;
 import com.pesupal.server.repository.TeamFolderRepository;
+import com.pesupal.server.service.interfaces.FileService;
 import com.pesupal.server.service.interfaces.PublicFolderService;
 import com.pesupal.server.service.interfaces.SecuredFolderPermissionService;
 import com.pesupal.server.service.interfaces.WorkdriveSpace;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component("TEAM_SPACE")
 @AllArgsConstructor
 public class TeamSpace extends WorkspaceSupportsPublicFolder implements WorkdriveSpace {
 
-    private final FileRepository fileRepository;
+    private final FileService fileService;
     private final FolderRepository folderRepository;
     private final PublicFolderService publicFolderService;
     private final TeamFolderRepository teamFolderRepository;
@@ -78,29 +76,21 @@ public class TeamSpace extends WorkspaceSupportsPublicFolder implements Workdriv
             }
         }
 
-        List<FileOrFolderDto> filesAndFolders = new ArrayList<>();
-
         // 1. Retrieve all subfolders in the given folder in the team space
 
-        List<TeamFolder> subFolders = teamFolderRepository.findByDepartmentAndFolder_ParentFolder(department, parentFolder);
+        List<FileOrFolderDto> filesAndFolders = teamFolderRepository.findByDepartmentAndFolder_ParentFolder(department, parentFolder)
+                .stream()
+                .map(teamFolder -> {
+                    Folder folder = teamFolder.getFolder();
+                    FolderDto folderDto = FolderDto.fromFolderAndOrgMember(folder, orgMember);
+                    folderDto.setType(FileOrFolder.FOLDER);
+                    folderDto.setSecurity(folder.getPublicFolder().getSecurity());
+                    return folderDto;
+                }).collect(Collectors.toList());
 
-        for (TeamFolder subFolder : subFolders) {
-            Folder folder = subFolder.getFolder();
-            FolderDto folderDto = FolderDto.fromFolderAndOrgMember(subFolder.getFolder(), orgMember);
-            folderDto.setType(FileOrFolder.FOLDER);
-            folderDto.setSecurity(folder.getPublicFolder().getSecurity());
-            filesAndFolders.add(folderDto);
-        }
+        // 2. Retrieve all files in the given folder in the team space
 
-        // 2. Retrieve all files in the given folder in the personal space
-
-        List<File> files = fileRepository.findAllByFolder(parentFolder);
-
-        for (File file : files) {
-            FileDto fileDto = FileDto.fromFileAndOrgMember(file, orgMember);
-            fileDto.setType(FileOrFolder.FILE);
-            filesAndFolders.add(fileDto);
-        }
+        filesAndFolders.addAll(fileService.findAllByFolderAndOrgMember(parentFolder, orgMember));
 
         return filesAndFolders;
     }
