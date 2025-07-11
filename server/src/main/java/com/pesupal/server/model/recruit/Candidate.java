@@ -36,6 +36,6 @@ public class Candidate extends CreationTimeAuditable {
     @Column(nullable = false)
     private JobApplicationStatus status;
 
-    @OneToMany
+    @OneToMany(mappedBy = "candidate", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<CandidateTimeline> timeline;
 }
