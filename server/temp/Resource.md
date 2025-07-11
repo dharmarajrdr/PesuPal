@@ -26,13 +26,13 @@
 
 ### Candidate Timeline Table
 
-| id | candidate_id | job_id | created_at | status                                               |
-|----|--------------|--------|------------|------------------------------------------------------|
-| 1  | 5            | 2      | 2023-10-05 | Sent OA Invitation                                   |
-| 2  | 5            | 2      | 2023-10-06 | Cleared OA                                           |
-| 3  | 5            | 2      | 2023-10-07 | Round 1 Interview Scheduled                          |
-| 4  | 5            | 2      | 2023-10-08 | Cleared Round 1 and so, Scheduled Round 2            |
-| 5  | 5            | 2      | 2023-10-09 | Not Satisfied with Round 2, Rejected                 |
-| 6  | 5            | 2      | 2023-10-10 | Reconsidered for Round 2 Interview based on feedback |
-| 7  | 5            | 2      | 2023-10-11 | Cleared Round 2, Offer Letter Sent                   |
-| 8  | 5            | 2      | 2023-10-12 | Offer Accepted                                       |
+| id | candidate_id | created_at | status                                               |
+|----|--------------|------------|------------------------------------------------------|
+| 1  | 5            | 2023-10-05 | Sent OA Invitation                                   |
+| 2  | 5            | 2023-10-06 | Cleared OA                                           |
+| 3  | 5            | 2023-10-07 | Round 1 Interview Scheduled                          |
+| 4  | 5            | 2023-10-08 | Cleared Round 1 and so, Scheduled Round 2            |
+| 5  | 5            | 2023-10-09 | Not Satisfied with Round 2, Rejected                 |
+| 6  | 5            | 2023-10-10 | Reconsidered for Round 2 Interview based on feedback |
+| 7  | 5            | 2023-10-11 | Cleared Round 2, Offer Letter Sent                   |
+| 8  | 5            | 2023-10-12 | Offer Accepted                                       |
