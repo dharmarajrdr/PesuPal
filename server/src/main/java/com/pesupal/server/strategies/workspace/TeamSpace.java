@@ -3,6 +3,8 @@ package com.pesupal.server.strategies.workspace;
 import com.pesupal.server.dto.request.CreateFolderDto;
 import com.pesupal.server.dto.response.FileOrFolderDto;
 import com.pesupal.server.enums.CRUD;
+import com.pesupal.server.exceptions.DataNotFoundException;
+import com.pesupal.server.exceptions.PermissionDeniedException;
 import com.pesupal.server.helpers.WorkspaceSupportsPublicFolder;
 import com.pesupal.server.model.department.Department;
 import com.pesupal.server.model.user.OrgMember;
@@ -58,6 +60,11 @@ public class TeamSpace extends WorkspaceSupportsPublicFolder implements Workdriv
     public List<FileOrFolderDto> findAllFilesAndFoldersByOrgMemberAndFolder(OrgMember orgMember, Folder folder) {
 
         ensureNecessaryPermissionInsideSecuredFolder(folder, orgMember, CRUD.READ, securedFolderPermissionService);
+
+        TeamFolder teamFolder = teamFolderRepository.findByFolder(folder).orElseThrow(() -> new DataNotFoundException("Folder '" + folder.getName() + "' not found in team space."));
+        if (!teamFolder.getDepartment().getId().equals(orgMember.getDepartment().getId())) {
+            throw new PermissionDeniedException("You don't have permission to access other team's folders.");
+        }
 
         return List.of();
     }
