@@ -7,6 +7,7 @@ import com.pesupal.server.model.workdrive.Folder;
 import com.pesupal.server.model.workdrive.PublicFolder;
 import com.pesupal.server.repository.FolderRepository;
 import com.pesupal.server.repository.PublicFolderRepository;
+import com.pesupal.server.service.interfaces.SecuredFolderPermissionService;
 import com.pesupal.server.service.interfaces.WorkdriveSpace;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -17,6 +18,7 @@ public class OrgSpace extends WorkspaceSupportsPublicFolder implements Workdrive
 
     private final FolderRepository folderRepository;
     private final PublicFolderRepository publicFolderRepository;
+    private final SecuredFolderPermissionService securedFolderPermissionService;
 
     /**
      * Saves a folder in the organization space with security settings.
@@ -26,6 +28,8 @@ public class OrgSpace extends WorkspaceSupportsPublicFolder implements Workdrive
      */
     @Override
     public Folder save(Folder folder, CreateFolderDto createFolderDto, OrgMember orgMember) {
+
+        ensureFolderCreationInsideSecuredFolder(folder, orgMember, securedFolderPermissionService);
 
         folder = folderRepository.save(folder);
         PublicFolder publicFolder = getPublicFolder(folder, createFolderDto);

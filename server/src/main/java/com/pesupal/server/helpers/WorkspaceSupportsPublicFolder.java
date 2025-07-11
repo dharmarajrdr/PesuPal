@@ -2,12 +2,47 @@ package com.pesupal.server.helpers;
 
 import com.pesupal.server.dto.request.CreateFolderDto;
 import com.pesupal.server.enums.Security;
+import com.pesupal.server.exceptions.PermissionDeniedException;
+import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.model.workdrive.Folder;
 import com.pesupal.server.model.workdrive.PublicFolder;
+import com.pesupal.server.service.interfaces.SecuredFolderPermissionService;
 
 public abstract class WorkspaceSupportsPublicFolder {
 
+    /**
+     * Ensures that the user has permission to create a folder in a secured parent folder.
+     *
+     * @param folder
+     * @param orgMember
+     */
+    protected void ensureFolderCreationInsideSecuredFolder(Folder folder, OrgMember orgMember, SecuredFolderPermissionService securedFolderPermissionService) {
+
+        Folder parentFolder = folder.getParentFolder();
+
+        if (parentFolder == null) {
+            return; // No parent folder, no need to check permissions
+        }
+
+        PublicFolder parentPublicFolder = parentFolder.getPublicFolder();
+
+        boolean isParentFolderSecured = parentPublicFolder != null && parentPublicFolder.getSecurity().equals(Security.SECURED);
+        if (isParentFolderSecured) {    // If the parent folder is secured
+
+            boolean isOwnerOfParentFolder = orgMember.getUser().getId().equals(parentFolder.getOwner().getId());
+            if (!isOwnerOfParentFolder) {   // If the user is not the owner of the parent folder
+
+                boolean hasWritePermission = securedFolderPermissionService.hasWritePermission(parentPublicFolder, orgMember);
+                if (!hasWritePermission) {  // If the user does not have write permission in the secured parent folder
+
+                    throw new PermissionDeniedException("You do not have permission to create a folder in this secured parent folder. Please request access from the owner.");
+                }
+            }
+        }
+    }
+
     protected PublicFolder getPublicFolder(Folder folder, CreateFolderDto createFolderDto) {
+
         PublicFolder publicFolder = new PublicFolder();
         publicFolder.setFolder(folder);
         publicFolder.setSecurity(createFolderDto.getSecurity());
