@@ -12,6 +12,7 @@ import java.util.UUID;
 @Entity
 public class File extends CreationTimeAuditable {
 
+    @Column(nullable = false)
     private String name;
 
     @ManyToOne

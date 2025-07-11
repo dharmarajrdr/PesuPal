@@ -7,11 +7,13 @@ import com.pesupal.server.model.org.Org;
 import com.pesupal.server.model.user.User;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.ToString;
 
 import java.util.List;
 
 @Data
 @Entity
+@ToString(onlyExplicitlyIncluded = true)
 public class Folder extends CreationTimeAuditable {
 
     @Column(nullable = false)
@@ -35,6 +37,8 @@ public class Folder extends CreationTimeAuditable {
     private List<Folder> subFolders;
 
     @OneToOne(mappedBy = "folder", cascade = CascadeType.ALL)
+    @JsonIgnore
+    @ToString.Exclude
     private PublicFolder publicFolder;
 
     @OneToMany(mappedBy = "folder", cascade = CascadeType.ALL, fetch = FetchType.LAZY)

@@ -20,4 +20,7 @@ public class TeamFolder extends BaseModel {
 
     @ManyToOne
     private Department department;
+
+    @OneToOne
+    private PublicFolder publicFolder;
 }
