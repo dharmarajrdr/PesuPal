@@ -40,18 +40,10 @@ const LeftNavigation = () => {
                     <div>
                         <i className="fa-solid fa-angles-left" id='closeLeftNav' onClick={hideNavContainer}></i>
                     </div>
-                    {ListOfNavigations.top.map((navigation, index) => {
-                        return (
-                            <Nav key={index} icon={navigation.icon} image={navigation.image} title={navigation.title} route={navigation.route} notifyCount={navigation.notifyCount} />
-                        )
-                    })}
+                    {ListOfNavigations.top.map((navigation, index) => <Nav key={index} icon={navigation.icon} image={navigation.image} title={navigation.title} route={navigation.route} notifyCount={navigation.notifyCount} />)}
                 </div>
                 <div className='w100'>
-                    {ListOfNavigations.bottom.map((navigation, index) => {
-                        return (
-                            <Nav key={index} icon={navigation.icon} image={navigation.image} title={navigation.title} route={navigation.route} />
-                        )
-                    })}
+                    {ListOfNavigations.bottom.map((navigation, index) => <Nav key={index} icon={navigation.icon} image={navigation.image} title={navigation.title} route={navigation.route} />)}
                 </div>
             </div>
         </div>
