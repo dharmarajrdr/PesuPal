@@ -14,18 +14,23 @@ import com.pesupal.server.service.interfaces.FolderService;
 import com.pesupal.server.service.interfaces.OrgMemberService;
 import com.pesupal.server.service.interfaces.WorkdriveSpace;
 import jakarta.transaction.Transactional;
-import lombok.AllArgsConstructor;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-@AllArgsConstructor
 public class FolderServiceImpl implements FolderService {
 
     private final OrgMemberService orgMemberService;
     private final FolderRepository folderRepository;
     private final WorkspaceFactory workspaceFactory;
+
+    public FolderServiceImpl(OrgMemberService orgMemberService, FolderRepository folderRepository, @Lazy WorkspaceFactory workspaceFactory) {
+        this.orgMemberService = orgMemberService;
+        this.folderRepository = folderRepository;
+        this.workspaceFactory = workspaceFactory;
+    }
 
     /**
      * Creates a new folder in the specified workspace.
