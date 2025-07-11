@@ -11,6 +11,13 @@ import com.pesupal.server.service.interfaces.SecuredFolderPermissionService;
 public abstract class WorkspaceSupportsPublicFolder {
 
     /**
+     * Ensures that the user has read access to a secured folder.
+     */
+    protected void ensureReadAccessToSecuredFolder(Folder folder, OrgMember orgMember, SecuredFolderPermissionService securedFolderPermissionService) {
+
+    }
+
+    /**
      * Ensures that the user has permission to create a folder in a secured parent folder.
      *
      * @param folder
