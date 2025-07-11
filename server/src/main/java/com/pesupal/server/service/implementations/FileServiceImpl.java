@@ -5,6 +5,7 @@ import com.pesupal.server.dto.response.FileDto;
 import com.pesupal.server.dto.response.FileOrFolderDto;
 import com.pesupal.server.enums.Arithmetic;
 import com.pesupal.server.enums.FileOrFolder;
+import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.model.workdrive.File;
 import com.pesupal.server.model.workdrive.Folder;
@@ -70,6 +71,19 @@ public class FileServiceImpl implements FileService {
         file = fileRepository.save(file);
         folderService.updateFolderSizeRecursively(folder, size, Arithmetic.PLUS);
         return FileDto.fromFile(file);
+    }
+
+    /**
+     * Retrieves a file by its ID and organization ID.
+     *
+     * @param fileId
+     * @param orgId
+     * @return
+     */
+    @Override
+    public File getFileByIdAndOrgId(Long fileId, Long orgId) {
+
+        return fileRepository.findByIdAndFolder_OrgId(fileId, orgId).orElseThrow(() -> new DataNotFoundException("File with ID " + fileId + " not found."));
     }
 
 }
