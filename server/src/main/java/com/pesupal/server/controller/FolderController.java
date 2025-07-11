@@ -2,6 +2,7 @@ package com.pesupal.server.controller;
 
 import com.pesupal.server.dto.request.CreateFolderDto;
 import com.pesupal.server.dto.response.ApiResponseDto;
+import com.pesupal.server.dto.response.FileOrFolderDto;
 import com.pesupal.server.dto.response.FolderDto;
 import com.pesupal.server.enums.Workspace;
 import com.pesupal.server.helpers.CurrentValueRetriever;
@@ -26,10 +27,17 @@ public class FolderController extends CurrentValueRetriever {
         return ResponseEntity.ok().body(new ApiResponseDto("Folder created successfully", folderDto));
     }
 
-    @GetMapping("/folders/{space}")
-    public ResponseEntity<ApiResponseDto> getAllFolders(@PathVariable Workspace space) {
+    @GetMapping("/{space}/folders")
+    public ResponseEntity<ApiResponseDto> getAllFoldersInRoot(@PathVariable Workspace space) {
 
-        List<FolderDto> folders = folderService.getAllFolders(space, getCurrentUserId(), getCurrentOrgId());
+        List<FileOrFolderDto> folders = folderService.getAllFolders(space, getCurrentUserId(), getCurrentOrgId());
+        return ResponseEntity.ok().body(new ApiResponseDto("Folders retrieved successfully", folders));
+    }
+
+    @GetMapping("/folders/{folderId}")
+    public ResponseEntity<ApiResponseDto> getAllFolders(@PathVariable Long folderId) {
+
+        List<FileOrFolderDto> folders = folderService.getAllFolders(folderId, getCurrentUserId(), getCurrentOrgId());
         return ResponseEntity.ok().body(new ApiResponseDto("Folders retrieved successfully", folders));
     }
 
