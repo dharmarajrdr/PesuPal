@@ -1,5 +1,6 @@
 package com.pesupal.server.service.implementations;
 
+import com.pesupal.server.enums.CRUD;
 import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.model.user.User;
@@ -30,6 +31,25 @@ public class SecuredFolderPermissionServiceImpl implements SecuredFolderPermissi
     public Optional<SecuredFolderPermission> getSecuredFolderPermissionByFolderAndUser(Folder folder, User user) {
 
         return securedFolderPermissionRepository.findByFolderAndUser(folder, user);
+    }
+
+    /**
+     * Checks if the user has the necessary permission for a CRUD operation in a secured public folder.
+     *
+     * @param parentPublicFolder
+     * @param orgMember
+     * @param crud
+     * @return boolean
+     */
+    @Override
+    public boolean hasNecessaryPermission(PublicFolder parentPublicFolder, OrgMember orgMember, CRUD crud) {
+
+        SecuredFolderPermission securedFolderPermission = getSecuredFolderPermissionByFolderAndUser(parentPublicFolder.getFolder(), orgMember.getUser())
+                .orElseThrow(() -> new DataNotFoundException("User does not have " + crud.name().toLowerCase() + " access on this folder."));
+        return switch (crud) {
+            case CREATE, UPDATE, DELETE -> securedFolderPermission.isWritable();
+            case READ -> securedFolderPermission.isReadable();
+        };
     }
 
     /**

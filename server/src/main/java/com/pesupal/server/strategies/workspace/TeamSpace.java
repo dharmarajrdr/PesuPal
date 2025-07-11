@@ -2,6 +2,7 @@ package com.pesupal.server.strategies.workspace;
 
 import com.pesupal.server.dto.request.CreateFolderDto;
 import com.pesupal.server.dto.response.FileOrFolderDto;
+import com.pesupal.server.enums.CRUD;
 import com.pesupal.server.helpers.WorkspaceSupportsPublicFolder;
 import com.pesupal.server.model.department.Department;
 import com.pesupal.server.model.user.OrgMember;
@@ -36,7 +37,7 @@ public class TeamSpace extends WorkspaceSupportsPublicFolder implements Workdriv
     @Override
     public Folder save(Folder folder, CreateFolderDto createFolderDto, OrgMember orgMember) {
 
-        ensureFolderCreationInsideSecuredFolder(folder, orgMember, securedFolderPermissionService);
+        ensureNecessaryPermissionInsideSecuredFolder(folder, orgMember, CRUD.CREATE, securedFolderPermissionService);
 
         folder = folderRepository.save(folder);
         PublicFolder publicFolder = getPublicFolder(folder, createFolderDto);
@@ -56,7 +57,7 @@ public class TeamSpace extends WorkspaceSupportsPublicFolder implements Workdriv
     @Override
     public List<FileOrFolderDto> findAllFilesAndFoldersByOrgMemberAndFolder(OrgMember orgMember, Folder folder) {
 
-        ensureReadAccessToSecuredFolder(folder, orgMember, securedFolderPermissionService);
+        ensureNecessaryPermissionInsideSecuredFolder(folder, orgMember, CRUD.READ, securedFolderPermissionService);
 
         return List.of();
     }

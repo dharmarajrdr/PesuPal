@@ -1,6 +1,7 @@
 package com.pesupal.server.helpers;
 
 import com.pesupal.server.dto.request.CreateFolderDto;
+import com.pesupal.server.enums.CRUD;
 import com.pesupal.server.enums.Security;
 import com.pesupal.server.exceptions.PermissionDeniedException;
 import com.pesupal.server.model.user.OrgMember;
@@ -11,19 +12,12 @@ import com.pesupal.server.service.interfaces.SecuredFolderPermissionService;
 public abstract class WorkspaceSupportsPublicFolder {
 
     /**
-     * Ensures that the user has read access to a secured folder.
-     */
-    protected void ensureReadAccessToSecuredFolder(Folder folder, OrgMember orgMember, SecuredFolderPermissionService securedFolderPermissionService) {
-
-    }
-
-    /**
      * Ensures that the user has permission to create a folder in a secured parent folder.
      *
      * @param folder
      * @param orgMember
      */
-    protected void ensureFolderCreationInsideSecuredFolder(Folder folder, OrgMember orgMember, SecuredFolderPermissionService securedFolderPermissionService) {
+    protected void ensureNecessaryPermissionInsideSecuredFolder(Folder folder, OrgMember orgMember, CRUD crud, SecuredFolderPermissionService securedFolderPermissionService) {
 
         Folder parentFolder = folder.getParentFolder();
 
@@ -39,10 +33,10 @@ public abstract class WorkspaceSupportsPublicFolder {
             boolean isOwnerOfParentFolder = orgMember.getUser().getId().equals(parentFolder.getOwner().getId());
             if (!isOwnerOfParentFolder) {   // If the user is not the owner of the parent folder
 
-                boolean hasWritePermission = securedFolderPermissionService.hasWritePermission(parentPublicFolder, orgMember);
-                if (!hasWritePermission) {  // If the user does not have write permission in the secured parent folder
+                boolean hasNecessaryPermission = securedFolderPermissionService.hasNecessaryPermission(parentPublicFolder, orgMember, crud);
+                if (!hasNecessaryPermission) {  // If the user does not have write permission in the secured parent folder
 
-                    throw new PermissionDeniedException("You do not have permission to create a folder in this secured parent folder. Please request access from the owner.");
+                    throw new PermissionDeniedException("You do not have permission to " + crud.name().toLowerCase() + " this folder. Please request access from the owner.");
                 }
             }
         }
