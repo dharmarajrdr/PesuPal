@@ -25,7 +25,7 @@ const LeftNavigation = () => {
     }, { LeftNavigationStyles } = themes,
         dispatch = useDispatch();
 
-    const [showOrgList, setShowOrgList] = useState(true);
+    const [showOrgList, setShowOrgList] = useState(false);
 
     const toggleOrgList = (e) => {
 
@@ -44,6 +44,10 @@ const LeftNavigation = () => {
         setShowOrgList(true);
     }
 
+    const closeOrgList = () => {
+
+        setShowOrgList(false);
+    }
 
     useEffect(() => {
         const { pathname } = document.location;
@@ -65,7 +69,7 @@ const LeftNavigation = () => {
                 </div>
                 <div className='w100'>
                     {ListOfNavigations.bottom.map((navigation, index) => <Nav key={index} icon={navigation.icon} image={navigation.image} title={navigation.title} route={navigation.route} showOrgListHandler={showOrgListHandler} />)}
-                    {showOrgList && <OrgList toggleOrgList={toggleOrgList} />}
+                    {showOrgList && <OrgList toggleOrgList={toggleOrgList} closeOrgList={closeOrgList} />}
                 </div>
             </div>
         </div>

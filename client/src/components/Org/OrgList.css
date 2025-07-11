@@ -1,13 +1,19 @@
 #org-list-modal {
-
-    position: absolute;
+    position: fixed;
     bottom: 0px;
-    width: fit-content;
-    background-color: #fff;
-    box-shadow: 4px 4px 8px #aaa;
-    left: 75px;
-    overflow: auto;
-    max-height: 460px;
-    border-radius: 5px;
+    left: 0px;
+    background-color: #eeeeee99;
+    width: 100vw;
+    height: 100vh;
     z-index: 10;
+}
+
+.org-list-popup {
+    position: absolute;
+    height: 400px;
+    overflow: auto;
+    background-color: #fff;
+    bottom: 0;
+    left: 75px;
+    border-radius: 5px;
 }
