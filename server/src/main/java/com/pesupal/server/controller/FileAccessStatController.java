@@ -2,6 +2,7 @@ package com.pesupal.server.controller;
 
 import com.pesupal.server.dto.response.ApiResponseDto;
 import com.pesupal.server.dto.response.FileAccessStatDto;
+import com.pesupal.server.dto.response.FileDto;
 import com.pesupal.server.helpers.CurrentValueRetriever;
 import com.pesupal.server.service.interfaces.FileAccessStatService;
 import lombok.AllArgsConstructor;
@@ -25,5 +26,12 @@ public class FileAccessStatController extends CurrentValueRetriever {
 
         List<FileAccessStatDto> fileAccessStatDto = fileAccessStatService.getFileAccessStats(fileId, getCurrentUserId(), getCurrentOrgId());
         return ResponseEntity.ok(new ApiResponseDto("File access statistics retrieved successfully", fileAccessStatDto));
+    }
+
+    @GetMapping("/recently-accessed-files")
+    public ResponseEntity<ApiResponseDto> getRecentlyAccessedFiles() {
+
+        List<FileDto> recentlyAccessedFiles = fileAccessStatService.getRecentlyAccessedFiles(getCurrentUserId(), getCurrentOrgId());
+        return ResponseEntity.ok(new ApiResponseDto("Recently accessed files retrieved successfully", recentlyAccessedFiles));
     }
 }
