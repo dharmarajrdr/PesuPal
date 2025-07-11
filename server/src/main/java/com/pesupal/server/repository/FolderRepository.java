@@ -18,4 +18,6 @@ public interface FolderRepository extends JpaRepository<Folder, Long> {
     Optional<Folder> findByIdAndOrgId(Long folderId, Long orgId);
 
     List<Folder> findAllByOrgAndOwnerAndSpaceAndParentFolder(Org org, User owner, Workspace space, Folder parentFolder);
+
+    List<Folder> findAllByOrgAndSpaceAndParentFolder(Org org, Workspace workspace, Folder parentFolder);
 }

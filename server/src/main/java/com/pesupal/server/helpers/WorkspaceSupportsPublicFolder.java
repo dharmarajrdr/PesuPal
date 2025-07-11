@@ -19,8 +19,7 @@ public abstract class WorkspaceSupportsPublicFolder {
      * @param parentFolder
      * @param orgMember
      */
-    protected void ensureNecessaryPermissionInsideSecuredFolder(Folder parentFolder, OrgMember orgMember, CRUD crud,
-            SecuredFolderPermissionService securedFolderPermissionService, PublicFolderService publicFolderService) {
+    protected void ensureNecessaryPermissionInsideSecuredFolder(Folder parentFolder, OrgMember orgMember, CRUD crud, SecuredFolderPermissionService securedFolderPermissionService, PublicFolderService publicFolderService) {
 
         if (parentFolder == null) {
             return; // No parent folder, no need to check permissions
@@ -28,26 +27,21 @@ public abstract class WorkspaceSupportsPublicFolder {
 
         PublicFolder parentPublicFolder = parentFolder.getPublicFolder();
 
-        boolean isParentFolderSecured = parentPublicFolder != null
-                && parentPublicFolder.getSecurity().equals(Security.SECURED);
+        boolean isParentFolderSecured = parentPublicFolder != null && parentPublicFolder.getSecurity().equals(Security.SECURED);
         if (isParentFolderSecured) { // If the parent folder is secured
 
             boolean isOwnerOfParentFolder = orgMember.getUser().getId().equals(parentFolder.getOwner().getId());
             if (!isOwnerOfParentFolder) { // If the user is not the owner of the parent folder
 
                 PublicFolder publicFolder = parentPublicFolder.getFolder().getPublicFolder();
-                boolean isPublicFolderOpenToPerformAction = publicFolderService
-                        .allowToPerformCrudByDefault(publicFolder, crud);
+                boolean isPublicFolderOpenToPerformAction = publicFolderService.allowToPerformCrudByDefault(publicFolder, crud);
 
                 if (!isPublicFolderOpenToPerformAction) {
 
-                    boolean hasNecessaryPermission = securedFolderPermissionService
-                            .hasNecessaryPermission(parentPublicFolder, orgMember, crud);
-                    if (!hasNecessaryPermission) { // If the user does not have write permission in the secured parent
-                                                   // folder
+                    boolean hasNecessaryPermission = securedFolderPermissionService.hasNecessaryPermission(parentPublicFolder, orgMember, crud);
+                    if (!hasNecessaryPermission) { // If the user does not have write permission in the secured parent folder
 
-                        throw new PermissionDeniedException("You do not have permission to " + crud.name().toLowerCase()
-                                + " this folder. Please request access from the owner.");
+                        throw new PermissionDeniedException("You do not have permission to " + crud.name().toLowerCase() + " this folder. Please request access from the owner.");
                     }
                 }
             }
