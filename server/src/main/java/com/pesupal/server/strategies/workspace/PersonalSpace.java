@@ -23,8 +23,8 @@ import java.util.List;
 @AllArgsConstructor
 public class PersonalSpace implements WorkdriveSpace {
 
-    private final FolderRepository folderRepository;
     private final FileRepository fileRepository;
+    private final FolderRepository folderRepository;
 
     /**
      * Saves a folder in the personal space.

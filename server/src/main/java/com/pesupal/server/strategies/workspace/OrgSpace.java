@@ -9,6 +9,7 @@ import com.pesupal.server.model.workdrive.Folder;
 import com.pesupal.server.model.workdrive.PublicFolder;
 import com.pesupal.server.repository.FolderRepository;
 import com.pesupal.server.repository.PublicFolderRepository;
+import com.pesupal.server.service.interfaces.PublicFolderService;
 import com.pesupal.server.service.interfaces.SecuredFolderPermissionService;
 import com.pesupal.server.service.interfaces.WorkdriveSpace;
 import lombok.AllArgsConstructor;
@@ -21,6 +22,7 @@ import java.util.List;
 public class OrgSpace extends WorkspaceSupportsPublicFolder implements WorkdriveSpace {
 
     private final FolderRepository folderRepository;
+    private final PublicFolderService publicFolderService;
     private final PublicFolderRepository publicFolderRepository;
     private final SecuredFolderPermissionService securedFolderPermissionService;
 
@@ -33,7 +35,7 @@ public class OrgSpace extends WorkspaceSupportsPublicFolder implements Workdrive
     @Override
     public Folder save(Folder folder, CreateFolderDto createFolderDto, OrgMember orgMember) {
 
-        ensureNecessaryPermissionInsideSecuredFolder(folder, orgMember, CRUD.CREATE, securedFolderPermissionService);
+        ensureNecessaryPermissionInsideSecuredFolder(folder.getParentFolder(), orgMember, CRUD.CREATE, securedFolderPermissionService, publicFolderService);
 
         folder = folderRepository.save(folder);
         PublicFolder publicFolder = getPublicFolder(folder, createFolderDto);
@@ -51,7 +53,7 @@ public class OrgSpace extends WorkspaceSupportsPublicFolder implements Workdrive
     @Override
     public List<FileOrFolderDto> findAllFilesAndFoldersByOrgMemberAndFolder(OrgMember orgMember, Folder folder) {
 
-        ensureNecessaryPermissionInsideSecuredFolder(folder, orgMember, CRUD.READ, securedFolderPermissionService);
+        ensureNecessaryPermissionInsideSecuredFolder(folder, orgMember, CRUD.READ, securedFolderPermissionService, publicFolderService);
 
         return List.of();
     }
