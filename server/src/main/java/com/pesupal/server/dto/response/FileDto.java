@@ -16,6 +16,8 @@ public class FileDto extends FileOrFolderDto {
 
     private String name;
 
+    private Long size;
+
     private UUID mediaId;
 
     private Security security;
@@ -24,12 +26,19 @@ public class FileDto extends FileOrFolderDto {
 
     public static FileDto fromFileAndOrgMember(File file, OrgMember orgMember) {
 
+        FileDto fileDto = fromFile(file);
+        fileDto.setOwner(UserBasicInfoDto.fromOrgMember(orgMember));
+        return fileDto;
+    }
+
+    public static FileDto fromFile(File file) {
+
         FileDto fileDto = new FileDto();
         fileDto.setId(file.getId());
         fileDto.setName(file.getName());
+        fileDto.setSize(file.getSize());
         fileDto.setMediaId(file.getMediaId());
         fileDto.setSecurity(file.getSecurity());
-        fileDto.setOwner(UserBasicInfoDto.fromOrgMember(orgMember));
         return fileDto;
     }
 }

@@ -16,6 +16,8 @@ public class FolderDto extends FileOrFolderDto {
 
     private String name;
 
+    private Long size;
+
     private UserBasicInfoDto owner;
 
     private Security security;
@@ -29,6 +31,7 @@ public class FolderDto extends FileOrFolderDto {
         FolderDto folderDto = new FolderDto();
         folderDto.setId(folder.getId());
         folderDto.setName(folder.getName());
+        folderDto.setSize(folderDto.getSize());
         folderDto.setOwner(UserBasicInfoDto.fromOrgMember(orgMember));
         return folderDto;
     }
