@@ -12,5 +12,5 @@ public interface FileService {
 
     List<FileOrFolderDto> findAllByFolderAndOrgMember(Folder parentFolder, OrgMember orgMember);
 
-    FileDto createFile(CreateFileDto createFileDto, Long userId, Long orgId);
+    FileDto createFile(CreateFileDto createFileDto, Long userId, Long orgId) throws Exception;
 }

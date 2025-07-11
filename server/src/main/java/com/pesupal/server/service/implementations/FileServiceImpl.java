@@ -13,6 +13,7 @@ import com.pesupal.server.service.interfaces.FileService;
 import com.pesupal.server.service.interfaces.FolderService;
 import com.pesupal.server.service.interfaces.MediaService;
 import com.pesupal.server.service.interfaces.OrgMemberService;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -53,7 +54,8 @@ public class FileServiceImpl implements FileService {
      * @return
      */
     @Override
-    public FileDto createFile(CreateFileDto createFileDto, Long userId, Long orgId) {
+    @Transactional
+    public FileDto createFile(CreateFileDto createFileDto, Long userId, Long orgId) throws Exception {
 
         OrgMember orgMember = orgMemberService.getOrgMemberByUserIdAndOrgId(userId, orgId);
 
