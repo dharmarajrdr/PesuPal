@@ -53,6 +53,7 @@ public class FolderServiceImpl implements FolderService {
 
         Folder folder = createFolderDto.toFolder();
         folder.setOrg(orgMember.getOrg());
+        folder.setSize(0L); // Initial size of folder
         folder.setOwner(orgMember.getUser());
         if (createFolderDto.getParentFolderId() != null) {
             Folder parentFolder = getFolderByIdAndOrgId(createFolderDto.getParentFolderId(), orgId);
@@ -169,7 +170,11 @@ public class FolderServiceImpl implements FolderService {
             return;
         }
 
-        folder.setSize(folder.getSize() + (arithmetic == Arithmetic.PLUS ? size : -size));
+        Long currentSize = folder.getSize();
+        if (currentSize == null) {
+            currentSize = 0L; // Initialize size if it's null
+        }
+        folder.setSize(currentSize + (arithmetic == Arithmetic.PLUS ? size : -size));
         folderRepository.save(folder);
         updateFolderSizeRecursively(folder.getParentFolder(), size, arithmetic);
     }
