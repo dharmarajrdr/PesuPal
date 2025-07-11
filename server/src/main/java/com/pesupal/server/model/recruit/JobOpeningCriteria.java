@@ -1,13 +1,12 @@
 package com.pesupal.server.model.recruit;
 
-import com.pesupal.server.model.BaseModel;
-import jakarta.persistence.Entity;
+import jakarta.persistence.Embeddable;
 import jakarta.persistence.ManyToOne;
 import lombok.Data;
 
 @Data
-@Entity
-public class JobOpeningCriteria extends BaseModel {
+@Embeddable
+public class JobOpeningCriteria {
 
     @ManyToOne
     private JobOpening jobOpening;
