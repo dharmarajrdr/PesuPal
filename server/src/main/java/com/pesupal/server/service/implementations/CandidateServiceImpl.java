@@ -6,15 +6,17 @@ import com.pesupal.server.dto.request.CreateCandidateTimelineDto;
 import com.pesupal.server.dto.request.CreateReferralDto;
 import com.pesupal.server.dto.response.CandidateDto;
 import com.pesupal.server.enums.JobApplicationStatus;
+import com.pesupal.server.enums.JobOpeningStatus;
 import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.exceptions.PermissionDeniedException;
 import com.pesupal.server.model.recruit.Candidate;
+import com.pesupal.server.model.recruit.CandidateTimeline;
+import com.pesupal.server.model.recruit.JobOpening;
 import com.pesupal.server.model.user.OrgMember;
+import com.pesupal.server.model.user.User;
 import com.pesupal.server.repository.CandidateRepository;
-import com.pesupal.server.service.interfaces.CandidateService;
-import com.pesupal.server.service.interfaces.CandidateTimelineService;
-import com.pesupal.server.service.interfaces.OrgMemberService;
+import com.pesupal.server.service.interfaces.*;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -24,7 +26,9 @@ import java.util.List;
 @AllArgsConstructor
 public class CandidateServiceImpl implements CandidateService {
 
+    private final UserService userService;
     private final OrgMemberService orgMemberService;
+    private final JobOpeningService jobOpeningService;
     private final CandidateRepository candidateRepository;
     private final CandidateTimelineService candidateTimelineService;
 
@@ -48,7 +52,61 @@ public class CandidateServiceImpl implements CandidateService {
      */
     @Override
     public CandidateDto createCandidate(CreateCandidateDto createCandidateDto, Long userId, Long orgId) {
-        return null;
+
+        Long candidateId = createCandidateDto.getUserId();
+
+        Long referredById = null;
+
+        if (candidateId == null) { // If userId is not provided, use the current user as the candidate
+            candidateId = userId;
+            if (orgMemberService.existsByUserIdAndOrgId(candidateId, orgId)) {
+                throw new PermissionDeniedException("You are already a member of this organization.");
+            }
+        } else { // If userId is provided, then it is a referral
+            if (!orgMemberService.existsByUserIdAndOrgId(userId, orgId)) {
+                throw new PermissionDeniedException("You do not have permission to refer candidates for this organization.");
+            }
+            if (orgMemberService.existsByUserIdAndOrgId(candidateId, orgId)) {
+                throw new PermissionDeniedException("Given user is already a member of this organization.");
+            }
+            referredById = userId;
+        }
+
+        if (candidateId.equals(referredById)) {
+            throw new ActionProhibitedException("You cannot refer yourself for a job opening.");
+        }
+
+        User applicant = userService.getUserById(candidateId);
+
+        JobOpening jobOpening = jobOpeningService.getJobOpeningById(createCandidateDto.getJobId());
+
+        if (candidateRepository.existsByApplicantAndJobOpening(applicant, jobOpening)) {
+            throw new ActionProhibitedException("You have already applied for this job opening.");
+        }
+
+        if (!jobOpening.getStatus().equals(JobOpeningStatus.PUBLISHED)) {
+            throw new ActionProhibitedException("Unable to apply for job opening with ID " + createCandidateDto.getJobId() + " as the status of the job opening is '" + jobOpening.getStatus() + "'.");
+        }
+
+        Candidate candidate = createCandidateDto.toCandidate();
+        candidate.setApplicant(applicant);
+        candidate.setStatus(JobApplicationStatus.UNDER_REVIEW);
+        candidate.setJobOpening(jobOpening);
+        OrgMember referredByOrgMember = null;
+        CandidateTimeline candidateTimeline = new CandidateTimeline();
+        if (referredById != null) {
+            User referredBy = orgMemberService.getOrgMemberByUserIdAndOrgId(referredById, orgId).getUser();
+            candidate.setReferredBy(referredBy);
+            referredByOrgMember = orgMemberService.getOrgMemberByUserIdAndOrgId(referredBy.getId(), orgId);
+            candidateTimeline.setCreatedBy(referredBy);
+            candidateTimeline.setDescription("Referred '" + createCandidateDto.getName() + "' for job opening.'");
+        } else {
+            User user = userService.getUserById(candidateId);
+            candidateTimeline.setCreatedBy(user);
+            candidateTimeline.setDescription("Applied for job opening.");
+        }
+        candidate.setTimeline(List.of(candidateTimeline));
+        return CandidateDto.fromCandidateAndOrgMember(candidateRepository.save(candidate), referredByOrgMember);
     }
 
     /**
