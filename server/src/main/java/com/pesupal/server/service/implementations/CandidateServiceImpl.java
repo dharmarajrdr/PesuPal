@@ -1,5 +1,6 @@
 package com.pesupal.server.service.implementations;
 
+import com.pesupal.server.config.StaticConfig;
 import com.pesupal.server.dto.request.CreateCandidateDto;
 import com.pesupal.server.dto.request.CreateCandidateTimelineDto;
 import com.pesupal.server.dto.request.CreateReferralDto;
@@ -87,10 +88,8 @@ public class CandidateServiceImpl implements CandidateService {
     @Override
     public void updateCandidateStatus(Long candidateId, JobApplicationStatus status, Long userId, Long orgId) {
 
-        List<String> eligibleRoles = List.of("HR", "Human Resource", "Recruiter");
-
         OrgMember orgMember = orgMemberService.getOrgMemberByUserIdAndOrgId(userId, orgId);
-        if (!eligibleRoles.contains(orgMember.getDesignation().getName())) {
+        if (!StaticConfig.HUMAN_RESOURCE_ROLES.contains(orgMember.getDesignation().getName())) {
             throw new PermissionDeniedException("You do not have permission to update candidate status.");
         }
 
