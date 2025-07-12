@@ -6,6 +6,7 @@ import com.pesupal.server.model.user.User;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -18,6 +19,8 @@ public class File extends CreationTimeAuditable {
     @ManyToOne
     private Folder folder;
 
+    private Long size;
+
     @ManyToOne
     private User creator;
 
@@ -26,4 +29,7 @@ public class File extends CreationTimeAuditable {
 
     @Enumerated(EnumType.STRING)
     private Security security;
+
+    @OneToMany(mappedBy = "file", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    List<FileAccessStat> accessStats;
 }

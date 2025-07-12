@@ -17,7 +17,7 @@ const DriveDashboard = () => {
                     {DriveDashboardList.map((item, index) => <PreviewFolderFileList key={index} item={item} />)}
                     <RecentlyAccessedFiles />
                 </div>
-                <DriveUsageStats />
+                {/* <DriveUsageStats /> */}
             </div>
         </div>
     )

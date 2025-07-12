@@ -17,7 +17,9 @@ import com.pesupal.server.service.interfaces.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 @Service
@@ -99,9 +101,15 @@ public class PostCommentServiceImpl implements PostCommentService {
             throw new ActionProhibitedException("Unable to retrieve comments as the post is not available.");
         }
 
+        Map<Long, OrgMember> memo = new HashMap<>();
+
         return post.getComments().stream().map(postComment -> {
-            OrgMember orgMember = orgMemberService.getOrgMemberByUserIdAndOrgId(postComment.getCommenter().getId(), orgId);
-            return PostCommentDto.fromPostCommentAndOrgMember(postComment, orgMember);
+
+            Long commentedById = postComment.getCommenter().getId();
+            if (!memo.containsKey(commentedById)) {
+                memo.put(commentedById, orgMemberService.getOrgMemberByUserIdAndOrgId(commentedById, orgId));
+            }
+            return PostCommentDto.fromPostCommentAndOrgMember(postComment, memo.get(commentedById));
         }).toList();
     }
 

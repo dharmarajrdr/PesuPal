@@ -13,4 +13,6 @@ public interface MediaService {
     Resource getResourceById(UUID mediaId, String contentType) throws MalformedURLException, FileNotFoundException;
 
     UUID saveMedia(MultipartFile file) throws IOException;
+
+    Long getFileSizeInKB(UUID mediaId) throws Exception;
 }

@@ -3,6 +3,7 @@ package com.pesupal.server.service.interfaces;
 import com.pesupal.server.dto.request.CreateFolderDto;
 import com.pesupal.server.dto.response.FileOrFolderDto;
 import com.pesupal.server.dto.response.FolderDto;
+import com.pesupal.server.enums.Arithmetic;
 import com.pesupal.server.enums.Workspace;
 import com.pesupal.server.model.workdrive.Folder;
 
@@ -21,4 +22,6 @@ public interface FolderService {
     List<FileOrFolderDto> getAllFolders(Workspace space, Long userId, Long orgId);
 
     void deleteFolder(Long folderId, Long userId, Long orgId);
+
+    void updateFolderSizeRecursively(Folder folder, Long size, Arithmetic arithmetic);
 }

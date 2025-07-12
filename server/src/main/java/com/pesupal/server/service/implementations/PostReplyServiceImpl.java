@@ -16,17 +16,19 @@ import com.pesupal.server.service.interfaces.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 @Service
 @AllArgsConstructor
 public class PostReplyServiceImpl implements PostReplyService {
 
-    private final PostReplyRepository postReplyRepository;
-    private final PostCommentService postCommentService;
     private final UserService userService;
     private final OrgMemberService orgMemberService;
+    private final PostCommentService postCommentService;
+    private final PostReplyRepository postReplyRepository;
 
     /**
      * Creates a reply to a post comment.
@@ -61,10 +63,16 @@ public class PostReplyServiceImpl implements PostReplyService {
     public List<ReplyCommentDto> getRepliesForComment(Long commentId, Long userId, Long orgId) {
 
         PostComment postComment = postCommentService.getPostCommentById(commentId, userId, orgId);
-        
+
+        Map<Long, OrgMember> memo = new HashMap<>();
+
         return postComment.getReplies().stream().map(postReply -> {
-            OrgMember orgMember = orgMemberService.getOrgMemberByUserIdAndOrgId(postReply.getReplier().getId(), orgId);
-            return ReplyCommentDto.fromPostReplyAndOrgMember(postReply, orgMember);
+
+            Long replierId = postReply.getReplier().getId();
+            if (!memo.containsKey(replierId)) {
+                memo.put(replierId, orgMemberService.getOrgMemberByUserIdAndOrgId(replierId, orgId));
+            }
+            return ReplyCommentDto.fromPostReplyAndOrgMember(postReply, memo.get(replierId));
         }).toList();
 
     }

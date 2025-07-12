@@ -8,6 +8,16 @@
     position: relative;
     overflow: hidden;
     margin: 5px;
+    min-height: fit-content;
+}
+
+.org-preview.active {
+    background-color: #f0f8ff;
+    cursor: default;
+}
+
+.org-preview:not(.active):hover {
+    background-color: #f9f9f9;
 }
 
 .org-preview .trial-badge {

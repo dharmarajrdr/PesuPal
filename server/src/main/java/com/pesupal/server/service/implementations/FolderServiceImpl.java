@@ -3,6 +3,7 @@ package com.pesupal.server.service.implementations;
 import com.pesupal.server.dto.request.CreateFolderDto;
 import com.pesupal.server.dto.response.FileOrFolderDto;
 import com.pesupal.server.dto.response.FolderDto;
+import com.pesupal.server.enums.Arithmetic;
 import com.pesupal.server.enums.Workspace;
 import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.exceptions.DataNotFoundException;
@@ -14,18 +15,23 @@ import com.pesupal.server.service.interfaces.FolderService;
 import com.pesupal.server.service.interfaces.OrgMemberService;
 import com.pesupal.server.service.interfaces.WorkdriveSpace;
 import jakarta.transaction.Transactional;
-import lombok.AllArgsConstructor;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-@AllArgsConstructor
 public class FolderServiceImpl implements FolderService {
 
     private final OrgMemberService orgMemberService;
     private final FolderRepository folderRepository;
     private final WorkspaceFactory workspaceFactory;
+
+    public FolderServiceImpl(OrgMemberService orgMemberService, FolderRepository folderRepository, @Lazy WorkspaceFactory workspaceFactory) {
+        this.orgMemberService = orgMemberService;
+        this.folderRepository = folderRepository;
+        this.workspaceFactory = workspaceFactory;
+    }
 
     /**
      * Creates a new folder in the specified workspace.
@@ -47,6 +53,7 @@ public class FolderServiceImpl implements FolderService {
 
         Folder folder = createFolderDto.toFolder();
         folder.setOrg(orgMember.getOrg());
+        folder.setSize(0L); // Initial size of folder
         folder.setOwner(orgMember.getUser());
         if (createFolderDto.getParentFolderId() != null) {
             Folder parentFolder = getFolderByIdAndOrgId(createFolderDto.getParentFolderId(), orgId);
@@ -139,5 +146,36 @@ public class FolderServiceImpl implements FolderService {
         }
 
         folderRepository.delete(folder);
+    }
+
+    /**
+     * Updates the size of a folder recursively, adjusting its size based on the specified arithmetic operation.
+     *
+     * @param folder
+     * @param size
+     * @param arithmetic
+     */
+    @Override
+    public void updateFolderSizeRecursively(Folder folder, Long size, Arithmetic arithmetic) {
+
+        if (folder == null) {
+            return;     // root folder reached
+        }
+
+        /**
+         * Prevents infinite recursion if the folder's parent is itself.
+         * This can happen if the folder is incorrectly set to be its own parent.
+         */
+        if (folder.getParentFolder() != null && folder.getParentFolder().getId().equals(folder.getId())) {
+            return;
+        }
+
+        Long currentSize = folder.getSize();
+        if (currentSize == null) {
+            currentSize = 0L; // Initialize size if it's null
+        }
+        folder.setSize(currentSize + (arithmetic == Arithmetic.PLUS ? size : -size));
+        folderRepository.save(folder);
+        updateFolderSizeRecursively(folder.getParentFolder(), size, arithmetic);
     }
 }

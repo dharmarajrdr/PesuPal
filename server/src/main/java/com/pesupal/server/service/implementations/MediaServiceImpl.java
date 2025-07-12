@@ -10,9 +10,7 @@ import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -70,5 +68,34 @@ public class MediaServiceImpl implements MediaService {
         Path filePath = uploadPath.resolve(mediaId + extension);
         Files.write(filePath, file.getBytes());
         return mediaId;
+    }
+
+    /**
+     * Retrieves the file size in kilobytes for a given media ID.
+     *
+     * @param mediaId
+     * @return Long
+     */
+    @Override
+    public Long getFileSizeInKB(UUID mediaId) throws Exception {
+
+        String partialName = StaticConfig.MEDIA_PATH + "/" + mediaId.toString();
+
+        // Build the shell command
+        String[] cmd = {
+                "bash", "-c",
+                "du -k -- " + partialName + ".* 2>/dev/null | awk '{print $1}'"
+        };
+
+        // Execute command
+        Process process = Runtime.getRuntime().exec(cmd);
+        BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+        String line = reader.readLine();
+
+        // Parse result
+        if (line != null && !line.isEmpty()) {
+            return Long.parseLong(line.trim());
+        }
+        throw new Exception("File size could not be determined for media ID: " + mediaId);
     }
 }
