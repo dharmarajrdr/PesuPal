@@ -24,6 +24,8 @@ public class FileDto extends FileOrFolderDto {
 
     private UserBasicInfoDto owner;
 
+    private int accessCount;
+
     public static FileDto fromFileAndOrgMember(File file, OrgMember orgMember) {
 
         FileDto fileDto = fromFile(file);
@@ -39,6 +41,7 @@ public class FileDto extends FileOrFolderDto {
         fileDto.setSize(file.getSize());
         fileDto.setMediaId(file.getMediaId());
         fileDto.setSecurity(file.getSecurity());
+        fileDto.setAccessCount(file.getAccessStats().size());
         return fileDto;
     }
 }
