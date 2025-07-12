@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.pesupal.server.enums.JobOpeningStatus;
 import com.pesupal.server.enums.JobType;
 import com.pesupal.server.model.CreationTimeAuditable;
+import com.pesupal.server.model.org.Org;
 import com.pesupal.server.model.user.User;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -14,6 +15,9 @@ import java.util.List;
 @Data
 @Entity
 public class JobOpening extends CreationTimeAuditable {
+
+    @ManyToOne
+    private Org org;
 
     @Column(nullable = false)
     private String title;
