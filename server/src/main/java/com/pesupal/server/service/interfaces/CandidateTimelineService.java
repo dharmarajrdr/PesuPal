@@ -9,5 +9,5 @@ public interface CandidateTimelineService {
 
     void createCandidateTimeline(CreateCandidateTimelineDto createCandidateTimelineDto);
 
-    List<CandidateTimelineDto> getTimelineByCandidateIdAndJobId(Long candidateId, Long jobId, Long userId, Long orgId);
+    List<CandidateTimelineDto> getTimelineByCandidateIdAndJobId(Long candidateId, Long userId, Long orgId);
 }
