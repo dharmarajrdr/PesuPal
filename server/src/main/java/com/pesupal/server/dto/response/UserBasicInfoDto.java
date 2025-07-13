@@ -16,6 +16,8 @@ public class UserBasicInfoDto {
 
     private String designation;
 
+    private String status;
+
     public static UserBasicInfoDto fromOrgMember(OrgMember orgMember) {
 
         UserBasicInfoDto userBasicInfoDto = new UserBasicInfoDto();
@@ -23,6 +25,7 @@ public class UserBasicInfoDto {
         userBasicInfoDto.setDisplayName(orgMember.getDisplayName());
         userBasicInfoDto.setDisplayPicture(orgMember.getDisplayPicture());
         userBasicInfoDto.setDesignation(orgMember.getDesignation().getName());
+        userBasicInfoDto.setStatus(orgMember.getStatus());
         return userBasicInfoDto;
     }
 }
