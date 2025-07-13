@@ -1,0 +1,149 @@
+#no-data-found p {
+    font-size: 13px;
+    color: #666;
+    margin: 3px 0px;
+}
+
+#no-data-found p i {
+    color: #3f4c68;
+}
+
+#job-applications {
+    border-right: 1px solid #3f4c6892;
+    overflow: auto;
+    max-width: 30%;
+    max-height: 100vh;
+    padding-bottom: 40px;
+}
+
+#job-applications-header {
+    position: sticky;
+    top: 0;
+    background-color: #fff;
+    box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.job-application {
+    margin: 2.5px 5px;
+    width: calc(100% - 10px);
+    box-sizing: border-box;
+    background-color: #fff;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    overflow: hidden;
+    padding: 12px 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-right: 0;
+    min-height: fit-content;
+}
+
+.job-application.active {
+    background-color: #f0faff;
+    border-color: #3f4c68;
+    width: calc(100% - 4px);
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    cursor: default;
+}
+
+.job-application:not(.active):hover {
+    background-color: #f9f9f9;
+}
+
+.subject-applied-count {
+    padding-bottom: 4px;
+}
+
+.subject-applied-count h5 {
+    margin: 0;
+    font-weight: bold;
+    font-weight: 500;
+    width: 70%;
+    overflow: hidden;
+    text-wrap: nowrap;
+    text-overflow: ellipsis;
+    font-size: 14px;
+    color: #444;
+}
+
+.subject-applied-count p {
+    font-size: 11px;
+    color: #666;
+    width: 30%;
+    text-align: right;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-wrap: nowrap;
+}
+
+.subject-applied-count p i {
+    color: #999;
+    font-size: 11px;
+    color: #3f4c68c4;
+}
+
+.job-application-details {
+    padding-top: 4px;
+}
+
+.job-application-created-by {
+    max-width: 33%;
+}
+
+.job-application-created-by img {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+}
+
+.job-application-created-by span {
+    font-size: 13px;
+    color: #777;
+    width: calc(100% - 20px);
+    text-wrap: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.job-application-status {
+    font-size: 10px;
+    color: #555;
+    text-align: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-wrap: nowrap;
+}
+
+.job-application-status.open {
+    color: green;
+}
+
+.job-application-status.draft {
+    color: orange;
+}
+
+.job-application-status.closed {
+    color: red;
+}
+
+.job-application-status.on_hold {
+    color: rgb(43, 151, 239);
+}
+
+.job-application-created-at {
+    text-wrap: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: right;
+}
+
+.job-application-created-at i {
+    color: #999;
+    font-size: 10px;
+}
+
+.job-application-created-at span {
+    font-size: 11px;
+    color: #666;
+}

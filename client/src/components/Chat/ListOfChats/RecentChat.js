@@ -7,7 +7,7 @@ const RecentChat = ({ image, name, status, recentMessage }) => {
     return (
         <div className='RecentChatContainer cursP FRCS w100'>
             <div className='pR'>
-                <img src={image} />
+                {image ? <img src={image} /> : <i className='fa fa-user-circle fs20' aria-hidden='true'></i>}
                 <StatusIndicator status={status} />
             </div>
             <div className='FCSC w100 name_message_date'>

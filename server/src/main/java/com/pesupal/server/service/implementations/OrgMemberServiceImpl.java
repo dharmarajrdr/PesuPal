@@ -5,6 +5,7 @@ import com.pesupal.server.dto.request.CreateDepartmentDto;
 import com.pesupal.server.dto.request.CreateDesignationDto;
 import com.pesupal.server.dto.response.LatestSubscriptionDto;
 import com.pesupal.server.dto.response.OrgDetailDto;
+import com.pesupal.server.dto.response.UserBasicInfoDto;
 import com.pesupal.server.enums.Role;
 import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.exceptions.DataNotFoundException;
@@ -46,7 +47,7 @@ public class OrgMemberServiceImpl implements OrgMemberService {
     @Override
     public OrgMember getOrgMemberByUserAndOrg(User user, Org org) {
 
-        return orgMemberRepository.findByUserAndOrg(user, org).orElseThrow(() -> new DataNotFoundException("User with ID: " + user.getId() + " is not a member of this org."));
+        return orgMemberRepository.findByUserAndOrg(user, org).orElseThrow(() -> new DataNotFoundException("User with ID " + user.getId() + " is not a member of this org."));
     }
 
     /**
@@ -99,6 +100,19 @@ public class OrgMemberServiceImpl implements OrgMemberService {
     public Boolean existsByUserAndOrg(User user, Org org) {
 
         return orgMemberRepository.existsByUserAndOrg(user, org);
+    }
+
+    /**
+     * Checks if a user is already a member of an organization by user ID and org ID.
+     *
+     * @param userId
+     * @param orgId
+     * @return
+     */
+    @Override
+    public Boolean existsByUserIdAndOrgId(Long userId, Long orgId) {
+
+        return orgMemberRepository.existsByUserIdAndOrgId(userId, orgId);
     }
 
     /**
@@ -169,7 +183,7 @@ public class OrgMemberServiceImpl implements OrgMemberService {
             OrgDetailDto orgDetailDto = OrgDetailDto.fromOrg(org);
             orgDetailDto.setRole(orgMember.getRole());
             orgDetailDto.setMembers(membersCount);
-            OrgSubscriptionHistory orgSubscriptionHistory = orgSubscriptionHistoryService.getLatestSubscription(org.getId()).orElseThrow(() -> new DataNotFoundException("No subscription history found for org with ID: " + org.getId()));
+            OrgSubscriptionHistory orgSubscriptionHistory = orgSubscriptionHistoryService.getLatestSubscription(org.getId()).orElseThrow(() -> new DataNotFoundException("No subscription history found for org with ID " + org.getId()));
             orgDetailDto.setSubscription(LatestSubscriptionDto.fromOrgSubscriptionHistory(orgSubscriptionHistory));
             orgDetailDtos.add(orgDetailDto);
         }
@@ -226,4 +240,47 @@ public class OrgMemberServiceImpl implements OrgMemberService {
         return orgMemberRepository.save(newOrgMember);
     }
 
+    /**
+     * Validates if a user is a member of an organization.
+     *
+     * @param user
+     * @param org
+     */
+    @Override
+    public void validateUserIsOrgMember(User user, Org org) {
+
+        if (!existsByUserAndOrg(user, org)) {
+            throw new DataNotFoundException("User with ID " + user.getId() + " is not a member of this org.");
+        }
+    }
+
+    /**
+     * Validates if a user is a member of an organization.
+     *
+     * @param userId
+     * @param orgId
+     */
+    @Override
+    public void validateUserIsOrgMember(Long userId, Long orgId) {
+
+        Org org = orgService.getOrgById(orgId);
+        User user = userService.getUserById(userId);
+
+        validateUserIsOrgMember(user, org);
+    }
+
+    /**
+     * Retrieves all members of an organization.
+     *
+     * @param userId
+     * @param orgId
+     * @return
+     */
+    @Override
+    public List<UserBasicInfoDto> getAllOrgMembers(Long userId, Long orgId) {
+
+        validateUserIsOrgMember(userId, orgId);
+
+        return orgMemberRepository.findAllByOrgIdOrderByDisplayNameAsc(orgId).stream().map(UserBasicInfoDto::fromOrgMember).toList();
+    }
 }

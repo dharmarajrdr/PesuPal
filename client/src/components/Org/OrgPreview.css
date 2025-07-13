@@ -8,6 +8,16 @@
     position: relative;
     overflow: hidden;
     margin: 5px;
+    min-height: fit-content;
+}
+
+.org-preview.active {
+    background-color: #f0f8ff;
+    cursor: default;
+}
+
+.org-preview:not(.active):hover {
+    background-color: #f9f9f9;
 }
 
 .org-preview .trial-badge {
@@ -36,6 +46,18 @@
     height: 40px;
     border-radius: 5px;
     object-fit: cover;
+}
+
+.org-preview .display-picture p {
+    width: 40px;
+    height: 40px;
+    border-radius: 5px;
+    background-color: #3f4c68;
+    color: #fff;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .org-preview .org-status {

@@ -70,7 +70,7 @@ export default {
             'id': 9,
             'title': 'Orgs',
             'icon': 'fa-solid fa-sitemap',
-            'route': '/organisations',
+            // 'route': '/organisations',
             'isActive': false
         },
         {

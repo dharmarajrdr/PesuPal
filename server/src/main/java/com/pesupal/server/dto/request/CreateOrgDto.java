@@ -10,11 +10,14 @@ public class CreateOrgDto {
 
     private String uniqueName;
 
+    private String displayPicture;
+
     public Org toOrg() {
 
         Org org = new Org();
         org.setDisplayName(this.displayName);
         org.setUniqueName(this.uniqueName);
+        org.setDisplayPicture(this.displayPicture);
         return org;
     }
 }

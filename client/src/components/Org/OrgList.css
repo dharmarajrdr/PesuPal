@@ -1,0 +1,22 @@
+#org-list-modal {
+    position: fixed;
+    bottom: 0px;
+    left: 0px;
+    background-color: #00000080;
+    width: 100vw;
+    height: 100vh;
+    z-index: 10;
+}
+
+.org-list-popup {
+    position: absolute;
+    height: 400px;
+    width: 410px;
+    overflow: auto;
+    background-color: #fff;
+    box-shadow: 4px 4px 8px rgba(43, 42, 42, 0.2);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 5px;
+}

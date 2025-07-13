@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class OrgSubscriptionManager {
+public class OrgSubscriptionManager extends CurrentValueRetriever {
 
     @Autowired
     private OrgSubscriptionHistoryService orgSubscriptionHistoryService;
@@ -14,11 +14,11 @@ public class OrgSubscriptionManager {
     /**
      * Checks if an organization has an active subscription.
      *
-     * @param orgId
      * @throws SubscriptionNotActiveException
      */
-    public void checkOrgSubscription(Long orgId) {
+    public void checkOrgSubscription() {
 
+        Long orgId = getCurrentOrgId();
         Boolean isActive = orgSubscriptionHistoryService.isOrgActive(orgId);
         if (!isActive.equals(true)) {
             throw new SubscriptionNotActiveException(orgId);
