@@ -42,8 +42,8 @@ public class JobOpeningServiceImpl implements JobOpeningService {
         JobOpening jobOpening = createJobOpeningDto.toJobOpening();
         jobOpening.setHiringManager(orgMember.getUser());
         jobOpening.setOrg(orgMember.getOrg());
-        jobOpening.setStatus(JobOpeningStatus.PUBLISHED);
-        return JobOpeningDto.fromJobOpening(jobOpeningRepository.save(jobOpening));
+        jobOpening.setStatus(JobOpeningStatus.OPEN);
+        return JobOpeningDto.fromJobOpening(jobOpeningRepository.save(jobOpening), null);
     }
 
     /**
@@ -66,7 +66,7 @@ public class JobOpeningServiceImpl implements JobOpeningService {
     @Override
     public JobOpeningDto getJobOpeningDtoById(Long jobOpeningId) {
 
-        return JobOpeningDto.fromJobOpening(getJobOpeningById(jobOpeningId));
+        return JobOpeningDto.fromJobOpening(getJobOpeningById(jobOpeningId), null);
     }
 
     /**
@@ -79,6 +79,9 @@ public class JobOpeningServiceImpl implements JobOpeningService {
     public List<JobOpeningDto> getAllJobOpeningsByOrgId(Long orgId, JobOpeningFilterDto jobOpeningFilterDto) {
 
         JobOpeningStatus status = jobOpeningFilterDto.getStatus();
-        return jobOpeningRepository.findAllByOrgIdAndStatusOrderByCreatedAtDesc(orgId, status).stream().map(JobOpeningDto::fromJobOpening).toList();
+        return jobOpeningRepository.findAllByOrgIdAndStatusOrderByCreatedAtDesc(orgId, status).stream().map(jobOpening -> {
+            OrgMember hiringManager = orgMemberService.getOrgMemberByUserAndOrg(jobOpening.getHiringManager(), jobOpening.getOrg());
+            return JobOpeningDto.fromJobOpening(jobOpening, hiringManager);
+        }).toList();
     }
 }

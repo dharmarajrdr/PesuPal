@@ -84,7 +84,7 @@ public class CandidateServiceImpl implements CandidateService {
             throw new ActionProhibitedException("You have already applied for this job opening.");
         }
 
-        if (!jobOpening.getStatus().equals(JobOpeningStatus.PUBLISHED)) {
+        if (!jobOpening.getStatus().equals(JobOpeningStatus.OPEN)) {
             throw new ActionProhibitedException("Unable to apply for job opening with ID " + createCandidateDto.getJobId() + " as the status of the job opening is '" + jobOpening.getStatus() + "'.");
         }
 

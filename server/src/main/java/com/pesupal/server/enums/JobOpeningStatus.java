@@ -3,7 +3,7 @@ package com.pesupal.server.enums;
 public enum JobOpeningStatus {
 
     DRAFT,
-    PUBLISHED,
+    OPEN,
     ON_HOLD,
     CLOSED
 }

@@ -10,6 +10,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -49,5 +50,5 @@ public class JobOpening extends CreationTimeAuditable {
     private List<JobOpeningCriteria> criteria;
 
     @OneToMany(mappedBy = "jobOpening", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Candidate> candidates;
+    private List<Candidate> candidates = new ArrayList<>();
 }

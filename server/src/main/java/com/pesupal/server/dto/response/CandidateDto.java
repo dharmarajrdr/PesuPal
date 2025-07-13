@@ -31,7 +31,7 @@ public class CandidateDto {
         candidateDto.setName(candidate.getName());
         candidateDto.setResumeId(candidate.getResumeId());
         candidateDto.setApplicationStatus(candidate.getStatus());
-        candidateDto.setJobOpening(JobOpeningDto.fromJobOpening(candidate.getJobOpening()));
+        candidateDto.setJobOpening(JobOpeningDto.fromJobOpening(candidate.getJobOpening(), null));
         if (referredByOrgMember != null) {
             candidateDto.setReferredBy(UserBasicInfoDto.fromOrgMember(referredByOrgMember));
         }
