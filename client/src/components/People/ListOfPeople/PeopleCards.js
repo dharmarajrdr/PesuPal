@@ -4,6 +4,7 @@ import './PeopleCards.css';
 import { apiRequest } from '../../../http_request';
 import Loader from '../../Loader';
 import ErrorMessage from '../../ErrorMessage';
+import Profile from '../../OthersProfile/Profile';
 
 const NoPeopleFound = () => {
 
@@ -23,6 +24,7 @@ const PeopleCards = () => {
     const [people, setPeople] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [showProfile, setShowProfile] = useState(false);
 
     useEffect(() => {
         apiRequest("/api/v1/people", "GET").then(({ data }) => {
@@ -39,11 +41,11 @@ const PeopleCards = () => {
             <div id='list_of_people'>
                 {loading ? <Loader /> :
                     error ? <ErrorMessage message={error} /> :
-                        people.length ?
-                            people.map((person, index) =>
-                                <PeopleCard key={index} person={person} />
-                            ) :
-                            <NoPeopleFound />
+                        people.length ? people.map((person, index) => <>
+                            {showProfile && <Profile Profile={person} setShowProfile={setShowProfile} />}
+                            <PeopleCard key={index} person={person} setShowProfile={setShowProfile} />
+                        </>
+                        ) : <NoPeopleFound />
                 }
             </div>
         </div>

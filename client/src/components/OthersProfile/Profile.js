@@ -3,15 +3,12 @@ import './Profile.css'
 
 const Profile = ({ Profile, setShowProfile }) => {
 
-    const { displayName, designation, department, displayPicture, Social, phone, email } = Profile || {},
-        closeProfileOverlay = () => {
-            setShowProfile(false);
-        }
+    const { displayName, designation, department, displayPicture, Social, phone, email } = Profile || {};
 
     return Profile ? (
-        <div id='ProfileOverlay' className='FRCE'>
+        <div id='ProfileOverlay' className='FRCE' onClick={() => { setShowProfile(false) }}>
             <div id='ProfileCard' className='noScrollbar'>
-                <i className="fa-solid fa-xmark" id='closeProfileOverlay' onClick={closeProfileOverlay}></i>
+                <i className="fa-solid fa-xmark" id='closeProfileOverlay'></i>
                 <div id='user_image_basic_info' className='FCCC'>
                     <img src={displayPicture} id='user_photo' />
                     <div id='user_basic_info' className='FCCC'>

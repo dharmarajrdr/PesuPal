@@ -1,16 +1,12 @@
 import './PeopleCard.css';
 import { StatusIndicator } from '../../Auth/utils';
-import Profile from '../../OthersProfile/Profile';
-import { useState } from 'react';
 
-const PeopleCard = ({ person }) => {
+const PeopleCard = ({ person, setShowProfile }) => {
 
     const { displayName, displayPicture, designation, status, id } = person;
-    const [showProfile, setShowProfile] = useState(false);
 
     return (
         <div className='FCCC PeopleCard' onClick={() => setShowProfile(true)}>
-            {showProfile && <Profile Profile={person} setShowProfile={setShowProfile} />}
             <i className="fa fa-ellipsis-vertical three_dots"></i>
             <div className='FCCC mB5 img_name_dept'>
                 <div className='FRCC profile_picture_container mB10'>
