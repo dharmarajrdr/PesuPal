@@ -5,10 +5,12 @@ const BASE_URL = 'http://localhost:8080'; // Adjust the base URL as needed
 export async function apiRequest(endpoint, method = 'GET', data = null, customHeaders = {}) {
 
     const token = localStorage.getItem('token'); // adjust as needed
+    const orgId = sessionStorage.getItem('org-id'); // adjust as needed
 
     const headers = {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
+        'X-Org-Id': orgId || null,
         ...customHeaders,
     };
 
@@ -40,7 +42,7 @@ export async function apiRequest(endpoint, method = 'GET', data = null, customHe
             ? await response.json()
             : await response.text();
     } catch (error) {
-        console.error('API Error:', error);
-        throw error;
+        // console.error('API Error:', error);
+        // throw error;
     }
 }
