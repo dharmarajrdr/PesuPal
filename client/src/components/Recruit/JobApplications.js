@@ -1,7 +1,9 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import './JobApplications.css';
 import utils from '../../utils';
 import { apiRequest } from '../../http_request';
+import Loader from '../Loader';
+import ErrorMessage from '../ErrorMessage';
 
 const JobApplication = ({ job }) => {
 
@@ -48,16 +50,19 @@ const NoJobApplications = () => {
 const JobApplications = () => {
 
     const [ListOfJobOpenings, setListOfJobOpenings] = useState([]);
+    const [error, setError] = useState(null);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
 
-        try {
-            apiRequest('/api/v1/job-opening', 'GET').then(({ data }) => {
-                setListOfJobOpenings(data);
-            });
-        } catch (error) {
-            console.error('Error fetching job openings:', error);
-        }
+        apiRequest('/api/v1/job-opening', 'GET').then(({ data }) => {
+            setLoading(false);
+            setListOfJobOpenings(data);
+        }).catch((error) => {
+            setLoading(false);
+            setError(error.message);
+        });
+
     }, []);
 
     return (
@@ -65,10 +70,12 @@ const JobApplications = () => {
             <div id='job-applications-header' className='FCSS p10 w100'>
                 <h2>Job Applications</h2>
             </div>
-            {ListOfJobOpenings.length ?
-                ListOfJobOpenings.map((job, index) => (
-                    <JobApplication key={index} job={job} />
-                )) : <NoJobApplications />
+            {
+                loading ? <Loader message='Fetching job applications...' /> :
+                    error ? <ErrorMessage message={error} /> :
+                        ListOfJobOpenings.length ? ListOfJobOpenings.map((job, index) => (
+                            <JobApplication key={index} job={job} />
+                        )) : <NoJobApplications />
             }
         </div>
     )
