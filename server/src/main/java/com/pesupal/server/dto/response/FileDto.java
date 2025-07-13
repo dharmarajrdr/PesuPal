@@ -6,6 +6,7 @@ import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.model.workdrive.File;
 import lombok.Data;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Data
@@ -15,6 +16,8 @@ public class FileDto extends FileOrFolderDto {
     private Long id;
 
     private String name;
+
+    private LocalDateTime createdAt;
 
     private Long size;
 
@@ -38,6 +41,7 @@ public class FileDto extends FileOrFolderDto {
         FileDto fileDto = new FileDto();
         fileDto.setId(file.getId());
         fileDto.setName(file.getName());
+        fileDto.setCreatedAt(file.getCreatedAt());
         fileDto.setSize(file.getSize());
         fileDto.setMediaId(file.getMediaId());
         fileDto.setSecurity(file.getSecurity());
