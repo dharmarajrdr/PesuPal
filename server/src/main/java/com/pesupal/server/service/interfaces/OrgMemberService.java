@@ -2,6 +2,7 @@ package com.pesupal.server.service.interfaces;
 
 import com.pesupal.server.dto.request.AddOrgMemberDto;
 import com.pesupal.server.dto.response.OrgDetailDto;
+import com.pesupal.server.dto.response.UserBasicInfoDto;
 import com.pesupal.server.model.org.Org;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.model.user.User;
@@ -27,4 +28,6 @@ public interface OrgMemberService {
     void validateUserIsOrgMember(User user, Org org);
 
     void validateUserIsOrgMember(Long userId, Long orgId);
+
+    List<UserBasicInfoDto> getAllOrgMembers(Long currentUserId, Long currentOrgId);
 }

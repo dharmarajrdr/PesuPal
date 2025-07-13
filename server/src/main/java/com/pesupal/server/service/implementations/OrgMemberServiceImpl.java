@@ -5,6 +5,7 @@ import com.pesupal.server.dto.request.CreateDepartmentDto;
 import com.pesupal.server.dto.request.CreateDesignationDto;
 import com.pesupal.server.dto.response.LatestSubscriptionDto;
 import com.pesupal.server.dto.response.OrgDetailDto;
+import com.pesupal.server.dto.response.UserBasicInfoDto;
 import com.pesupal.server.enums.Role;
 import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.exceptions.DataNotFoundException;
@@ -268,4 +269,18 @@ public class OrgMemberServiceImpl implements OrgMemberService {
         validateUserIsOrgMember(user, org);
     }
 
+    /**
+     * Retrieves all members of an organization.
+     *
+     * @param userId
+     * @param orgId
+     * @return
+     */
+    @Override
+    public List<UserBasicInfoDto> getAllOrgMembers(Long userId, Long orgId) {
+
+        validateUserIsOrgMember(userId, orgId);
+
+        return orgMemberRepository.findAllByOrgIdOrderByDisplayNameAsc(orgId).stream().map(UserBasicInfoDto::fromOrgMember).toList();
+    }
 }

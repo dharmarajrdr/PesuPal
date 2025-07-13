@@ -21,4 +21,6 @@ public interface OrgMemberRepository extends JpaRepository<OrgMember, Long> {
     List<OrgMember> findByUser(User user);
 
     Boolean existsByUserIdAndOrgId(Long userId, Long orgId);
+
+    List<OrgMember> findAllByOrgIdOrderByDisplayNameAsc(Long orgId);
 }
