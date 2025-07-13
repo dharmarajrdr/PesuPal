@@ -24,7 +24,7 @@ const PeopleCards = () => {
     const [people, setPeople] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [showProfile, setShowProfile] = useState(false);
+    const [selectedPerson, setSelectedPerson] = useState(null);
 
     useEffect(() => {
         apiRequest("/api/v1/people", "GET").then(({ data }) => {
@@ -41,13 +41,15 @@ const PeopleCards = () => {
             <div id='list_of_people'>
                 {loading ? <Loader /> :
                     error ? <ErrorMessage message={error} /> :
-                        people.length ? people.map((person, index) => <>
-                            {showProfile && <Profile Profile={person} setShowProfile={setShowProfile} />}
-                            <PeopleCard key={index} person={person} setShowProfile={setShowProfile} />
-                        </>
+                        people.length ? people.map((person, index) =>
+                            <PeopleCard key={index} person={person} setShowProfile={() => setSelectedPerson(person)} />
                         ) : <NoPeopleFound />
                 }
+                {selectedPerson && (
+                    <Profile Profile={selectedPerson} setShowProfile={() => setSelectedPerson(null)} />
+                )}
             </div>
+
         </div>
     )
 }
