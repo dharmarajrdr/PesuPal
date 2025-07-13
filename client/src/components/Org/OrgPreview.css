@@ -48,6 +48,18 @@
     object-fit: cover;
 }
 
+.org-preview .display-picture p {
+    width: 40px;
+    height: 40px;
+    border-radius: 5px;
+    background-color: #3f4c68;
+    color: #fff;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 .org-preview .org-status {
     font-weight: 600;
     font-size: 12px;

@@ -3,7 +3,7 @@ import './OrgPreview.css';
 
 const OrgPreview = ({ org, toggleOrgList }) => {
 
-    const { id, active, displayName, role, displayPicture, members, status, subscription } = org;
+    const { id, active, displayName, role, uniqueName, displayPicture, members, status, subscription } = org;
     const { planName, expiresAt, status: subscriptionStatus } = subscription || {};
     const isOwner = role === 'ADMIN';
     const isTrial = planName == 'FREE_TRIAL';
@@ -16,7 +16,10 @@ const OrgPreview = ({ org, toggleOrgList }) => {
                 </h5>
             )}
             <div className='display-picture FCCC'>
-                <img src={displayPicture} alt='Organization Logo' />
+                {displayPicture ?
+                    <img src={displayPicture} alt='Logo' /> :
+                    <p>{uniqueName.trim().toUpperCase().charAt(0)}</p>
+                }
             </div>
             <div className='FCSS org-details'>
                 <div className='FRCB w100 mb5'>
