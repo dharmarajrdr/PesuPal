@@ -3,6 +3,7 @@ package com.pesupal.server.controller;
 import com.pesupal.server.dto.request.AddOrgMemberDto;
 import com.pesupal.server.dto.response.ApiResponseDto;
 import com.pesupal.server.dto.response.OrgDetailDto;
+import com.pesupal.server.dto.response.UserBasicInfoDto;
 import com.pesupal.server.helpers.OrgSubscriptionManager;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.service.interfaces.OrgMemberService;
@@ -40,5 +41,12 @@ public class OrgMemberController extends OrgSubscriptionManager {
 
         List<OrgDetailDto> orgDetails = orgMemberService.listOfOrgUserPartOf(getCurrentUserId());
         return ResponseEntity.ok(new ApiResponseDto("List of orgs retrieved successfully.", orgDetails));
+    }
+
+    @GetMapping("")
+    public ResponseEntity<ApiResponseDto> getAllOrgMembers() {
+
+        List<UserBasicInfoDto> orgMembers = orgMemberService.getAllOrgMembers(getCurrentUserId(), getCurrentOrgId());
+        return ResponseEntity.ok(new ApiResponseDto("List of organization members retrieved successfully.", orgMembers));
     }
 }
