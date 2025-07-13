@@ -46,7 +46,7 @@ public class OrgMemberServiceImpl implements OrgMemberService {
     @Override
     public OrgMember getOrgMemberByUserAndOrg(User user, Org org) {
 
-        return orgMemberRepository.findByUserAndOrg(user, org).orElseThrow(() -> new DataNotFoundException("User with ID: " + user.getId() + " is not a member of this org."));
+        return orgMemberRepository.findByUserAndOrg(user, org).orElseThrow(() -> new DataNotFoundException("User with ID " + user.getId() + " is not a member of this org."));
     }
 
     /**
