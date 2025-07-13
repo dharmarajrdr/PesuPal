@@ -182,7 +182,7 @@ public class OrgMemberServiceImpl implements OrgMemberService {
             OrgDetailDto orgDetailDto = OrgDetailDto.fromOrg(org);
             orgDetailDto.setRole(orgMember.getRole());
             orgDetailDto.setMembers(membersCount);
-            OrgSubscriptionHistory orgSubscriptionHistory = orgSubscriptionHistoryService.getLatestSubscription(org.getId()).orElseThrow(() -> new DataNotFoundException("No subscription history found for org with ID: " + org.getId()));
+            OrgSubscriptionHistory orgSubscriptionHistory = orgSubscriptionHistoryService.getLatestSubscription(org.getId()).orElseThrow(() -> new DataNotFoundException("No subscription history found for org with ID " + org.getId()));
             orgDetailDto.setSubscription(LatestSubscriptionDto.fromOrgSubscriptionHistory(orgSubscriptionHistory));
             orgDetailDtos.add(orgDetailDto);
         }

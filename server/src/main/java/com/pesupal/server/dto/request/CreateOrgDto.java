@@ -17,7 +17,7 @@ public class CreateOrgDto {
         Org org = new Org();
         org.setDisplayName(this.displayName);
         org.setUniqueName(this.uniqueName);
-        org.setDisplayName(this.displayPicture);
+        org.setDisplayPicture(this.displayPicture);
         return org;
     }
 }
