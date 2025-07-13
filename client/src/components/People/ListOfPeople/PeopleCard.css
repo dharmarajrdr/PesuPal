@@ -23,6 +23,10 @@
   position: relative;
 }
 
+.profile_picture_container img {
+  object-fit: cover;
+}
+
 .PeopleCard .three_dots {
   position: absolute;
   right: 15px;
