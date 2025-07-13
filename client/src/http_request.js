@@ -42,7 +42,6 @@ export async function apiRequest(endpoint, method = 'GET', data = null, customHe
             ? await response.json()
             : await response.text();
     } catch (error) {
-        // console.error('API Error:', error);
-        // throw error;
+        throw error;
     }
 }
