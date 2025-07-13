@@ -23,7 +23,7 @@ const JobApplication = ({ job }) => {
                 </div>
                 {/* <span className={`job-application-status w100 ${jobStatus.toLowerCase()}`}>{jobStatus.replace('_', ' ')}</span> */}
                 <div className='job-application-created-at FRCE w100'>
-                    <i class="fa-solid fa-clock-rotate-left mR5"></i>
+                    <i className="fa-solid fa-clock-rotate-left mR5"></i>
                     <span>{utils.agoTimeCalculator(new Date(createdAt))}</span>
                 </div>
             </div>

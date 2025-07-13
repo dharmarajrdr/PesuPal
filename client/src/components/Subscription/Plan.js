@@ -23,7 +23,7 @@ const Plan = ({ plan }) => {
             </button>
             <ul className='plan-features'>
                 {features.map((feature, index) => <li className='black-text'>
-                    <i class="fa-solid fa-square-check black-text"></i>{feature}
+                    <i className="fa-solid fa-square-check black-text"></i>{feature}
                 </li>)}
             </ul>
         </div>

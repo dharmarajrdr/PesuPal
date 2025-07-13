@@ -10,7 +10,7 @@ const FeedsLeftPanel = ({ leftNavigationState, width }) => {
     return (
         <div id='FeedsLeftPanel' className='h100 custom-scrollbar' style={{ width }}>
             <div id='openCloseLeftNavigationContainer' className='w100 FRCE'>
-                <i class={"fa-solid fa-angles-" + (leftNavOpened ? 'left' : 'right')} onClick={openCloseLeftNav}></i>
+                <i className={"fa-solid fa-angles-" + (leftNavOpened ? 'left' : 'right')} onClick={openCloseLeftNav}></i>
             </div>
             {FeedsLeftPanelList.map((item, index) => <FeedsLeftPanelItem key={index} item={item} leftNavOpened={leftNavOpened} />)}
             <FeedsLeftPanelPages leftNavOpened={leftNavOpened} />

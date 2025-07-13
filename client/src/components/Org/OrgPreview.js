@@ -32,7 +32,7 @@ const OrgPreview = ({ org, toggleOrgList }) => {
                         {role}
                     </span>
                     <span className='org-members-count'>
-                        <i class="fa-solid fa-users"></i>
+                        <i className="fa-solid fa-users"></i>
                         {members}
                     </span>
 
