@@ -24,7 +24,7 @@ export default [
         has_access: true
     },
     {
-        title: 'Manage Work (crm)',
+        title: 'Tasks',
         route: '/team/manage_work',
         icon: 'fa fa-tasks',
         active: false,
@@ -40,7 +40,7 @@ export default [
         has_access: true
     },
     {
-        title: 'Drive (workdrive)',
+        title: 'Workdrive',
         route: '/team/drive',
         icon: 'fa fa-store',
         active: false,
@@ -72,11 +72,10 @@ export default [
         has_access: true
     },
     {
-        title: 'Resource (people)',
-        route: '/team/resource',
+        title: 'Recruit',
+        route: '/team/recruit',
         icon: 'fa fa-user-plus',
         active: false,
-        notify_count: 3,
         has_access: false
     },
     {

@@ -12,7 +12,7 @@ const TeamMainContainer = ({ width }) => {
                 <Route path="" element={<Navigate to="/team/drive" />} />
                 <Route path="/drive/*" element={<DriveLayout />} />
                 <Route path="/manage_work/*" element={<ManageWorkLayout />} />
-                <Route path="/resource/*" element={<RecruitLayout />} />
+                <Route path="/recruit/*" element={<RecruitLayout />} />
             </Routes>
         </div>
     )
