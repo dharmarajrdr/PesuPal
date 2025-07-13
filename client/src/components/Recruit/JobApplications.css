@@ -1,10 +1,10 @@
-#no-job-applications p {
+#no-data-found p {
     font-size: 13px;
     color: #666;
     margin: 3px 0px;
 }
 
-#no-job-applications p i {
+#no-data-found p i {
     color: #3f4c68;
 }
 

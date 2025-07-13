@@ -37,7 +37,7 @@ const JobApplication = ({ job }) => {
 const NoJobApplications = () => {
 
     return (
-        <div className='FCCC w100 h100' id='no-job-applications'>
+        <div className='FCCC w100 h100' id='no-data-found'>
             <p className='FRCC w100'>
                 <i className='fa fa-briefcase mR5' />
                 No job applications found.
