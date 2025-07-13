@@ -1,10 +1,10 @@
-import React from 'react'
 import { Link } from 'react-router-dom'
 import './Profile.css'
 
 const Profile = ({ Profile, setShowProfile }) => {
-    const { Name, Designation, Department, Profile_picture, Contact, Social } = Profile || {},
-        { Phone, Email } = Contact || {}, closeProfileOverlay = () => {
+
+    const { displayName, designation, department, displayPicture, Social, phone, email } = Profile || {},
+        closeProfileOverlay = () => {
             setShowProfile(false);
         }
 
@@ -13,16 +13,16 @@ const Profile = ({ Profile, setShowProfile }) => {
             <div id='ProfileCard' className='noScrollbar'>
                 <i className="fa-solid fa-xmark" id='closeProfileOverlay' onClick={closeProfileOverlay}></i>
                 <div id='user_image_basic_info' className='FCCC'>
-                    <img src={Profile_picture} id='user_photo' />
+                    <img src={displayPicture} id='user_photo' />
                     <div id='user_basic_info' className='FCCC'>
                         <div className='row'>
-                            <h4 id='profile_name'>{Name}</h4>
+                            <h4 id='profile_name'>{displayName}</h4>
                         </div>
                         <div className='row'>
-                            <p id='profile_designation'>{Designation}</p>
+                            <p id='profile_designation'>{designation}</p>
                         </div>
                         <div className='row'>
-                            <p id='profile_dept'>{Department}</p>
+                            <p id='profile_dept'>{department}</p>
                         </div>
                         <div className='row mT10'>
                             <i className='profile_contacts fa fa-comment' style={{ backgroundColor: 'blue' }} />
@@ -36,18 +36,18 @@ const Profile = ({ Profile, setShowProfile }) => {
                     <div className='FCSS w100 phone_email'>
                         <label>Phone</label>
                         <div className='FRCB w100'>
-                            <b>{Phone}</b>
+                            <b>{phone}</b>
                             <i className='fa-regular fa-copy copy_contact_info' title='Copy' />
                         </div>
                     </div>
                     <div className='FCSS w100 phone_email'>
                         <label>Email</label>
                         <div className='FRCB w100'>
-                            <b>{Email}</b>
+                            <b>{email}</b>
                             <i className='fa-regular fa-copy copy_contact_info' title='Copy' />
                         </div>
                     </div>
-                    {Social.length ?
+                    {Social?.length ?
                         <div className='FCSS w100 phone_email'>
                             <label>Social</label>
                             <div className='FRCS w100'>
