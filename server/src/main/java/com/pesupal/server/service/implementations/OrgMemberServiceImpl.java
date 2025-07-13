@@ -102,6 +102,19 @@ public class OrgMemberServiceImpl implements OrgMemberService {
     }
 
     /**
+     * Checks if a user is already a member of an organization by user ID and org ID.
+     *
+     * @param userId
+     * @param orgId
+     * @return
+     */
+    @Override
+    public Boolean existsByUserIdAndOrgId(Long userId, Long orgId) {
+
+        return orgMemberRepository.existsByUserIdAndOrgId(userId, orgId);
+    }
+
+    /**
      * Retrieves an organization member by their ID.
      *
      * @param orgMemberId
