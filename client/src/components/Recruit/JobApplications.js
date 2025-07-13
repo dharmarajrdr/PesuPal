@@ -1,6 +1,7 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import './JobApplications.css';
 import utils from '../../utils';
+import { apiRequest } from '../../http_request';
 
 const JobApplication = ({ job }) => {
 
@@ -31,15 +32,44 @@ const JobApplication = ({ job }) => {
     )
 }
 
-const JobApplications = ({ ListOfJobOpenings }) => {
+const NoJobApplications = () => {
+
+    return (
+        <div className='FCCC w100 h100' id='no-job-applications'>
+            <p className='FRCC w100'>
+                <i className='fa fa-briefcase mR5' />
+                No job applications found.
+            </p>
+            <p className='w100 alignCenter'>Start creating a new job opening.</p>
+        </div>
+    )
+}
+
+const JobApplications = () => {
+
+    const [ListOfJobOpenings, setListOfJobOpenings] = useState([]);
+
+    useEffect(() => {
+
+        try {
+            apiRequest('/api/v1/job-opening', 'GET').then(({ data }) => {
+                setListOfJobOpenings(data);
+            });
+        } catch (error) {
+            console.error('Error fetching job openings:', error);
+        }
+    }, []);
+
     return (
         <div id='job-applications' className='FCSS h100'>
             <div id='job-applications-header' className='FCSS p10 w100'>
                 <h2>Job Applications</h2>
             </div>
-            {ListOfJobOpenings.map((job, index) => (
-                <JobApplication key={index} job={job} />
-            ))}
+            {ListOfJobOpenings.length ?
+                ListOfJobOpenings.map((job, index) => (
+                    <JobApplication key={index} job={job} />
+                )) : <NoJobApplications />
+            }
         </div>
     )
 }

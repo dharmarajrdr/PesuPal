@@ -1,3 +1,13 @@
+#no-job-applications p {
+    font-size: 13px;
+    color: #666;
+    margin: 3px 0px;
+}
+
+#no-job-applications p i {
+    color: #3f4c68;
+}
+
 #job-applications {
     border-right: 1px solid #3f4c6892;
     overflow: auto;
