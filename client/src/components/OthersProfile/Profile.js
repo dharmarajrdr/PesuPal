@@ -20,7 +20,7 @@ const Profile = ({ Profile, setShowProfile }) => {
                             <p className='employee_id' title="Employee Id">13910</p>
                         </div>
                         <div className='row FRCC'>
-                            <i className='fa-solid fa-building mR5 color555 fs10'></i>
+                            <i className='fa-solid fa-building mR5 colorAAA fs10'></i>
                             <p id='profile_dept' title='Department'>{department}</p>
                         </div>
                         <div className='row mT10'>

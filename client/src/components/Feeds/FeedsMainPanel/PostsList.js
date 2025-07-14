@@ -17,7 +17,18 @@ export default [
         "createdAt": "2025-07-14T13:35:24.705911",
         "tags": [
             "#zoho",
-            "#chennai"
+            "#chennai",
+            "#pesupal",
+            "#reactjs",
+            "#javascript",
+            "#webdevelopment",
+            "#frontend",
+            "#backend",
+            "#fullstack",
+            "#programming",
+            "#coding",
+            "#softwaredevelopment",
+            "#webdesign"
         ],
         "media": [
             "00bb0d71-fe90-4325-99b8-13529ef63037",
