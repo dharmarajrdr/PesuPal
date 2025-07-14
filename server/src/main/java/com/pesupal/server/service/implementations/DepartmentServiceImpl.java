@@ -73,8 +73,7 @@ public class DepartmentServiceImpl implements DepartmentService {
 
         OrgMember orgMember = orgMemberService.getOrgMemberByUserIdAndOrgId(userId, orgId);
         return departmentRepository.findAllByOrgOrderByOrg_DisplayNameAsc(orgMember.getOrg()).stream().map(department -> {
-            OrgMember head = orgMemberService.getOrgMemberByUserIdAndOrgId(department.getHead().getId(), orgMember.getOrg().getId());
-            return DepartmentDto.fromDepartmentAndOrgMember(department, head);
+            return DepartmentDto.fromDepartmentAndOrgMember(department, null);  // Assuming head is not needed here, otherwise fetch it
         }).toList();
     }
 
@@ -87,5 +86,25 @@ public class DepartmentServiceImpl implements DepartmentService {
     public Department getDepartmentByIdAndOrg(Long departmentId, Org org) {
 
         return departmentRepository.findByIdAndOrg(departmentId, org).orElseThrow(() -> new DataNotFoundException("Department with ID " + departmentId + " not found"));
+    }
+
+    /**
+     * Retrieves a Department by its ID and organization ID.
+     *
+     * @param departmentId
+     * @param userId
+     * @param orgId
+     * @return
+     */
+    @Override
+    public DepartmentDto getDepartmentByIdAndOrgId(Long departmentId, Long userId, Long orgId) {
+
+        OrgMember orgMember = orgMemberService.getOrgMemberByUserIdAndOrgId(userId, orgId);
+        Department department = getDepartmentByIdAndOrg(departmentId, orgMember.getOrg());
+
+        return DepartmentDto.fromDepartmentAndOrgMember(
+                department,
+                orgMemberService.getOrgMemberByUserAndOrg(department.getHead(), orgMember.getOrg())
+        );
     }
 }

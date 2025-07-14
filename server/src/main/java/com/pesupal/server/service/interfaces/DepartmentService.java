@@ -16,4 +16,6 @@ public interface DepartmentService {
     List<DepartmentDto> getAllDepartments(Long currentUserId, Long currentOrgId);
 
     Department getDepartmentByIdAndOrg(Long departmentId, Org org);
+
+    DepartmentDto getDepartmentByIdAndOrgId(Long departmentId, Long currentUserId, Long currentOrgId);
 }
