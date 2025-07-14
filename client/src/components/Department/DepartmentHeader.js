@@ -56,6 +56,8 @@ const DepartmentHead = ({ head }) => {
 // Main component
 const DepartmentHeader = ({ departmentId }) => {
 
+    console.log(departmentId);
+
     const [currentDepartment, setCurrentDepartment] = useState(null);
     const [currentDepartmentData, setCurrentDepartmentData] = useState({});
 
