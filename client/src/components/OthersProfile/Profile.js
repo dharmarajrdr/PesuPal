@@ -15,11 +15,13 @@ const Profile = ({ Profile, setShowProfile }) => {
                         <div className='row'>
                             <h4 id='profile_name'>{displayName}</h4>
                         </div>
-                        <div className='row'>
-                            <p id='profile_designation'>{designation}</p>
+                        <div className='row FRCC'>
+                            <p id='profile_designation' title="Designation">{designation}</p>
+                            <p className='employee_id' title="Employee Id">13910</p>
                         </div>
-                        <div className='row'>
-                            <p id='profile_dept'>{department}</p>
+                        <div className='row FRCC'>
+                            <i className='fa-solid fa-building mR5 color555 fs10'></i>
+                            <p id='profile_dept' title='Department'>{department}</p>
                         </div>
                         <div className='row mT10'>
                             <i className='profile_contacts fa fa-comment' style={{ backgroundColor: 'blue' }} />
@@ -29,7 +31,7 @@ const Profile = ({ Profile, setShowProfile }) => {
                     </div>
                 </div>
                 <div id='contact_info'>
-                    <h4>User Information</h4>
+                    {/* <h4>User Information</h4> */}
                     <div className='FCSS w100 phone_email'>
                         <label>Phone</label>
                         <div className='FRCB w100'>
