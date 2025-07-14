@@ -1,0 +1,89 @@
+#OrgMembers {
+    padding: 10px;
+    padding-top: 0;
+    margin: 10px;
+    height: calc(100vh - 120px);
+    box-sizing: border-box;
+    background-color: #fff;
+    border-radius: 5px;
+    position: relative;
+    overflow: auto;
+}
+
+#OrgMembers:first-child {
+    margin-right: 0;
+}
+
+#OrgMembers .status-title {
+    border-bottom: 1px solid #ccc;
+    padding-top: 20px;
+    padding-bottom: 5px;
+    margin-bottom: 10px;
+    position: sticky;
+    top: 0;
+    background-color: #fff;
+    z-index: 2;
+}
+
+#OrgMembers .status-title i {
+    font-size: 10px;
+}
+
+#OrgMembers .status-title.available_members {
+    color: #4caf50;
+}
+
+#OrgMembers .status-title.available_members i {
+    color: #4caf50;
+}
+
+#OrgMembers .status-title.unavailable_members {
+    color: #ff9800;
+}
+
+#OrgMembers .status-title.unavailable_members i {
+    color: #ff9800;
+}
+
+.org-member {
+    border-radius: 5px;
+    padding: 15px 10px;
+    box-sizing: border-box;
+    cursor: pointer;
+}
+
+.org-member:hover {
+    background-color: #f0f0f084;
+}
+
+.org-member div .displayName {
+    color: #222;
+    font-weight: 500;
+    margin-bottom: 3px;
+}
+
+.org-member div .email {
+    color: #777;
+    font-size: 12px;
+}
+
+.org-member-details {
+    width: calc(100% - 50px);
+}
+
+.org-member #left {
+    width: calc(100% - 130px);
+    overflow: hidden;
+}
+
+.org-member #right {
+    width: 120px;
+}
+
+.org-member #right i {
+    font-size: 12px;
+    margin-top: 5px;
+    width: 40px;
+    line-height: 30px;
+    height: 30px;
+}
