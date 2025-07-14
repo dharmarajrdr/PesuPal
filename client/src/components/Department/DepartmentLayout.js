@@ -11,6 +11,7 @@ const DepartmentLayout = () => {
     const [departmentId, setDepartmentId] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [currentDepartment, setCurrentDepartment] = useState(null);
 
     useState(() => {
         apiRequest("/api/v1/department", "GET").then(({ data }) => {
@@ -28,8 +29,8 @@ const DepartmentLayout = () => {
                 loading ? <Loader /> :
                     error ? <ErrorMessage message={error} /> :
                         <>
-                            <DepartmentHeader departmentId={departmentId} />
-                            <DepartmentMain departmentId={departmentId} />
+                            <DepartmentHeader departmentId={departmentId} currentDepartment={currentDepartment} setCurrentDepartment={setCurrentDepartment} />
+                            <DepartmentMain departmentId={departmentId} currentDepartment={currentDepartment} />
                         </>
             }
         </div>

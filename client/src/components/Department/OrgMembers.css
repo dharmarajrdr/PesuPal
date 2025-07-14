@@ -52,6 +52,10 @@
     cursor: pointer;
 }
 
+#OrgMembers #no-data-found {
+    height: calc(100% - 60px);
+}
+
 .org-member:hover {
     background-color: #f0f0f084;
 }

@@ -5,21 +5,21 @@ import { apiRequest } from '../../http_request';
 import Loader from '../Loader';
 import ErrorMessage from '../ErrorMessage';
 
-const DepartmentMain = ({ departmentId }) => {
+const DepartmentMain = ({ departmentId, currentDepartment }) => {
 
   const [orgMembersList, setOrgMembersList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    apiRequest(`/api/v1/department/${departmentId}/members`, "GET").then(({ data }) => {
+    apiRequest(`/api/v1/department/${currentDepartment?.id || departmentId}/members`, "GET").then(({ data }) => {
       setLoading(false);
       setOrgMembersList(data);
     }).catch(({ message }) => {
       setLoading(false);
       setError(message);
     });
-  }, []);
+  }, [currentDepartment]);
 
   const availableMembers = orgMembersList.filter(member => member.status === 'available');
   const unavailableMembers = orgMembersList.filter(member => member.status !== 'available');
