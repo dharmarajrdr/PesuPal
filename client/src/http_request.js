@@ -1,10 +1,10 @@
-// src/utils/api.js
+import utils from "./utils";
 
 const BASE_URL = 'http://localhost:8080'; // Adjust the base URL as needed
 
 export async function apiRequest(endpoint, method = 'GET', data = null, customHeaders = {}) {
 
-    const token = localStorage.getItem('token'); // adjust as needed
+    const token = utils.parseCookie().get('token');
     const orgId = sessionStorage.getItem('org-id'); // adjust as needed
 
     const headers = {
@@ -42,6 +42,11 @@ export async function apiRequest(endpoint, method = 'GET', data = null, customHe
             ? await response.json()
             : await response.text();
     } catch (error) {
+        const { message } = error;
+        console.log(message);
+        if (message == "Invalid JWT token") {
+            localStorage.removeItem('token');
+        }
         throw error;
     }
 }

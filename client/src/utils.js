@@ -124,5 +124,18 @@ export default {
         if (hours > 0) return `${hours} hr${hours > 1 ? 's' : ''} ago`;
         if (minutes > 0) return `${minutes} min${minutes > 1 ? 's' : ''} ago`;
         return `${seconds} sec${seconds > 1 ? 's' : ''} ago`;
+    },
+    "parseCookie": () => {
+        const cookies = document.cookie
+            .split(';')
+            .map(cookie => cookie.trim().split('='))
+            .reduce((acc, [key, value]) => {
+                acc[key] = decodeURIComponent(value);
+                return acc;
+            }, {});
+
+        return {
+            get: (name) => cookies[name] || null
+        };
     }
 }
