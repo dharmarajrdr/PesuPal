@@ -1,5 +1,6 @@
 package com.pesupal.server.repository;
 
+import com.pesupal.server.model.department.Department;
 import com.pesupal.server.model.org.Org;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.model.user.User;
@@ -23,4 +24,6 @@ public interface OrgMemberRepository extends JpaRepository<OrgMember, Long> {
     Boolean existsByUserIdAndOrgId(Long userId, Long orgId);
 
     List<OrgMember> findAllByOrgIdOrderByDisplayNameAsc(Long orgId);
+
+    List<OrgMember> findAllByOrgAndDepartmentOrderByDisplayName(Org org, Department department);
 }

@@ -19,6 +19,8 @@ public interface OrgMemberService {
 
     Boolean existsByUserAndOrg(User user, Org org);
 
+    List<UserBasicInfoDto> getAllMembers(Long departmentId, Long currentUserId, Long currentOrgId);
+
     Boolean existsByUserIdAndOrgId(Long userId, Long orgId);
 
     OrgMember joinOrgAsFirstMember(User user, Org org);

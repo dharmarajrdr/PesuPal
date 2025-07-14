@@ -119,6 +119,22 @@ public class OrgMemberServiceImpl implements OrgMemberService {
     }
 
     /**
+     * Retrieves all members of a department.
+     *
+     * @param departmentId
+     * @param userId
+     * @param orgId
+     * @return List<UserBasicInfoDto>
+     */
+    @Override
+    public List<UserBasicInfoDto> getAllMembers(Long departmentId, Long userId, Long orgId) {
+
+        OrgMember orgMember = getOrgMemberByUserIdAndOrgId(userId, orgId);
+        Department department = departmentService.getDepartmentByIdAndOrg(departmentId, orgMember.getOrg());
+        return orgMemberRepository.findAllByOrgAndDepartmentOrderByDisplayName(orgMember.getOrg(), department).stream().map(UserBasicInfoDto::fromOrgMember).toList();
+    }
+
+    /**
      * Checks if a user is already a member of an organization by user ID and org ID.
      *
      * @param userId
