@@ -18,4 +18,6 @@ public interface DepartmentService {
     Department getDepartmentByIdAndOrg(Long departmentId, Org org);
 
     DepartmentDto getDepartmentByIdAndOrgId(Long departmentId, Long currentUserId, Long currentOrgId);
+
+    DepartmentDto getUserDepartment(Long currentUserId, Long currentOrgId);
 }

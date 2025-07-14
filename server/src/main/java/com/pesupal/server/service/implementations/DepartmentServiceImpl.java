@@ -107,4 +107,18 @@ public class DepartmentServiceImpl implements DepartmentService {
                 orgMemberService.getOrgMemberByUserAndOrg(department.getHead(), orgMember.getOrg())
         );
     }
+
+    /**
+     * Retrieves the Department of the current user in the organization.
+     *
+     * @param userId
+     * @param orgId
+     * @return
+     */
+    @Override
+    public DepartmentDto getUserDepartment(Long userId, Long orgId) {
+
+        OrgMember orgMember = orgMemberService.getOrgMemberByUserIdAndOrgId(userId, orgId);
+        return DepartmentDto.fromDepartmentAndOrgMember(orgMember.getDepartment(), orgMember);
+    }
 }
