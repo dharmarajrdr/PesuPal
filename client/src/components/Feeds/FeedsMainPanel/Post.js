@@ -11,7 +11,7 @@ const Post = ({ post }) => {
 
     const { title, owner, description, createdAt, impression, media, mentions, tags, commentable, bookmarkable } = post,
         { likes, comments } = impression || {},
-        { displayName, displayPicture } = owner,
+        { userId, displayName, displayPicture } = owner,
         [fullScreenImage, setFullScreenImage] = useState(null),
         convertDateAndTime = function (str) {
             try {
@@ -103,7 +103,7 @@ const Post = ({ post }) => {
                 </div>
                 {/* <p>{mentions} Mentions</p> */}
             </div>
-            {showProfile && <Profile Profile={owner} setShowProfile={setShowProfile} />}
+            {showProfile && <Profile userId={userId} setShowProfile={setShowProfile} />}
         </div>
     )
 }

@@ -46,7 +46,7 @@ const PeopleCards = () => {
                         ) : <NoPeopleFound />
                 }
                 {selectedPerson && (
-                    <Profile Profile={selectedPerson} setShowProfile={() => setSelectedPerson(null)} />
+                    <Profile userId={selectedPerson.userId} setShowProfile={() => setSelectedPerson(null)} />
                 )}
             </div>
 
