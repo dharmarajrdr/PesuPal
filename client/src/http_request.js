@@ -42,10 +42,10 @@ export async function apiRequest(endpoint, method = 'GET', data = null, customHe
             ? await response.json()
             : await response.text();
     } catch (error) {
-        const { message } = error;
+        const { message } = JSON.parse(error.message) || {};
         console.log(message);
         if (message == "Invalid JWT token") {
-            localStorage.removeItem('token');
+            document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/';
         }
         throw error;
     }
