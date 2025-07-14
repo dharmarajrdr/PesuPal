@@ -29,7 +29,7 @@ const DepartmentLayout = () => {
                     error ? <ErrorMessage message={error} /> :
                         <>
                             <DepartmentHeader departmentId={departmentId} />
-                            <DepartmentMain />
+                            <DepartmentMain departmentId={departmentId} />
                         </>
             }
         </div>
