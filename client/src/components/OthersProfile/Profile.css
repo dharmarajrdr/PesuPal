@@ -28,6 +28,7 @@
   border-bottom-left-radius: 10px;
   right: 0;
   animation: rightToLeft 0.25s ease-out;
+  z-index: 10;
 }
 
 @keyframes rightToLeft {
