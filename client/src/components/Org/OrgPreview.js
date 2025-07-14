@@ -1,4 +1,3 @@
-import React from 'react'
 import './OrgPreview.css';
 
 const OrgPreview = ({ org, toggleOrgList }) => {
@@ -17,7 +16,7 @@ const OrgPreview = ({ org, toggleOrgList }) => {
             )}
             <div className='display-picture FCCC'>
                 {displayPicture ?
-                    <img src={displayPicture} alt='Logo' /> :
+                    <img src={displayPicture} alt='Logo' className='objectPositionCenter objectFitCover' /> :
                     <p>{uniqueName.trim().toUpperCase().charAt(0)}</p>
                 }
             </div>

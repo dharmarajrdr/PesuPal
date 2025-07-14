@@ -1,6 +1,5 @@
 package com.pesupal.server.controller;
 
-import com.pesupal.server.config.RequestContext;
 import com.pesupal.server.dto.response.ApiResponseDto;
 import com.pesupal.server.service.interfaces.MediaService;
 import lombok.AllArgsConstructor;
@@ -34,7 +33,8 @@ public class MediaController {
     public ResponseEntity<Resource> getMedia(@PathVariable UUID mediaId) throws MalformedURLException, FileNotFoundException {
 
         // Get content type from header
-        String contentType = RequestContext.get("CONTENT-TYPE", String.class);
+//        String contentType = RequestContext.get("CONTENT-TYPE", String.class);
+        String contentType = "image/png";
         Resource resource = mediaService.getResourceById(mediaId, contentType);
         return ResponseEntity.ok().contentType(MediaType.valueOf(contentType)).body(resource);
     }

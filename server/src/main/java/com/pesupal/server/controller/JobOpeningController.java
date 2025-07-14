@@ -40,7 +40,7 @@ public class JobOpeningController extends CurrentValueRetriever {
     ) {
 
         JobOpeningFilterDto jobOpeningFilterDto = new JobOpeningFilterDto(openingStatus);
-        List<JobOpeningDto> jobOpenings = jobOpeningService.getAllJobOpeningsByOrgId(getCurrentOrgId(), jobOpeningFilterDto);
+        List<JobOpeningDto> jobOpenings = jobOpeningService.getAllJobOpeningsByOrgId(getCurrentUserId(), getCurrentOrgId(), jobOpeningFilterDto);
         return ResponseEntity.ok(new ApiResponseDto("Job openings retrieved successfully", jobOpenings));
     }
 }

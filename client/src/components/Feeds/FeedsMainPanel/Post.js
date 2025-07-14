@@ -1,10 +1,17 @@
-import React from 'react'
+import utils from '../../../utils';
+import Profile from '../../OthersProfile/Profile';
 import './Post.css'
 import { useState } from 'react';
 
+const serverDomain = 'http://localhost:8080';
+
+const PostDescription = ({ html }) => <div className="post-description postContent" dangerouslySetInnerHTML={{ __html: html }} />
+
 const Post = ({ post }) => {
-    const { title, author, content, created_at, likes, comments, media, mentions, tags } = post,
-        { name, image } = author,
+
+    const { title, owner, description, createdAt, impression, media, mentions, tags, commentable, bookmarkable } = post,
+        { likes, comments } = impression || {},
+        { displayName, displayPicture } = owner,
         [fullScreenImage, setFullScreenImage] = useState(null),
         convertDateAndTime = function (str) {
             try {
@@ -39,45 +46,64 @@ const Post = ({ post }) => {
         }, closeFullScreen = function () {
             setFullScreenImage(null);
         };
+
+    const [showProfile, setShowProfile] = useState(false);
+
+    const tagClickHandler = (e) => {
+        const tag = e.target.innerText;
+        e.preventDefault();
+        e.stopPropagation();
+        if (tag.startsWith('#')) {
+            const tagName = tag.slice(1);
+            alert(`Searching for tag: ${tagName}`);  //eslint-disable-line no-alert
+            // redirect to tag search or filter logic
+        }
+    }
+
     return (
         <div className='Post w100'>
             {fullScreenImage ?
                 <div id='view_image_full_screen' className='FRCC'>
                     <div id='closeFullScreen' className='FRCC' onClick={closeFullScreen}>
-                        <span>Close</span>
+                        <span className='mR5'>Close</span>
                         <i className="fa-solid fa-xmark"></i>
                     </div>
                     <img src={fullScreenImage} />
                 </div> : null}
             <div className='PostHeader FRCB'>
                 <div className='FRCS'>
-                    <img src={image} alt={name} className='img_40_40 user_photo' />
+                    <img src={displayPicture} alt={displayName} className='img_40_40 user_photo' onClick={() => setShowProfile(true)} />
                     <div className='FCSS'>
-                        <h3 className='user_name'>{name}</h3>
-                        <p className='created_at'>{convertDateAndTime(created_at)}</p>
+                        <h3 className='user_name'>{displayName}</h3>
+                        <p className='created_at' title={convertDateAndTime(createdAt)}>{utils.agoTimeCalculator(createdAt)}</p>
                     </div>
                 </div>
                 <i className='fa-solid fa-ellipsis'></i>
             </div>
             <div className='PostBody FCSS'>
                 {title ? <h4 className='postTitle'>{title}</h4> : null}
-                <p className='postContent'>{content}</p>
+                <PostDescription html={description} />
+                <div className='FRCS tagsContainer'>
+                    {tags && tags.map((tag, index) => (
+                        <span key={index} onClick={tagClickHandler}>{tag}</span>
+                    ))}
+                </div>
                 {media ?
                     <div className='mediaContainer FCSS w100' onClick={toggleMaxHeight}>
-                        {media.map((media, index) => <img key={index} src={media} className='media_image w100' />)}
+                        {media.map((media, index) => <img key={index} src={`${serverDomain}/api/v1/media/${media}`} className='media_image w100' />)}
                     </div> : null}
             </div>
             <div className='PostFooter w100 FRCB'>
                 <div className='FRCS'>
                     <div className='postActions leftFooter FRCC mY5'><i className="fa-regular fa-thumbs-up"></i> {likes}</div>
-                    <div className='postActions leftFooter FRCC mY5'><i className="fa-regular fa-comment"></i> {comments}</div>
+                    {commentable && <div className='postActions leftFooter FRCC mY5'><i className="fa-regular fa-comment"></i> {comments}</div>}
                 </div>
                 <div className='FRCE'>
-                    <div className='postActions rightFooter FRCC mY5'><i className="fa-regular fa-bookmark"></i></div>
+                    {bookmarkable && <div className='postActions rightFooter FRCC mY5'><i className="fa-regular fa-bookmark"></i></div>}
                 </div>
-                {/* <p>{mentions} Mentions</p>
-                <p>{tags} Tags</p> */}
+                {/* <p>{mentions} Mentions</p> */}
             </div>
+            {showProfile && <Profile Profile={owner} setShowProfile={setShowProfile} />}
         </div>
     )
 }
