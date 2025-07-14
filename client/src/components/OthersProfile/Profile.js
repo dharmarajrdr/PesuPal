@@ -5,8 +5,14 @@ const Profile = ({ Profile, setShowProfile }) => {
 
     const { displayName, designation, department, displayPicture, Social, phone, email } = Profile || {};
 
+    const closeProfileOverlay = (e) => {
+        if (e.target.id === 'ProfileOverlay') {
+            setShowProfile(false);
+        }
+    }
+
     return Profile ? (
-        <div id='ProfileOverlay' className='FRCE' onClick={() => { setShowProfile(false) }}>
+        <div id='ProfileOverlay' className='FRCE' onClick={closeProfileOverlay}>
             <div id='ProfileCard' className='noScrollbar'>
                 {/* <i className="fa-solid fa-xmark" id='closeProfileOverlay'></i> */}
                 <div id='user_image_basic_info' className='FCCC'>
