@@ -4,12 +4,14 @@ import './TeamMainContainer.css';
 import ManageWorkLayout from './ManageWork/ManageWorkLayout';
 import DriveLayout from './Drive/DriveLayout';
 import RecruitLayout from '../Recruit/RecruitLayout';
+import DepartmentLayout from '../Department/DepartmentLayout';
 
 const TeamMainContainer = ({ width }) => {
     return (
         <div id='TeamMainContainer' style={{ width }}>
             <Routes>
                 <Route path="" element={<Navigate to="/team/drive" />} />
+                <Route path="/dashboard/*" element={<DepartmentLayout />} />
                 <Route path="/drive/*" element={<DriveLayout />} />
                 <Route path="/manage_work/*" element={<ManageWorkLayout />} />
                 <Route path="/recruit/*" element={<RecruitLayout />} />
