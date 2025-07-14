@@ -444,6 +444,14 @@ span {
   transition-duration: 0.25s;
 }
 
+.objectFitCover {
+  object-fit: cover;
+}
+
+.objectPositionCenter {
+  object-position: center;
+}
+
 @media screen and (max-width: 768px) {
   .Layout {
     width: 100%;
