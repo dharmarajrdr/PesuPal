@@ -24,7 +24,7 @@ public class Post extends CreationTimeAuditable {
 
     private String title;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 3000)
     private String description;
 
     private boolean media;
