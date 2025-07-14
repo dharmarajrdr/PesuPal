@@ -10,7 +10,7 @@ const Profile = ({ Profile, setShowProfile }) => {
             <div id='ProfileCard' className='noScrollbar'>
                 <i className="fa-solid fa-xmark" id='closeProfileOverlay'></i>
                 <div id='user_image_basic_info' className='FCCC'>
-                    <img src={displayPicture} id='user_photo' />
+                    <img src={displayPicture} id='user_photo' className='objectFitCover objectPositionCenter' />
                     <div id='user_basic_info' className='FCCC'>
                         <div className='row'>
                             <h4 id='profile_name'>{displayName}</h4>
