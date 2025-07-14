@@ -24,6 +24,8 @@ public class UserBasicInfoDto {
 
     private String phone;
 
+    private Integer employeeId;
+
     public static UserBasicInfoDto fromOrgMember(OrgMember orgMember) {
 
         UserBasicInfoDto userBasicInfoDto = new UserBasicInfoDto();
@@ -35,6 +37,9 @@ public class UserBasicInfoDto {
         userBasicInfoDto.setStatus(orgMember.getStatus());
         userBasicInfoDto.setEmail(orgMember.getUser().getEmail());
         userBasicInfoDto.setPhone(orgMember.getUser().getPhone());
+        if (orgMember.getOrg().isShowEmployeeId()) {
+            userBasicInfoDto.setEmployeeId(orgMember.getEmployeeId());
+        }
         return userBasicInfoDto;
     }
 }

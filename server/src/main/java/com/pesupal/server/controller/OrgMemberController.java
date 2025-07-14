@@ -32,8 +32,8 @@ public class OrgMemberController extends OrgSubscriptionManager {
 
         checkOrgSubscription();
 
-        OrgMember orgMember = orgMemberService.getOrgMemberByUserIdAndOrgId(userId, getCurrentOrgId());
-        return ResponseEntity.ok(new ApiResponseDto("Organization member retrieved successfully.", orgMember));
+        UserBasicInfoDto userBasicInfoDto = orgMemberService.getOrgMemberBasicInfoByUserIdAndOrgId(userId, getCurrentOrgId());
+        return ResponseEntity.ok(new ApiResponseDto("Organization member retrieved successfully.", userBasicInfoDto));
     }
 
     @GetMapping("/orgs")

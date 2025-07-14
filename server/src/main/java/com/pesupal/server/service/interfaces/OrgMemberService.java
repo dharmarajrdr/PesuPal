@@ -15,6 +15,8 @@ public interface OrgMemberService {
 
     OrgMember getOrgMemberByUserIdAndOrgId(Long userId, Long orgId);
 
+    UserBasicInfoDto getOrgMemberBasicInfoByUserIdAndOrgId(Long userId, Long orgId);
+
     Boolean existsByUserAndOrg(User user, Org org);
 
     Boolean existsByUserIdAndOrgId(Long userId, Long orgId);

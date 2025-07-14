@@ -62,7 +62,23 @@ public class OrgMemberServiceImpl implements OrgMemberService {
 
         User user = userService.getUserById(userId);
         Org org = orgService.getOrgById(orgId);
-        return getOrgMemberByUserAndOrg(user, org);
+        OrgMember orgMember = getOrgMemberByUserAndOrg(user, org);
+        orgMember.getUser().setPassword(null);
+        return orgMember;
+    }
+
+    /**
+     * Retrieves basic information of an organization member by user ID and org ID.
+     *
+     * @param userId
+     * @param orgId
+     * @return
+     */
+    @Override
+    public UserBasicInfoDto getOrgMemberBasicInfoByUserIdAndOrgId(Long userId, Long orgId) {
+
+        OrgMember orgMember = getOrgMemberByUserIdAndOrgId(userId, orgId);
+        return UserBasicInfoDto.fromOrgMember(orgMember);
     }
 
     /**
