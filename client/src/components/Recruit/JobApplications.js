@@ -66,18 +66,19 @@ const JobApplications = () => {
     }, []);
 
     return (
-        <div id='job-applications' className='FCSS h100'>
-            <div id='job-applications-header' className='FCSS p10 w100'>
-                <h2>Job Applications</h2>
-            </div>
-            {
-                loading ? <Loader message='Fetching job applications...' /> :
-                    error ? <ErrorMessage message={error} /> :
-                        ListOfJobOpenings.length ? ListOfJobOpenings.map((job, index) => (
-                            <JobApplication key={index} job={job} />
-                        )) : <NoJobApplications />
-            }
-        </div>
+    
+        loading ? <Loader message='Fetching job applications...' /> :
+            error ? <ErrorMessage message={error} /> : (
+                <div id='job-applications' className='FCSS h100'>
+                    <div id='job-applications-header' className='FCSS p10 w100'>
+                        <h2>Job Applications</h2>
+                    </div>
+                    {ListOfJobOpenings.length ? ListOfJobOpenings.map((job, index) => (
+                        <JobApplication key={index} job={job} />
+                    )) : <NoJobApplications />
+                    }
+                </div>
+            )
     )
 }
 
