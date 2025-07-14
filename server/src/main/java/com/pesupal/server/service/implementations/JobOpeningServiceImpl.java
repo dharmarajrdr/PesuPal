@@ -76,9 +76,13 @@ public class JobOpeningServiceImpl implements JobOpeningService {
      * @return
      */
     @Override
-    public List<JobOpeningDto> getAllJobOpeningsByOrgId(Long orgId, JobOpeningFilterDto jobOpeningFilterDto) {
+    public List<JobOpeningDto> getAllJobOpeningsByOrgId(Long userId, Long orgId, JobOpeningFilterDto jobOpeningFilterDto) {
 
         JobOpeningStatus status = jobOpeningFilterDto.getStatus();
+        OrgMember orgMember = orgMemberService.getOrgMemberByUserIdAndOrgId(userId, orgId);
+        if (!StaticConfig.HUMAN_RESOURCE_ROLES.contains(orgMember.getRole().name())) {
+            throw new PermissionDeniedException("You do not have permission to view job openings.");
+        }
         return jobOpeningRepository.findAllByOrgIdAndStatusOrderByCreatedAtDesc(orgId, status).stream().map(jobOpening -> {
             OrgMember hiringManager = orgMemberService.getOrgMemberByUserAndOrg(jobOpening.getHiringManager(), jobOpening.getOrg());
             return JobOpeningDto.fromJobOpening(jobOpening, hiringManager);

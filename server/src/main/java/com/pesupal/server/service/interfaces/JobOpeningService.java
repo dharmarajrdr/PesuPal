@@ -15,5 +15,5 @@ public interface JobOpeningService {
 
     JobOpeningDto getJobOpeningDtoById(Long jobOpeningId);
 
-    List<JobOpeningDto> getAllJobOpeningsByOrgId(Long orgId, JobOpeningFilterDto jobOpeningFilterDto);
+    List<JobOpeningDto> getAllJobOpeningsByOrgId(Long userId, Long orgId, JobOpeningFilterDto jobOpeningFilterDto);
 }
