@@ -1,11 +1,12 @@
 import './PeopleCard.css';
 import { StatusIndicator } from '../../Auth/utils';
 
-const PeopleCard = ({ person }) => {
+const PeopleCard = ({ person, setShowProfile }) => {
 
     const { displayName, displayPicture, designation, status, id } = person;
+
     return (
-        <div className='FCCC PeopleCard'>
+        <div className='FCCC PeopleCard' onClick={() => setShowProfile(true)}>
             <i className="fa fa-ellipsis-vertical three_dots"></i>
             <div className='FCCC mB5 img_name_dept'>
                 <div className='FRCC profile_picture_container mB10'>

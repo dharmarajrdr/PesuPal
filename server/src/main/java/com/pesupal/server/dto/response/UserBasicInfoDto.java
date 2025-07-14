@@ -16,7 +16,13 @@ public class UserBasicInfoDto {
 
     private String designation;
 
+    private String department;
+
     private String status;
+
+    private String email;
+
+    private String phone;
 
     public static UserBasicInfoDto fromOrgMember(OrgMember orgMember) {
 
@@ -25,7 +31,10 @@ public class UserBasicInfoDto {
         userBasicInfoDto.setDisplayName(orgMember.getDisplayName());
         userBasicInfoDto.setDisplayPicture(orgMember.getDisplayPicture());
         userBasicInfoDto.setDesignation(orgMember.getDesignation().getName());
+        userBasicInfoDto.setDepartment(orgMember.getDepartment().getName());
         userBasicInfoDto.setStatus(orgMember.getStatus());
+        userBasicInfoDto.setEmail(orgMember.getUser().getEmail());
+        userBasicInfoDto.setPhone(orgMember.getUser().getPhone());
         return userBasicInfoDto;
     }
 }
