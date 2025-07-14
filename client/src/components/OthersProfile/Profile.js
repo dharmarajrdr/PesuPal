@@ -8,7 +8,7 @@ const Profile = ({ Profile, setShowProfile }) => {
     return Profile ? (
         <div id='ProfileOverlay' className='FRCE' onClick={() => { setShowProfile(false) }}>
             <div id='ProfileCard' className='noScrollbar'>
-                <i className="fa-solid fa-xmark" id='closeProfileOverlay'></i>
+                {/* <i className="fa-solid fa-xmark" id='closeProfileOverlay'></i> */}
                 <div id='user_image_basic_info' className='FCCC'>
                     <img src={displayPicture} id='user_photo' className='objectFitCover objectPositionCenter' />
                     <div id='user_basic_info' className='FCCC'>
