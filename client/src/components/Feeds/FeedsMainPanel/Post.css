@@ -103,6 +103,25 @@
   overflow: hidden;
 }
 
+.tagsContainer {
+  margin-top: 10px;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.tagsContainer span {
+  color: #2e67e1;
+  font-size: 13px;
+  margin-right: 5px;
+  cursor: pointer;
+  margin-bottom: 3px;
+}
+
+.tagsContainer span:hover {
+  text-decoration: underline;
+  color: #1a4bb8;
+}
+
 .media_image {
   padding-bottom: 25px;
   max-height: 450px;

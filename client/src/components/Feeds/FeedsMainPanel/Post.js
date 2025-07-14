@@ -49,6 +49,17 @@ const Post = ({ post }) => {
 
     const [showProfile, setShowProfile] = useState(false);
 
+    const tagClickHandler = (e) => {
+        const tag = e.target.innerText;
+        e.preventDefault();
+        e.stopPropagation();
+        if (tag.startsWith('#')) {
+            const tagName = tag.slice(1);
+            alert(`Searching for tag: ${tagName}`);  //eslint-disable-line no-alert
+            // redirect to tag search or filter logic
+        }
+    }
+
     return (
         <div className='Post w100'>
             {fullScreenImage ?
@@ -72,6 +83,11 @@ const Post = ({ post }) => {
             <div className='PostBody FCSS'>
                 {title ? <h4 className='postTitle'>{title}</h4> : null}
                 <PostDescription html={description} />
+                <div className='FRCS tagsContainer'>
+                    {tags && tags.map((tag, index) => (
+                        <span key={index} onClick={tagClickHandler}>{tag}</span>
+                    ))}
+                </div>
                 {media ?
                     <div className='mediaContainer FCSS w100' onClick={toggleMaxHeight}>
                         {media.map((media, index) => <img key={index} src={`${serverDomain}/api/v1/media/${media}`} className='media_image w100' />)}
@@ -85,8 +101,7 @@ const Post = ({ post }) => {
                 <div className='FRCE'>
                     {bookmarkable && <div className='postActions rightFooter FRCC mY5'><i className="fa-regular fa-bookmark"></i></div>}
                 </div>
-                {/* <p>{mentions} Mentions</p>
-                <p>{tags} Tags</p> */}
+                {/* <p>{mentions} Mentions</p> */}
             </div>
             {showProfile && <Profile Profile={owner} setShowProfile={setShowProfile} />}
         </div>
