@@ -9,6 +9,8 @@ import lombok.Data;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class DepartmentDto {
 
+    private Long id;
+
     private String name;
 
     private String description;
@@ -18,9 +20,12 @@ public class DepartmentDto {
     public static DepartmentDto fromDepartmentAndOrgMember(Department department, OrgMember head) {
 
         DepartmentDto dto = new DepartmentDto();
+        dto.setId(department.getId());
         dto.setName(department.getName());
         dto.setDescription(department.getDescription());
-        dto.setHead(UserBasicInfoDto.fromOrgMember(head));
+        if (head != null) {
+            dto.setHead(UserBasicInfoDto.fromOrgMember(head));
+        }
         return dto;
     }
 }
