@@ -1,8 +1,9 @@
 package com.pesupal.server.strategies.payment_gateway;
 
+import com.pesupal.server.dto.request.PaymentDto;
 import com.pesupal.server.dto.response.WebhookDto;
+import com.pesupal.server.repository.SubscriptionPlanRepository;
 import com.pesupal.server.service.interfaces.PaymentGateway;
-import com.pesupal.server.service.interfaces.SubscriptionService;
 import com.pesupal.server.service.interfaces.WebhookService;
 import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
@@ -19,12 +20,17 @@ import java.util.Map;
 
 @Service
 @Primary
-public class StripeGateway implements PaymentGateway, WebhookService, SubscriptionService {
+public class StripeGateway implements PaymentGateway, WebhookService {
 
+    private final SubscriptionPlanRepository subscriptionPlanRepository;
     @Value("${stripe.api-key}")
     private String API_KEY = "";
 
     private final Long trialDays = 730L;
+
+    public StripeGateway(SubscriptionPlanRepository subscriptionPlanRepository) {
+        this.subscriptionPlanRepository = subscriptionPlanRepository;
+    }
 
     /**
      * Things needed are as follows.
@@ -37,10 +43,10 @@ public class StripeGateway implements PaymentGateway, WebhookService, Subscripti
      * @return
      */
     @Override
-    public String generatePaymentLink() throws StripeException {
+    public String generatePaymentLink(PaymentDto paymentDto) throws StripeException {
 
         Stripe.apiKey = API_KEY;
-        Price price = getPrice();
+        Price price = getPrice(paymentDto);
 
         PaymentLinkCreateParams params = PaymentLinkCreateParams.builder().addLineItem(
                 PaymentLinkCreateParams.LineItem.builder()
@@ -67,14 +73,14 @@ public class StripeGateway implements PaymentGateway, WebhookService, Subscripti
      * @return
      * @throws StripeException
      */
-    public Price getPrice() throws StripeException {
+    public Price getPrice(PaymentDto paymentDto) throws StripeException {
 
         PriceCreateParams params = PriceCreateParams.builder()
-                .setCurrency("inr")
-                .setUnitAmount(70000L)
+                .setCurrency(paymentDto.getCurrency().name().toLowerCase())
+                .setUnitAmount(paymentDto.getAmount())
                 .setProductData(
                         PriceCreateParams.ProductData.builder()
-                                .setName("Boult Audio")
+                                .setName(paymentDto.getName())
                                 .build()
                 ).build();
 
@@ -210,19 +216,4 @@ public class StripeGateway implements PaymentGateway, WebhookService, Subscripti
         };
     }
 
-    /**
-     * Creates a subscription for a product with the given parameters.
-     *
-     * @param customerName
-     * @param customerEmail
-     * @param productAmount
-     * @param productName
-     * @param interval
-     * @return
-     */
-    @Override
-    public String createSubscriptionForProduct(String customerName, String customerEmail, Long productAmount, String productName, PlanCreateParams.Interval interval) {
-
-        return "";
-    }
 }
