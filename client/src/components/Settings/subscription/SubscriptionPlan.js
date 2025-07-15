@@ -7,7 +7,7 @@ const SubscriptionPlan = () => {
     const plans = PlanDetails;
 
     return (
-        <div className='FRSS h100 subscription-plans'>
+        <div className='FRSS h100 w100 subscription-plans'>
             {plans.map((plan) => <Plan plan={plan} key={plan.id} />)}
         </div>
     )
