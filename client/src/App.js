@@ -15,6 +15,7 @@ import { combineReducers } from 'redux';
 import { Provider } from 'react-redux';
 import { NavigationReducers } from './store/reducers/Navigation';
 import PageNotFound from './components/Auth/PageNotFound';
+import SettingsLayout from './components/Settings/SettingsLayout';
 
 const store = configureStore({
     reducer: combineReducers({
@@ -48,6 +49,7 @@ function App() {
                     <Route path="/people" element={<PeopleLayout />} />
                     <Route path="/team/*" element={<TeamLayout />} />
                     <Route path="/tracker" element={<TrackerLayout />} />
+                    <Route path="/settings/*" element={<SettingsLayout />} />
                     <Route path="/signup" element={<Signup />} />
                     <Route path="/signin" element={<Signin />} />
                     <Route path="*" element={<PageNotFound />} />
