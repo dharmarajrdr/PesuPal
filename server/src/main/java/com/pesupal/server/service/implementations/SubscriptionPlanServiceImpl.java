@@ -72,6 +72,6 @@ public class SubscriptionPlanServiceImpl implements SubscriptionPlanService {
     @Override
     public List<SubscriptionPlan> getAllSubscriptionPlans() {
 
-        return subscriptionPlanRepository.findAll();
+        return subscriptionPlanRepository.findAllByOrderByPrice();
     }
 }
