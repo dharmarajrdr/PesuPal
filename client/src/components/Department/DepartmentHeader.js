@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import './DepartmentLayout.css';
 import { apiRequest } from "../../http_request";
+import UserAvatar from "../User/UserAvatar";
 
 // Renders the department dropdown
 const DepartmentList = ({ setCurrentDepartment, departmentId }) => {
@@ -43,7 +44,7 @@ const DepartmentList = ({ setCurrentDepartment, departmentId }) => {
 const DepartmentHead = ({ head }) => {
     return head ? (
         <div className="FRCB" id="departmentHead">
-            <img src={head.displayPicture} alt="Head" className="img_40_40 mR10 objectFitCover" />
+            <UserAvatar displayPicture={head.displayPicture} />
             <div className="FCSS">
                 <h5 id="headName">{head.displayName}</h5>
                 <p id="headDesignation">{head.designation}</p>
