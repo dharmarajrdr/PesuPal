@@ -13,18 +13,21 @@ const NoMembersAvailable = ({ message }) => {
 }
 
 const OrgMember = ({ member }) => {
+
+    const { userId, displayName, email, displayPicture, status } = member;
+
     return (
         <div className='org-member w100 FRCB'>
             <div className='FRCS' id='left'>
                 <div className='pR'>
-                    <img src={member.displayPicture} alt={`${member.displayName}'s profile`} className='img_40_40 mR10' />
-                    <StatusIndicator status={member.status} />
+                    <img src={displayPicture} alt={`${displayName}'s profile`} className='img_40_40 mR10' />
+                    <StatusIndicator status={status} />
                 </div>
                 <div className='FCSS org-member-details'>
                     <div className='FRCB w100'>
-                        <h4 className='displayName'>{member.displayName}</h4>
+                        <h4 className='displayName'>{displayName}</h4>
                     </div>
-                    <p className='email'>{member.email}</p>
+                    <p className='email'>{email}</p>
                 </div>
             </div>
             <div className='FRCE' id='right'>
@@ -41,7 +44,8 @@ const OrgMembers = ({ title, orgMembersList, noMembersAvailableMessage }) => {
         <div id='OrgMembers' className='w100 h100'>
             <h5 className={`status-title w100 ${title.toLowerCase().replace(/\s+/, '_')}`}>
                 <i className={`fa fa-circle mR5`} />
-                {title}
+                <span className='status-span'>{title}</span>
+                <span className='status-count mL5'>({orgMembersList.length})</span>
             </h5>
             {orgMembersList.length ? (
                 <div className='FCSS w100'>
