@@ -63,7 +63,7 @@ public class OrgMemberServiceImpl implements OrgMemberService {
         User user = userService.getUserById(userId);
         Org org = orgService.getOrgById(orgId);
         OrgMember orgMember = getOrgMemberByUserAndOrg(user, org);
-        orgMember.getUser().setPassword(null);
+//      orgMember.getUser().setPassword(null);
         return orgMember;
     }
 
