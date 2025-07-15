@@ -56,7 +56,7 @@ public class OrgServiceImpl implements OrgService {
         org = orgRepository.save(org);
         orgConfigurationService.initializeOrgConfiguration(org);
         orgMemberService.joinOrgAsFirstMember(owner, org);
-        orgSubscriptionHistoryService.addSubscription(org.getId(), "FREE_TRIAL");
+        orgSubscriptionHistoryService.addSubscription(org.getId(), "FREE_TRIAL", null);
         return org;
     }
 }
