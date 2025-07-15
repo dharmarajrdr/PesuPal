@@ -1,8 +1,11 @@
 package com.pesupal.server.model.subscription;
 
+import com.pesupal.server.dto.request.PaymentDto;
 import com.pesupal.server.enums.Currency;
 import com.pesupal.server.enums.Interval;
+import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.model.CreationTimeAuditable;
+import com.pesupal.server.model.payment.Transaction;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -17,7 +20,7 @@ public class SubscriptionPlan extends CreationTimeAuditable {
     private String code;
 
     @Column(nullable = false)
-    private Double price;
+    private Long price;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -34,5 +37,20 @@ public class SubscriptionPlan extends CreationTimeAuditable {
 
     @Column(nullable = false)
     private Long numberOfDays;
+
+    public PaymentDto toPaymentDto() {
+        if (!active) {
+            throw new ActionProhibitedException("Subscription plan is not active");
+        }
+        return PaymentDto.builder().name(code).amount(price * 100).currency(currency).interval(interval).description(description).build();
+    }
+
+    public Transaction toTransaction() {
+
+        Transaction transaction = new Transaction();
+        transaction.setAmount(price);
+        transaction.setCurrency(currency);
+        return transaction;
+    }
 
 }
