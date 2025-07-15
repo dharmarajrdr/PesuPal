@@ -12,6 +12,8 @@ import com.pesupal.server.service.interfaces.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @AllArgsConstructor
 public class SubscriptionPlanServiceImpl implements SubscriptionPlanService {
@@ -60,5 +62,16 @@ public class SubscriptionPlanServiceImpl implements SubscriptionPlanService {
     public SubscriptionPlan getSubscriptionPlanById(Long subscriptionPlanId) {
 
         return subscriptionPlanRepository.findById(subscriptionPlanId).orElseThrow(() -> new DataNotFoundException("Subscription plan with ID '" + subscriptionPlanId + "' not found"));
+    }
+
+    /**
+     * Retrieves all subscription plans.
+     *
+     * @return
+     */
+    @Override
+    public List<SubscriptionPlan> getAllSubscriptionPlans() {
+
+        return subscriptionPlanRepository.findAll();
     }
 }

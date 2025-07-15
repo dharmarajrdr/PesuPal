@@ -7,10 +7,9 @@ import com.pesupal.server.model.subscription.SubscriptionPlan;
 import com.pesupal.server.service.interfaces.SubscriptionPlanService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @AllArgsConstructor
@@ -24,5 +23,12 @@ public class SubscriptionPlanController extends CurrentValueRetriever {
 
         SubscriptionPlan subscriptionPlan = subscriptionPlanService.createNewSubscriptionPlan(addSubscriptionDto, getCurrentUserId());
         return ResponseEntity.ok(new ApiResponseDto("Subscription plan created successfully.", subscriptionPlan));
+    }
+
+    @GetMapping("")
+    public ResponseEntity<ApiResponseDto> getAllSubscriptionPlans() {
+
+        List<SubscriptionPlan> subscriptionPlans = subscriptionPlanService.getAllSubscriptionPlans();
+        return ResponseEntity.ok(new ApiResponseDto("Subscription plans retrieved successfully.", subscriptionPlans));
     }
 }
