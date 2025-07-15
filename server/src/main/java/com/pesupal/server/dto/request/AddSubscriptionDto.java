@@ -14,7 +14,7 @@ public class AddSubscriptionDto {
 
     private String code;
 
-    private Double price;
+    private Long price;
 
     private Currency currency;
 
