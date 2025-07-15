@@ -49,4 +49,16 @@ public class SubscriptionPlanServiceImpl implements SubscriptionPlanService {
         subscriptionPlan.setActive(true);
         return subscriptionPlanRepository.save(subscriptionPlan);
     }
+
+    /**
+     * Retrieves a subscription plan by its ID.
+     *
+     * @param subscriptionPlanId
+     * @return
+     */
+    @Override
+    public SubscriptionPlan getSubscriptionPlanById(Long subscriptionPlanId) {
+
+        return subscriptionPlanRepository.findById(subscriptionPlanId).orElseThrow(() -> new DataNotFoundException("Subscription plan with ID '" + subscriptionPlanId + "' not found"));
+    }
 }
