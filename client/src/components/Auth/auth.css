@@ -45,9 +45,11 @@
 .auth_component_form_input .showHidePassword {
   position: absolute;
   right: 0;
-  transform: translate(-100%, 70%);
+  transform: translate(-70%, 70%);
   color: #ddd;
   font-size: 20px;
+  width: 30px;
+  text-align: center;
 }
 
 .showHidePassword:hover {
@@ -60,6 +62,14 @@
   border-radius: 50px;
   font-size: 0.9em;
   border: 1px solid #aaa;
+}
+
+.auth_component_form #error-message {
+  color: red;
+  font-size: 12px;
+  margin-top: 10px;
+  height: 15px;
+  line-height: 15px;
 }
 
 .ChatGifComponent {
