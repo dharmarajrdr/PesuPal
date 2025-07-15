@@ -8,4 +8,6 @@ public interface SubscriptionPlanService {
     SubscriptionPlan getSubscriptionByCode(String code);
 
     SubscriptionPlan createNewSubscriptionPlan(AddSubscriptionDto addSubscriptionDto, Long userId);
+
+    SubscriptionPlan getSubscriptionPlanById(Long subscriptionPlanId);
 }
