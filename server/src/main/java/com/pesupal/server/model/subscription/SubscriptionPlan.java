@@ -19,6 +19,8 @@ public class SubscriptionPlan extends CreationTimeAuditable {
     @Column(unique = true, nullable = false)
     private String code;
 
+    private String name;
+
     @Column(nullable = false)
     private Long price;
 
@@ -37,6 +39,8 @@ public class SubscriptionPlan extends CreationTimeAuditable {
 
     @Column(nullable = false)
     private Long numberOfDays;
+    
+    private String badge;
 
     public PaymentDto toPaymentDto() {
         if (!active) {
