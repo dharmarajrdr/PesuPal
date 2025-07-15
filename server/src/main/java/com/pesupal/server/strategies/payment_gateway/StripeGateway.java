@@ -49,19 +49,19 @@ public class StripeGateway implements PaymentGateway, WebhookService {
         Price price = getPrice(paymentDto);
 
         PaymentLinkCreateParams params = PaymentLinkCreateParams.builder().addLineItem(
-                PaymentLinkCreateParams.LineItem.builder()
-                        .setPrice(price.getId())
-                        .setQuantity(1L)
-                        .build()
-        ).setAfterCompletion(
-                PaymentLinkCreateParams.AfterCompletion.builder()
-                        .setType(PaymentLinkCreateParams.AfterCompletion.Type.REDIRECT)
-                        .setRedirect(
-                                PaymentLinkCreateParams.AfterCompletion.Redirect.builder()
-                                        .setUrl("https://www.google.com/?txn_id=abcd1234")
-                                        .build()
-                        ).build()
-        ).build();
+                        PaymentLinkCreateParams.LineItem.builder()
+                                .setPrice(price.getId())
+                                .setQuantity(1L)
+                                .build())
+                .setAfterCompletion(
+                        PaymentLinkCreateParams.AfterCompletion.builder()
+                                .setType(PaymentLinkCreateParams.AfterCompletion.Type.REDIRECT)
+                                .setRedirect(
+                                        PaymentLinkCreateParams.AfterCompletion.Redirect.builder()
+                                                .setUrl("https://www.google.com/?txn_id=abcd1234")
+                                                .build())
+                                .build())
+                .build();
 
         PaymentLink paymentLink = PaymentLink.create(params);
         return paymentLink.getUrl();
@@ -81,8 +81,8 @@ public class StripeGateway implements PaymentGateway, WebhookService {
                 .setProductData(
                         PriceCreateParams.ProductData.builder()
                                 .setName(paymentDto.getName())
-                                .build()
-                ).build();
+                                .build())
+                .build();
 
         return Price.create(params);
     }
@@ -100,8 +100,10 @@ public class StripeGateway implements PaymentGateway, WebhookService {
         try {
             Stripe.apiKey = API_KEY;
             WebhookEndpointCreateParams.Builder builder = WebhookEndpointCreateParams.builder().setUrl(url);
-            for (String event : events) {
-                builder.addEnabledEvent(WebhookEndpointCreateParams.EnabledEvent.valueOf(event));
+            for (WebhookEndpointCreateParams.EnabledEvent enabledEvent : WebhookEndpointCreateParams.EnabledEvent.values()) {
+                if (events.contains(enabledEvent.getValue())) {
+                    builder.addEnabledEvent(enabledEvent);
+                }
             }
             WebhookEndpointCreateParams params = builder.build();
             WebhookEndpoint webhookEndpoint = WebhookEndpoint.create(params);
@@ -166,13 +168,15 @@ public class StripeGateway implements PaymentGateway, WebhookService {
      * @param interval
      * @return
      */
-    public String SubscriptionService(String customerName, String customerEmail, Long productAmount, String productName, PlanCreateParams.Interval interval) {
+    public String SubscriptionService(String customerName, String customerEmail, Long productAmount, String productName,
+                                      PlanCreateParams.Interval interval) {
 
         Stripe.apiKey = API_KEY;
 
         try {
 
-            CustomerCreateParams customerParams = CustomerCreateParams.builder().setName(customerName).setEmail(customerEmail).build();
+            CustomerCreateParams customerParams = CustomerCreateParams.builder().setName(customerName)
+                    .setEmail(customerEmail).build();
             Customer customer = Customer.create(customerParams);
 
             ProductCreateParams productParams = ProductCreateParams.builder().setName(productName).build();
@@ -184,8 +188,8 @@ public class StripeGateway implements PaymentGateway, WebhookService {
                     .setRecurring(
                             PriceCreateParams.Recurring.builder()
                                     .setInterval(from(interval))
-                                    .build()
-                    ).setProduct(product.getId()).build();
+                                    .build())
+                    .setProduct(product.getId()).build();
 
             Price price = Price.create(priceParams);
 
@@ -197,8 +201,8 @@ public class StripeGateway implements PaymentGateway, WebhookService {
                     .addItem(
                             SubscriptionCreateParams.Item.builder()
                                     .setPrice(price.getId())
-                                    .build()
-                    ).setTrialPeriodDays(trialDays).build();
+                                    .build())
+                    .setTrialPeriodDays(trialDays).build();
 
             Subscription subscription = Subscription.create(subParams);
             return subscription.getId();
