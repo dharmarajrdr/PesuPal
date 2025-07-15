@@ -1,4 +1,5 @@
 import { StatusIndicator } from '../Auth/utils';
+import UserAvatar from '../User/UserAvatar';
 import './OrgMembers.css';
 
 const NoMembersAvailable = ({ message }) => {
@@ -20,7 +21,7 @@ const OrgMember = ({ member }) => {
         <div className='org-member w100 FRCB'>
             <div className='FRCS' id='left'>
                 <div className='pR'>
-                    <img src={displayPicture} alt={`${displayName}'s profile`} className='img_40_40 mR10' />
+                    <UserAvatar displayPicture={displayPicture} />
                     <StatusIndicator status={status} />
                 </div>
                 <div className='FCSS org-member-details'>
