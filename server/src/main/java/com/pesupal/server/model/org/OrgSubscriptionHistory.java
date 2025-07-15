@@ -1,6 +1,7 @@
 package com.pesupal.server.model.org;
 
 import com.pesupal.server.model.CreationTimeAuditable;
+import com.pesupal.server.model.payment.Transaction;
 import com.pesupal.server.model.subscription.SubscriptionPlan;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
@@ -21,4 +22,7 @@ public class OrgSubscriptionHistory extends CreationTimeAuditable {
     private LocalDateTime startDate;
 
     private LocalDateTime endDate;
+
+    @ManyToOne
+    private Transaction transaction;
 }
