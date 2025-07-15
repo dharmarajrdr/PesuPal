@@ -3,16 +3,16 @@ package com.pesupal.server.service.implementations;
 import com.pesupal.server.dto.response.WebhookDto;
 import com.pesupal.server.service.interfaces.WebhookService;
 import com.pesupal.server.strategies.payment_gateway.StripeGateway;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@AllArgsConstructor
 public class WebhookServiceImpl implements WebhookService {
 
-    @Autowired
-    private StripeGateway stripeGateway;
+    private final StripeGateway stripeGateway;
 
     public WebhookDto createWebhook(String url, List<String> events) {
 
