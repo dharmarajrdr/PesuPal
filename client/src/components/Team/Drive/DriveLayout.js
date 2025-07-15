@@ -7,7 +7,7 @@ const DriveLayout = () => {
     return <div className='FCSS p20 w100'>
         <FileManager />
         <Routes>
-            <Route path='' element={<Navigate to="/team/drive/home" />} />
+            <Route path='' element={<Navigate to="/team/dashboard" />} />
             <Route path='/home/*' element={<DriveDashboard />} />
         </Routes>
     </div>

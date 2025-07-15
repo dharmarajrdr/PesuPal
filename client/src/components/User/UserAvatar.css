@@ -1,0 +1,9 @@
+.user-avatar-placeholder {
+    font-size: 40px;
+    color: #aaa;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 40px;
+}

@@ -1,14 +1,22 @@
 import './OrgPreview.css';
 
-const OrgPreview = ({ org, toggleOrgList }) => {
+const OrgPreview = ({ org, setCurrentOrg, currentOrgId }) => {
 
-    const { id, active, displayName, role, uniqueName, displayPicture, members, status, subscription } = org;
+    const { id, displayName, role, uniqueName, displayPicture, members, status, subscription } = org;
     const { planName, expiresAt, status: subscriptionStatus } = subscription || {};
     const isOwner = role === 'ADMIN';
     const isTrial = planName == 'FREE_TRIAL';
+    const active = org.id == currentOrgId;
+
+    const orgClickHandler = (e) => {
+        e.stopPropagation();
+        if (!active) {
+            setCurrentOrg(org);
+        }
+    };
 
     return (
-        <div className={`FRCB org-preview p20 ${active ? 'active' : ''}`} key={id} onClick={toggleOrgList} >
+        <div className={`FRCB org-preview p20 ${active ? 'active' : ''}`} key={id} onClick={orgClickHandler} >
             {isTrial && (
                 <h5 className='trial-badge'>
                     TRIAL
