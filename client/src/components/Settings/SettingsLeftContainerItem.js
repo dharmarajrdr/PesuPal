@@ -1,7 +1,7 @@
 import { NavLink } from 'react-router-dom';
-import './TeamLeftContainerItem.css'
+import '../Team/TeamLeftContainerItem.css'
 
-const TeamLeftContainerItem = ({ item, leftNavOpened }) => {
+const SettingsLeftContainerItem = ({ item, leftNavOpened }) => {
     const { title, route, icon, notify_count } = item;
     return (
         <NavLink to={route} className={({ isActive }) => (isActive ? "active-tab" : "") + ' TeamLeftContainerItem FRCS w100 pX10 pY10 mx5'} title={leftNavOpened ? null : title}>
@@ -17,4 +17,4 @@ const TeamLeftContainerItem = ({ item, leftNavOpened }) => {
     )
 }
 
-export default TeamLeftContainerItem
+export default SettingsLeftContainerItem

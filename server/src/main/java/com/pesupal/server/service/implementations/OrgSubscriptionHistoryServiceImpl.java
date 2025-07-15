@@ -1,15 +1,19 @@
 package com.pesupal.server.service.implementations;
 
 import com.pesupal.server.config.StaticConfig;
+import com.pesupal.server.dto.request.PaymentDto;
+import com.pesupal.server.dto.request.PurchaseSubscriptionDto;
+import com.pesupal.server.enums.PaymentStatus;
+import com.pesupal.server.enums.SupportedGateway;
 import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.model.org.Org;
 import com.pesupal.server.model.org.OrgSubscriptionHistory;
+import com.pesupal.server.model.payment.Transaction;
 import com.pesupal.server.model.subscription.SubscriptionPlan;
+import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.repository.OrgSubscriptionHistoryRepository;
-import com.pesupal.server.service.interfaces.OrgService;
-import com.pesupal.server.service.interfaces.OrgSubscriptionHistoryService;
-import com.pesupal.server.service.interfaces.SubscriptionPlanService;
-import lombok.AllArgsConstructor;
+import com.pesupal.server.service.interfaces.*;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -18,13 +22,25 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
-@AllArgsConstructor
 public class OrgSubscriptionHistoryServiceImpl implements OrgSubscriptionHistoryService {
 
     private final OrgService orgService;
+    private final PaymentService paymentService;
+    private final OrgMemberService orgMemberService;
+    private final TransactionService transactionService;
     private final RedisTemplate<String, Object> redisTemplate;
     private final SubscriptionPlanService subscriptionPlanService;
     private final OrgSubscriptionHistoryRepository orgSubscriptionHistoryRepository;
+
+    public OrgSubscriptionHistoryServiceImpl(OrgService orgService, PaymentService paymentService, @Lazy OrgMemberService orgMemberService, TransactionService transactionService, RedisTemplate<String, Object> redisTemplate, SubscriptionPlanService subscriptionPlanService, OrgSubscriptionHistoryRepository orgSubscriptionHistoryRepository) {
+        this.orgService = orgService;
+        this.paymentService = paymentService;
+        this.orgMemberService = orgMemberService;
+        this.transactionService = transactionService;
+        this.redisTemplate = redisTemplate;
+        this.subscriptionPlanService = subscriptionPlanService;
+        this.orgSubscriptionHistoryRepository = orgSubscriptionHistoryRepository;
+    }
 
     /**
      * Checks if an organization is active based on its subscription history.
@@ -85,7 +101,7 @@ public class OrgSubscriptionHistoryServiceImpl implements OrgSubscriptionHistory
      * @param code
      */
     @Override
-    public OrgSubscriptionHistory addSubscription(Long orgId, String code) {
+    public OrgSubscriptionHistory addSubscription(Long orgId, String code, Transaction transaction) {
 
         Org org = orgService.getOrgById(orgId);
 
@@ -101,9 +117,38 @@ public class OrgSubscriptionHistoryServiceImpl implements OrgSubscriptionHistory
         }
         OrgSubscriptionHistory orgSubscriptionHistory = new OrgSubscriptionHistory();
         orgSubscriptionHistory.setOrg(org);
+        orgSubscriptionHistory.setTransaction(transaction);
         orgSubscriptionHistory.setSubscriptionPlan(subscriptionPlan);
         orgSubscriptionHistory.setStartDate(latestSubscriptionEndDate);
         orgSubscriptionHistory.setEndDate(latestSubscriptionEndDate.plusDays(subscriptionPlan.getNumberOfDays()));
         return orgSubscriptionHistoryRepository.save(orgSubscriptionHistory);
+    }
+
+    /**
+     * Initiates a payment for a subscription purchase.
+     *
+     * @param purchaseSubscriptionDto
+     * @param userId
+     * @param orgId
+     * @return String
+     */
+    @Override
+    public String generatePaymentLink(PurchaseSubscriptionDto purchaseSubscriptionDto, Long userId, Long orgId) throws Exception {
+
+        OrgMember orgMember = orgMemberService.getOrgMemberByUserIdAndOrgId(userId, orgId);
+
+        Long subscriptionPlanId = purchaseSubscriptionDto.getSubscriptionPlanId();
+        SubscriptionPlan subscriptionPlan = subscriptionPlanService.getSubscriptionPlanById(subscriptionPlanId);
+        PaymentDto paymentDto = subscriptionPlan.toPaymentDto();
+        String paymentLink = paymentService.initiatePayment(paymentDto);
+        Transaction transaction = subscriptionPlan.toTransaction();
+        transaction.setOrg(orgMember.getOrg());
+        transaction.setUser(orgMember.getUser());
+        transaction.setPaymentLink(paymentLink);
+        transaction.setGateway(SupportedGateway.STRIPE);
+        transaction.setPaymentStatus(PaymentStatus.INITIATED);
+        transaction = transactionService.createTransaction(transaction);
+        addSubscription(orgId, subscriptionPlan.getCode(), transaction);
+        return paymentLink;
     }
 }
