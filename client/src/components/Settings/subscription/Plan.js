@@ -1,4 +1,3 @@
-import React from 'react'
 import './Plan.css';
 
 const Plan = ({ plan }) => {
