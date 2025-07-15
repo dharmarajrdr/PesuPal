@@ -42,25 +42,31 @@ public class StripeGateway implements PaymentGateway, WebhookService, Subscripti
         Stripe.apiKey = API_KEY;
         Price price = getPrice();
 
-        PaymentLinkCreateParams params = PaymentLinkCreateParams.builder()
-                .addLineItem(
-                        PaymentLinkCreateParams.LineItem.builder()
-                                .setPrice(price.getId())
-                                .setQuantity(1L)
-                                .build())
-                .setAfterCompletion(
-                        PaymentLinkCreateParams.AfterCompletion.builder()
-                                .setType(PaymentLinkCreateParams.AfterCompletion.Type.REDIRECT)
-                                .setRedirect(
-                                        PaymentLinkCreateParams.AfterCompletion.Redirect.builder()
-                                                .setUrl("https://www.google.com/?txn_id=abcd1234").build())
-                                .build())
-                .build();
+        PaymentLinkCreateParams params = PaymentLinkCreateParams.builder().addLineItem(
+                PaymentLinkCreateParams.LineItem.builder()
+                        .setPrice(price.getId())
+                        .setQuantity(1L)
+                        .build()
+        ).setAfterCompletion(
+                PaymentLinkCreateParams.AfterCompletion.builder()
+                        .setType(PaymentLinkCreateParams.AfterCompletion.Type.REDIRECT)
+                        .setRedirect(
+                                PaymentLinkCreateParams.AfterCompletion.Redirect.builder()
+                                        .setUrl("https://www.google.com/?txn_id=abcd1234")
+                                        .build()
+                        ).build()
+        ).build();
 
         PaymentLink paymentLink = PaymentLink.create(params);
         return paymentLink.getUrl();
     }
 
+    /**
+     * Creates a price for a product.
+     *
+     * @return
+     * @throws StripeException
+     */
     public Price getPrice() throws StripeException {
 
         PriceCreateParams params = PriceCreateParams.builder()
@@ -69,12 +75,19 @@ public class StripeGateway implements PaymentGateway, WebhookService, Subscripti
                 .setProductData(
                         PriceCreateParams.ProductData.builder()
                                 .setName("Boult Audio")
-                                .build())
-                .build();
+                                .build()
+                ).build();
 
         return Price.create(params);
     }
 
+    /**
+     * Creates a webhook endpoint for Stripe.
+     *
+     * @param url
+     * @param events
+     * @return
+     */
     @Override
     public WebhookDto createWebhook(String url, List<String> events) {
 
@@ -92,6 +105,12 @@ public class StripeGateway implements PaymentGateway, WebhookService, Subscripti
         }
     }
 
+    /**
+     * Deletes a webhook endpoint by its ID.
+     *
+     * @param webhookId
+     * @return
+     */
     @Override
     public Boolean deleteWebhook(String webhookId) {
 
@@ -105,6 +124,14 @@ public class StripeGateway implements PaymentGateway, WebhookService, Subscripti
         }
     }
 
+    /**
+     * Updates a webhook endpoint with a new URL and events.
+     *
+     * @param updatedUrl
+     * @param events
+     * @param webhookId
+     * @return
+     */
     @Override
     public WebhookDto updateWebhook(String updatedUrl, List<String> events, String webhookId) {
 
@@ -123,21 +150,26 @@ public class StripeGateway implements PaymentGateway, WebhookService, Subscripti
         }
     }
 
-    public String SubscriptionService(String customerName, String customerEmail, Long productAmount, String productName,
-            PlanCreateParams.Interval interval) {
+    /**
+     * Creates a subscription for a product with the given parameters.
+     *
+     * @param customerName
+     * @param customerEmail
+     * @param productAmount
+     * @param productName
+     * @param interval
+     * @return
+     */
+    public String SubscriptionService(String customerName, String customerEmail, Long productAmount, String productName, PlanCreateParams.Interval interval) {
 
         Stripe.apiKey = API_KEY;
 
         try {
-            CustomerCreateParams customerParams = CustomerCreateParams.builder()
-                    .setName(customerName)
-                    .setEmail(customerEmail)
-                    .build();
+
+            CustomerCreateParams customerParams = CustomerCreateParams.builder().setName(customerName).setEmail(customerEmail).build();
             Customer customer = Customer.create(customerParams);
 
-            ProductCreateParams productParams = ProductCreateParams.builder()
-                    .setName(productName)
-                    .build();
+            ProductCreateParams productParams = ProductCreateParams.builder().setName(productName).build();
             Product product = Product.create(productParams);
 
             PriceCreateParams priceParams = PriceCreateParams.builder()
@@ -146,9 +178,8 @@ public class StripeGateway implements PaymentGateway, WebhookService, Subscripti
                     .setRecurring(
                             PriceCreateParams.Recurring.builder()
                                     .setInterval(from(interval))
-                                    .build())
-                    .setProduct(product.getId())
-                    .build();
+                                    .build()
+                    ).setProduct(product.getId()).build();
 
             Price price = Price.create(priceParams);
 
@@ -160,9 +191,8 @@ public class StripeGateway implements PaymentGateway, WebhookService, Subscripti
                     .addItem(
                             SubscriptionCreateParams.Item.builder()
                                     .setPrice(price.getId())
-                                    .build())
-                    .setTrialPeriodDays(trialDays)
-                    .build();
+                                    .build()
+                    ).setTrialPeriodDays(trialDays).build();
 
             Subscription subscription = Subscription.create(subParams);
             return subscription.getId();
@@ -172,18 +202,12 @@ public class StripeGateway implements PaymentGateway, WebhookService, Subscripti
     }
 
     private Interval from(PlanCreateParams.Interval interval) {
-        switch (interval) {
-            case DAY:
-                return Interval.DAY;
-            case WEEK:
-                return Interval.WEEK;
-            case MONTH:
-                return Interval.MONTH;
-            case YEAR:
-                return Interval.YEAR;
-            default:
-                throw new IllegalArgumentException("Unknown interval: " + interval);
-        }
+        return switch (interval) {
+            case DAY -> Interval.DAY;
+            case WEEK -> Interval.WEEK;
+            case MONTH -> Interval.MONTH;
+            case YEAR -> Interval.YEAR;
+        };
     }
 
     /**
@@ -197,8 +221,7 @@ public class StripeGateway implements PaymentGateway, WebhookService, Subscripti
      * @return
      */
     @Override
-    public String createSubscriptionForProduct(String customerName, String customerEmail, Long productAmount,
-            String productName, PlanCreateParams.Interval interval) {
+    public String createSubscriptionForProduct(String customerName, String customerEmail, Long productAmount, String productName, PlanCreateParams.Interval interval) {
 
         return "";
     }
