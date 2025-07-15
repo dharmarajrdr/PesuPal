@@ -21,9 +21,9 @@ export default [
         has_access: true
     },
     {
-        title: 'Subscription',
-        route: '/settings/subscription',
-        icon: 'fa fa-credit-card',
+        title: 'Pricing',
+        route: '/settings/pricing',
+        icon: 'fa fa-dollar-sign',
         active: false,
         has_access: true
     },
