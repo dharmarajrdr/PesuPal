@@ -46,6 +46,7 @@ export async function apiRequest(endpoint, method = 'GET', data = null, customHe
         console.log(message);
         if (message == "Invalid JWT token") {
             document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/';
+            window.location.reload();   // Reload the page to clear the session
         }
         throw error;
     }
