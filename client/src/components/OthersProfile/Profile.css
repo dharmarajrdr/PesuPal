@@ -156,6 +156,41 @@
   transition-duration: 0.25s;
 }
 
+#ProfileCard .navlinks {
+  padding-left: 20px;
+  padding-top: 30px;
+}
+
+#ProfileCard .navlink {
+  width: 120px;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  margin-left: 10px;
+}
+
+#ProfileCard .navlink:hover {
+  background-color: #f1f1f1;
+  transition-duration: 0.25s;
+}
+
+#ProfileCard .navlink i {
+  color: #555;
+  font-weight: 600;
+}
+
+#ProfileCard .navlink h5 {
+  font-size: 14px;
+  color: #555;
+  font-weight: 500;
+  margin-right: 2px;
+}
+
+#ProfileCard .navlink span {
+  font-size: 12px;
+  color: #888;
+}
+
 @media screen and (max-width: 768px) {
   #user_basic_info .row #profile_name {
     font-size: 18px;
