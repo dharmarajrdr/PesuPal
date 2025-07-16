@@ -1,10 +1,11 @@
-import React, { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import './LeftNavigation.css'
 import Nav from './Nav'
 import { useDispatch, useSelector } from 'react-redux';
 import themes from '../../theme';
+import OrgList from '../Org/OrgList';
 
-const LeftNavigation = () => {
+const LeftNavigation = ({ profile }) => {
 
     const ListOfNavigations = useSelector((state) => {
         return state.Navigation;
@@ -24,6 +25,32 @@ const LeftNavigation = () => {
     }, { LeftNavigationStyles } = themes,
         dispatch = useDispatch();
 
+    const { id, icon, image, title, route } = profile;
+
+    const [showOrgList, setShowOrgList] = useState(false);
+
+    const toggleOrgList = (e) => {
+
+        const clickedOrgList = e.currentTarget;
+
+        if (clickedOrgList.classList.contains("org-preview")) {
+            const isActive = clickedOrgList.classList.contains("active");
+            if (!isActive) {
+                setShowOrgList(false);
+            }
+        }
+    };
+
+    const showOrgListHandler = () => {
+
+        setShowOrgList(true);
+    }
+
+    const closeOrgList = () => {
+
+        setShowOrgList(false);
+    }
+
     useEffect(() => {
         const { pathname } = document.location;
         const route = '/' + pathname.split('/')[1];
@@ -40,18 +67,12 @@ const LeftNavigation = () => {
                     <div>
                         <i className="fa-solid fa-angles-left" id='closeLeftNav' onClick={hideNavContainer}></i>
                     </div>
-                    {ListOfNavigations.top.map((navigation, index) => {
-                        return (
-                            <Nav key={index} icon={navigation.icon} image={navigation.image} title={navigation.title} route={navigation.route} notifyCount={navigation.notifyCount} />
-                        )
-                    })}
+                    {ListOfNavigations.top.map((navigation, index) => <Nav key={index} icon={navigation.icon} image={navigation.image} title={navigation.title} route={navigation.route} notifyCount={navigation.notifyCount} />)}
                 </div>
                 <div className='w100'>
-                    {ListOfNavigations.bottom.map((navigation, index) => {
-                        return (
-                            <Nav key={index} icon={navigation.icon} image={navigation.image} title={navigation.title} route={navigation.route} />
-                        )
-                    })}
+                    <Nav key={id} icon={icon} image={image} title={title} route={route} />
+                    {ListOfNavigations.bottom.map((navigation, index) => <Nav key={index} icon={navigation.icon} image={navigation.image} title={navigation.title} route={navigation.route} showOrgListHandler={showOrgListHandler} />)}
+                    {showOrgList && <OrgList toggleOrgList={toggleOrgList} closeOrgList={closeOrgList} />}
                 </div>
             </div>
         </div>

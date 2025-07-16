@@ -416,6 +416,10 @@ span {
   top: -3px;
 }
 
+.bgFFF {
+  background-color: #fff;
+}
+
 .fw400 {
   font-weight: 400;
 }
@@ -438,6 +442,14 @@ span {
 #openCloseLeftNavigationContainer i:hover {
   color: #777;
   transition-duration: 0.25s;
+}
+
+.objectFitCover {
+  object-fit: cover;
+}
+
+.objectPositionCenter {
+  object-position: center;
 }
 
 @media screen and (max-width: 768px) {

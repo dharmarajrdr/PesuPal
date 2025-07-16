@@ -1,9 +1,13 @@
 package com.pesupal.server.service.interfaces;
 
 import com.pesupal.server.dto.request.AddOrgMemberDto;
+import com.pesupal.server.dto.response.OrgDetailDto;
+import com.pesupal.server.dto.response.UserBasicInfoDto;
 import com.pesupal.server.model.org.Org;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.model.user.User;
+
+import java.util.List;
 
 public interface OrgMemberService {
 
@@ -11,7 +15,25 @@ public interface OrgMemberService {
 
     OrgMember getOrgMemberByUserIdAndOrgId(Long userId, Long orgId);
 
+    UserBasicInfoDto getOrgMemberBasicInfoByUserIdAndOrgId(Long userId, Long orgId);
+
+    Boolean existsByUserAndOrg(User user, Org org);
+
+    List<UserBasicInfoDto> getAllMembers(Long departmentId, Long currentUserId, Long currentOrgId);
+
+    Boolean existsByUserIdAndOrgId(Long userId, Long orgId);
+
     OrgMember joinOrgAsFirstMember(User user, Org org);
 
-    OrgMember addMemberToOrg(AddOrgMemberDto addOrgMemberDto, Long adminId, boolean firstMember);
+    List<OrgDetailDto> listOfOrgUserPartOf(Long userId);
+
+    OrgMember addMemberToOrg(AddOrgMemberDto addOrgMemberDto, Long adminId, Long orgId, boolean firstMember);
+
+    void validateUserIsOrgMember(User user, Org org);
+
+    void validateUserIsOrgMember(Long userId, Long orgId);
+
+    List<UserBasicInfoDto> getAllOrgMembers(Long currentUserId, Long currentOrgId);
+
+    String getOrgMemberImageByUserIdAndOrgId(Long userId, Long currentOrgId);
 }

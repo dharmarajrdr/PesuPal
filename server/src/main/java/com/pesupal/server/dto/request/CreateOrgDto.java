@@ -10,8 +10,6 @@ public class CreateOrgDto {
 
     private String uniqueName;
 
-    private Long ownerId;
-
     private String displayPicture;
 
     public Org toOrg() {

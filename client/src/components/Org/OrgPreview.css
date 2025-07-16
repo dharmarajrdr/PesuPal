@@ -1,0 +1,137 @@
+.org-preview {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    width: 400px;
+    align-items: stretch;
+    border-radius: 5px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    margin: 5px;
+    min-height: fit-content;
+}
+
+.org-preview.active {
+    background-color: #f0f8ff;
+    cursor: default;
+}
+
+.org-preview:not(.active):hover {
+    background-color: #f9f9f9;
+}
+
+.org-preview .trial-badge {
+    position: absolute;
+    top: 5px;
+    left: -20px;
+    background-color: #f0ad4e;
+    color: #fff;
+    padding: 5px 5px 5px 0px;
+    width: 100px;
+    text-align: center;
+    border-radius: 3px;
+    font-size: 12px;
+    rotate: -35deg;
+    font-weight: 600;
+    font-family: 'Open Sans', sans-serif;
+}
+
+.org-preview .trial-badge i {
+    color: #fff;
+    margin-right: 5px;
+}
+
+.org-preview .display-picture img {
+    width: 40px;
+    height: 40px;
+    border-radius: 5px;
+    object-fit: cover;
+}
+
+.org-preview .display-picture p {
+    width: 40px;
+    height: 40px;
+    border-radius: 5px;
+    background-color: #3f4c68;
+    color: #fff;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.org-preview .org-status {
+    font-weight: 600;
+    font-size: 12px;
+    color: #f0ad4e;
+}
+
+.org-preview .org-status i {
+    margin-left: 5px;
+    font-size: 12px;
+    color: #f0ad4e;
+}
+
+.org-preview .org-status.active {
+    color: green;
+}
+
+.org-preview .org-status.active i {
+    color: green;
+}
+
+.org-preview .org-status.inactive {
+    color: #aaa;
+}
+
+.org-preview .org-status.inactive i {
+    color: #aaa;
+}
+
+.org-preview .org-details {
+    width: 100%;
+    height: 100%;
+    padding-left: 20px;
+    overflow: hidden;
+}
+
+.org-preview .org-details div .org-displayname {
+    width: 75%;
+    text-wrap: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    font-weight: 500;
+    line-height: 20px;
+    font-family: 'system-ui';
+}
+
+.org-preview .org-details div .org-members-count {
+    width: 25%;
+    font-size: 12px;
+    text-align: right;
+    line-height: 20px;
+}
+
+.org-preview .org-details div .org-members-count i {
+    margin-right: 5px;
+    color: #555;
+}
+
+.org-role {
+    font-size: 12px;
+    color: #555;
+    margin-top: 5px;
+}
+
+.org-role i {
+    margin-right: 5px;
+    color: #555;
+}
+
+.org-role i.fa-user-shield {
+    color: #9a8500;
+}
+
+.org-role i.fa-user {
+    color: #09426b;
+}

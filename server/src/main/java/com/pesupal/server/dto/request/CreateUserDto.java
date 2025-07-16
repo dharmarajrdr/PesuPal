@@ -10,7 +10,7 @@ public class CreateUserDto {
 
     private String phone;
 
-    private Long password;
+    private String password;
 
     public User toUser() {
 

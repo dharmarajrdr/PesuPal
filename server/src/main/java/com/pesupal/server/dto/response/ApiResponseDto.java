@@ -12,12 +12,28 @@ public class ApiResponseDto {
 
     private Object data;
 
+    private Object info;
+
     private ResponseStatus status;
 
     public ApiResponseDto(String message, Object data, ResponseStatus status) {
         this.message = message;
         this.data = data;
         this.status = status;
+    }
+
+    public ApiResponseDto(String message, Object data, Object info, ResponseStatus status) {
+        this.message = message;
+        this.data = data;
+        this.info = info;
+        this.status = status;
+    }
+
+    public ApiResponseDto(String message, Object data, Object info) {
+        this.message = message;
+        this.data = data;
+        this.info = info;
+        this.status = ResponseStatus.SUCCESS;
     }
 
     public ApiResponseDto(String message, Object data) {

@@ -1,3 +1,7 @@
+#RecentChats {
+  height: calc(100vh - 190px);
+}
+
 .RecentChatContainer {
   width: 100%;
   overflow: hidden;
@@ -16,6 +20,8 @@
   border-radius: 100%;
   margin-right: 10px;
   margin-left: 5px;
+  object-fit: cover;
+  object-position: center;
 }
 
 .RecentChatContainer .name {
@@ -27,7 +33,7 @@
   font-weight: 600;
 }
 
-.RecentChatContainer .date_time {
+.RecentChatContainer .createdAt {
   font-size: 10px;
   line-height: 20px;
 }
@@ -90,7 +96,7 @@
     font-size: 12px;
   }
 
-  .RecentChatContainer .date_time {
+  .RecentChatContainer .createdAt {
     font-size: 9px;
   }
 

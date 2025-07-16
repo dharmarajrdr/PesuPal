@@ -1,21 +1,20 @@
-import React from 'react'
-import { Link } from 'react-router-dom';
 import './PeopleCard.css';
 import { StatusIndicator } from '../../Auth/utils';
 
-const PeopleCard = ({ person }) => {
+const PeopleCard = ({ person, setShowProfile }) => {
 
-    const { name, profile_image, department, status, id } = person;
+    const { displayName, displayPicture, designation, status, id } = person;
+
     return (
-        <div className='FCCC PeopleCard'>
+        <div className='FCCC PeopleCard' onClick={() => setShowProfile(true)}>
             <i className="fa fa-ellipsis-vertical three_dots"></i>
             <div className='FCCC mB5 img_name_dept'>
                 <div className='FRCC profile_picture_container mB10'>
-                    <img src={profile_image} className='img_75_75' />
+                    <img src={displayPicture} className='img_75_75' />
                     <StatusIndicator status={status} />
                 </div>
-                <b className='mx5 user_name'>{name}</b>
-                <span className='color777 fs10 mB5'>{department}</span>
+                <b className='mx5 user_name'>{displayName}</b>
+                <span className='color777 fs10 mB5'>{designation}</span>
             </div>
             <div className='mT5 FRCC'>
                 <i className='profile_contacts fa fa-comment' style={{ backgroundColor: 'blue' }} />

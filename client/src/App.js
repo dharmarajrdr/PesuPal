@@ -1,53 +1,78 @@
 import './App.css';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
+import { hasCookie } from './components/Auth/utils';
 import Signup from './components/Auth/Signup';
 import Signin from './components/Auth/Signin';
-import { BrowserRouter, Route, Routes, useNavigate } from 'react-router-dom';
-import { hasCookie } from './components/Auth/utils';
 import LeftNavigation from './components/LeftNavigation/LeftNavigation';
 import FeedsLayout from './components/Feeds/FeedsLayout';
 import ChatLayout from './components/Chat/ChatLayout';
-import { configureStore } from '@reduxjs/toolkit';
-import { combineReducers } from 'redux';
-import { Provider } from 'react-redux';
-import { NavigationReducers } from './store/reducers/Navigation';
 import PeopleLayout from './components/People/PeopleLayout';
 import TeamLayout from './components/Team/TeamLayout';
 import TrackerLayout from './components/Tracker/TrackerLayout';
+import { configureStore } from '@reduxjs/toolkit';
+import { combineReducers } from 'redux';
+import { Provider } from 'react-redux';
+import { VerticalLoaderReducer } from './store/reducers/VerticalLoader';
+import { NavigationReducers } from './store/reducers/Navigation';
+import PageNotFound from './components/Auth/PageNotFound';
+import SettingsLayout from './components/Settings/SettingsLayout';
+import MoreFeaturesLayout from './components/More/MoreFeaturesLayout';
+import VerticalLoader from './components/VerticalLoader';
+import { apiRequest } from './http_request';
 
-function Navigation() {
-    const navigate = useNavigate();
-
-    useEffect(() => {
-        !hasCookie() && navigate('/signin');
-    }, []);
-
-    return null;
-}
+const store = configureStore({
+    reducer: combineReducers({
+        Navigation: NavigationReducers,
+        VerticalLoader: VerticalLoaderReducer
+    }),
+    devTools: true
+});
 
 function App() {
-    const store = configureStore({
-        'reducer': combineReducers({
-            Navigation: NavigationReducers
-        }),
-        'devTools': true
-    });
+
+    const location = useLocation();
+    const navigate = useNavigate();
+
+    const isAuthPage = ['/signin', '/signup'].includes(location.pathname);
+
+    const [orgId, setOrgId] = useState(sessionStorage.getItem('org-id'));
+    const [profile, setProfile] = useState({ 'id': 8, 'title': 'Me', 'route': '/profile', 'icon': 'fa-regular fa-user', 'isActive': false });
+
+    useEffect(() => {
+        if (!hasCookie() && !isAuthPage) {
+            navigate('/signin');
+        }
+    }, [location.pathname, navigate]);
+
+    useEffect(() => {
+        apiRequest("/api/v1/people/display-picture", "GET").then(({ data }) => {
+            const updatedProfile = { ...profile, image: data, icon: null };
+            setProfile(updatedProfile);
+        }).catch(({ message }) => {
+            console.error("Error fetching profile image:", message);
+        });
+    }, [orgId]);
+
     return (
         <Provider store={store}>
             <div className="App FRCS">
-                <BrowserRouter>
-                    {/* <Navigation /> */}
-                    <LeftNavigation />
-                    <Routes>
-                        <Route path='/feeds' element={<FeedsLayout />} />
-                        <Route path='/chat' element={<ChatLayout />} />
-                        <Route path='/people' element={<PeopleLayout />} />
-                        <Route path='/team/*' element={<TeamLayout />} />
-                        <Route path='/tracker' element={<TrackerLayout />} />
-                        <Route path='/signup' element={<Signup />} />
-                        <Route path='/signin' element={<Signin />} />
-                    </Routes>
-                </BrowserRouter>
+                {/* ✅ Only render LeftNavigation if not on /signin or /signup */}
+                {!isAuthPage && <LeftNavigation profile={profile} />}
+                <VerticalLoader />
+
+                <Routes>
+                    <Route path="/feeds" element={<FeedsLayout />} />
+                    <Route path="/chat" element={<ChatLayout />} />
+                    <Route path="/people" element={<PeopleLayout />} />
+                    <Route path="/team/*" element={<TeamLayout />} />
+                    <Route path="/tracker" element={<TrackerLayout />} />
+                    <Route path="/settings/*" element={<SettingsLayout />} />
+                    <Route path='/more/*' element={<MoreFeaturesLayout />} />
+                    <Route path="/signup" element={<Signup />} />
+                    <Route path="/signin" element={<Signin />} />
+                    <Route path="*" element={<PageNotFound />} />
+                </Routes>
             </div>
         </Provider>
     );

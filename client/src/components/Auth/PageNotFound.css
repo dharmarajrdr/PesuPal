@@ -1,0 +1,142 @@
+.notfound-container {
+    height: 100vh;
+    background-color: #f7f8fc;
+    color: #3f4c68;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    font-family: 'system-ui', sans-serif;
+    padding: 2rem;
+    opacity: 0;
+    animation: fadeIn 0.6s ease-in-out forwards;
+}
+
+/* Header (404) */
+.notfound-container h1 {
+    font-size: 6rem;
+    margin: 0;
+    color: #3f4c68;
+    animation: bounceIn 0.6s ease-out forwards;
+}
+
+/* Paragraph + Button */
+.notfound-container p,
+.notfound-container button {
+    opacity: 0;
+    animation: slideUp 0.6s ease-out forwards;
+    animation-delay: 0.4s;
+}
+
+.notfound-container button {
+    background-color: #3f4c68;
+    color: white;
+    padding: 12px 24px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 1rem;
+    transition: transform 0.3s ease;
+}
+
+.notfound-container button:hover {
+    transform: scale(1.05);
+    background-color: #2d3750;
+}
+
+/* === Animations === */
+@keyframes fadeIn {
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(30px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes bounceIn {
+    0% {
+        transform: scale(0.5);
+        opacity: 0;
+    }
+
+    60% {
+        transform: scale(1.2);
+        opacity: 1;
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* Breathe animation for 404 text */
+@keyframes breathe {
+
+    0%,
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    50% {
+        transform: scale(1.06);
+        opacity: 0.85;
+    }
+}
+
+/* Wiggle animation for button */
+@keyframes wiggle {
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    25% {
+        transform: translateX(-2px);
+    }
+
+    75% {
+        transform: translateX(2px);
+    }
+}
+
+/* Glow effect for paragraph text */
+@keyframes glow {
+
+    0%,
+    100% {
+        text-shadow: 0 0 0px rgba(63, 76, 104, 0.2);
+    }
+
+    50% {
+        text-shadow: 0 0 8px rgba(63, 76, 104, 0.4);
+    }
+}
+
+/* Apply the infinite animations */
+.notfound-container h1 {
+    animation: bounceIn 0.6s ease-out forwards, breathe 3s ease-in-out infinite;
+}
+
+.notfound-container p {
+    animation: slideUp 0.6s ease-out forwards, glow 4s ease-in-out infinite;
+    animation-delay: 0.4s, 1s;
+}
+
+.notfound-container button {
+    animation: slideUp 0.6s ease-out forwards, wiggle 5s ease-in-out infinite;
+    animation-delay: 0.4s, 2s;
+}

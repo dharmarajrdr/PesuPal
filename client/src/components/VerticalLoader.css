@@ -1,0 +1,88 @@
+.vertical-loader-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 7px;
+    border-radius: 10px;
+    background-color: rgba(128, 128, 128, 0.7);
+    /* Grey with 70% opacity */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    /* Ensure it's on top of everything */
+}
+
+/* src/components/VerticalLoader/VerticalLoader.css */
+
+/* Container for the progress bar, fixed at the top */
+.top-progress-loader-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    /* Height of the progress bar */
+    background-color: #e0e0e0;
+    /* Background color of the track */
+    z-index: 9999;
+    /* Ensure it's on top of other content */
+    overflow: hidden;
+    /* Hide anything outside the bar */
+}
+
+/* The actual moving progress bar */
+.top-progress-loader-bar {
+    height: 100%;
+    width: 0;
+    /* Starts at 0 width */
+    background-color: #4CAF50;
+    /* Green color for the progress */
+    animation: progress-animation 1.5s infinite ease-in-out;
+    /* Animation for the progress */
+    /* You can adjust the animation duration and timing function */
+}
+
+/* Keyframes for the progress animation */
+@keyframes progress-animation {
+    0% {
+        width: 0%;
+        left: -100%;
+        /* Start off-screen to the left */
+    }
+
+    50% {
+        width: 100%;
+        /* Expand to full width */
+        left: 0%;
+        /* Move to screen */
+    }
+
+    100% {
+        width: 0%;
+        /* Shrink back to 0 */
+        left: 100%;
+        /* Move off-screen to the right */
+    }
+}
+
+/* Optional: If you want a more subtle, continuous flow */
+/*
+@keyframes progress-animation {
+    0% {
+        transform: translateX(-100%);
+    }
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+.top-progress-loader-bar {
+    height: 100%;
+    width: 30%;
+    background-color: #4CAF50;
+    position: absolute;
+    animation: progress-animation 1.5s linear infinite;
+}
+*/

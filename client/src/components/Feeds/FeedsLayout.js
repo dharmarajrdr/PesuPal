@@ -1,10 +1,29 @@
-import React, { useState } from 'react'
+import { useEffect, useState } from 'react'
 import './FeedsLayout.css'
 import FeedsLeftPanel from './FeedsLeftPanel/FeedsLeftPanel'
 import FeedsRightPanel from './FeedsRightPanel/FeedsRightPanel'
 import FeedsMainPanel from './FeedsMainPanel/FeedsMainPanel'
+import Popup from '../Popup'
 
 const FeedsLayout = () => {
+
+    const [popupData, setPopupData] = useState(null);
+
+    const showPopup = (message, type) => {
+        setPopupData({ message, type });
+    };
+
+    useEffect(() => {
+        const message = sessionStorage.getItem("popup-message");
+        const type = sessionStorage.getItem("popup-type");
+
+        if (message && type) {
+            showPopup(message, type);
+            sessionStorage.removeItem("popup-message");
+            sessionStorage.removeItem("popup-type");
+        }
+    }, []);
+
     const leftNavigationState = useState(true),
         [leftNavOpened,] = leftNavigationState,
         width = {
@@ -13,6 +32,7 @@ const FeedsLayout = () => {
         }
     return (
         <div id='FeedsLayout' className='Layout FRCS'>
+            {popupData && <Popup message={popupData.message} type={popupData.type} />}
             <FeedsLeftPanel leftNavigationState={leftNavigationState} width={leftNavOpened ? width.leftNavOpened : width.leftNavClosed} />
             <div className='FRSC h100' id='FeedsMain' width={leftNavOpened ? `calc(100% - ${width.leftNavOpened})` : `calc(100% - ${width.leftNavClosed})`} >
                 <FeedsMainPanel />

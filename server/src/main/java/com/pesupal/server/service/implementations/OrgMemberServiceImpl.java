@@ -3,6 +3,9 @@ package com.pesupal.server.service.implementations;
 import com.pesupal.server.dto.request.AddOrgMemberDto;
 import com.pesupal.server.dto.request.CreateDepartmentDto;
 import com.pesupal.server.dto.request.CreateDesignationDto;
+import com.pesupal.server.dto.response.LatestSubscriptionDto;
+import com.pesupal.server.dto.response.OrgDetailDto;
+import com.pesupal.server.dto.response.UserBasicInfoDto;
 import com.pesupal.server.enums.Role;
 import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.exceptions.DataNotFoundException;
@@ -10,6 +13,7 @@ import com.pesupal.server.exceptions.PermissionDeniedException;
 import com.pesupal.server.model.department.Department;
 import com.pesupal.server.model.org.Org;
 import com.pesupal.server.model.org.OrgConfiguration;
+import com.pesupal.server.model.org.OrgSubscriptionHistory;
 import com.pesupal.server.model.user.Designation;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.model.user.User;
@@ -17,6 +21,9 @@ import com.pesupal.server.repository.OrgMemberRepository;
 import com.pesupal.server.service.interfaces.*;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -28,6 +35,7 @@ public class OrgMemberServiceImpl implements OrgMemberService {
     private final DesignationService designationService;
     private final OrgMemberRepository orgMemberRepository;
     private final OrgConfigurationService orgConfigurationService;
+    private final OrgSubscriptionHistoryService orgSubscriptionHistoryService;
 
     /**
      * Retrieves an organization member by user and organization.
@@ -39,7 +47,7 @@ public class OrgMemberServiceImpl implements OrgMemberService {
     @Override
     public OrgMember getOrgMemberByUserAndOrg(User user, Org org) {
 
-        return orgMemberRepository.findByUserAndOrg(user, org).orElseThrow(() -> new DataNotFoundException("User with ID: " + user.getId() + " is not a member of this org."));
+        return orgMemberRepository.findByUserAndOrg(user, org).orElseThrow(() -> new DataNotFoundException("User with ID " + user.getId() + " is not a member of this org."));
     }
 
     /**
@@ -54,7 +62,23 @@ public class OrgMemberServiceImpl implements OrgMemberService {
 
         User user = userService.getUserById(userId);
         Org org = orgService.getOrgById(orgId);
-        return getOrgMemberByUserAndOrg(user, org);
+        OrgMember orgMember = getOrgMemberByUserAndOrg(user, org);
+//      orgMember.getUser().setPassword(null);
+        return orgMember;
+    }
+
+    /**
+     * Retrieves basic information of an organization member by user ID and org ID.
+     *
+     * @param userId
+     * @param orgId
+     * @return
+     */
+    @Override
+    public UserBasicInfoDto getOrgMemberBasicInfoByUserIdAndOrgId(Long userId, Long orgId) {
+
+        OrgMember orgMember = getOrgMemberByUserIdAndOrgId(userId, orgId);
+        return UserBasicInfoDto.fromOrgMember(orgMember);
     }
 
     /**
@@ -88,9 +112,39 @@ public class OrgMemberServiceImpl implements OrgMemberService {
      * @param org
      * @return Boolean
      */
-    private Boolean existsByUserAndOrg(User user, Org org) {
+    @Override
+    public Boolean existsByUserAndOrg(User user, Org org) {
 
         return orgMemberRepository.existsByUserAndOrg(user, org);
+    }
+
+    /**
+     * Retrieves all members of a department.
+     *
+     * @param departmentId
+     * @param userId
+     * @param orgId
+     * @return List<UserBasicInfoDto>
+     */
+    @Override
+    public List<UserBasicInfoDto> getAllMembers(Long departmentId, Long userId, Long orgId) {
+
+        OrgMember orgMember = getOrgMemberByUserIdAndOrgId(userId, orgId);
+        Department department = departmentService.getDepartmentByIdAndOrg(departmentId, orgMember.getOrg());
+        return orgMemberRepository.findAllByOrgAndDepartmentOrderByDisplayName(orgMember.getOrg(), department).stream().map(UserBasicInfoDto::fromOrgMember).toList();
+    }
+
+    /**
+     * Checks if a user is already a member of an organization by user ID and org ID.
+     *
+     * @param userId
+     * @param orgId
+     * @return
+     */
+    @Override
+    public Boolean existsByUserIdAndOrgId(Long userId, Long orgId) {
+
+        return orgMemberRepository.existsByUserIdAndOrgId(userId, orgId);
     }
 
     /**
@@ -132,7 +186,6 @@ public class OrgMemberServiceImpl implements OrgMemberService {
     public OrgMember joinOrgAsFirstMember(User user, Org org) {
 
         AddOrgMemberDto addOrgMemberDto = new AddOrgMemberDto();
-        addOrgMemberDto.setOrgId(org.getId());
         addOrgMemberDto.setUserId(user.getId()); // Assuming the first user has ID 1
         addOrgMemberDto.setUserName("user_" + user.getId()); // Assuming a default username format
         addOrgMemberDto.setDisplayName("Org Owner");
@@ -140,7 +193,33 @@ public class OrgMemberServiceImpl implements OrgMemberService {
         addOrgMemberDto.setDesignationId(createDummyDesignationForNewOrg(org).getId()); // Assuming a default designation
         addOrgMemberDto.setDepartmentId(createDummyDepartmentForNewOrg(org, user).getId()); // Assuming a default department
         addOrgMemberDto.setManagerId(user.getId()); // Assuming the first member is their own manager
-        return addMemberToOrg(addOrgMemberDto, user.getId(), true);
+        return addMemberToOrg(addOrgMemberDto, user.getId(), org.getId(), true);
+    }
+
+    /**
+     * Lists all organizations that a user is part of.
+     *
+     * @param userId
+     * @return List<OrgDetailDto>
+     */
+    @Override
+    public List<OrgDetailDto> listOfOrgUserPartOf(Long userId) {
+
+        List<OrgDetailDto> orgDetailDtos = new ArrayList<>();
+        User user = userService.getUserById(userId);
+        List<OrgMember> orgMembers = orgMemberRepository.findByUser(user);
+        orgMembers.sort((o1, o2) -> o1.getOrg().getDisplayName().compareToIgnoreCase(o2.getOrg().getDisplayName()));
+        for (OrgMember orgMember : orgMembers) {
+            Org org = orgMember.getOrg();
+            Integer membersCount = countOrgMembersByOrg(org);
+            OrgDetailDto orgDetailDto = OrgDetailDto.fromOrg(org);
+            orgDetailDto.setRole(orgMember.getRole());
+            orgDetailDto.setMembers(membersCount);
+            OrgSubscriptionHistory orgSubscriptionHistory = orgSubscriptionHistoryService.getLatestSubscription(org.getId()).orElseThrow(() -> new DataNotFoundException("No subscription history found for org with ID " + org.getId()));
+            orgDetailDto.setSubscription(LatestSubscriptionDto.fromOrgSubscriptionHistory(orgSubscriptionHistory));
+            orgDetailDtos.add(orgDetailDto);
+        }
+        return orgDetailDtos;
     }
 
     /**
@@ -151,10 +230,10 @@ public class OrgMemberServiceImpl implements OrgMemberService {
      * @return OrgMember
      */
     @Override
-    public OrgMember addMemberToOrg(AddOrgMemberDto addOrgMemberDto, Long adminId, boolean firstMember) {
+    public OrgMember addMemberToOrg(AddOrgMemberDto addOrgMemberDto, Long adminId, Long orgId, boolean firstMember) {
 
         User user = userService.getUserById(addOrgMemberDto.getUserId());
-        Org org = orgService.getOrgById(addOrgMemberDto.getOrgId());
+        Org org = orgService.getOrgById(orgId);
 
         OrgMember orgAdmin = firstMember ? null : getOrgMemberByUserAndOrg(userService.getUserById(adminId), org);
 
@@ -193,4 +272,60 @@ public class OrgMemberServiceImpl implements OrgMemberService {
         return orgMemberRepository.save(newOrgMember);
     }
 
+    /**
+     * Validates if a user is a member of an organization.
+     *
+     * @param user
+     * @param org
+     */
+    @Override
+    public void validateUserIsOrgMember(User user, Org org) {
+
+        if (!existsByUserAndOrg(user, org)) {
+            throw new DataNotFoundException("User with ID " + user.getId() + " is not a member of this org.");
+        }
+    }
+
+    /**
+     * Validates if a user is a member of an organization.
+     *
+     * @param userId
+     * @param orgId
+     */
+    @Override
+    public void validateUserIsOrgMember(Long userId, Long orgId) {
+
+        Org org = orgService.getOrgById(orgId);
+        User user = userService.getUserById(userId);
+
+        validateUserIsOrgMember(user, org);
+    }
+
+    /**
+     * Retrieves all members of an organization.
+     *
+     * @param userId
+     * @param orgId
+     * @return
+     */
+    @Override
+    public List<UserBasicInfoDto> getAllOrgMembers(Long userId, Long orgId) {
+
+        validateUserIsOrgMember(userId, orgId);
+
+        return orgMemberRepository.findAllByOrgIdOrderByDisplayNameAsc(orgId).stream().map(UserBasicInfoDto::fromOrgMember).toList();
+    }
+
+    /**
+     * Retrieves the image URL of an organization member by user ID and org ID.
+     *
+     * @param userId
+     * @param orgId
+     * @return
+     */
+    @Override
+    public String getOrgMemberImageByUserIdAndOrgId(Long userId, Long orgId) {
+
+        return getOrgMemberByUserIdAndOrgId(userId, orgId).getDisplayPicture();
+    }
 }
