@@ -1,5 +1,5 @@
 import './App.css';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { hasCookie } from './components/Auth/utils';
 import Signup from './components/Auth/Signup';
@@ -19,6 +19,7 @@ import PageNotFound from './components/Auth/PageNotFound';
 import SettingsLayout from './components/Settings/SettingsLayout';
 import MoreFeaturesLayout from './components/More/MoreFeaturesLayout';
 import VerticalLoader from './components/VerticalLoader';
+import { apiRequest } from './http_request';
 
 const store = configureStore({
     reducer: combineReducers({
@@ -35,17 +36,34 @@ function App() {
 
     const isAuthPage = ['/signin', '/signup'].includes(location.pathname);
 
+    const [profile, setProfile] = useState({
+        'id': 8,
+        'title': 'Me',
+        'route': '/profile',
+        'icon': 'fa-regular fa-user',
+        'isActive': false
+    });
+
     useEffect(() => {
         if (!hasCookie() && !isAuthPage) {
             navigate('/signin');
         }
     }, [location.pathname, navigate]);
 
+    useEffect(() => {
+        apiRequest("/api/v1/people/display-picture", "GET").then(({ data }) => {
+            const updatedProfile = { ...profile, image: data, icon: null };
+            setProfile(updatedProfile);
+        }).catch(({ message }) => {
+            console.error("Error fetching profile image:", message);
+        });
+    }, []);
+
     return (
         <Provider store={store}>
             <div className="App FRCS">
                 {/* ✅ Only render LeftNavigation if not on /signin or /signup */}
-                {!isAuthPage && <LeftNavigation />}
+                {!isAuthPage && <LeftNavigation profile={profile} />}
                 <VerticalLoader />
 
                 <Routes>
