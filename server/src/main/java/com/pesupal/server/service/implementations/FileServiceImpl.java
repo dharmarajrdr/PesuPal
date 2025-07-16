@@ -62,7 +62,8 @@ public class FileServiceImpl implements FileService {
 
         Folder folder = folderService.getFolderById(createFileDto.getFolderId());
 
-        Long size = mediaService.getFileSizeInKB(createFileDto.getMediaId());
+        // Long size = mediaService.getFileSizeInKB(createFileDto.getMediaId());
+        Long size = 0L;
 
         File file = createFileDto.toFile();
         file.setCreator(orgMember.getUser());
