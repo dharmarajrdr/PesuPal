@@ -13,14 +13,17 @@ import TrackerLayout from './components/Tracker/TrackerLayout';
 import { configureStore } from '@reduxjs/toolkit';
 import { combineReducers } from 'redux';
 import { Provider } from 'react-redux';
+import { VerticalLoaderReducer } from './store/reducers/VerticalLoader';
 import { NavigationReducers } from './store/reducers/Navigation';
 import PageNotFound from './components/Auth/PageNotFound';
 import SettingsLayout from './components/Settings/SettingsLayout';
 import MoreFeaturesLayout from './components/More/MoreFeaturesLayout';
+import VerticalLoader from './components/VerticalLoader';
 
 const store = configureStore({
     reducer: combineReducers({
-        Navigation: NavigationReducers
+        Navigation: NavigationReducers,
+        VerticalLoader: VerticalLoaderReducer
     }),
     devTools: true
 });
@@ -43,6 +46,7 @@ function App() {
             <div className="App FRCS">
                 {/* ✅ Only render LeftNavigation if not on /signin or /signup */}
                 {!isAuthPage && <LeftNavigation />}
+                <VerticalLoader />
 
                 <Routes>
                     <Route path="/feeds" element={<FeedsLayout />} />
