@@ -3,9 +3,13 @@ package com.pesupal.server.service.interfaces;
 import com.pesupal.server.dto.response.MediaUploadDto;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.net.URL;
+
 public interface MediaService {
 
-    public MediaUploadDto uploadFile(MultipartFile file) throws Exception;
+    MediaUploadDto uploadFile(MultipartFile file) throws Exception;
 
-    public byte[] downloadFile(String key);
+    byte[] downloadFile(String key);
+
+    URL generatePresignedUrl(String key) throws Exception;
 }
