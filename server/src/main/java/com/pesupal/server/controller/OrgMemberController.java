@@ -30,10 +30,21 @@ public class OrgMemberController extends OrgSubscriptionManager {
     @GetMapping("/{userId}")
     public ResponseEntity<ApiResponseDto> getOrgMemberByUserAndOrg(@PathVariable Long userId) {
 
-        checkOrgSubscription();
+        // checkOrgSubscription();
 
         UserBasicInfoDto userBasicInfoDto = orgMemberService.getOrgMemberBasicInfoByUserIdAndOrgId(userId, getCurrentOrgId());
         return ResponseEntity.ok(new ApiResponseDto("Organization member retrieved successfully.", userBasicInfoDto));
+    }
+
+    @GetMapping("/display-picture")
+    public ResponseEntity<ApiResponseDto> getOrgMemberImage(@RequestParam(required = false) Long userId) {
+
+        if(userId == null) {
+            userId = getCurrentUserId();
+        }
+
+        String imageUrl = orgMemberService.getOrgMemberImageByUserIdAndOrgId(userId, getCurrentOrgId());
+        return ResponseEntity.ok(new ApiResponseDto("Organization member image retrieved successfully.", imageUrl));
     }
 
     @GetMapping("/orgs")

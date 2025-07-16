@@ -315,4 +315,17 @@ public class OrgMemberServiceImpl implements OrgMemberService {
 
         return orgMemberRepository.findAllByOrgIdOrderByDisplayNameAsc(orgId).stream().map(UserBasicInfoDto::fromOrgMember).toList();
     }
+
+    /**
+     * Retrieves the image URL of an organization member by user ID and org ID.
+     *
+     * @param userId
+     * @param orgId
+     * @return
+     */
+    @Override
+    public String getOrgMemberImageByUserIdAndOrgId(Long userId, Long orgId) {
+
+        return getOrgMemberByUserIdAndOrgId(userId, orgId).getDisplayPicture();
+    }
 }
