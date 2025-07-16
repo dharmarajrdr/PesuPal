@@ -10,7 +10,11 @@ import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.services.s3.presigner.S3Presigner;
+import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest;
 
+import java.net.URL;
+import java.time.Duration;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -21,6 +25,9 @@ public class S3Service implements MediaService {
 
     @Autowired
     private S3Client s3Client;
+
+    @Autowired
+    private S3Presigner s3Presigner;
 
     private final String bucketName = dotenv.get("aws.s3.bucket.name");
 
@@ -60,5 +67,19 @@ public class S3Service implements MediaService {
                         .key(key)
                         .build()
         ).asByteArray();
+    }
+
+    /**
+     * Generates a pre-signed URL for accessing a file in the S3 bucket.
+     *
+     * @param key
+     * @return
+     */
+    @Override
+    public URL generatePresignedUrl(String key) {
+
+        GetObjectRequest getObjectRequest = GetObjectRequest.builder().bucket(bucketName).key(key).build();
+        GetObjectPresignRequest presignRequest = GetObjectPresignRequest.builder().signatureDuration(Duration.ofMinutes(5)).getObjectRequest(getObjectRequest).build();
+        return s3Presigner.presignGetObject(presignRequest).url();
     }
 }
