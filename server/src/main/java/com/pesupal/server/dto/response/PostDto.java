@@ -34,6 +34,10 @@ public class PostDto {
 
     private boolean bookmarkable;
 
+    private boolean liked;
+
+    private boolean bookmarked;
+
     public static PostDto fromPost(Post post) {
 
         PostDto postDto = new PostDto();

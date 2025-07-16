@@ -11,6 +11,7 @@ import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.exceptions.PermissionDeniedException;
 import com.pesupal.server.model.org.Org;
 import com.pesupal.server.model.post.Post;
+import com.pesupal.server.model.post.PostLike;
 import com.pesupal.server.model.post.PostMedia;
 import com.pesupal.server.model.post.PostTag;
 import com.pesupal.server.model.user.OrgMember;
@@ -63,6 +64,10 @@ public class PostServiceImpl implements PostService {
         return postRepository.save(post);
     }
 
+    private boolean isLiked(List<PostLike> likes, User user) {
+        return likes.stream().anyMatch(like -> Objects.equals(like.getLiker().getId(), user.getId()));
+    }
+
     /**
      * Converts a Post entity and OrgMember to a PostDto.
      *
@@ -77,6 +82,8 @@ public class PostServiceImpl implements PostService {
         postDto.setMedia(post.getPostMedia().stream().map(PostMedia::getMediaId).toList());
         postDto.setOwner(UserBasicInfoDto.fromOrgMember(orgMember));
         postDto.setImpression(PostImpressionDto.builder().likes(post.getLikes().size()).comments(post.getComments().size()).build());
+        postDto.setLiked(isLiked(post.getLikes(), orgMember.getUser()));
+        postDto.setBookmarked(false);   // Feature not implemented yet
         return postDto;
     }
 
