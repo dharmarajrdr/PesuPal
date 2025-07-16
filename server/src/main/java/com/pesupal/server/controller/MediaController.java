@@ -8,6 +8,8 @@ import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.net.URL;
+
 @RestController
 @AllArgsConstructor
 @RequestMapping("/api/v1/media")
@@ -47,6 +49,13 @@ public class MediaController {
         headers.setContentDisposition(ContentDisposition.inline().filename(key).build());
 
         return new ResponseEntity<>(fileData, headers, HttpStatus.OK);
+    }
+
+    @GetMapping("/download/presigned")
+    public ResponseEntity<ApiResponseDto> downloadFileWithPresignedUrl(@RequestParam String key) throws Exception {
+
+        URL presignedUrl = mediaService.generatePresignedUrl(key);
+        return ResponseEntity.ok().body(new ApiResponseDto("Presigned URL generated successfully.", presignedUrl.toString()));
     }
 
 }
