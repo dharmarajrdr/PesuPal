@@ -64,7 +64,7 @@ function App() {
                 <Routes>
                     <Route path="/feeds" element={<FeedsLayout />} />
                     <Route path="/chat" element={<ChatLayout />} />
-                    <Route path="/people" element={<PeopleLayout />} />
+                    <Route path="/people/*" element={<PeopleLayout />} />
                     <Route path="/team/*" element={<TeamLayout />} />
                     <Route path="/tracker" element={<TrackerLayout />} />
                     <Route path="/settings/*" element={<SettingsLayout />} />
