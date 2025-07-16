@@ -1,18 +1,11 @@
 package com.pesupal.server.service.interfaces;
 
-import org.springframework.core.io.Resource;
+import com.pesupal.server.dto.response.MediaUploadDto;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.util.UUID;
 
 public interface MediaService {
 
-    Resource getResourceById(UUID mediaId, String contentType) throws MalformedURLException, FileNotFoundException;
+    public MediaUploadDto uploadFile(MultipartFile file) throws Exception;
 
-    UUID saveMedia(MultipartFile file) throws IOException;
-
-    Long getFileSizeInKB(UUID mediaId) throws Exception;
+    public byte[] downloadFile(String key);
 }
