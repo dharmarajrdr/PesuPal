@@ -36,13 +36,8 @@ function App() {
 
     const isAuthPage = ['/signin', '/signup'].includes(location.pathname);
 
-    const [profile, setProfile] = useState({
-        'id': 8,
-        'title': 'Me',
-        'route': '/profile',
-        'icon': 'fa-regular fa-user',
-        'isActive': false
-    });
+    const [orgId, setOrgId] = useState(sessionStorage.getItem('org-id'));
+    const [profile, setProfile] = useState({ 'id': 8, 'title': 'Me', 'route': '/profile', 'icon': 'fa-regular fa-user', 'isActive': false });
 
     useEffect(() => {
         if (!hasCookie() && !isAuthPage) {
@@ -57,7 +52,7 @@ function App() {
         }).catch(({ message }) => {
             console.error("Error fetching profile image:", message);
         });
-    }, []);
+    }, [orgId]);
 
     return (
         <Provider store={store}>
