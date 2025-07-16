@@ -12,7 +12,6 @@ import com.pesupal.server.model.workdrive.Folder;
 import com.pesupal.server.repository.FileRepository;
 import com.pesupal.server.service.interfaces.FileService;
 import com.pesupal.server.service.interfaces.FolderService;
-import com.pesupal.server.service.interfaces.MediaService;
 import com.pesupal.server.service.interfaces.OrgMemberService;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -24,7 +23,6 @@ import java.util.List;
 @AllArgsConstructor
 public class FileServiceImpl implements FileService {
 
-    private final MediaService mediaService;
     private final FolderService folderService;
     private final FileRepository fileRepository;
     private final OrgMemberService orgMemberService;
@@ -62,7 +60,8 @@ public class FileServiceImpl implements FileService {
 
         Folder folder = folderService.getFolderById(createFileDto.getFolderId());
 
-        Long size = mediaService.getFileSizeInKB(createFileDto.getMediaId());
+        // Long size = mediaService.getFileSizeInKB(createFileDto.getMediaId());
+        Long size = 0L;
 
         File file = createFileDto.toFile();
         file.setCreator(orgMember.getUser());
