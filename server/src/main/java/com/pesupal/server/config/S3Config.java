@@ -7,6 +7,7 @@ import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 
 @Configuration
 public class S3Config {
@@ -26,5 +27,14 @@ public class S3Config {
         StaticCredentialsProvider credentialsProvider = StaticCredentialsProvider.create(awsBasicCredentials);
 
         return S3Client.builder().region(Region.of(region)).credentialsProvider(credentialsProvider).build();
+    }
+
+    @Bean
+    public S3Presigner s3Presigner() {
+
+        AwsBasicCredentials awsBasicCredentials = AwsBasicCredentials.create(accessKey, secretKey);
+        StaticCredentialsProvider credentialsProvider = StaticCredentialsProvider.create(awsBasicCredentials);
+
+        return S3Presigner.builder().region(Region.of(region)).credentialsProvider(credentialsProvider).build();
     }
 }
