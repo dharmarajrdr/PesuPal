@@ -4,6 +4,7 @@ import Nav from './Nav'
 import { useDispatch, useSelector } from 'react-redux';
 import themes from '../../theme';
 import OrgList from '../Org/OrgList';
+import { apiRequest } from '../../http_request';
 
 const LeftNavigation = () => {
 
@@ -49,11 +50,27 @@ const LeftNavigation = () => {
         setShowOrgList(false);
     }
 
+    const [profile, setProfile] = useState({
+        'id': 8,
+        'title': 'Me',
+        'route': '/profile',
+        'icon': 'fa-regular fa-user',
+        'isActive': false
+    });
+
     useEffect(() => {
         const { pathname } = document.location;
         const route = '/' + pathname.split('/')[1];
+
+        apiRequest("/api/v1/people/display-picture", "GET").then(({ data }) => {
+            Object.assign(profile, { 'image': data, 'icon': null });
+            setProfile(profile);
+        }).catch(({ message }) => {
+            console.error("Error fetching profile image:", message);
+        });
+
         dispatch({ type: 'UPDATE_NAVIGATION', payload: { route } });
-    }, []);
+    }, [profile]);
 
     return (
         <div id='LeftNavigationOverlay' onClick={clickedOverlay}>
@@ -68,6 +85,7 @@ const LeftNavigation = () => {
                     {ListOfNavigations.top.map((navigation, index) => <Nav key={index} icon={navigation.icon} image={navigation.image} title={navigation.title} route={navigation.route} notifyCount={navigation.notifyCount} />)}
                 </div>
                 <div className='w100'>
+                    <Nav key={profile.id} icon={profile.icon} image={profile.image} title={profile.title} route={profile.route} />
                     {ListOfNavigations.bottom.map((navigation, index) => <Nav key={index} icon={navigation.icon} image={navigation.image} title={navigation.title} route={navigation.route} showOrgListHandler={showOrgListHandler} />)}
                     {showOrgList && <OrgList toggleOrgList={toggleOrgList} closeOrgList={closeOrgList} />}
                 </div>

@@ -58,13 +58,6 @@ export default {
         }
     ],
     'bottom': [
-        {
-            'id': 8,
-            'title': 'Me',
-            'image': '/images/Users/user_10.jpg',
-            'route': '/profile',
-            'isActive': false
-        },
 
         {
             'id': 9,
