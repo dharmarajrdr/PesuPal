@@ -1,19 +1,12 @@
 package com.pesupal.server.controller;
 
 import com.pesupal.server.dto.response.ApiResponseDto;
+import com.pesupal.server.dto.response.MediaUploadDto;
 import com.pesupal.server.service.interfaces.MediaService;
 import lombok.AllArgsConstructor;
-import org.springframework.core.io.Resource;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.util.Map;
-import java.util.UUID;
 
 @RestController
 @AllArgsConstructor
@@ -22,20 +15,38 @@ public class MediaController {
 
     private final MediaService mediaService;
 
-    @PostMapping("/save")
-    public ResponseEntity<ApiResponseDto> saveMedia(@RequestPart("file") MultipartFile file) throws IOException {
+    @PostMapping("/upload")
+    public ResponseEntity<ApiResponseDto> uploadFile(MultipartFile file) throws Exception {
 
-        UUID mediaId = mediaService.saveMedia(file);
-        return ResponseEntity.ok(new ApiResponseDto("Media saved successfully.", Map.of("id", mediaId)));
+        MediaUploadDto mediaUploadDto = mediaService.uploadFile(file);
+        return ResponseEntity.ok(new ApiResponseDto("File uploaded successfully.", mediaUploadDto));
     }
 
-    @GetMapping("/{mediaId}")
-    public ResponseEntity<Resource> getMedia(@PathVariable UUID mediaId) throws MalformedURLException, FileNotFoundException {
+    private String getContentType(String key) {
 
-        // Get content type from header
-//        String contentType = RequestContext.get("CONTENT-TYPE", String.class);
-        String contentType = "image/png";
-        Resource resource = mediaService.getResourceById(mediaId, contentType);
-        return ResponseEntity.ok().contentType(MediaType.valueOf(contentType)).body(resource);
+        return switch (key.substring(key.lastIndexOf('.') + 1).toLowerCase()) {
+            case "png" -> "image/png";
+            case "jpg", "jpeg" -> "image/jpeg";
+            case "gif" -> "image/gif";
+            case "pdf" -> "application/pdf";
+            case "mp4" -> "video/mp4";
+            default -> "application/octet-stream";
+        };
     }
+
+    @GetMapping("/download")
+    public ResponseEntity<byte[]> downloadFile(@RequestParam String key) {
+
+        byte[] fileData = mediaService.downloadFile(key);
+
+        // Set content type based on file extension (you can also detect MIME type dynamically)
+        String contentType = getContentType(key);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.parseMediaType(contentType));
+        headers.setContentDisposition(ContentDisposition.inline().filename(key).build());
+
+        return new ResponseEntity<>(fileData, headers, HttpStatus.OK);
+    }
+
 }
