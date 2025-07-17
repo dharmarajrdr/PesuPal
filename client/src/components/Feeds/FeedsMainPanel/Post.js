@@ -38,7 +38,7 @@ const PostBody = ({ title, description, media, toggleMaxHeight, tags }) => {
 const TagsContainer = ({ tags }) => {
     return <div className='FRCS tagsContainer'>
         {tags && tags.map((tag, index) => (
-            <NavLink to={`/feeds/tag/${tag}`} key={index} className='tagNavLink'>{tag}</NavLink>
+            <NavLink to={`/feeds/tag/${tag.replace(/^#/m, '')}`} key={index} className='tagNavLink'>{tag}</NavLink>
         ))}
     </div>
 }
