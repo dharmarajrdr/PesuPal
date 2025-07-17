@@ -37,12 +37,13 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class PostServiceImpl implements PostService {
 
+    private final S3Service s3Service;
     private final OrgService orgService;
     private final TagService tagService;
     private final UserService userService;
     private final PostRepository postRepository;
     private final OrgMemberService orgMemberService;
-    private final S3Service s3Service;
+    private final PostTagService postTagService;
 
     /**
      * Creates a new post.
@@ -205,5 +206,40 @@ public class PostServiceImpl implements PostService {
     public int getUserPostCount(Long userId, Long orgId) {
 
         return postRepository.countAllByUserIdAndOrgId(userId, orgId);
+    }
+
+    /**
+     * Retrieves posts by a specific tag.
+     *
+     * @param userId
+     * @param orgId
+     * @param tag
+     * @param page
+     * @param size
+     * @param sortOrder
+     * @return
+     */
+    @Override
+    public PostsListDto getPostByTag(Long userId, Long orgId, String tag, int page, int size, SortOrder sortOrder) {
+
+        OrgMember orgMember = orgMemberService.getOrgMemberByUserIdAndOrgId(userId, orgId);
+
+        Pageable pageable = PageRequest.of(page, size + 1);
+        Page<PostTag> postPage = postTagService.findAllByTagAndOrgId(tag, orgId, pageable);
+        List<PostDto> postDtos = new ArrayList<>(postPage.getContent().stream().map(postTag -> {
+            OrgMember postOwnerOrgMember = orgMemberService.getOrgMemberByUserIdAndOrgId(postTag.getPost().getUser().getId(), orgId);
+            PostDto postDto = getPostDtoFromPostAndOrgMember(postTag.getPost(), postOwnerOrgMember);
+            postDto.setLiked(isLiked(postTag.getPost().getLikes(), orgMember.getUser()));
+            return postDto;
+        }).toList());
+        PostsListDto postsListDto = new PostsListDto();
+        postsListDto.setInfo(Map.of(
+                "hasMoreRecords", postDtos.size() == size + 1
+        ));
+        if (!postDtos.isEmpty() && postDtos.size() > size) {
+            postDtos.remove(postDtos.size() - 1); // Remove the extra post if it exists
+        }
+        postsListDto.setPosts(postDtos);
+        return postsListDto;
     }
 }

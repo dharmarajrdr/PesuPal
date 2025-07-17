@@ -21,4 +21,6 @@ public interface PostService {
     void archivePost(Long postId, Long userId, Long orgId);
 
     int getUserPostCount(Long userId, Long orgId);
+
+    PostsListDto getPostByTag(Long currentUserId, Long currentOrgId, String tag, int page, int size, SortOrder sortOrder);
 }
