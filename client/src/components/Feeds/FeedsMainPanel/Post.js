@@ -11,7 +11,7 @@ import PostCommentsLayout from './PostCommentsLayout';
 
 const PostDescription = ({ html }) => <div className="post-description html-content-renderer postContent" dangerouslySetInnerHTML={{ __html: html }} />
 
-const PostHeader = ({ displayName, displayPicture, createdAt, setShowProfile, postId, isOptionOpen, onToggleOption }) => {
+const PostHeader = ({ displayName, displayPicture, createdAt, setShowProfile, postId, isOptionOpen, onToggleOption, commentable, setCommentable, isCreator }) => {
 
     return <div className='PostHeader FRCB'>
         <div className='FRCS'>
@@ -22,7 +22,7 @@ const PostHeader = ({ displayName, displayPicture, createdAt, setShowProfile, po
             </div>
         </div>
         <i className='fa-solid fa-ellipsis cursP' onClick={onToggleOption}></i>
-        {isOptionOpen && <PostOptions postId={postId} />}
+        {isOptionOpen && <PostOptions postId={postId} commentable={commentable} setCommentable={setCommentable} isCreator={isCreator} />}
     </div>
 }
 
@@ -91,7 +91,7 @@ const PostFooter = ({ postId, likedPost, likesCount, commentsCount, commentable,
 
 const Post = ({ post, isOptionOpen, onToggleOption }) => {
 
-    const { id, title, owner, description, createdAt, impression, media, mentions, liked, bookmarked, tags, commentable, bookmarkable } = post,
+    const { id, title, owner, description, createdAt, impression, media, mentions, liked, bookmarked, tags, bookmarkable, creator: isCreator } = post,
         { likes, comments } = impression || {},
         { userId, displayName, displayPicture } = owner,
         [fullScreenImage, setFullScreenImage] = useState(null),
@@ -114,7 +114,7 @@ const Post = ({ post, isOptionOpen, onToggleOption }) => {
         };
 
     const [showProfile, setShowProfile] = useState(false);
-
+    const [commentable, setCommentable] = useState(post.commentable);
     const [popupData, setPopupData] = useState(null);
     const [likedPost, setLikedPost] = useState(liked);
     const [likesCount, setLikesCount] = useState(likes || 0);
@@ -143,7 +143,7 @@ const Post = ({ post, isOptionOpen, onToggleOption }) => {
         <div className='Post w100'>
             {popupData && <Popup message={popupData.message} type={popupData.type} />}
             {fullScreenImage ? <FullScreenImage closeFullScreen={closeFullScreen} fullScreenImage={fullScreenImage} /> : null}
-            <PostHeader isOptionOpen={isOptionOpen} onToggleOption={onToggleOption} postId={id} displayName={displayName} displayPicture={displayPicture} createdAt={createdAt} setShowProfile={setShowProfile} />
+            <PostHeader isOptionOpen={isOptionOpen} onToggleOption={onToggleOption} postId={id} displayName={displayName} displayPicture={displayPicture} createdAt={createdAt} setShowProfile={setShowProfile} commentable={commentable} setCommentable={setCommentable} isCreator={isCreator} />
             <PostBody title={title} description={description} media={media} toggleMaxHeight={toggleMaxHeight} tags={tags} />
             <PostFooter postId={id} likedPost={likedPost} likesCount={likesCount} commentsCount={comments || 0} commentable={commentable} bookmarkable={bookmarkable} bookmarked={bookmarked} likeHandler={likeHandler} />
             {showProfile && <Profile userId={userId} setShowProfile={setShowProfile} />}
