@@ -28,7 +28,7 @@
 
 .comment-item {
     border-bottom: 1px solid #eee;
-    padding: 15px 15px;
+    padding: 15px 20px;
     box-sizing: border-box;
     background-color: var(--pure-white);
     cursor: pointer;

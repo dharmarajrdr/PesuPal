@@ -10,8 +10,7 @@ const NoCommentsFound = () => {
     return (
         <div className='FCCC w100 h100' id='no-data-found'>
             <p className='FRCC w100'>
-                <i className='fa fa-comment-slash' />
-                No comments found
+                <i className='fa fa-comment-slash' /> No comments found
             </p>
             <p className='w100 alignCenter'>Create a comment to start the discussion</p>
         </div>
@@ -21,16 +20,9 @@ const NoCommentsFound = () => {
 const CreateCommentContainer = ({ postId }) => {
     return (
         <div id='create-comment' className='FRCC w100'>
-            <textarea
-                className='create-comment-textarea'
-                placeholder='Write a comment...'
-            />
-            <button
-                className='create-comment-button'
-                onClick={() => console.log('Create comment for post:', postId)}
-            >
-                <i className='fa fa-paper-plane mR5' />
-                Post
+            <textarea className='create-comment-textarea' placeholder='Write a comment...' />
+            <button className='create-comment-button' onClick={() => console.log('Create comment for post:', postId)}>
+                <i className='fa fa-paper-plane mR5' /> Post
             </button>
         </div>
     );
@@ -64,7 +56,7 @@ const Comment = ({ comment }) => {
                 <div className='comment-footer FRCB w100 mT10'>
                     <div>
                         <span className='fs12 cursP add-new-reply color555'><i className='fa fa-reply mR5 fs10 color777' />Reply</span>
-                        {replyCount >= 0 && <>
+                        {replyCount > 0 && <>
                             <span className='comment-reply-toggle-button fs12 cursP mL10 pL10' onClick={() => setShowReplies(!showReplies)}>
                                 {/* {showReplies ? <i className='fa fa-chevron-up mR5' /> : <i className='fa fa-chevron-right mR5' />} */}
                                 {showReplies ? 'Hide' : 'Show'} {replyCount} replies
