@@ -70,20 +70,9 @@
   padding-top: 10px;
 }
 
-i.liked {
-  color: #e01818;
-  font-weight: 600;
-}
-
-i.bookmarked {
-  color: #e1842e;
-  font-weight: 600;
-}
-
 .Post .PostFooter .postActions {
   cursor: pointer;
   font-size: 13px;
-  color: #555;
 }
 
 .Post .PostFooter .postActions i {
@@ -105,6 +94,20 @@ i.bookmarked {
   margin-left: 5px;
   border-left: 1px solid #ddd;
   padding-left: 10px;
+}
+
+.post-liked {
+  color: #d28733;
+}
+
+.post-liked i {
+  font-weight: 600;
+  color: #d28733;
+}
+
+i.bookmarked {
+  color: #e1842e;
+  font-weight: 600;
 }
 
 .mediaContainer {

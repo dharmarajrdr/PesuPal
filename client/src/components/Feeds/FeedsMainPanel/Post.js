@@ -59,7 +59,7 @@ const FullScreenImage = ({ closeFullScreen, fullScreenImage }) => {
 const PostFooter = ({ likedPost, likesCount, comments, commentable, bookmarkable, bookmarked, likeHandler }) => {
     return <div className='PostFooter w100 FRCB'>
         <div className='FRCS'>
-            <div className='postActions leftFooter FRCC mY5'><i className={`fa-regular fa-thumbs-up ${likedPost && 'liked'}`} onClick={likeHandler}></i> {likesCount}</div>
+            <div className={`postActions leftFooter FRCC mY5 ${likedPost && 'post-liked'}`} onClick={likeHandler}><i className={`fa-regular fa-thumbs-up`}></i> {likesCount}</div>
             {commentable && <div className='postActions leftFooter FRCC mY5'><i className="fa-regular fa-comment"></i> {comments}</div>}
         </div>
         <div className='FRCE'>
