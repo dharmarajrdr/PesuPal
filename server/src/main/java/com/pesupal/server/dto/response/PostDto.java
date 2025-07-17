@@ -38,6 +38,8 @@ public class PostDto {
 
     private boolean bookmarked;
 
+    private boolean isCreator;
+
     public static PostDto fromPost(Post post) {
 
         PostDto postDto = new PostDto();

@@ -160,6 +160,7 @@ public class PostServiceImpl implements PostService {
         OrgMember postOwnerOrgMember = orgMemberService.getOrgMemberByUserIdAndOrgId(postOwnerId, orgId);
         List<PostDto> postDtos = new ArrayList<>(postPage.getContent().stream().map(post -> {
             PostDto postDto = getPostDtoFromPostAndOrgMember(post, postOwnerOrgMember);
+            postDto.setCreator(post.getUser().getId().equals(userId));
             postDto.setLiked(isLiked(post.getLikes(), orgMember.getUser()));
             return postDto;
         }).toList());
@@ -227,9 +228,11 @@ public class PostServiceImpl implements PostService {
         Pageable pageable = PageRequest.of(page, size + 1);
         Page<PostTag> postPage = postTagService.findAllByTagAndOrgId(tag, orgId, pageable);
         List<PostDto> postDtos = new ArrayList<>(postPage.getContent().stream().map(postTag -> {
-            OrgMember postOwnerOrgMember = orgMemberService.getOrgMemberByUserIdAndOrgId(postTag.getPost().getUser().getId(), orgId);
-            PostDto postDto = getPostDtoFromPostAndOrgMember(postTag.getPost(), postOwnerOrgMember);
-            postDto.setLiked(isLiked(postTag.getPost().getLikes(), orgMember.getUser()));
+            Post post = postTag.getPost();
+            OrgMember postOwnerOrgMember = orgMemberService.getOrgMemberByUserIdAndOrgId(post.getUser().getId(), orgId);
+            PostDto postDto = getPostDtoFromPostAndOrgMember(post, postOwnerOrgMember);
+            postDto.setCreator(post.getUser().getId().equals(userId));
+            postDto.setLiked(isLiked(post.getLikes(), orgMember.getUser()));
             return postDto;
         }).toList());
         PostsListDto postsListDto = new PostsListDto();
@@ -241,5 +244,24 @@ public class PostServiceImpl implements PostService {
         }
         postsListDto.setPosts(postDtos);
         return postsListDto;
+    }
+
+    /**
+     * Updates an existing post.
+     *
+     * @param postId
+     * @param createPostDto
+     * @param userId
+     * @param orgId
+     * @return
+     */
+    @Override
+    public Post updatePost(Long postId, CreatePostDto createPostDto, Long userId, Long orgId) {
+
+        orgMemberService.validateUserIsOrgMember(userId, orgId);
+        
+        Post post = getPostByIdAndOrgId(postId, orgId);
+        createPostDto.applyToPost(post);
+        return postRepository.save(post);
     }
 }
