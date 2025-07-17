@@ -8,10 +8,12 @@ const PostOptions = ({ postId }) => {
 
     return (
         <div className="FCSS" id="post-options">
+
             {showLikesList && <PostsLikedBy postId={postId} closeShowLikesList={() => setShowLikesList(false)} />}
             <div className='option' onClick={() => setShowLikesList(true)}>Show Post Likes</div>
-            <div className='option'>Show Post Comments</div>
+
             <div className='option'>Enable Post Comments</div>
+
             <div className='option'>Enable Post Bookmarks</div>
         </div>
     )
