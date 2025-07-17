@@ -12,6 +12,7 @@
 
 #post-options .option {
     padding: 10px 15px;
+    user-select: none;
     cursor: pointer;
     color: #555;
     font-size: 14px;

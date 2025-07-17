@@ -45,12 +45,20 @@ const UserPostsLayout = () => {
 
   }, []);
 
+  const [activePostId, setActivePostId] = useState(null); // only one can be open
+
+  const overlayClickHandler = (e) => {
+    if (e.target.id === 'user-posts-layout') {
+      setActivePostId(null); // Close the active post options when clicking outside
+    }
+  }
+
   return (
-    <div id='user-posts-layout' className='FCCS w100 h100'>
+    <div id='user-posts-layout' className='FCCS w100 h100' onClick={overlayClickHandler}>
       <div id="postsList">
         {loading ? <Loader /> :
           error ? <ErrorMessage /> :
-            posts.length ? <PostList posts={posts} /> : <NoPostsAvailable />}
+            posts.length ? <PostList posts={posts} activePostId={activePostId} setActivePostId={setActivePostId} /> : <NoPostsAvailable />}
       </div>
       {hasMore && <Loader />}
     </div>

@@ -1,9 +1,6 @@
-import { useState } from 'react';
 import Post from './Post';
 
-const PostList = ({ posts }) => {
-
-    const [activePostId, setActivePostId] = useState(null); // only one can be open
+const PostList = ({ posts, activePostId, setActivePostId }) => {
 
     return <>
         {posts.map((post, index) =>
