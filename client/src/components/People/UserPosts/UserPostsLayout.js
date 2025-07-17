@@ -4,6 +4,7 @@ import { apiRequest } from "../../../http_request";
 import Post from "../../Feeds/FeedsMainPanel/Post";
 import './UserPostsLayout.css'; // Assuming you have a CSS file for styling
 import Loader from "../../Loader";
+import ErrorMessage from "../../ErrorMessage";
 
 const UserPostsLayout = () => {
 
@@ -26,6 +27,7 @@ const UserPostsLayout = () => {
     }).catch(({ message }) => {
       setLoading(false);
       setError(message);
+      setHasMore(false);
     });
 
   }, []);
@@ -33,11 +35,11 @@ const UserPostsLayout = () => {
   return (
     <div id='user-posts-layout' className='FCCS w100 h100'>
       <div id="postsList">
-        {posts.map((post, index) => (
+        {error ? <ErrorMessage /> : posts.map((post, index) => (
           <Post post={post} key={index} />
         ))}
       </div>
-      <Loader />
+      {hasMore && <Loader />}
     </div>
   )
 }

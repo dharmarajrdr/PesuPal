@@ -70,8 +70,13 @@
   padding-top: 10px;
 }
 
-.Post .PostFooter .postActions .liked {
+i.liked {
   color: #e01818;
+  font-weight: 600;
+}
+
+i.bookmarked {
+  color: #e1842e;
   font-weight: 600;
 }
 

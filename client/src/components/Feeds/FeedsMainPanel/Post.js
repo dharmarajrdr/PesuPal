@@ -10,7 +10,7 @@ const PostDescription = ({ html }) => <div className="post-description postConte
 
 const Post = ({ post }) => {
 
-    const { title, owner, description, createdAt, impression, media, mentions, liked, tags, commentable, bookmarkable } = post,
+    const { title, owner, description, createdAt, impression, media, mentions, liked, bookmarked, tags, commentable, bookmarkable } = post,
         { likes, comments } = impression || {},
         { userId, displayName, displayPicture } = owner,
         [fullScreenImage, setFullScreenImage] = useState(null),
@@ -85,11 +85,11 @@ const Post = ({ post }) => {
             </div>
             <div className='PostFooter w100 FRCB'>
                 <div className='FRCS'>
-                    <div className='postActions leftFooter FRCC mY5'><i className={`fa-regular fa-thumbs-up ${liked ? 'liked' : null}`}></i> {likes}</div>
+                    <div className='postActions leftFooter FRCC mY5'><i className={`fa-regular fa-thumbs-up ${liked && 'liked'}`}></i> {likes}</div>
                     {commentable && <div className='postActions leftFooter FRCC mY5'><i className="fa-regular fa-comment"></i> {comments}</div>}
                 </div>
                 <div className='FRCE'>
-                    {bookmarkable && <div className='postActions rightFooter FRCC mY5'><i className="fa-regular fa-bookmark"></i></div>}
+                    {bookmarkable && <div className='postActions rightFooter FRCC mY5'><i className={`fa-regular fa-bookmark ${bookmarked && 'bookmarked'}`}></i></div>}
                 </div>
                 {/* <p>{mentions} Mentions</p> */}
             </div>
