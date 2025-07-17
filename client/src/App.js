@@ -62,7 +62,7 @@ function App() {
                 <VerticalLoader />
 
                 <Routes>
-                    <Route path="/feeds" element={<FeedsLayout />} />
+                    <Route path="/feeds/*" element={<FeedsLayout />} />
                     <Route path="/chat" element={<ChatLayout />} />
                     <Route path="/people/*" element={<PeopleLayout />} />
                     <Route path="/team/*" element={<TeamLayout />} />
