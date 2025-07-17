@@ -41,13 +41,14 @@ const CommentContent = ({ html }) => <div className="comment-content html-conten
 
 const Comment = ({ comment }) => {
 
-    const { userId, displayName, displayPicture, id, message, createdAt, replyCount } = comment;
+    const { userId, displayName, displayPicture, id, message, createdAt, replyCount, deleteable } = comment;
 
     const [showReplies, setShowReplies] = useState(false);
     const [showProfile, setShowProfile] = useState(false);
+    const [showDeleteIcon, setShowDeleteIcon] = useState(false);
 
     return (
-        <div className='comment-item FRSS w100'>
+        <div className='comment-item FRSS w100' onMouseEnter={() => setShowDeleteIcon(true)} onMouseLeave={() => setShowDeleteIcon(false)}>
             <div className='FCCS'>
                 <img src={displayPicture} alt={displayName} className='comment-user-picture img_40_40 mR10' onClick={() => setShowProfile(true)} />
                 {showProfile && <Profile userId={userId} setShowProfile={() => { setShowProfile(false) }} />}
@@ -60,15 +61,18 @@ const Comment = ({ comment }) => {
                     </div>
                     <CommentContent html={message} />
                 </div>
-                <div className='comment-footer FRCC mT10'>
-                    <span className='fs12 cursP add-new-reply'><i className='fa fa-reply mR5 fs10' />Reply</span>
-                    {replyCount > 0 && <>
-                        <span className='comment-reply-toggle-button fs12 cursP mL10 pL10' onClick={() => setShowReplies(!showReplies)}>
-                            {/* {showReplies ? <i className='fa fa-chevron-up mR5' /> : <i className='fa fa-chevron-right mR5' />} */}
-                            {showReplies ? 'Hide' : 'Show'} {replyCount} replies
-                        </span>
-                        {showReplies && <CommentReply commentId={id} />}
-                    </>}
+                <div className='comment-footer FRCB w100 mT10'>
+                    <div>
+                        <span className='fs12 cursP add-new-reply color555'><i className='fa fa-reply mR5 fs10 color777' />Reply</span>
+                        {replyCount >= 0 && <>
+                            <span className='comment-reply-toggle-button fs12 cursP mL10 pL10' onClick={() => setShowReplies(!showReplies)}>
+                                {/* {showReplies ? <i className='fa fa-chevron-up mR5' /> : <i className='fa fa-chevron-right mR5' />} */}
+                                {showReplies ? 'Hide' : 'Show'} {replyCount} replies
+                            </span>
+                            {showReplies && <CommentReply commentId={id} />}
+                        </>}
+                    </div>
+                    {deleteable && showDeleteIcon && <p className='fs12 cursP delete-comment color555'><i className='fa fa-trash mR5 fs10 color777' />Delete</p>}
                 </div>
             </div>
         </div>

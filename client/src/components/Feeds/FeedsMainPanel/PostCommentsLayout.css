@@ -69,14 +69,6 @@
     color: var(--primary-color);
 }
 
-.add-new-reply {
-    color: #555;
-}
-
-.add-new-reply i {
-    color: #888;
-}
-
 #create-comment {
     position: sticky;
     bottom: 0;
@@ -130,4 +122,10 @@
 
 .create-comment-button:hover {
     background-color: #2f3b55;
+}
+
+.delete-comment:hover,
+.delete-comment:hover i {
+    color: red;
+    transition-duration: 0.2s;
 }
