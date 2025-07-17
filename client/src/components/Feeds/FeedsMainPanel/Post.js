@@ -63,9 +63,15 @@ const Comment = ({ postId, commentable, commentsCount }) => {
 
     const [showCommentsList, setShowCommentsList] = useState(false);
 
+    const closeShowCommentsList = (e) => {
+        if (e.target.id === 'post-comments-layout') {
+            setShowCommentsList(false);
+        }
+    }
+
     return <>
         {commentable && <div className='postActions leftFooter FRCC mY5' onClick={() => setShowCommentsList(true)}><i className="fa-regular fa-comment"></i> {commentsCount}</div>}
-        {showCommentsList && <PostCommentsLayout postId={postId} closeShowCommentsList={() => setShowCommentsList(false)} commentable={commentable} />}
+        {showCommentsList && <PostCommentsLayout postId={postId} closeShowCommentsList={closeShowCommentsList} commentable={commentable} />}
     </>
 }
 
