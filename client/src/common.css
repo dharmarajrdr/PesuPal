@@ -471,3 +471,27 @@ span {
     width: 100%;
   }
 }
+
+.html-content-renderer b {
+  font-weight: 600;
+}
+
+.html-content-renderer u {
+  text-decoration: underline;
+}
+
+.html-content-renderer a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.html-content-renderer a:hover {
+  text-decoration: underline;
+  color: #000bff;
+}
+
+.html-content-renderer s,
+.html-content-renderer strike,
+.html-content-renderer del {
+  text-decoration: line-through;
+}
