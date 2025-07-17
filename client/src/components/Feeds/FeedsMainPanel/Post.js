@@ -7,10 +7,14 @@ import { apiRequest } from '../../../http_request';
 import { UsePopupFromSession } from '../../../UsePopupFromSession';
 import Popup from '../../Popup';
 import PostsLikedBy from './PostsLikedBy';
+import PostOptions from './PostOptions';
 
 const PostDescription = ({ html }) => <div className="post-description postContent" dangerouslySetInnerHTML={{ __html: html }} />
 
 const PostHeader = ({ displayName, displayPicture, createdAt, setShowProfile }) => {
+
+    const [showOptions, setShowOptions] = useState(false);
+
     return <div className='PostHeader FRCB'>
         <div className='FRCS'>
             <img src={displayPicture} alt={displayName} className='img_40_40 user_photo' onClick={() => setShowProfile(true)} />
@@ -19,7 +23,8 @@ const PostHeader = ({ displayName, displayPicture, createdAt, setShowProfile }) 
                 <p className='created_at' title={utils.convertDateAndTime(createdAt)}>{utils.agoTimeCalculator(createdAt)}</p>
             </div>
         </div>
-        <i className='fa-solid fa-ellipsis'></i>
+        <i className='fa-solid fa-ellipsis cursP' onClick={() => setShowOptions(!showOptions)}></i>
+        {showOptions && <PostOptions />}
     </div>
 }
 
