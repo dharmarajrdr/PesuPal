@@ -6,6 +6,19 @@ import './UserPostsLayout.css'; // Assuming you have a CSS file for styling
 import Loader from "../../Loader";
 import ErrorMessage from "../../ErrorMessage";
 
+const NoPostsAvailable = () => {
+
+  return (
+    <div className='FCCC w100 h100' id='no-data-found'>
+      <p className='FRCC w100'>
+        <i className='fa fa-exclamation-triangle mR5'></i>
+        No posts available
+      </p>
+      <p className='w100 alignCenter'>User has not posted anything yet.</p>
+    </div>
+  )
+}
+
 const UserPostsLayout = () => {
 
   const size = 10; // Number of posts per page
@@ -35,9 +48,10 @@ const UserPostsLayout = () => {
   return (
     <div id='user-posts-layout' className='FCCS w100 h100'>
       <div id="postsList">
-        {error ? <ErrorMessage /> : posts.map((post, index) => (
-          <Post post={post} key={index} />
-        ))}
+        {error ? <ErrorMessage /> :
+          posts.length ? posts.map((post, index) => (
+            <Post post={post} key={index} />
+          )) : <NoPostsAvailable />}
       </div>
       {hasMore && <Loader />}
     </div>
