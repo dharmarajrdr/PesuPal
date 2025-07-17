@@ -153,7 +153,7 @@ export default {
                 return toTwoDigits(d.getDate()) + "/" + toTwoDigits(d.getMonth() + 1) + "/" + d.getFullYear() + " " + toTwoDigits(hours) + ":" + toTwoDigits(d.getMinutes()) + " " + am_pm;
             }
         } catch (error) {
-            console.error({ 'module': convertDateAndTime, error, str });  //eslint-disable-line no-console
+            console.error({ error, str });  //eslint-disable-line no-console
         }
     }
 }
