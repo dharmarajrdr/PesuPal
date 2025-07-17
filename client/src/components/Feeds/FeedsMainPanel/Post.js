@@ -1,3 +1,4 @@
+import { NavLink } from 'react-router-dom';
 import utils from '../../../utils';
 import Profile from '../../OthersProfile/Profile';
 import './Post.css'
@@ -49,17 +50,6 @@ const Post = ({ post }) => {
 
     const [showProfile, setShowProfile] = useState(false);
 
-    const tagClickHandler = (e) => {
-        const tag = e.target.innerText;
-        e.preventDefault();
-        e.stopPropagation();
-        if (tag.startsWith('#')) {
-            const tagName = tag.slice(1);
-            alert(`Searching for tag: ${tagName}`);  //eslint-disable-line no-alert
-            // redirect to tag search or filter logic
-        }
-    }
-
     return (
         <div className='Post w100'>
             {fullScreenImage ?
@@ -85,7 +75,7 @@ const Post = ({ post }) => {
                 <PostDescription html={description} />
                 <div className='FRCS tagsContainer'>
                     {tags && tags.map((tag, index) => (
-                        <span key={index} onClick={tagClickHandler}>{tag}</span>
+                        <NavLink to={`/feeds/tag/${tag}`} key={index} className='tagNavLink'>{tag}</NavLink>
                     ))}
                 </div>
                 {media ?
