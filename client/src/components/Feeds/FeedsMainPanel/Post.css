@@ -9,7 +9,7 @@
   border-bottom: 1px solid #ddd;
   margin-bottom: 10px;
   padding-bottom: 10px;
-  position: sticky;
+  position: relative;
   top: 0px;
   background-color: var(--pure-white);
 }

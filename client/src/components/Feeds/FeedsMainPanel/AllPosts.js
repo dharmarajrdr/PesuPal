@@ -1,12 +1,11 @@
-import React from 'react'
 import './AllPosts.css'
-import PostsList from './PostsList.js'
-import Post from './Post'
+import PostList from './PostList'
 
 const AllPosts = () => {
+
     return (
         <div className='FCSS AllPosts'>
-            {PostsList.map((post, index) => <Post key={index} post={post} />)}
+            <PostList posts={[]} />
         </div>
     )
 }

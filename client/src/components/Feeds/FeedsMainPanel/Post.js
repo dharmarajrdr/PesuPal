@@ -6,14 +6,11 @@ import { useState } from 'react';
 import { apiRequest } from '../../../http_request';
 import { UsePopupFromSession } from '../../../UsePopupFromSession';
 import Popup from '../../Popup';
-import PostsLikedBy from './PostsLikedBy';
 import PostOptions from './PostOptions';
 
 const PostDescription = ({ html }) => <div className="post-description postContent" dangerouslySetInnerHTML={{ __html: html }} />
 
-const PostHeader = ({ displayName, displayPicture, createdAt, setShowProfile }) => {
-
-    const [showOptions, setShowOptions] = useState(false);
+const PostHeader = ({ displayName, displayPicture, createdAt, setShowProfile, postId, isOptionOpen, onToggleOption }) => {
 
     return <div className='PostHeader FRCB'>
         <div className='FRCS'>
@@ -23,8 +20,8 @@ const PostHeader = ({ displayName, displayPicture, createdAt, setShowProfile }) 
                 <p className='created_at' title={utils.convertDateAndTime(createdAt)}>{utils.agoTimeCalculator(createdAt)}</p>
             </div>
         </div>
-        <i className='fa-solid fa-ellipsis cursP' onClick={() => setShowOptions(!showOptions)}></i>
-        {showOptions && <PostOptions />}
+        <i className='fa-solid fa-ellipsis cursP' onClick={onToggleOption}></i>
+        {isOptionOpen && <PostOptions postId={postId} />}
     </div>
 }
 
@@ -74,7 +71,7 @@ const PostFooter = ({ likedPost, likesCount, comments, commentable, bookmarkable
     </div>
 }
 
-const Post = ({ post }) => {
+const Post = ({ post, isOptionOpen, onToggleOption }) => {
 
     const { id, title, owner, description, createdAt, impression, media, mentions, liked, bookmarked, tags, commentable, bookmarkable } = post,
         { likes, comments } = impression || {},
@@ -103,7 +100,6 @@ const Post = ({ post }) => {
     const [popupData, setPopupData] = useState(null);
     const [likedPost, setLikedPost] = useState(liked);
     const [likesCount, setLikesCount] = useState(likes || 0);
-    const [showLikesList, setShowLikesList] = useState(false);
 
     const showPopup = (message, type) => {
         setPopupData({ message, type });
@@ -129,11 +125,10 @@ const Post = ({ post }) => {
         <div className='Post w100'>
             {popupData && <Popup message={popupData.message} type={popupData.type} />}
             {fullScreenImage ? <FullScreenImage closeFullScreen={closeFullScreen} fullScreenImage={fullScreenImage} /> : null}
-            <PostHeader displayName={displayName} displayPicture={displayPicture} createdAt={createdAt} setShowProfile={setShowProfile} />
+            <PostHeader isOptionOpen={isOptionOpen} onToggleOption={onToggleOption} postId={id} displayName={displayName} displayPicture={displayPicture} createdAt={createdAt} setShowProfile={setShowProfile} />
             <PostBody title={title} description={description} media={media} toggleMaxHeight={toggleMaxHeight} tags={tags} />
             <PostFooter likedPost={likedPost} likesCount={likesCount} comments={comments || 0} commentable={commentable} bookmarkable={bookmarkable} bookmarked={bookmarked} likeHandler={likeHandler} />
             {showProfile && <Profile userId={userId} setShowProfile={setShowProfile} />}
-            {showLikesList && <PostsLikedBy postId={id} closeShowLikesList={() => setShowLikesList(false)} />}
         </div>
     )
 }

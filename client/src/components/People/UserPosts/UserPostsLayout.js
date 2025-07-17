@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { apiRequest } from "../../../http_request";
-import Post from "../../Feeds/FeedsMainPanel/Post";
 import './UserPostsLayout.css'; // Assuming you have a CSS file for styling
 import Loader from "../../Loader";
 import ErrorMessage from "../../ErrorMessage";
+import PostList from "../../Feeds/FeedsMainPanel/PostList";
 
 const NoPostsAvailable = () => {
 
@@ -28,7 +28,7 @@ const UserPostsLayout = () => {
   const [page, setPage] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [hasMore, setHasMore] = useState(true);
+  const [hasMore, setHasMore] = useState(false);
 
   useEffect(() => {
 
@@ -48,10 +48,9 @@ const UserPostsLayout = () => {
   return (
     <div id='user-posts-layout' className='FCCS w100 h100'>
       <div id="postsList">
-        {error ? <ErrorMessage /> :
-          posts.length ? posts.map((post, index) => (
-            <Post post={post} key={index} />
-          )) : <NoPostsAvailable />}
+        {loading ? <Loader /> :
+          error ? <ErrorMessage /> :
+            posts.length ? <PostList posts={posts} /> : <NoPostsAvailable />}
       </div>
       {hasMore && <Loader />}
     </div>
