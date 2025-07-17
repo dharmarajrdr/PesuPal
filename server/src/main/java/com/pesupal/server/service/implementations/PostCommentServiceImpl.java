@@ -106,7 +106,9 @@ public class PostCommentServiceImpl implements PostCommentService {
             if (!memo.containsKey(commentedById)) {
                 memo.put(commentedById, orgMemberService.getOrgMemberByUserIdAndOrgId(commentedById, orgId));
             }
-            return PostCommentDto.fromPostCommentAndOrgMember(postComment, memo.get(commentedById));
+            PostCommentDto postCommentDto = PostCommentDto.fromPostCommentAndOrgMember(postComment, memo.get(commentedById));
+            postCommentDto.setDeleteable(commentedById.equals(userId));
+            return postCommentDto;
         }).toList());
         postCommentDtos.sort(Comparator.comparing(PostCommentDto::getCreatedAt).reversed());
         return postCommentDtos;
