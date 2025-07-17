@@ -16,17 +16,17 @@ public class CreatePostDto {
 
     private String description;
 
-    private boolean commentable = true;
+    private Boolean commentable = true;
 
-    private boolean shareable = true;
+    private Boolean shareable = true;
 
-    private boolean bookmarkable = true;
+    private Boolean bookmarkable = true;
 
     private Set<MediaDto> mediaIds = new HashSet<>();
 
     private Set<String> tags = new HashSet<>();
 
-    private boolean media = false;
+    private Boolean media = false;
 
     public Post toPost() {
 
@@ -38,5 +38,26 @@ public class CreatePostDto {
         post.setShareable(this.shareable);
         post.setBookmarkable(this.bookmarkable);
         return post;
+    }
+
+    public void applyToPost(Post post) {
+        if (this.title != null) {
+            post.setTitle(this.title);
+        }
+        if (this.description != null) {
+            post.setDescription(this.description);
+        }
+        if (this.commentable != null) {
+            post.setCommentable(this.commentable);
+        }
+        if (this.shareable != null) {
+            post.setShareable(this.shareable);
+        }
+        if (this.bookmarkable != null) {
+            post.setBookmarkable(this.bookmarkable);
+        }
+        if (this.media != null) {
+            post.setMedia(this.media);
+        }
     }
 }
