@@ -4,6 +4,7 @@ import { apiRequest } from '../../../http_request';
 import Loader from '../../Loader';
 import ErrorMessage from '../../ErrorMessage';
 import utils from '../../../utils';
+import Profile from '../../OthersProfile/Profile';
 
 const NoCommentsFound = () => {
     return (
@@ -18,8 +19,23 @@ const NoCommentsFound = () => {
 }
 
 const CreateCommentContainer = ({ postId }) => {
-    return null;
-}
+    return (
+        <div id='create-comment' className='FRCC w100'>
+            <textarea
+                className='create-comment-textarea'
+                placeholder='Write a comment...'
+            />
+            <button
+                className='create-comment-button'
+                onClick={() => console.log('Create comment for post:', postId)}
+            >
+                <i className='fa fa-paper-plane mR5' />
+                Post
+            </button>
+        </div>
+    );
+};
+
 
 const CommentContent = ({ html }) => <div className="comment-content html-content-renderer" dangerouslySetInnerHTML={{ __html: html }} />
 
@@ -28,11 +44,13 @@ const Comment = ({ comment }) => {
     const { userId, displayName, displayPicture, id, message, createdAt, replyCount } = comment;
 
     const [showReplies, setShowReplies] = useState(false);
+    const [showProfile, setShowProfile] = useState(false);
 
     return (
         <div className='comment-item FRSS w100'>
             <div className='FCCS'>
-                <img src={displayPicture} alt={displayName} className='comment-user-picture img_40_40 mR10' />
+                <img src={displayPicture} alt={displayName} className='comment-user-picture img_40_40 mR10' onClick={() => setShowProfile(true)} />
+                {showProfile && <Profile userId={userId} setShowProfile={() => { setShowProfile(false) }} />}
             </div>
             <div className='FCSS comment-content-container'>
                 <div className='comment-user FCSS w100'>
@@ -90,8 +108,8 @@ const CommentsContainer = ({ postId, commentable }) => {
                     : error ? <ErrorMessage message={error} />
                         : <>
                             <h5 className='w100 alignCenter'>Post Comments({comments.length})</h5>
-                            {commentable && <CreateCommentContainer postId={postId} />}
                             {comments.length ? <CommentsList comments={comments} /> : <NoCommentsFound />}
+                            {commentable && <CreateCommentContainer postId={postId} />}
                         </>
             }
         </div>
@@ -99,8 +117,6 @@ const CommentsContainer = ({ postId, commentable }) => {
 }
 
 const PostCommentsLayout = ({ postId, commentable, closeShowCommentsList }) => {
-
-    console.log({ postId, commentable, closeShowCommentsList });
 
     return (
         <div id='post-comments-layout' className='w100 h100 FRSC' onClick={closeShowCommentsList}>

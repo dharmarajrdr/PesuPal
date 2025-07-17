@@ -76,3 +76,58 @@
 .add-new-reply i {
     color: #888;
 }
+
+#create-comment {
+    position: sticky;
+    bottom: 0;
+    background-color: var(--pure-white);
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    width: 100%;
+    padding: 15px;
+    border-radius: 12px;
+    box-shadow: 0 2px 6px var(--box-shadow-color);
+}
+
+.create-comment-textarea {
+    flex-grow: 1;
+    min-height: 80px;
+    resize: vertical;
+    padding: 12px;
+    font-size: 15px;
+    line-height: 1.5;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    outline: none;
+    background-color: #fff;
+    transition: border-color 0.3s ease;
+    resize: none;
+}
+
+.create-comment-textarea:focus {
+    border-color: #3f4c68;
+    box-shadow: 0 0 0 2px rgba(63, 76, 104, 0.2);
+}
+
+.create-comment-button {
+    background-color: var(--primary-color);
+    color: #fff;
+    border: none;
+    padding: 10px 14px;
+    font-size: 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    transition: background-color 0.3s ease;
+}
+
+.create-comment-button i {
+    font-size: 12px;
+    color: #fff;
+}
+
+.create-comment-button:hover {
+    background-color: #2f3b55;
+}
