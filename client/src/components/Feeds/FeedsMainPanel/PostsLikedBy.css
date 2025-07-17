@@ -1,0 +1,54 @@
+#PostsLikedByOverlay {
+    background-color: var(--overlay-bg-color);
+    z-index: 10;
+    position: fixed;
+    top: 0;
+    left: 0;
+}
+
+#PostsLikedByContainer {
+    background-color: var(--pure-white);
+    width: 350px;
+    border-radius: 5px;
+    height: 500px;
+    overflow: scroll;
+}
+
+#PostsLikedByContainer>h5 {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+    position: sticky;
+    top: 0;
+    color: #555;
+    font-size: 16px;
+    font-weight: 500;
+    background-color: var(--pure-white);
+    box-shadow: 0 1px 2px var(--box-shadow-color);
+}
+
+.likedByItem {
+    border-bottom: 1px solid #eee;
+    padding: 10px 15px;
+    box-sizing: border-box;
+    background-color: var(--pure-white);
+    cursor: pointer;
+}
+
+.likedByItem:hover {
+    background-color: var(--pure-white-hover);
+}
+
+.likedByItem div {
+    width: 70%;
+}
+
+.likedByItem h6 {
+    font-size: 14px;
+    color: #333;
+    margin: 0;
+    font-weight: 400;
+    text-wrap: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: calc(100% - 60px);
+}

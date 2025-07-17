@@ -11,30 +11,30 @@
     display: flex;
     align-items: center;
     gap: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 12px var(--box-shadow-color);
     z-index: 9999;
     animation: slideDown 0.4s ease forwards;
 }
 
 .popup-container.success {
-    background-color: #28a745;
+    background-color: var(--success-color);
 }
 
 .popup-container.error {
-    background-color: #dc3545;
+    background-color: var(--error-color);
 }
 
 .popup-container.info {
-    background-color: #007bff;
+    background-color: var(--info-color);
 }
 
 .popup-container .icon {
     font-size: 1.5rem;
-    color: #fff;
+    color: var(--pure-white);
 }
 
 .popup-container span {
-    color: #fff;
+    color: var(--pure-white);
 }
 
 /* Slide down animation */

@@ -1,5 +1,5 @@
 #TrendingPosts {
-  background-color: #fff;
+  background-color: var(--pure-white);
   border-radius: 10px;
   margin: 15px 0px;
   padding: 20px;
@@ -40,6 +40,6 @@
 }
 
 .TrendingPost:hover {
-  background-color: #f0f0f077;
+  background-color: var(--pure-white-hover);
   color: #000;
 }

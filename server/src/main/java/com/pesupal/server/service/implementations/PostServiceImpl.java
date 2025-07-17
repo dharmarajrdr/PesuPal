@@ -3,6 +3,7 @@ package com.pesupal.server.service.implementations;
 import com.pesupal.server.dto.request.CreatePostDto;
 import com.pesupal.server.dto.response.PostDto;
 import com.pesupal.server.dto.response.PostImpressionDto;
+import com.pesupal.server.dto.response.PostsListDto;
 import com.pesupal.server.dto.response.UserBasicInfoDto;
 import com.pesupal.server.enums.PostStatus;
 import com.pesupal.server.enums.SortOrder;
@@ -11,6 +12,7 @@ import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.exceptions.PermissionDeniedException;
 import com.pesupal.server.model.org.Org;
 import com.pesupal.server.model.post.Post;
+import com.pesupal.server.model.post.PostLike;
 import com.pesupal.server.model.post.PostMedia;
 import com.pesupal.server.model.post.PostTag;
 import com.pesupal.server.model.user.OrgMember;
@@ -24,7 +26,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -63,6 +67,10 @@ public class PostServiceImpl implements PostService {
         return postRepository.save(post);
     }
 
+    private boolean isLiked(List<PostLike> likes, User user) {
+        return likes.stream().anyMatch(like -> Objects.equals(like.getLiker().getId(), user.getId()));
+    }
+
     /**
      * Converts a Post entity and OrgMember to a PostDto.
      *
@@ -77,6 +85,7 @@ public class PostServiceImpl implements PostService {
         postDto.setMedia(post.getPostMedia().stream().map(PostMedia::getMediaId).toList());
         postDto.setOwner(UserBasicInfoDto.fromOrgMember(orgMember));
         postDto.setImpression(PostImpressionDto.builder().likes(post.getLikes().size()).comments(post.getComments().size()).build());
+        postDto.setBookmarked(false);   // Feature not implemented yet
         return postDto;
     }
 
@@ -119,7 +128,10 @@ public class PostServiceImpl implements PostService {
 
         OrgMember orgMember = orgMemberService.getOrgMemberByUserIdAndOrgId(userId, orgId);
         Post post = getPostByIdAndOrgId(postId, orgId);
-        return getPostDtoFromPostAndOrgMember(post, orgMember);
+        OrgMember postOwner = orgMemberService.getOrgMemberByUserIdAndOrgId(post.getUser().getId(), orgId);
+        PostDto postDto = getPostDtoFromPostAndOrgMember(post, postOwner);
+        postDto.setLiked(isLiked(post.getLikes(), orgMember.getUser()));
+        return postDto;
     }
 
     /**
@@ -130,16 +142,30 @@ public class PostServiceImpl implements PostService {
      * @return
      */
     @Override
-    public List<PostDto> getPostByUserId(Long userId, Long orgId, Long postOwnerId, int page, int size, SortOrder sortOrder) {
+    public PostsListDto getPostByUserId(Long userId, Long orgId, Long postOwnerId, int page, int size, SortOrder sortOrder) {
 
         OrgMember orgMember = orgMemberService.getOrgMemberByUserIdAndOrgId(userId, orgId);
 
         orgMemberService.validateUserIsOrgMember(postOwnerId, orgId);
 
         Sort sort = Sort.by(sortOrder == SortOrder.ASC ? Sort.Direction.ASC : Sort.Direction.DESC, "createdAt");
-        Pageable pageable = PageRequest.of(page, size, sort);
+        Pageable pageable = PageRequest.of(page, size + 1, sort);
         Page<Post> postPage = postRepository.findAllByOrgIdAndUserIdAndStatus(orgId, postOwnerId, pageable, PostStatus.PUBLISHED);
-        return postPage.getContent().stream().map(post -> getPostDtoFromPostAndOrgMember(post, orgMember)).toList();
+        OrgMember postOwnerOrgMember = orgMemberService.getOrgMemberByUserIdAndOrgId(postOwnerId, orgId);
+        List<PostDto> postDtos = new ArrayList<>(postPage.getContent().stream().map(post -> {
+            PostDto postDto = getPostDtoFromPostAndOrgMember(post, postOwnerOrgMember);
+            postDto.setLiked(isLiked(post.getLikes(), orgMember.getUser()));
+            return postDto;
+        }).toList());
+        PostsListDto postsListDto = new PostsListDto();
+        postsListDto.setInfo(Map.of(
+                "hasMoreRecords", postDtos.size() == size + 1
+        ));
+        if (!postDtos.isEmpty() && postDtos.size() > size) {
+            postDtos.remove(postDtos.size() - 1); // Remove the extra post if it exists
+        }
+        postsListDto.setPosts(postDtos);
+        return postsListDto;
     }
 
     /**
@@ -161,5 +187,18 @@ public class PostServiceImpl implements PostService {
         }
         post.setStatus(PostStatus.ARCHIVED);
         postRepository.save(post);
+    }
+
+    /**
+     * Retrieves the count of posts made by a user in a specific organization.
+     *
+     * @param userId
+     * @param orgId
+     * @return
+     */
+    @Override
+    public int getUserPostCount(Long userId, Long orgId) {
+
+        return postRepository.countAllByUserIdAndOrgId(userId, orgId);
     }
 }

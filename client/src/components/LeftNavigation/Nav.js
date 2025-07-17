@@ -2,7 +2,6 @@ import { NavLink } from 'react-router-dom';
 import './LeftNavigation.css'
 
 const NavContent = ({ icon, image, notifyCount, title }) => {
-    console.log({ icon, image });
     return <>
         {
             icon ? <i className={`fas ${icon} colorFFF`}></i> : <img src={image} />

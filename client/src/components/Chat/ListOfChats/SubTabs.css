@@ -17,21 +17,21 @@
 }
 
 .subtabs span:hover {
-  background-color: #f5f5f5;
+  background-color: var(--pure-white-hover);
   color: #222;
 }
 
 .subtabs .notifyCount {
-    position: absolute;
-    top: -5px;
-    right: 2px;
-    background-color: #ff4646;
-    width: 12px;
-    height: 12px;
-    line-height: 12px;
-    color: #fff;
-    border-radius: 100%;
-    text-align: center;
-    font-size: 8px;
-    overflow: hidden;
+  position: absolute;
+  top: -5px;
+  right: 2px;
+  background-color: var(--count-label-color);
+  width: 12px;
+  height: 12px;
+  line-height: 12px;
+  color: var(--pure-white);
+  border-radius: 100%;
+  text-align: center;
+  font-size: 8px;
+  overflow: hidden;
 }

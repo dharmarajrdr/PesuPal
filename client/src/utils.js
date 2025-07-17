@@ -1,4 +1,5 @@
 export default {
+    "serverDomain": 'http://localhost:8080',
     "getIconBasedOnCategory": function (category) {
         const icon = {};
         switch (category) {
@@ -137,5 +138,22 @@ export default {
         return {
             get: (name) => cookies[name] || null
         };
+    },
+    "convertDateAndTime": (str) => {
+        try {
+            const toTwoDigits = function (str) {
+                str = str + '';
+                return str.length == 2 ? str : '0' + str;
+            }
+            let d = new Date(str);
+            if (d) {
+                let hours = d.getHours();
+                let am_pm = hours >= 12 ? 'PM' : 'AM';
+                hours = hours > 12 ? hours - 12 : hours;
+                return toTwoDigits(d.getDate()) + "/" + toTwoDigits(d.getMonth() + 1) + "/" + d.getFullYear() + " " + toTwoDigits(hours) + ":" + toTwoDigits(d.getMinutes()) + " " + am_pm;
+            }
+        } catch (error) {
+            console.error({ 'module': convertDateAndTime, error, str });  //eslint-disable-line no-console
+        }
     }
 }

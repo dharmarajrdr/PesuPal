@@ -10,7 +10,7 @@
 }
 
 .RecentChatContainer:hover {
-  background-color: #eee;
+  background-color: var(--pure-white-hover);
   transition-duration: 0.25s;
 }
 
@@ -54,7 +54,7 @@
 .number_of_unread_messages {
   font-size: 10px;
   background-color: #999;
-  color: #fff;
+  color: var(--pure-white);
   border-radius: 50px;
   width: 15px;
   height: 15px;

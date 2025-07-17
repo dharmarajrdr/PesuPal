@@ -4,7 +4,7 @@
 }
 
 .FilterComponentItem {
-  background-color: #fff;
+  background-color: var(--pure-white);
   border-radius: 5px;
   margin: 5px;
   position: relative;
@@ -21,14 +21,14 @@
 .FilterComponentItem select {
   border: none;
   padding: 5px 10px 5px 30px;
-  background-color: #fff;
+  background-color: var(--pure-white);
   cursor: pointer;
   color: #555;
   width: 150px;
 }
 
 .FilterComponentItem select option {
-  background-color: #fff;
+  background-color: var(--pure-white);
   color: #555;
   cursor: pointer;
 }

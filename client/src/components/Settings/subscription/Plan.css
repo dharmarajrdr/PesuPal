@@ -23,7 +23,7 @@
 }
 
 .plan:hover .black-text {
-    color: #fff;
+    color: var(--pure-white);
 }
 
 .plan:hover .plan-features {
@@ -55,7 +55,7 @@
     top: 15px;
     left: -30px;
     transform: rotate(-25deg);
-    background-color: #ff9800;
+    background-color: var(--badge-color);
     color: white;
     font-weight: bold;
     padding: 5px 40px;
@@ -63,7 +63,7 @@
     z-index: 10;
     width: 200px;
     cursor: default;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 2px 6px var(--box-shadow-color);
 }
 
 .plan-code {

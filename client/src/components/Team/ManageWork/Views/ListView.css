@@ -28,7 +28,7 @@
   width: 90px;
   cursor: pointer;
   border-color: #ccc;
-  background-color: #fff;
+  background-color: var(--pure-white);
   border-radius: 5px;
 }
 
@@ -37,7 +37,7 @@
   height: calc(100% - 40px);
   max-width: max-content;
   min-width: 100%;
-  background-color: #fff;
+  background-color: var(--pure-white);
 }
 
 #ListView #listview_table #listview_table_header {
@@ -49,7 +49,7 @@
 
 #ListView #listview_table #listview_table_header b,
 #ListView #listview_table #listview_table_header i {
-  color: #fff;
+  color: var(--pure-white);
   font-size: 14px;
 }
 

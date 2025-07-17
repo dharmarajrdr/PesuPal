@@ -35,9 +35,9 @@ const ContactInfo = ({ phone, email, Social }) => {
     </div>
 }
 
-const NavigationLink = ({ to, icon, label, count }) => {
+const NavigationLink = ({ to, icon, label, count, setShowProfile }) => {
 
-    return <Link to={to} className='FRCC p10 navlink'>
+    return <Link to={to} className='FRCC p10 navlink' onClick={() => setShowProfile(false)}>
         <i className={`fa ${icon} mR5`} />
         <h5>{label}</h5>
         {count !== undefined && <span className='fs12'>({count})</span>}
@@ -101,10 +101,10 @@ const Profile = ({ userId, setShowProfile }) => {
                         </div>
 
                         <ContactInfo phone={phone} email={email} Social={Social} />
-                        
+
                         <div className='FRSS w100 navlinks'>
-                            <NavigationLink to={`/people/${userId}/posts`} icon='fa-newspaper' label='Posts' count={45} />
-                            <NavigationLink to={`/people/${userId}/file`} icon='fa-file' label='Files' count={12} />
+                            <NavigationLink to={`/people/${userId}/posts`} icon='fa-newspaper' label='Posts' count={45} setShowProfile={setShowProfile} />
+                            <NavigationLink to={`/people/${userId}/file`} icon='fa-file' label='Files' count={12} setShowProfile={setShowProfile} />
                         </div>
                     </>
                 }

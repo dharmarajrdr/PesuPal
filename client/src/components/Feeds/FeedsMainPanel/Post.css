@@ -1,5 +1,5 @@
 .Post {
-  background-color: #fff;
+  background-color: var(--pure-white);
   margin-top: 15px;
   border-radius: 10px;
   padding: 20px;
@@ -9,9 +9,9 @@
   border-bottom: 1px solid #ddd;
   margin-bottom: 10px;
   padding-bottom: 10px;
-  position: sticky;
+  position: relative;
   top: 0px;
-  background-color: #fff;
+  background-color: var(--pure-white);
 }
 
 .Post .PostHeader .user_name {
@@ -45,26 +45,6 @@
   line-height: 1.25;
 }
 
-.post-description u {
-  text-decoration: underline;
-}
-
-.post-description a {
-  color: #007bff;
-  text-decoration: none;
-}
-
-.post-description a:hover {
-  text-decoration: underline;
-  color: #000bff;
-}
-
-.post-description s,
-.post-description strike,
-.post-description del {
-  text-decoration: line-through;
-}
-
 .Post .PostFooter {
   margin-top: 10px;
   padding-top: 10px;
@@ -73,7 +53,6 @@
 .Post .PostFooter .postActions {
   cursor: pointer;
   font-size: 13px;
-  color: #555;
 }
 
 .Post .PostFooter .postActions i {
@@ -97,6 +76,20 @@
   padding-left: 10px;
 }
 
+.post-liked {
+  color: #d28733;
+}
+
+.post-liked i {
+  font-weight: 600;
+  color: #d28733;
+}
+
+i.bookmarked {
+  color: #e1842e;
+  font-weight: 600;
+}
+
 .mediaContainer {
   margin-top: 15px;
   max-height: 200px;
@@ -109,7 +102,7 @@
   flex-wrap: wrap;
 }
 
-.tagsContainer span {
+.tagsContainer .tagNavLink {
   color: #2e67e1;
   font-size: 13px;
   margin-right: 5px;
@@ -117,7 +110,7 @@
   margin-bottom: 3px;
 }
 
-.tagsContainer span:hover {
+.tagsContainer .tagNavLink:hover {
   text-decoration: underline;
   color: #1a4bb8;
 }
@@ -137,7 +130,7 @@
   align-items: center;
   height: 100vh;
   width: 100vw;
-  background-color: rgba(0, 0, 0, 0.8);
+  background-color: var(--overlay-bg-color);
   position: fixed;
   top: 0;
   left: 0;
@@ -149,7 +142,7 @@
   height: auto;
   max-height: 90vh;
   object-fit: contain;
-  box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 0 30px var(--box-shadow-color);
   border-radius: 8px;
 }
 
@@ -161,10 +154,10 @@
   font-size: 15px;
   color: #333;
   cursor: pointer;
-  background-color: #3f4c68;
+  background-color: var(--primary-color);
   padding: 8px 12px 8px 20px;
   border-radius: 10px;
-  box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.2);
+  box-shadow: 5px 5px 5px var(--box-shadow-color);
 }
 
 #closeFullScreen i {
@@ -172,11 +165,11 @@
   height: 20px;
   line-height: 20px;
   text-align: center;
-  color: #fff;
+  color: var(--pure-white);
 }
 
 #closeFullScreen span {
-  color: #fff;
+  color: var(--pure-white);
   line-height: 20px;
 }
 
@@ -188,7 +181,7 @@
 @media screen and (max-width: 768px) {
   #view_image_full_screen {
     height: 669px;
-    background-color: rgba(0, 0, 0, 0.75);
+    background-color: var(--overlay-bg-color);
   }
 
   #closeFullScreen {

@@ -8,7 +8,7 @@
 
 #uploadButton i,
 #uploadButton span {
-  color: #fff;
+  color: var(--pure-white);
   font-size: 14px;
 }
 
@@ -30,14 +30,14 @@
 
 .FileManagerItemActive {
   background-color: rgb(70, 92, 138);
-  color: #fff;
+  color: var(--pure-white);
   border-color: transparent;
 }
 
 .FileManagerItemActive i {
-  color: #fff;
+  color: var(--pure-white);
 }
 
 .FileManagerItemActive span {
-  color: #fff;
+  color: var(--pure-white);
 }

@@ -6,7 +6,7 @@ const FeedsLeftPanelItem = ({ item, leftNavOpened }) => {
     const { icon, title, is_active, color, visibility, route, participants } = item;
     return (
         <Link to={route} id='FeedsLeftPanelItem' className={`FRCS w100 ${is_active ? 'active' : ''}`} title={leftNavOpened ? null : title}>
-            <i className={icon} style={{ color }} ></i>
+            <i className={icon} style={is_active ? null : { color }} ></i>
             <span className='noTextWrap'>{title}</span>
             {leftNavOpened && <span>{participants}</span>}
         </Link>

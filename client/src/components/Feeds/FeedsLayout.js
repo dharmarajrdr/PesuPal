@@ -1,9 +1,10 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import './FeedsLayout.css'
 import FeedsLeftPanel from './FeedsLeftPanel/FeedsLeftPanel'
 import FeedsRightPanel from './FeedsRightPanel/FeedsRightPanel'
 import FeedsMainPanel from './FeedsMainPanel/FeedsMainPanel'
 import Popup from '../Popup'
+import { UsePopupFromSession } from '../../UsePopupFromSession'
 
 const FeedsLayout = () => {
 
@@ -13,16 +14,7 @@ const FeedsLayout = () => {
         setPopupData({ message, type });
     };
 
-    useEffect(() => {
-        const message = sessionStorage.getItem("popup-message");
-        const type = sessionStorage.getItem("popup-type");
-
-        if (message && type) {
-            showPopup(message, type);
-            sessionStorage.removeItem("popup-message");
-            sessionStorage.removeItem("popup-type");
-        }
-    }, []);
+    UsePopupFromSession(showPopup);
 
     const leftNavigationState = useState(true),
         [leftNavOpened,] = leftNavigationState,
