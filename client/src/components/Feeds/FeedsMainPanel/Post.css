@@ -45,26 +45,6 @@
   line-height: 1.25;
 }
 
-.post-description u {
-  text-decoration: underline;
-}
-
-.post-description a {
-  color: #007bff;
-  text-decoration: none;
-}
-
-.post-description a:hover {
-  text-decoration: underline;
-  color: #000bff;
-}
-
-.post-description s,
-.post-description strike,
-.post-description del {
-  text-decoration: line-through;
-}
-
 .Post .PostFooter {
   margin-top: 10px;
   padding-top: 10px;

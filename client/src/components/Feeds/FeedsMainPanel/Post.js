@@ -7,8 +7,9 @@ import { apiRequest } from '../../../http_request';
 import { UsePopupFromSession } from '../../../UsePopupFromSession';
 import Popup from '../../Popup';
 import PostOptions from './PostOptions';
+import PostCommentsLayout from './PostCommentsLayout';
 
-const PostDescription = ({ html }) => <div className="post-description postContent" dangerouslySetInnerHTML={{ __html: html }} />
+const PostDescription = ({ html }) => <div className="post-description html-content-renderer postContent" dangerouslySetInnerHTML={{ __html: html }} />
 
 const PostHeader = ({ displayName, displayPicture, createdAt, setShowProfile, postId, isOptionOpen, onToggleOption }) => {
 
@@ -58,11 +59,22 @@ const FullScreenImage = ({ closeFullScreen, fullScreenImage }) => {
     </div>
 }
 
-const PostFooter = ({ likedPost, likesCount, comments, commentable, bookmarkable, bookmarked, likeHandler }) => {
+const Comment = ({ postId, commentable, commentsCount }) => {
+
+    const [showCommentsList, setShowCommentsList] = useState(false);
+
+    return <>
+        {commentable && <div className='postActions leftFooter FRCC mY5' onClick={() => setShowCommentsList(true)}><i className="fa-regular fa-comment"></i> {commentsCount}</div>}
+        {showCommentsList && <PostCommentsLayout postId={postId} closeShowCommentsList={() => setShowCommentsList(false)} commentable={commentable} />}
+    </>
+}
+
+const PostFooter = ({ postId, likedPost, likesCount, commentsCount, commentable, bookmarkable, bookmarked, likeHandler }) => {
+
     return <div className='PostFooter w100 FRCB'>
         <div className='FRCS'>
             <div className={`postActions leftFooter FRCC mY5 ${likedPost && 'post-liked'}`} onClick={likeHandler}><i className={`fa-regular fa-thumbs-up`}></i> {likesCount}</div>
-            {commentable && <div className='postActions leftFooter FRCC mY5'><i className="fa-regular fa-comment"></i> {comments}</div>}
+            <Comment postId={postId} commentable={commentable} commentsCount={commentsCount} />
         </div>
         <div className='FRCE'>
             {bookmarkable && <div className='postActions rightFooter FRCC mY5'><i className={`fa-regular fa-bookmark ${bookmarked && 'bookmarked'}`}></i></div>}
@@ -127,7 +139,7 @@ const Post = ({ post, isOptionOpen, onToggleOption }) => {
             {fullScreenImage ? <FullScreenImage closeFullScreen={closeFullScreen} fullScreenImage={fullScreenImage} /> : null}
             <PostHeader isOptionOpen={isOptionOpen} onToggleOption={onToggleOption} postId={id} displayName={displayName} displayPicture={displayPicture} createdAt={createdAt} setShowProfile={setShowProfile} />
             <PostBody title={title} description={description} media={media} toggleMaxHeight={toggleMaxHeight} tags={tags} />
-            <PostFooter likedPost={likedPost} likesCount={likesCount} comments={comments || 0} commentable={commentable} bookmarkable={bookmarkable} bookmarked={bookmarked} likeHandler={likeHandler} />
+            <PostFooter postId={id} likedPost={likedPost} likesCount={likesCount} commentsCount={comments || 0} commentable={commentable} bookmarkable={bookmarkable} bookmarked={bookmarked} likeHandler={likeHandler} />
             {showProfile && <Profile userId={userId} setShowProfile={setShowProfile} />}
         </div>
     )
