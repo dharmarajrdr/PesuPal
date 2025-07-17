@@ -9,29 +9,63 @@ import Popup from '../../Popup';
 
 const PostDescription = ({ html }) => <div className="post-description postContent" dangerouslySetInnerHTML={{ __html: html }} />
 
+const PostHeader = ({ displayName, displayPicture, createdAt, setShowProfile }) => {
+    return <div className='PostHeader FRCB'>
+        <div className='FRCS'>
+            <img src={displayPicture} alt={displayName} className='img_40_40 user_photo' onClick={() => setShowProfile(true)} />
+            <div className='FCSS'>
+                <h3 className='user_name'>{displayName}</h3>
+                <p className='created_at' title={utils.convertDateAndTime(createdAt)}>{utils.agoTimeCalculator(createdAt)}</p>
+            </div>
+        </div>
+        <i className='fa-solid fa-ellipsis'></i>
+    </div>
+}
+
+const TagsContainer = ({ tags }) => {
+    return <div className='FRCS tagsContainer'>
+        {tags && tags.map((tag, index) => (
+            <NavLink to={`/feeds/tag/${tag}`} key={index} className='tagNavLink'>{tag}</NavLink>
+        ))}
+    </div>
+}
+
+const MediaContainer = ({ media, toggleMaxHeight }) => {
+    return <div className='mediaContainer FCSS w100' onClick={toggleMaxHeight}>
+        {media.map((media, index) => <img key={index} src={`${utils.serverDomain}/api/v1/media/${media}`} className='media_image w100' />)}
+    </div>
+}
+
+const FullScreenImage = ({ closeFullScreen, fullScreenImage }) => {
+    return <div id='view_image_full_screen' className='FRCC'>
+        <div id='closeFullScreen' className='FRCC' onClick={closeFullScreen}>
+            <span className='mR5'>Close</span>
+            <i className="fa-solid fa-xmark"></i>
+        </div>
+        <img src={fullScreenImage} />
+    </div>
+}
+
+const PostFooter = ({ likedPost, likesCount, comments, commentable, bookmarkable, bookmarked, likeHandler }) => {
+    return <div className='PostFooter w100 FRCB'>
+        <div className='FRCS'>
+            <div className='postActions leftFooter FRCC mY5'><i className={`fa-regular fa-thumbs-up ${likedPost && 'liked'}`} onClick={likeHandler}></i> {likesCount}</div>
+            {commentable && <div className='postActions leftFooter FRCC mY5'><i className="fa-regular fa-comment"></i> {comments}</div>}
+        </div>
+        <div className='FRCE'>
+            {bookmarkable && <div className='postActions rightFooter FRCC mY5'><i className={`fa-regular fa-bookmark ${bookmarked && 'bookmarked'}`}></i></div>}
+        </div>
+        {/* <p>{mentions} Mentions</p> */}
+    </div>
+}
+
 const Post = ({ post }) => {
 
     const { id, title, owner, description, createdAt, impression, media, mentions, liked, bookmarked, tags, commentable, bookmarkable } = post,
         { likes, comments } = impression || {},
         { userId, displayName, displayPicture } = owner,
         [fullScreenImage, setFullScreenImage] = useState(null),
-        convertDateAndTime = function (str) {
-            try {
-                const toTwoDigits = function (str) {
-                    str = str + '';
-                    return str.length == 2 ? str : '0' + str;
-                }
-                let d = new Date(str);
-                if (d) {
-                    let hours = d.getHours();
-                    let am_pm = hours >= 12 ? 'PM' : 'AM';
-                    hours = hours > 12 ? hours - 12 : hours;
-                    return toTwoDigits(d.getDate()) + "/" + toTwoDigits(d.getMonth() + 1) + "/" + d.getFullYear() + " " + toTwoDigits(hours) + ":" + toTwoDigits(d.getMinutes()) + " " + am_pm;
-                }
-            } catch (error) {
-                console.error({ 'module': convertDateAndTime, error, str });  //eslint-disable-line no-console
-            }
-        }, toggleMaxHeight = function (e) {
+        toggleMaxHeight = function (e) {
             const { target } = e;
             try {
                 if (target.classList.contains('media_image')) {
@@ -78,47 +112,16 @@ const Post = ({ post }) => {
     return (
         <div className='Post w100'>
             {popupData && <Popup message={popupData.message} type={popupData.type} />}
-            {fullScreenImage ?
-                <div id='view_image_full_screen' className='FRCC'>
-                    <div id='closeFullScreen' className='FRCC' onClick={closeFullScreen}>
-                        <span className='mR5'>Close</span>
-                        <i className="fa-solid fa-xmark"></i>
-                    </div>
-                    <img src={fullScreenImage} />
-                </div> : null}
-            <div className='PostHeader FRCB'>
-                <div className='FRCS'>
-                    <img src={displayPicture} alt={displayName} className='img_40_40 user_photo' onClick={() => setShowProfile(true)} />
-                    <div className='FCSS'>
-                        <h3 className='user_name'>{displayName}</h3>
-                        <p className='created_at' title={convertDateAndTime(createdAt)}>{utils.agoTimeCalculator(createdAt)}</p>
-                    </div>
-                </div>
-                <i className='fa-solid fa-ellipsis'></i>
-            </div>
+            {fullScreenImage ? <FullScreenImage closeFullScreen={closeFullScreen} fullScreenImage={fullScreenImage} /> : null}
+            <PostHeader displayName={displayName} displayPicture={displayPicture} createdAt={createdAt} setShowProfile={setShowProfile} />
             <div className='PostBody FCSS'>
                 {title ? <h4 className='postTitle'>{title}</h4> : null}
                 <PostDescription html={description} />
-                <div className='FRCS tagsContainer'>
-                    {tags && tags.map((tag, index) => (
-                        <NavLink to={`/feeds/tag/${tag}`} key={index} className='tagNavLink'>{tag}</NavLink>
-                    ))}
-                </div>
+                <TagsContainer tags={tags} />
                 {media ?
-                    <div className='mediaContainer FCSS w100' onClick={toggleMaxHeight}>
-                        {media.map((media, index) => <img key={index} src={`${utils.serverDomain}/api/v1/media/${media}`} className='media_image w100' />)}
-                    </div> : null}
+                    <MediaContainer media={media} toggleMaxHeight={toggleMaxHeight} key={media.id} /> : null}
             </div>
-            <div className='PostFooter w100 FRCB'>
-                <div className='FRCS'>
-                    <div className='postActions leftFooter FRCC mY5'><i className={`fa-regular fa-thumbs-up ${likedPost && 'liked'}`} onClick={likeHandler}></i> {likesCount}</div>
-                    {commentable && <div className='postActions leftFooter FRCC mY5'><i className="fa-regular fa-comment"></i> {comments}</div>}
-                </div>
-                <div className='FRCE'>
-                    {bookmarkable && <div className='postActions rightFooter FRCC mY5'><i className={`fa-regular fa-bookmark ${bookmarked && 'bookmarked'}`}></i></div>}
-                </div>
-                {/* <p>{mentions} Mentions</p> */}
-            </div>
+            <PostFooter likedPost={likedPost} likesCount={likesCount} comments={comments || 0} commentable={commentable} bookmarkable={bookmarkable} bookmarked={bookmarked} likeHandler={likeHandler} />
             {showProfile && <Profile userId={userId} setShowProfile={setShowProfile} />}
         </div>
     )
