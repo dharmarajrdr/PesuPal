@@ -61,4 +61,11 @@ public class PostController extends CurrentValueRetriever {
         postService.archivePost(postId, getCurrentUserId(), getCurrentOrgId());
         return ResponseEntity.ok().body(new ApiResponseDto("Post archived successfully"));
     }
+
+    @PatchMapping("/{postId}")
+    public ResponseEntity<ApiResponseDto> updatePost(@PathVariable Long postId, @RequestBody CreatePostDto createPostDto) {
+
+        Post post = postService.updatePost(postId, createPostDto, getCurrentUserId(), getCurrentOrgId());
+        return ResponseEntity.ok().body(new ApiResponseDto("Post updated successfully", post));
+    }
 }
