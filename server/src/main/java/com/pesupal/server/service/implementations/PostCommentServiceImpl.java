@@ -17,10 +17,7 @@ import com.pesupal.server.service.interfaces.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 @Service
 @AllArgsConstructor
@@ -103,14 +100,16 @@ public class PostCommentServiceImpl implements PostCommentService {
 
         Map<Long, OrgMember> memo = new HashMap<>();
 
-        return post.getComments().stream().map(postComment -> {
+        List<PostCommentDto> postCommentDtos = new ArrayList<>(post.getComments().stream().map(postComment -> {
 
             Long commentedById = postComment.getCommenter().getId();
             if (!memo.containsKey(commentedById)) {
                 memo.put(commentedById, orgMemberService.getOrgMemberByUserIdAndOrgId(commentedById, orgId));
             }
             return PostCommentDto.fromPostCommentAndOrgMember(postComment, memo.get(commentedById));
-        }).toList();
+        }).toList());
+        postCommentDtos.sort(Comparator.comparing(PostCommentDto::getCreatedAt).reversed());
+        return postCommentDtos;
     }
 
     /**
