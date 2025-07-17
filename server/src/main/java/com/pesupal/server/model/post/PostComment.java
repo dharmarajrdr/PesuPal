@@ -18,6 +18,7 @@ public class PostComment extends CreationTimeAuditable {
     @ManyToOne
     private User commenter;
 
+    @Column(nullable = false, length = 3000)
     private String message;
 
     @OneToMany(mappedBy = "postComment", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
