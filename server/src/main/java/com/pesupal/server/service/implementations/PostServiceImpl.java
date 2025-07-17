@@ -85,7 +85,6 @@ public class PostServiceImpl implements PostService {
         postDto.setMedia(post.getPostMedia().stream().map(PostMedia::getMediaId).toList());
         postDto.setOwner(UserBasicInfoDto.fromOrgMember(orgMember));
         postDto.setImpression(PostImpressionDto.builder().likes(post.getLikes().size()).comments(post.getComments().size()).build());
-        postDto.setLiked(isLiked(post.getLikes(), orgMember.getUser()));
         postDto.setBookmarked(false);   // Feature not implemented yet
         return postDto;
     }
@@ -129,7 +128,10 @@ public class PostServiceImpl implements PostService {
 
         OrgMember orgMember = orgMemberService.getOrgMemberByUserIdAndOrgId(userId, orgId);
         Post post = getPostByIdAndOrgId(postId, orgId);
-        return getPostDtoFromPostAndOrgMember(post, orgMember);
+        OrgMember postOwner = orgMemberService.getOrgMemberByUserIdAndOrgId(post.getUser().getId(), orgId);
+        PostDto postDto = getPostDtoFromPostAndOrgMember(post, postOwner);
+        postDto.setLiked(isLiked(post.getLikes(), orgMember.getUser()));
+        return postDto;
     }
 
     /**
@@ -150,7 +152,11 @@ public class PostServiceImpl implements PostService {
         Pageable pageable = PageRequest.of(page, size + 1, sort);
         Page<Post> postPage = postRepository.findAllByOrgIdAndUserIdAndStatus(orgId, postOwnerId, pageable, PostStatus.PUBLISHED);
         OrgMember postOwnerOrgMember = orgMemberService.getOrgMemberByUserIdAndOrgId(postOwnerId, orgId);
-        List<PostDto> postDtos = new ArrayList<>(postPage.getContent().stream().map(post -> getPostDtoFromPostAndOrgMember(post, postOwnerOrgMember)).toList());
+        List<PostDto> postDtos = new ArrayList<>(postPage.getContent().stream().map(post -> {
+            PostDto postDto = getPostDtoFromPostAndOrgMember(post, postOwnerOrgMember);
+            postDto.setLiked(isLiked(post.getLikes(), orgMember.getUser()));
+            return postDto;
+        }).toList());
         PostsListDto postsListDto = new PostsListDto();
         postsListDto.setInfo(Map.of(
                 "hasMoreRecords", postDtos.size() == size + 1
