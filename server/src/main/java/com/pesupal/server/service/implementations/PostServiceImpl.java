@@ -26,6 +26,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -148,12 +149,15 @@ public class PostServiceImpl implements PostService {
         Sort sort = Sort.by(sortOrder == SortOrder.ASC ? Sort.Direction.ASC : Sort.Direction.DESC, "createdAt");
         Pageable pageable = PageRequest.of(page, size + 1, sort);
         Page<Post> postPage = postRepository.findAllByOrgIdAndUserIdAndStatus(orgId, postOwnerId, pageable, PostStatus.PUBLISHED);
-        List<PostDto> postDtos = postPage.getContent().stream().map(post -> getPostDtoFromPostAndOrgMember(post, orgMember)).toList();
+        List<PostDto> postDtos = new ArrayList<>(postPage.getContent().stream().map(post -> getPostDtoFromPostAndOrgMember(post, orgMember)).toList());
         PostsListDto postsListDto = new PostsListDto();
-        postsListDto.setPosts(postDtos);
         postsListDto.setInfo(Map.of(
                 "hasMoreRecords", postDtos.size() == size + 1
         ));
+        if (!postDtos.isEmpty()) {
+            postDtos.remove(postDtos.size() - 1); // Remove the extra post if it exists
+        }
+        postsListDto.setPosts(postDtos);
         return postsListDto;
     }
 
@@ -176,5 +180,18 @@ public class PostServiceImpl implements PostService {
         }
         post.setStatus(PostStatus.ARCHIVED);
         postRepository.save(post);
+    }
+
+    /**
+     * Retrieves the count of posts made by a user in a specific organization.
+     *
+     * @param userId
+     * @param orgId
+     * @return
+     */
+    @Override
+    public int getUserPostCount(Long userId, Long orgId) {
+
+        return postRepository.countAllByUserIdAndOrgId(userId, orgId);
     }
 }

@@ -19,4 +19,6 @@ public interface PostService {
     PostsListDto getPostByUserId(Long userId, Long orgId, Long postOwnerId, int page, int size, SortOrder sortOrder);
 
     void archivePost(Long postId, Long userId, Long orgId);
+
+    int getUserPostCount(Long userId, Long orgId);
 }
