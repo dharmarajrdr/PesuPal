@@ -59,7 +59,7 @@
   top: 10px;
   right: 17px;
   background-color: var(--count-label-color);
-  color: #fff;
+  color: var(--pure-white);
   border-radius: 100%;
   min-width: 15px;
   min-height: 15px;
@@ -125,7 +125,7 @@
   #closeLeftNav {
     display: block;
     padding: 20px;
-    color: #fff;
+    color: var(--pure-white);
     text-align: right;
   }
 }

@@ -2,7 +2,7 @@
 
 #departmentHeader {
     box-sizing: border-box;
-    background-color: #fff;
+    background-color: var(--pure-white);
     padding: 20px;
 }
 
@@ -20,7 +20,7 @@
     font-size: 14px;
     border: 1px solid #3f4c689a;
     border-radius: 8px;
-    background-color: #fff;
+    background-color: var(--pure-white);
     color: var(--primary-color);
     outline: none;
     cursor: pointer;

@@ -4,7 +4,7 @@
 }
 
 .active-tab {
-  background-color: rgb(63, 76, 104);
+  background-color: var(--primary-color);
 }
 
 .TeamLeftContainerItem i {
@@ -30,7 +30,7 @@
 
 .TeamLeftContainerItem .title_notify .notify_count {
   font-size: 12px;
-  color: #fff;
+  color: var(--pure-white);
   text-align: center;
   width: 12px;
   line-height: 12px;
@@ -50,7 +50,7 @@
 
 .active-tab .title_notify span,
 .active-tab i {
-  color: #fff;
+  color: var(--pure-white);
 }
 
 .TeamLeftContainerItem div .notifyCount {
@@ -61,7 +61,7 @@
   width: 12px;
   height: 12px;
   line-height: 12px;
-  color: #fff;
+  color: var(--pure-white);
   border-radius: 100%;
   text-align: center;
   font-size: 8px;

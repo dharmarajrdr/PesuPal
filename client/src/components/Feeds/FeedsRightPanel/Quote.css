@@ -1,5 +1,5 @@
 #Quote {
-  background-color: #fff;
+  background-color: var(--pure-white);
   border-radius: 10px;
   margin: 15px 0px;
   padding: 20px;

@@ -19,7 +19,7 @@
 #job-applications-header {
     position: sticky;
     top: 0;
-    background-color: #fff;
+    background-color: var(--pure-white);
     box-shadow: 4px 4px 10px var(--box-shadow-color);
 }
 
@@ -27,7 +27,7 @@
     margin: 2.5px 5px;
     width: calc(100% - 10px);
     box-sizing: border-box;
-    background-color: #fff;
+    background-color: var(--pure-white);
     border-radius: 5px;
     border: 1px solid #ccc;
     cursor: pointer;

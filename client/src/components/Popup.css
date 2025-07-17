@@ -30,11 +30,11 @@
 
 .popup-container .icon {
     font-size: 1.5rem;
-    color: #fff;
+    color: var(--pure-white);
 }
 
 .popup-container span {
-    color: #fff;
+    color: var(--pure-white);
 }
 
 /* Slide down animation */

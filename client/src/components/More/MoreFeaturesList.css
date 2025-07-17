@@ -7,7 +7,7 @@
     margin: 1.3vh 0.65%;
     border: 1px solid #e0e0e0;
     height: 95px;
-    background-color: #fff;
+    background-color: var(--pure-white);
     border-radius: 5px;
     cursor: pointer;
     padding: 20px;
@@ -15,7 +15,7 @@
 }
 
 #more-features-list .feature-item:hover {
-    background-color: #f5f5f5;
+    background-color: var(--pure-white-hover);
 }
 
 .feature-item-icon {
@@ -24,7 +24,7 @@
 
 .feature-item-icon i {
     font-size: 25px;
-    color: #fff;
+    color: var(--pure-white);
 }
 
 .feature-item-details {

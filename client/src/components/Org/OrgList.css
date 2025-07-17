@@ -13,7 +13,7 @@
     height: 400px;
     width: 410px;
     overflow: auto;
-    background-color: #fff;
+    background-color: var(--pure-white);
     box-shadow: 4px 4px 8px rgba(43, 42, 42, 0.2);
     top: 50%;
     left: 50%;

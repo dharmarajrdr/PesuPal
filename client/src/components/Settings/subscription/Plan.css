@@ -23,7 +23,7 @@
 }
 
 .plan:hover .black-text {
-    color: #fff;
+    color: var(--pure-white);
 }
 
 .plan:hover .plan-features {

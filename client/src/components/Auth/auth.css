@@ -81,7 +81,7 @@
   border-radius: 50px;
   border: none;
   background-color: blue;
-  color: #fff;
+  color: var(--pure-white);
 }
 
 .navigator_parent {
