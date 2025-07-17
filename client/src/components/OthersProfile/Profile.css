@@ -1,7 +1,7 @@
 #ProfileOverlay {
   width: 100%;
   height: 100vh;
-  background-color: #00000077;
+  background-color: var(--overlay-bg-color);
   position: fixed;
   top: 0;
   left: 0;

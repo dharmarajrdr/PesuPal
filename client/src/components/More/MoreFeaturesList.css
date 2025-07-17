@@ -11,7 +11,7 @@
     border-radius: 5px;
     cursor: pointer;
     padding: 20px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 1px 3px var(--box-shadow-color);
 }
 
 #more-features-list .feature-item:hover {

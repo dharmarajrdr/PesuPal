@@ -2,7 +2,7 @@
     position: fixed;
     bottom: 0px;
     left: 0px;
-    background-color: #00000080;
+    background-color: var(--overlay-bg-color);
     width: 100vw;
     height: 100vh;
     z-index: 15;

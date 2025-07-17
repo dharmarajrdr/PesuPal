@@ -10,7 +10,7 @@
     font-size: 14px;
     font-weight: 400;
     margin-bottom: 5px;
-    color: #3f4c68;
+    color: var(--primary-color);
 }
 
 #departmentList {
@@ -21,7 +21,7 @@
     border: 1px solid #3f4c689a;
     border-radius: 8px;
     background-color: #fff;
-    color: #3f4c68;
+    color: var(--primary-color);
     outline: none;
     cursor: pointer;
 }
@@ -36,7 +36,7 @@
 }
 
 #departmentList:focus {
-    border-color: #3f4c68;
+    border-color: var(--primary-color);
     box-shadow: 0 0 4px rgba(63, 76, 104, 0.5);
 }
 
@@ -85,7 +85,7 @@
 #departmentHead div #headName {
     font-size: 0.9rem;
     font-weight: 600;
-    color: #3f4c68;
+    color: var(--primary-color);
     margin-bottom: 2px;
 }
 

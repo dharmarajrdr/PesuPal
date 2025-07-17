@@ -1,4 +1,4 @@
 #more-features-layout {
-    background-color: #e3e8ed;
+    background-color: var(--bg-color);
     padding: 10px;
 }

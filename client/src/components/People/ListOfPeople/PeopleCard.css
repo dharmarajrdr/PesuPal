@@ -52,7 +52,7 @@
   height: 20px;
   line-height: 20px;
   font-weight: 600;
-  color: #3f4c68;
+  color: var(--primary-color);
 }
 
 .profile_contacts {

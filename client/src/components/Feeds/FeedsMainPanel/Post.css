@@ -150,7 +150,7 @@ i.bookmarked {
   align-items: center;
   height: 100vh;
   width: 100vw;
-  background-color: rgba(0, 0, 0, 0.8);
+  background-color: var(--overlay-bg-color);
   position: fixed;
   top: 0;
   left: 0;
@@ -162,7 +162,7 @@ i.bookmarked {
   height: auto;
   max-height: 90vh;
   object-fit: contain;
-  box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 0 30px var(--box-shadow-color);
   border-radius: 8px;
 }
 
@@ -174,10 +174,10 @@ i.bookmarked {
   font-size: 15px;
   color: #333;
   cursor: pointer;
-  background-color: #3f4c68;
+  background-color: var(--primary-color);
   padding: 8px 12px 8px 20px;
   border-radius: 10px;
-  box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.2);
+  box-shadow: 5px 5px 5px var(--box-shadow-color);
 }
 
 #closeFullScreen i {
@@ -201,7 +201,7 @@ i.bookmarked {
 @media screen and (max-width: 768px) {
   #view_image_full_screen {
     height: 669px;
-    background-color: rgba(0, 0, 0, 0.75);
+    background-color: var(--overlay-bg-color);
   }
 
   #closeFullScreen {

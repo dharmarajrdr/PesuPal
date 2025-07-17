@@ -24,7 +24,7 @@
     position: absolute;
     top: 5px;
     left: -20px;
-    background-color: #f0ad4e;
+    background-color: var(--badge-color);
     color: #fff;
     padding: 5px 5px 5px 0px;
     width: 100px;
@@ -52,7 +52,7 @@
     width: 40px;
     height: 40px;
     border-radius: 5px;
-    background-color: #3f4c68;
+    background-color: var(--primary-color);
     color: #fff;
     font-size: 20px;
     display: flex;

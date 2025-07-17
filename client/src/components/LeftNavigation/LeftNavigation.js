@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react'
 import './LeftNavigation.css'
 import Nav from './Nav'
 import { useDispatch, useSelector } from 'react-redux';
-import themes from '../../theme';
 import OrgList from '../Org/OrgList';
 
 const LeftNavigation = ({ profile }) => {
@@ -22,8 +21,7 @@ const LeftNavigation = ({ profile }) => {
         if (window.outerWidth < 769) {
             hideNavContainer();
         }
-    }, { LeftNavigationStyles } = themes,
-        dispatch = useDispatch();
+    }, dispatch = useDispatch();
 
     const { id, icon, image, title, route } = profile;
 
@@ -59,7 +57,7 @@ const LeftNavigation = ({ profile }) => {
 
     return (
         <div id='LeftNavigationOverlay' onClick={clickedOverlay}>
-            <div id='LeftNavigation' className='FCCB' style={LeftNavigationStyles}>
+            <div id='LeftNavigation' className='FCCB'>
                 <div className='w100'>
                     <div id='app_logo'>
                         <img src='/logo512.png' />
