@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { apiRequest } from '../../../http_request';
 import { UsePopupFromSession } from '../../../UsePopupFromSession';
 import Popup from '../../Popup';
+import PostsLikedBy from './PostsLikedBy';
 
 const PostDescription = ({ html }) => <div className="post-description postContent" dangerouslySetInnerHTML={{ __html: html }} />
 
@@ -19,6 +20,15 @@ const PostHeader = ({ displayName, displayPicture, createdAt, setShowProfile }) 
             </div>
         </div>
         <i className='fa-solid fa-ellipsis'></i>
+    </div>
+}
+
+const PostBody = ({ title, description, media, toggleMaxHeight, tags }) => {
+    return <div className='PostBody FCSS'>
+        {title ? <h4 className='postTitle'>{title}</h4> : null}
+        <PostDescription html={description} />
+        <TagsContainer tags={tags} />
+        {media ? <MediaContainer media={media} toggleMaxHeight={toggleMaxHeight} key={media.id} /> : null}
     </div>
 }
 
@@ -88,6 +98,7 @@ const Post = ({ post }) => {
     const [popupData, setPopupData] = useState(null);
     const [likedPost, setLikedPost] = useState(liked);
     const [likesCount, setLikesCount] = useState(likes || 0);
+    const [showLikesList, setShowLikesList] = useState(false);
 
     const showPopup = (message, type) => {
         setPopupData({ message, type });
@@ -97,7 +108,7 @@ const Post = ({ post }) => {
 
     const likeHandler = () => {
 
-        apiRequest(`/api/v1/post/like/${id}`, likedPost ? 'DELETE' : 'POST').then(({ data }) => {
+        apiRequest(`/api/v1/post/like/${id}`, likedPost ? 'DELETE' : 'POST').then(() => {
             setLikedPost(!likedPost);
             if (likedPost) {
                 setLikesCount(likesCount - 1);
@@ -114,15 +125,10 @@ const Post = ({ post }) => {
             {popupData && <Popup message={popupData.message} type={popupData.type} />}
             {fullScreenImage ? <FullScreenImage closeFullScreen={closeFullScreen} fullScreenImage={fullScreenImage} /> : null}
             <PostHeader displayName={displayName} displayPicture={displayPicture} createdAt={createdAt} setShowProfile={setShowProfile} />
-            <div className='PostBody FCSS'>
-                {title ? <h4 className='postTitle'>{title}</h4> : null}
-                <PostDescription html={description} />
-                <TagsContainer tags={tags} />
-                {media ?
-                    <MediaContainer media={media} toggleMaxHeight={toggleMaxHeight} key={media.id} /> : null}
-            </div>
+            <PostBody title={title} description={description} media={media} toggleMaxHeight={toggleMaxHeight} tags={tags} />
             <PostFooter likedPost={likedPost} likesCount={likesCount} comments={comments || 0} commentable={commentable} bookmarkable={bookmarkable} bookmarked={bookmarked} likeHandler={likeHandler} />
             {showProfile && <Profile userId={userId} setShowProfile={setShowProfile} />}
+            {showLikesList && <PostsLikedBy postId={id} closeShowLikesList={() => setShowLikesList(false)} />}
         </div>
     )
 }
