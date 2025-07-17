@@ -19,6 +19,7 @@ import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.model.user.User;
 import com.pesupal.server.repository.PostRepository;
 import com.pesupal.server.service.interfaces.*;
+import com.pesupal.server.strategies.media_storage.S3Service;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -41,6 +42,7 @@ public class PostServiceImpl implements PostService {
     private final UserService userService;
     private final PostRepository postRepository;
     private final OrgMemberService orgMemberService;
+    private final S3Service s3Service;
 
     /**
      * Creates a new post.
@@ -59,7 +61,7 @@ public class PostServiceImpl implements PostService {
         post.setOrg(org);
         post.setUser(user);
         post.setStatus(PostStatus.PUBLISHED);
-        List<PostMedia> postMedia = createPostDto.getMediaIds().stream().map(mediaId -> PostMedia.builder().post(post).mediaId(mediaId).build()).collect(Collectors.toList());
+        List<PostMedia> postMedia = createPostDto.getMediaIds().stream().map(mediaId -> PostMedia.builder().post(post).mediaId(mediaId.getId()).extension(mediaId.getExtension()).build()).collect(Collectors.toList());
         post.setMedia(!postMedia.isEmpty());
         post.setPostMedia(postMedia);
         List<PostTag> postTags = createPostDto.getTags().stream().map(tagName -> PostTag.builder().post(post).tag(tagService.createOrGet(tagName)).build()).collect(Collectors.toList());
@@ -82,7 +84,10 @@ public class PostServiceImpl implements PostService {
 
         PostDto postDto = PostDto.fromPost(post);
         postDto.setTags(post.getTags().stream().map(postTag -> postTag.getTag().getName()).toList());
-        postDto.setMedia(post.getPostMedia().stream().map(PostMedia::getMediaId).toList());
+        postDto.setMedia(post.getPostMedia().stream().map(postMedia -> {
+            String key = postMedia.getMediaId() + "." + postMedia.getExtension();
+            return s3Service.generatePresignedUrl(key);
+        }).toList());
         postDto.setOwner(UserBasicInfoDto.fromOrgMember(orgMember));
         postDto.setImpression(PostImpressionDto.builder().likes(post.getLikes().size()).comments(post.getComments().size()).build());
         postDto.setBookmarked(false);   // Feature not implemented yet
