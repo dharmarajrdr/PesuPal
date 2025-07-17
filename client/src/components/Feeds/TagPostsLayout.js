@@ -19,6 +19,23 @@ const NoPostsAvailable = () => {
     )
 }
 
+const TagsPageHeader = ({ tag }) => {
+
+    return (
+        <div id='tags-page-header' className="FRCC w100 p10">
+            <h1 className='tags-page-title'>#{tag}</h1>
+        </div>
+    )
+}
+
+const TagsPage = ({ tag, posts, activePostId, setActivePostId }) => {
+
+    return <>
+        <TagsPageHeader tag={tag} />
+        <PostList posts={posts} activePostId={activePostId} setActivePostId={setActivePostId} />
+    </>
+}
+
 const TagPostsLayout = () => {
 
     const size = 10; // Number of posts per page
@@ -62,7 +79,7 @@ const TagPostsLayout = () => {
             <div id="postsList">
                 {loading ? <Loader /> :
                     error ? <ErrorMessage /> :
-                        posts.length ? <PostList posts={posts} activePostId={activePostId} setActivePostId={setActivePostId} /> : <NoPostsAvailable />}
+                        posts.length ? <TagsPage tag={tag} posts={posts} activePostId={activePostId} setActivePostId={setActivePostId} /> : <NoPostsAvailable />}
             </div>
             {hasMore && <Loader />}
         </div>
