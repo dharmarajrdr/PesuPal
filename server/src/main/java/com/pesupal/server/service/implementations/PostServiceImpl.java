@@ -154,7 +154,7 @@ public class PostServiceImpl implements PostService {
         postsListDto.setInfo(Map.of(
                 "hasMoreRecords", postDtos.size() == size + 1
         ));
-        if (!postDtos.isEmpty()) {
+        if (!postDtos.isEmpty() && postDtos.size() > size) {
             postDtos.remove(postDtos.size() - 1); // Remove the extra post if it exists
         }
         postsListDto.setPosts(postDtos);
