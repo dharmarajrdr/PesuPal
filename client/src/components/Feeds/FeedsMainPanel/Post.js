@@ -45,7 +45,7 @@ const TagsContainer = ({ tags }) => {
 
 const MediaContainer = ({ media, toggleMaxHeight }) => {
     return <div className='mediaContainer FCSS w100' onClick={toggleMaxHeight}>
-        {media.map((media, index) => <img key={index} src={`${utils.serverDomain}/api/v1/media/${media}`} className='media_image w100' />)}
+        {media.map((media, index) => <img key={index} src={media} className='media_image w100' />)}
     </div>
 }
 
