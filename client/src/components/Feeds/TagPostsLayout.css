@@ -1,0 +1,9 @@
+#tag-posts-layout {
+    overflow: auto;
+    padding-bottom: 100px;
+}
+
+#tag-posts-layout #postsList {
+    width: 50%;
+    padding-bottom: 50px;
+}
