@@ -70,6 +70,11 @@
   padding-top: 10px;
 }
 
+.Post .PostFooter .postActions .liked {
+  color: #e01818;
+  font-weight: 600;
+}
+
 .Post .PostFooter .postActions {
   cursor: pointer;
   font-size: 13px;
