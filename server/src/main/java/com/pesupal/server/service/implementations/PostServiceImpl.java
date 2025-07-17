@@ -3,6 +3,7 @@ package com.pesupal.server.service.implementations;
 import com.pesupal.server.dto.request.CreatePostDto;
 import com.pesupal.server.dto.response.PostDto;
 import com.pesupal.server.dto.response.PostImpressionDto;
+import com.pesupal.server.dto.response.PostsListDto;
 import com.pesupal.server.dto.response.UserBasicInfoDto;
 import com.pesupal.server.enums.PostStatus;
 import com.pesupal.server.enums.SortOrder;
@@ -26,6 +27,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -137,16 +139,22 @@ public class PostServiceImpl implements PostService {
      * @return
      */
     @Override
-    public List<PostDto> getPostByUserId(Long userId, Long orgId, Long postOwnerId, int page, int size, SortOrder sortOrder) {
+    public PostsListDto getPostByUserId(Long userId, Long orgId, Long postOwnerId, int page, int size, SortOrder sortOrder) {
 
         OrgMember orgMember = orgMemberService.getOrgMemberByUserIdAndOrgId(userId, orgId);
 
         orgMemberService.validateUserIsOrgMember(postOwnerId, orgId);
 
         Sort sort = Sort.by(sortOrder == SortOrder.ASC ? Sort.Direction.ASC : Sort.Direction.DESC, "createdAt");
-        Pageable pageable = PageRequest.of(page, size, sort);
+        Pageable pageable = PageRequest.of(page, size + 1, sort);
         Page<Post> postPage = postRepository.findAllByOrgIdAndUserIdAndStatus(orgId, postOwnerId, pageable, PostStatus.PUBLISHED);
-        return postPage.getContent().stream().map(post -> getPostDtoFromPostAndOrgMember(post, orgMember)).toList();
+        List<PostDto> postDtos = postPage.getContent().stream().map(post -> getPostDtoFromPostAndOrgMember(post, orgMember)).toList();
+        PostsListDto postsListDto = new PostsListDto();
+        postsListDto.setPosts(postDtos);
+        postsListDto.setInfo(Map.of(
+                "hasMoreRecords", postDtos.size() == size + 1
+        ));
+        return postsListDto;
     }
 
     /**
