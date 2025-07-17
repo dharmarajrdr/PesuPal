@@ -3,14 +3,15 @@ import utils from '../../../utils';
 import Profile from '../../OthersProfile/Profile';
 import './Post.css'
 import { useState } from 'react';
-
-const serverDomain = 'http://localhost:8080';
+import { apiRequest } from '../../../http_request';
+import { UsePopupFromSession } from '../../../UsePopupFromSession';
+import Popup from '../../Popup';
 
 const PostDescription = ({ html }) => <div className="post-description postContent" dangerouslySetInnerHTML={{ __html: html }} />
 
 const Post = ({ post }) => {
 
-    const { title, owner, description, createdAt, impression, media, mentions, liked, bookmarked, tags, commentable, bookmarkable } = post,
+    const { id, title, owner, description, createdAt, impression, media, mentions, liked, bookmarked, tags, commentable, bookmarkable } = post,
         { likes, comments } = impression || {},
         { userId, displayName, displayPicture } = owner,
         [fullScreenImage, setFullScreenImage] = useState(null),
@@ -50,8 +51,33 @@ const Post = ({ post }) => {
 
     const [showProfile, setShowProfile] = useState(false);
 
+    const [popupData, setPopupData] = useState(null);
+    const [likedPost, setLikedPost] = useState(liked);
+    const [likesCount, setLikesCount] = useState(likes || 0);
+
+    const showPopup = (message, type) => {
+        setPopupData({ message, type });
+    };
+
+    UsePopupFromSession(showPopup);
+
+    const likeHandler = () => {
+
+        apiRequest(`/api/v1/post/like/${id}`, likedPost ? 'DELETE' : 'POST').then(({ data }) => {
+            setLikedPost(!likedPost);
+            if (likedPost) {
+                setLikesCount(likesCount - 1);
+            } else {
+                setLikesCount(likesCount + 1);
+            }
+        }).catch(({ message }) => {
+            showPopup(message, 'error');
+        });
+    }
+
     return (
         <div className='Post w100'>
+            {popupData && <Popup message={popupData.message} type={popupData.type} />}
             {fullScreenImage ?
                 <div id='view_image_full_screen' className='FRCC'>
                     <div id='closeFullScreen' className='FRCC' onClick={closeFullScreen}>
@@ -80,12 +106,12 @@ const Post = ({ post }) => {
                 </div>
                 {media ?
                     <div className='mediaContainer FCSS w100' onClick={toggleMaxHeight}>
-                        {media.map((media, index) => <img key={index} src={`${serverDomain}/api/v1/media/${media}`} className='media_image w100' />)}
+                        {media.map((media, index) => <img key={index} src={`${utils.serverDomain}/api/v1/media/${media}`} className='media_image w100' />)}
                     </div> : null}
             </div>
             <div className='PostFooter w100 FRCB'>
                 <div className='FRCS'>
-                    <div className='postActions leftFooter FRCC mY5'><i className={`fa-regular fa-thumbs-up ${liked && 'liked'}`}></i> {likes}</div>
+                    <div className='postActions leftFooter FRCC mY5'><i className={`fa-regular fa-thumbs-up ${likedPost && 'liked'}`} onClick={likeHandler}></i> {likesCount}</div>
                     {commentable && <div className='postActions leftFooter FRCC mY5'><i className="fa-regular fa-comment"></i> {comments}</div>}
                 </div>
                 <div className='FRCE'>
