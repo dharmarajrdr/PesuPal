@@ -8,7 +8,7 @@ const PeopleLayout = () => {
         <div className='Layout'>
             <Routes>
                 <Route path='/' element={<AllUsers />} />
-                <Route path='/:id/posts' element={<UserPostsLayout />} />
+                <Route path='/:userId/posts' element={<UserPostsLayout />} />
                 <Route path='*' element={<PageNotFound />} />
             </Routes>
         </div>
