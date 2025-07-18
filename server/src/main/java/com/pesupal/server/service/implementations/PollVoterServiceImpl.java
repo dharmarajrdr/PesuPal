@@ -70,6 +70,6 @@ public class PollVoterServiceImpl implements PollVoterService {
             pollVoter.setPollOption(pollOption);
         }
         pollVoter = pollVoterRepository.save(pollVoter);
-        return PollDto.fromPoll(pollVoter.getPollOption().getPoll());
+        return PollDto.fromPoll(pollVoter.getPollOption().getPoll(), userId);
     }
 }

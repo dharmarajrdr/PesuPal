@@ -101,7 +101,7 @@ public class PostServiceImpl implements PostService {
         postDto.setImpression(PostImpressionDto.builder().likes(post.getLikes().size()).comments(post.getComments().size()).build());
         postDto.setBookmarked(false);   // Feature not implemented yet
         if (post.isHasPoll()) {
-            postDto.setPoll(PollDto.fromPoll(pollService.getPollByPost(post)));
+            postDto.setPoll(PollDto.fromPoll(pollService.getPollByPost(post), orgMember.getUser().getId()));
         }
         return postDto;
     }
