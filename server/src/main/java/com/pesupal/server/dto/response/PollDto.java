@@ -2,28 +2,47 @@ package com.pesupal.server.dto.response;
 
 import com.pesupal.server.model.post.Poll;
 import com.pesupal.server.model.post.PollOption;
+import com.pesupal.server.model.post.PollVoter;
 import lombok.Data;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Data
 public class PollDto {
 
+    private Long id;
+
     private String question;
 
-    private Map<String, Integer> votes;
+    private List<PollOptionDto> options;
 
-    public static PollDto fromPoll(Poll poll) {
-        List<PollOption> pollOptions = poll.getOptions();
-        Map<String, Integer> votesMap = new HashMap<>();
-        for (PollOption option : pollOptions) {
-            votesMap.put(option.getOption(), option.getVoters().size());
-        }
+    private Long votedOptionId;
+
+    public static PollDto fromPoll(Poll poll, Long userId) {
+
         PollDto pollDto = new PollDto();
+        pollDto.setId(poll.getId());
         pollDto.setQuestion(poll.getQuestion());
-        pollDto.setVotes(votesMap);
+
+        boolean revealVotes = false;
+        Long votedOptionId = null;
+
+        outer:
+        for (PollOption option : poll.getOptions()) {
+            for (PollVoter voter : option.getVoters()) {
+                if (voter.getVoter().getId().equals(userId)) {
+                    votedOptionId = option.getId();
+                    revealVotes = true;
+                    break outer; // early exit both loops
+                }
+            }
+        }
+
+        pollDto.setVotedOptionId(votedOptionId);
+        boolean finalRevealVotes = revealVotes;
+        pollDto.setOptions(poll.getOptions().stream().map(opt -> PollOptionDto.fromPollOption(opt, finalRevealVotes)).toList());
+
         return pollDto;
     }
+
 }
