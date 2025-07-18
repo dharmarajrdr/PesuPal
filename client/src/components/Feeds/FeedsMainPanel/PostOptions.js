@@ -67,7 +67,7 @@ const PostOptions = ({ postId, commentable, setCommentable, isCreator, poll, pol
     ];
 
     return (
-        <div div className="FCSS" id="post-options" >
+        <div className="FCSS" id="post-options" >
 
             <div className='option' onClick={() => { setShowLikesList(true); closeOptionsModal(); }}>Show Post Likes</div>
 
