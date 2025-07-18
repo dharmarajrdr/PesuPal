@@ -259,9 +259,26 @@ public class PostServiceImpl implements PostService {
     public Post updatePost(Long postId, CreatePostDto createPostDto, Long userId, Long orgId) {
 
         orgMemberService.validateUserIsOrgMember(userId, orgId);
-        
+
         Post post = getPostByIdAndOrgId(postId, orgId);
         createPostDto.applyToPost(post);
         return postRepository.save(post);
+    }
+
+    /**
+     * Deletes a post by its ID.
+     *
+     * @param postId
+     * @param userId
+     * @param orgId
+     */
+    @Override
+    public void deletePost(Long postId, Long userId, Long orgId) {
+
+        Post post = getPostByIdAndOrgId(postId, orgId);
+        if (!post.getUser().getId().equals(userId)) {
+            throw new PermissionDeniedException("You do not have permission to delete this post.");
+        }
+        postRepository.delete(post);
     }
 }

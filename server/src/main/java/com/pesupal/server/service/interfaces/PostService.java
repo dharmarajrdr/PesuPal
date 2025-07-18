@@ -25,4 +25,6 @@ public interface PostService {
     PostsListDto getPostByTag(Long currentUserId, Long currentOrgId, String tag, int page, int size, SortOrder sortOrder);
 
     Post updatePost(Long postId, CreatePostDto createPostDto, Long currentUserId, Long currentOrgId);
+
+    void deletePost(Long postId, Long userId, Long orgId);
 }

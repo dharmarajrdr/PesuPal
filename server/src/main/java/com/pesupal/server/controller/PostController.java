@@ -68,4 +68,11 @@ public class PostController extends CurrentValueRetriever {
         Post post = postService.updatePost(postId, createPostDto, getCurrentUserId(), getCurrentOrgId());
         return ResponseEntity.ok().body(new ApiResponseDto("Post updated successfully", post));
     }
+
+    @DeleteMapping("/{postId}")
+    public ResponseEntity<ApiResponseDto> deletePost(@PathVariable Long postId) {
+
+        postService.deletePost(postId, getCurrentUserId(), getCurrentOrgId());
+        return ResponseEntity.ok().body(new ApiResponseDto("Post deleted successfully"));
+    }
 }
