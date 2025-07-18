@@ -2,8 +2,8 @@ package com.pesupal.server.strategies.media_storage;
 
 import com.pesupal.server.dto.response.MediaUploadDto;
 import com.pesupal.server.service.interfaces.MediaService;
-import io.github.cdimascio.dotenv.Dotenv;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.sync.RequestBody;
@@ -21,15 +21,14 @@ import java.util.UUID;
 @Service
 public class S3Service implements MediaService {
 
-    Dotenv dotenv = Dotenv.load();
-
     @Autowired
     private S3Client s3Client;
 
     @Autowired
     private S3Presigner s3Presigner;
 
-    private final String bucketName = dotenv.get("aws.s3.bucket.name");
+    @Value("${aws.s3.bucket.name}")
+    private String bucketName;
 
     /**
      * Uploads a file to the S3 bucket.
