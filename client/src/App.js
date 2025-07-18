@@ -15,6 +15,7 @@ import { combineReducers } from 'redux';
 import { Provider } from 'react-redux';
 import { VerticalLoaderReducer } from './store/reducers/VerticalLoader';
 import { NavigationReducers } from './store/reducers/Navigation';
+import PostReducer from './store/reducers/PostSlice';
 import PageNotFound from './components/Auth/PageNotFound';
 import SettingsLayout from './components/Settings/SettingsLayout';
 import MoreFeaturesLayout from './components/More/MoreFeaturesLayout';
@@ -24,7 +25,8 @@ import { apiRequest } from './http_request';
 const store = configureStore({
     reducer: combineReducers({
         Navigation: NavigationReducers,
-        VerticalLoader: VerticalLoaderReducer
+        VerticalLoader: VerticalLoaderReducer,
+        posts: PostReducer
     }),
     devTools: true
 });
