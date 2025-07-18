@@ -1,6 +1,7 @@
 package com.pesupal.server.service.interfaces;
 
 import com.pesupal.server.dto.request.CreatePollDto;
+import com.pesupal.server.dto.request.UpdatePollDto;
 import com.pesupal.server.model.post.Poll;
 import com.pesupal.server.model.post.Post;
 
@@ -13,4 +14,8 @@ public interface PollService {
     void validateNewPoll(CreatePollDto poll);
 
     void deleteByPost(Post post);
+
+    Poll getPollById(Long pollId);
+
+    void updatePoll(Long pollId, UpdatePollDto updatePollDto, Long userId, Long orgId);
 }
