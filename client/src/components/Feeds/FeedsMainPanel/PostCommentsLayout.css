@@ -69,6 +69,10 @@
     color: var(--primary-color);
 }
 
+#comments-list {
+    height: calc(100% - 150px);
+}
+
 #create-comment {
     position: sticky;
     bottom: 0;

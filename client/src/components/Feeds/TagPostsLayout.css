@@ -1,0 +1,26 @@
+#tag-posts-layout {
+    overflow: auto;
+    padding-bottom: 100px;
+}
+
+#tag-posts-layout #postsList {
+    width: 50%;
+    padding-bottom: 50px;
+}
+
+#tags-page-header {
+    border-bottom: 1px solid var(--box-shadow-color);
+    background-color: var(--bg-color);
+    position: sticky;
+    top: 0;
+    z-index: 5;
+}
+
+#tags-page-header h1 {
+    font-size: 1.5rem;
+    font-weight: 500;
+    color: var(--primary-color);
+    font-family: 'system-ui';
+    cursor: default;
+    user-select: all;
+}

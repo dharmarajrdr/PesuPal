@@ -29,6 +29,8 @@ public class Post extends CreationTimeAuditable {
 
     private boolean media;
 
+    private boolean hasPoll;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private PostStatus status;

@@ -22,6 +22,10 @@
     border-bottom: 1px solid #eee;
 }
 
+#post-options .option:last-child {
+    border-bottom: none;
+}
+
 #post-options .option:hover {
     background-color: var(--pure-white-hover);
     color: var(--primary-color-active);

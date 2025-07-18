@@ -1,10 +1,7 @@
 package com.pesupal.server.service.implementations;
 
 import com.pesupal.server.dto.request.CreatePostDto;
-import com.pesupal.server.dto.response.PostDto;
-import com.pesupal.server.dto.response.PostImpressionDto;
-import com.pesupal.server.dto.response.PostsListDto;
-import com.pesupal.server.dto.response.UserBasicInfoDto;
+import com.pesupal.server.dto.response.*;
 import com.pesupal.server.enums.PostStatus;
 import com.pesupal.server.enums.SortOrder;
 import com.pesupal.server.exceptions.ActionProhibitedException;
@@ -19,6 +16,8 @@ import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.model.user.User;
 import com.pesupal.server.repository.PostRepository;
 import com.pesupal.server.service.interfaces.*;
+import com.pesupal.server.strategies.media_storage.S3Service;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -36,11 +35,14 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class PostServiceImpl implements PostService {
 
+    private final S3Service s3Service;
     private final OrgService orgService;
     private final TagService tagService;
     private final UserService userService;
     private final PostRepository postRepository;
     private final OrgMemberService orgMemberService;
+    private final PostTagService postTagService;
+    private final PollService pollService;
 
     /**
      * Creates a new post.
@@ -48,6 +50,7 @@ public class PostServiceImpl implements PostService {
      * @param createPostDto
      */
     @Override
+    @Transactional
     public Post createPost(CreatePostDto createPostDto, Long userId, Long orgId) {
 
         Org org = orgService.getOrgById(orgId);
@@ -55,16 +58,24 @@ public class PostServiceImpl implements PostService {
 
         orgMemberService.validateUserIsOrgMember(user, org);
 
+        pollService.validateNewPoll(createPostDto.getPoll());
+        boolean hasPoll = createPostDto.getPoll() != null;
+
         Post post = createPostDto.toPost();
         post.setOrg(org);
         post.setUser(user);
         post.setStatus(PostStatus.PUBLISHED);
-        List<PostMedia> postMedia = createPostDto.getMediaIds().stream().map(mediaId -> PostMedia.builder().post(post).mediaId(mediaId).build()).collect(Collectors.toList());
+        List<PostMedia> postMedia = createPostDto.getMediaIds().stream().map(mediaId -> PostMedia.builder().post(post).mediaId(mediaId.getId()).extension(mediaId.getExtension()).build()).collect(Collectors.toList());
         post.setMedia(!postMedia.isEmpty());
         post.setPostMedia(postMedia);
         List<PostTag> postTags = createPostDto.getTags().stream().map(tagName -> PostTag.builder().post(post).tag(tagService.createOrGet(tagName)).build()).collect(Collectors.toList());
         post.setTags(postTags);
-        return postRepository.save(post);
+        post.setHasPoll(hasPoll);
+        postRepository.save(post);
+        if (hasPoll) {
+            pollService.createPoll(createPostDto.getPoll(), post);
+        }
+        return post;
     }
 
     private boolean isLiked(List<PostLike> likes, User user) {
@@ -82,10 +93,16 @@ public class PostServiceImpl implements PostService {
 
         PostDto postDto = PostDto.fromPost(post);
         postDto.setTags(post.getTags().stream().map(postTag -> postTag.getTag().getName()).toList());
-        postDto.setMedia(post.getPostMedia().stream().map(PostMedia::getMediaId).toList());
+        postDto.setMedia(post.getPostMedia().stream().map(postMedia -> {
+            String key = postMedia.getMediaId() + "." + postMedia.getExtension();
+            return s3Service.generatePresignedUrl(key);
+        }).toList());
         postDto.setOwner(UserBasicInfoDto.fromOrgMember(orgMember));
         postDto.setImpression(PostImpressionDto.builder().likes(post.getLikes().size()).comments(post.getComments().size()).build());
         postDto.setBookmarked(false);   // Feature not implemented yet
+        if (post.isHasPoll()) {
+            postDto.setPoll(PollDto.fromPoll(pollService.getPollByPost(post), orgMember.getUser().getId()));
+        }
         return postDto;
     }
 
@@ -154,6 +171,7 @@ public class PostServiceImpl implements PostService {
         OrgMember postOwnerOrgMember = orgMemberService.getOrgMemberByUserIdAndOrgId(postOwnerId, orgId);
         List<PostDto> postDtos = new ArrayList<>(postPage.getContent().stream().map(post -> {
             PostDto postDto = getPostDtoFromPostAndOrgMember(post, postOwnerOrgMember);
+            postDto.setCreator(post.getUser().getId().equals(userId));
             postDto.setLiked(isLiked(post.getLikes(), orgMember.getUser()));
             return postDto;
         }).toList());
@@ -200,5 +218,81 @@ public class PostServiceImpl implements PostService {
     public int getUserPostCount(Long userId, Long orgId) {
 
         return postRepository.countAllByUserIdAndOrgId(userId, orgId);
+    }
+
+    /**
+     * Retrieves posts by a specific tag.
+     *
+     * @param userId
+     * @param orgId
+     * @param tag
+     * @param page
+     * @param size
+     * @param sortOrder
+     * @return
+     */
+    @Override
+    public PostsListDto getPostByTag(Long userId, Long orgId, String tag, int page, int size, SortOrder sortOrder) {
+
+        OrgMember orgMember = orgMemberService.getOrgMemberByUserIdAndOrgId(userId, orgId);
+
+        Pageable pageable = PageRequest.of(page, size + 1);
+        Page<PostTag> postPage = postTagService.findAllByTagAndOrgId(tag, orgId, pageable);
+        List<PostDto> postDtos = new ArrayList<>(postPage.getContent().stream().map(postTag -> {
+            Post post = postTag.getPost();
+            OrgMember postOwnerOrgMember = orgMemberService.getOrgMemberByUserIdAndOrgId(post.getUser().getId(), orgId);
+            PostDto postDto = getPostDtoFromPostAndOrgMember(post, postOwnerOrgMember);
+            postDto.setCreator(post.getUser().getId().equals(userId));
+            postDto.setLiked(isLiked(post.getLikes(), orgMember.getUser()));
+            return postDto;
+        }).toList());
+        PostsListDto postsListDto = new PostsListDto();
+        postsListDto.setInfo(Map.of(
+                "hasMoreRecords", postDtos.size() == size + 1
+        ));
+        if (!postDtos.isEmpty() && postDtos.size() > size) {
+            postDtos.remove(postDtos.size() - 1); // Remove the extra post if it exists
+        }
+        postsListDto.setPosts(postDtos);
+        return postsListDto;
+    }
+
+    /**
+     * Updates an existing post.
+     *
+     * @param postId
+     * @param createPostDto
+     * @param userId
+     * @param orgId
+     * @return
+     */
+    @Override
+    public Post updatePost(Long postId, CreatePostDto createPostDto, Long userId, Long orgId) {
+
+        orgMemberService.validateUserIsOrgMember(userId, orgId);
+
+        Post post = getPostByIdAndOrgId(postId, orgId);
+        createPostDto.applyToPost(post);
+        return postRepository.save(post);
+    }
+
+    /**
+     * Deletes a post by its ID.
+     *
+     * @param postId
+     * @param userId
+     * @param orgId
+     */
+    @Override
+    public void deletePost(Long postId, Long userId, Long orgId) {
+
+        Post post = getPostByIdAndOrgId(postId, orgId);
+        if (!post.getUser().getId().equals(userId)) {
+            throw new PermissionDeniedException("You do not have permission to delete this post.");
+        }
+        if (post.isHasPoll()) {
+            pollService.deleteByPost(post);
+        }
+        postRepository.delete(post);
     }
 }

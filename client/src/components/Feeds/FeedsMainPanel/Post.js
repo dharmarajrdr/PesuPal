@@ -8,10 +8,15 @@ import { UsePopupFromSession } from '../../../UsePopupFromSession';
 import Popup from '../../Popup';
 import PostOptions from './PostOptions';
 import PostCommentsLayout from './PostCommentsLayout';
+import Poll from './Poll';
+import PostsLikedBy from './PostsLikedBy';
 
 const PostDescription = ({ html }) => <div className="post-description html-content-renderer postContent" dangerouslySetInnerHTML={{ __html: html }} />
 
-const PostHeader = ({ displayName, displayPicture, createdAt, setShowProfile, postId, isOptionOpen, onToggleOption }) => {
+const PostHeader = ({ displayName, displayPicture, createdAt, setShowProfile, postId, isOptionOpen, setPopupData, onToggleOption, commentable, setCommentable, isCreator, poll }) => {
+
+    const [pollUpdatable, setPollUpdatable] = useState(poll?.updatable);
+    const [showLikesList, setShowLikesList] = useState(false);
 
     return <div className='PostHeader FRCB'>
         <div className='FRCS'>
@@ -22,15 +27,17 @@ const PostHeader = ({ displayName, displayPicture, createdAt, setShowProfile, po
             </div>
         </div>
         <i className='fa-solid fa-ellipsis cursP' onClick={onToggleOption}></i>
-        {isOptionOpen && <PostOptions postId={postId} />}
+        {showLikesList && <PostsLikedBy postId={postId} closeShowLikesList={() => setShowLikesList(false)} showLikesList={showLikesList} />}
+        {isOptionOpen && <PostOptions setPopupData={setPopupData} pollUpdatable={pollUpdatable} setPollUpdatable={setPollUpdatable} isOptionOpen={isOptionOpen} postId={postId} commentable={commentable} setCommentable={setCommentable} isCreator={isCreator} poll={poll} setShowLikesList={setShowLikesList} />}
     </div>
 }
 
-const PostBody = ({ title, description, media, toggleMaxHeight, tags }) => {
+const PostBody = ({ title, description, media, toggleMaxHeight, tags, poll, setPoll }) => {
     return <div className='PostBody FCSS'>
         {title ? <h4 className='postTitle'>{title}</h4> : null}
         <PostDescription html={description} />
         <TagsContainer tags={tags} />
+        {poll && <Poll poll={poll} setPoll={setPoll} />}
         {media ? <MediaContainer media={media} toggleMaxHeight={toggleMaxHeight} key={media.id} /> : null}
     </div>
 }
@@ -38,14 +45,14 @@ const PostBody = ({ title, description, media, toggleMaxHeight, tags }) => {
 const TagsContainer = ({ tags }) => {
     return <div className='FRCS tagsContainer'>
         {tags && tags.map((tag, index) => (
-            <NavLink to={`/feeds/tag/${tag}`} key={index} className='tagNavLink'>{tag}</NavLink>
+            <NavLink to={`/feeds/tag/${tag.replace(/^#/m, '')}`} key={index} className='tagNavLink'>{tag}</NavLink>
         ))}
     </div>
 }
 
 const MediaContainer = ({ media, toggleMaxHeight }) => {
     return <div className='mediaContainer FCSS w100' onClick={toggleMaxHeight}>
-        {media.map((media, index) => <img key={index} src={`${utils.serverDomain}/api/v1/media/${media}`} className='media_image w100' />)}
+        {media.map((media, index) => <img key={index} src={media} className='media_image w100' />)}
     </div>
 }
 
@@ -59,7 +66,7 @@ const FullScreenImage = ({ closeFullScreen, fullScreenImage }) => {
     </div>
 }
 
-const Comment = ({ postId, commentable, commentsCount }) => {
+const Comment = ({ postId, commentable, commentsCount, setCommentsCount }) => {
 
     const [showCommentsList, setShowCommentsList] = useState(false);
 
@@ -71,16 +78,16 @@ const Comment = ({ postId, commentable, commentsCount }) => {
 
     return <>
         {commentable && <div className='postActions leftFooter FRCC mY5' onClick={() => setShowCommentsList(true)}><i className="fa-regular fa-comment"></i> {commentsCount}</div>}
-        {showCommentsList && <PostCommentsLayout postId={postId} closeShowCommentsList={closeShowCommentsList} commentable={commentable} />}
+        {showCommentsList && <PostCommentsLayout postId={postId} setCommentsCount={setCommentsCount} closeShowCommentsList={closeShowCommentsList} commentable={commentable} />}
     </>
 }
 
-const PostFooter = ({ postId, likedPost, likesCount, commentsCount, commentable, bookmarkable, bookmarked, likeHandler }) => {
+const PostFooter = ({ postId, likedPost, likesCount, commentsCount, setCommentsCount, commentable, bookmarkable, bookmarked, likeHandler }) => {
 
     return <div className='PostFooter w100 FRCB'>
         <div className='FRCS'>
             <div className={`postActions leftFooter FRCC mY5 ${likedPost && 'post-liked'}`} onClick={likeHandler}><i className={`fa-regular fa-thumbs-up`}></i> {likesCount}</div>
-            <Comment postId={postId} commentable={commentable} commentsCount={commentsCount} />
+            <Comment postId={postId} commentable={commentable} commentsCount={commentsCount} setCommentsCount={setCommentsCount} />
         </div>
         <div className='FRCE'>
             {bookmarkable && <div className='postActions rightFooter FRCC mY5'><i className={`fa-regular fa-bookmark ${bookmarked && 'bookmarked'}`}></i></div>}
@@ -91,7 +98,7 @@ const PostFooter = ({ postId, likedPost, likesCount, commentsCount, commentable,
 
 const Post = ({ post, isOptionOpen, onToggleOption }) => {
 
-    const { id, title, owner, description, createdAt, impression, media, mentions, liked, bookmarked, tags, commentable, bookmarkable } = post,
+    const { id, title, owner, description, createdAt, impression, media, mentions, liked, bookmarked, tags, bookmarkable, creator: isCreator } = post,
         { likes, comments } = impression || {},
         { userId, displayName, displayPicture } = owner,
         [fullScreenImage, setFullScreenImage] = useState(null),
@@ -114,10 +121,12 @@ const Post = ({ post, isOptionOpen, onToggleOption }) => {
         };
 
     const [showProfile, setShowProfile] = useState(false);
-
+    const [commentable, setCommentable] = useState(post.commentable);
     const [popupData, setPopupData] = useState(null);
     const [likedPost, setLikedPost] = useState(liked);
     const [likesCount, setLikesCount] = useState(likes || 0);
+    const [commentsCount, setCommentsCount] = useState(comments || 0);
+    const [poll, setPoll] = useState(post.poll);
 
     const showPopup = (message, type) => {
         setPopupData({ message, type });
@@ -143,9 +152,9 @@ const Post = ({ post, isOptionOpen, onToggleOption }) => {
         <div className='Post w100'>
             {popupData && <Popup message={popupData.message} type={popupData.type} />}
             {fullScreenImage ? <FullScreenImage closeFullScreen={closeFullScreen} fullScreenImage={fullScreenImage} /> : null}
-            <PostHeader isOptionOpen={isOptionOpen} onToggleOption={onToggleOption} postId={id} displayName={displayName} displayPicture={displayPicture} createdAt={createdAt} setShowProfile={setShowProfile} />
-            <PostBody title={title} description={description} media={media} toggleMaxHeight={toggleMaxHeight} tags={tags} />
-            <PostFooter postId={id} likedPost={likedPost} likesCount={likesCount} commentsCount={comments || 0} commentable={commentable} bookmarkable={bookmarkable} bookmarked={bookmarked} likeHandler={likeHandler} />
+            <PostHeader isOptionOpen={isOptionOpen} onToggleOption={onToggleOption} postId={id} displayName={displayName} displayPicture={displayPicture} createdAt={createdAt} setShowProfile={setShowProfile} commentable={commentable} setCommentable={setCommentable} setPopupData={setPopupData} isCreator={isCreator} poll={poll} />
+            <PostBody title={title} description={description} media={media} toggleMaxHeight={toggleMaxHeight} tags={tags} poll={poll} setPoll={setPoll} />
+            <PostFooter postId={id} likedPost={likedPost} likesCount={likesCount} commentsCount={commentsCount} setCommentsCount={setCommentsCount} commentable={commentable} bookmarkable={bookmarkable} bookmarked={bookmarked} likeHandler={likeHandler} />
             {showProfile && <Profile userId={userId} setShowProfile={setShowProfile} />}
         </div>
     )

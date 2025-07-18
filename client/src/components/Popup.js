@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import "./Popup.css"; // Styling is the same
 
 const Popup = ({ message, type = "info", duration = 30000 }) => {

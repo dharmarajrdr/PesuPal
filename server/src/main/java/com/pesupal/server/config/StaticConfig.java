@@ -18,6 +18,8 @@ public class StaticConfig {
 
     public static final int MAX_FILE_SIZE_IN_MB = 5;
 
+    public static final int MAXIMUM_OPTIONS_PER_POLL = 4;
+
     public static final List<String> HUMAN_RESOURCE_ROLES = List.of("HR", "Human Resource", "Recruiter");
 
     public static boolean eligibleToCreateSubscriptionPlan(Role role) {

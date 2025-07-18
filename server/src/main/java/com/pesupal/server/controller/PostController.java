@@ -44,10 +44,35 @@ public class PostController extends CurrentValueRetriever {
         return ResponseEntity.ok().body(new ApiResponseDto("Posts retrieved successfully.", posts.getPosts(), posts.getInfo()));
     }
 
+    @GetMapping("/tag/{tag}")
+    public ResponseEntity<ApiResponseDto> getPostsByTag(@PathVariable(name = "tag") String tag,
+                                                        @RequestParam(defaultValue = "0") int page,
+                                                        @RequestParam(defaultValue = "10") int size,
+                                                        @RequestParam(name = "sort_order", defaultValue = "DESC") String sortOrder) {
+
+
+        PostsListDto posts = postService.getPostByTag(getCurrentUserId(), getCurrentOrgId(), "#" + tag, page, size, SortOrder.valueOf(sortOrder));
+        return ResponseEntity.ok().body(new ApiResponseDto("Posts retrieved successfully.", posts.getPosts(), posts.getInfo()));
+    }
+
     @PutMapping("/archive/{postId}")
     public ResponseEntity<ApiResponseDto> archivePost(@PathVariable Long postId) {
 
         postService.archivePost(postId, getCurrentUserId(), getCurrentOrgId());
         return ResponseEntity.ok().body(new ApiResponseDto("Post archived successfully"));
+    }
+
+    @PatchMapping("/{postId}")
+    public ResponseEntity<ApiResponseDto> updatePost(@PathVariable Long postId, @RequestBody CreatePostDto createPostDto) {
+
+        Post post = postService.updatePost(postId, createPostDto, getCurrentUserId(), getCurrentOrgId());
+        return ResponseEntity.ok().body(new ApiResponseDto("Post updated successfully", post));
+    }
+
+    @DeleteMapping("/{postId}")
+    public ResponseEntity<ApiResponseDto> deletePost(@PathVariable Long postId) {
+
+        postService.deletePost(postId, getCurrentUserId(), getCurrentOrgId());
+        return ResponseEntity.ok().body(new ApiResponseDto("Post deleted successfully"));
     }
 }
