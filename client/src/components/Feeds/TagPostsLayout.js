@@ -75,7 +75,7 @@ const TagPostsLayout = () => {
     }
 
     return (
-        <div id='tag-posts-layout' className='FCCS w100 h100' onClick={overlayClickHandler}>
+        <div id='tag-posts-layout' className='posts-layout FCCS w100 h100' onClick={overlayClickHandler}>
             <div id="postsList">
                 {loading ? <Loader /> :
                     error ? <ErrorMessage /> :

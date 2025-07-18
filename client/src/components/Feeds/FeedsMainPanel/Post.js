@@ -32,12 +32,12 @@ const PostHeader = ({ displayName, displayPicture, createdAt, setShowProfile, po
     </div>
 }
 
-const PostBody = ({ title, description, media, toggleMaxHeight, tags, poll, setPoll }) => {
+const PostBody = ({ title, description, media, toggleMaxHeight, tags, poll, setPoll, showPopup }) => {
     return <div className='PostBody FCSS'>
         {title ? <h4 className='postTitle'>{title}</h4> : null}
         <PostDescription html={description} />
         <TagsContainer tags={tags} />
-        {poll && <Poll poll={poll} setPoll={setPoll} />}
+        {poll && <Poll poll={poll} setPoll={setPoll} showPopup={showPopup} />}
         {media ? <MediaContainer media={media} toggleMaxHeight={toggleMaxHeight} key={media.id} /> : null}
     </div>
 }
@@ -145,6 +145,7 @@ const Post = ({ post, isOptionOpen, onToggleOption }) => {
             }
         }).catch(({ message }) => {
             showPopup(message, 'error');
+            setTimeout(showPopup(null), 3000);
         });
     }
 
@@ -153,7 +154,7 @@ const Post = ({ post, isOptionOpen, onToggleOption }) => {
             {popupData && <Popup message={popupData.message} type={popupData.type} />}
             {fullScreenImage ? <FullScreenImage closeFullScreen={closeFullScreen} fullScreenImage={fullScreenImage} /> : null}
             <PostHeader isOptionOpen={isOptionOpen} onToggleOption={onToggleOption} postId={id} displayName={displayName} displayPicture={displayPicture} createdAt={createdAt} setShowProfile={setShowProfile} commentable={commentable} setCommentable={setCommentable} setPopupData={setPopupData} isCreator={isCreator} poll={poll} />
-            <PostBody title={title} description={description} media={media} toggleMaxHeight={toggleMaxHeight} tags={tags} poll={poll} setPoll={setPoll} />
+            <PostBody title={title} description={description} media={media} toggleMaxHeight={toggleMaxHeight} tags={tags} poll={poll} setPoll={setPoll} setPopupData={setPopupData} showPopup={showPopup} />
             <PostFooter postId={id} likedPost={likedPost} likesCount={likesCount} commentsCount={commentsCount} setCommentsCount={setCommentsCount} commentable={commentable} bookmarkable={bookmarkable} bookmarked={bookmarked} likeHandler={likeHandler} />
             {showProfile && <Profile userId={userId} setShowProfile={setShowProfile} />}
         </div>

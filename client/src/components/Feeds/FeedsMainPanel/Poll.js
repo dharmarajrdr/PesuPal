@@ -2,7 +2,7 @@ import { useState } from "react";
 import "./Poll.css";
 import { apiRequest } from "../../../http_request";
 
-const Poll = ({ poll, setPoll }) => {
+const Poll = ({ poll, setPoll, showPopup }) => {
 
     const [selectedOptionId, setSelectedOptionId] = useState(poll.votedOptionId || null);
     const [voted, setVoted] = useState(poll.votedOptionId);
@@ -14,7 +14,8 @@ const Poll = ({ poll, setPoll }) => {
     const handleVote = ({ id }) => {
 
         if (selectedOptionId === id) {
-            alert("You have already voted for this option.");
+            showPopup("You have already voted for this option.", 'error');
+            setTimeout(() => showPopup(null), 3000);
             return;
         }
 
@@ -24,8 +25,9 @@ const Poll = ({ poll, setPoll }) => {
             setVoted(true);
             setSelectedOptionId(id);
 
-        }).catch((error) => {
-            console.log(error);
+        }).catch(({ message }) => {
+            showPopup(message, 'error');
+            setTimeout(() => showPopup(null), 3000);
         });
 
     };

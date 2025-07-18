@@ -14,7 +14,10 @@ const PostOptions = ({ postId, commentable, setCommentable, isCreator, poll, pol
     }
 
     const closeOptionsModal = () => {
-        document.getElementById('tag-posts-layout').click();
+        const postsLayout = document.getElementsByClassName('posts-layout');
+        if (postsLayout) {
+            postsLayout[0].click();
+        }
     }
 
     const toggleCommentSectionHandler = () => {
@@ -25,7 +28,7 @@ const PostOptions = ({ postId, commentable, setCommentable, isCreator, poll, pol
             cleanupPopupAfterTimeout();
         }).catch(({ message }) => {
             closeOptionsModal();
-            console.error({ message });  //eslint-disable-line no-console
+            setPopupData({ message, type: 'error' });
         });
     }
 
@@ -37,7 +40,7 @@ const PostOptions = ({ postId, commentable, setCommentable, isCreator, poll, pol
             cleanupPopupAfterTimeout();
         }).catch(({ message }) => {
             closeOptionsModal();
-            console.error({ message });  //eslint-disable-line no-console
+            setPopupData({ message, type: 'error' });
         });
     }
 

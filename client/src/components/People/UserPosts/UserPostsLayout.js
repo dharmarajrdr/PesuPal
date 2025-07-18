@@ -54,7 +54,7 @@ const UserPostsLayout = () => {
   }
 
   return (
-    <div id='user-posts-layout' className='FCCS w100 h100' onClick={overlayClickHandler}>
+    <div id='user-posts-layout' className='posts-layout FCCS w100 h100' onClick={overlayClickHandler}>
       <div id="postsList">
         {loading ? <Loader /> :
           error ? <ErrorMessage /> :

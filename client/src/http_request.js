@@ -1,16 +1,15 @@
 import utils from "./utils";
 
-const BASE_URL = 'http://localhost:8080'; // Adjust the base URL as needed
+const BASE_URL = 'http://localhost:8080'; // Update as needed
 
 export async function apiRequest(endpoint, method = 'GET', data = null, customHeaders = {}) {
-
     const token = utils.parseCookie().get('token');
-    const orgId = sessionStorage.getItem('org-id'); // adjust as needed
+    const orgId = sessionStorage.getItem('org-id'); // Optional: get orgId from session
 
     const headers = {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
-        'X-Org-Id': orgId || null,
+        ...(orgId && { 'X-Org-Id': orgId }),
         ...customHeaders,
     };
 
@@ -18,10 +17,7 @@ export async function apiRequest(endpoint, method = 'GET', data = null, customHe
         headers['Authorization'] = `Bearer ${token}`;
     }
 
-    const config = {
-        method,
-        headers,
-    };
+    const config = { method, headers };
 
     if (data && method !== 'GET') {
         config.body = JSON.stringify(data);
@@ -29,25 +25,30 @@ export async function apiRequest(endpoint, method = 'GET', data = null, customHe
 
     try {
         const response = await fetch(`${BASE_URL}${endpoint}`, config);
-        const contentType = response.headers.get('content-type');
+        const contentType = response.headers.get('content-type') || '';
 
-        if (!response.ok) {
-            const errorResponse = contentType?.includes('application/json')
-                ? await response.json()
-                : { message: await response.text() };
-            throw new Error(errorResponse.message || 'API request failed');
+        const isJson = contentType.includes('application/json');
+        const result = isJson ? await response.json() : {
+            message: await response.text(),
+            status: 'FAILURE',
+        };
+
+        if (!response.ok || result.status === 'FAILURE') {
+            if (result.message === "Invalid JWT token") {
+                document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/';
+                window.location.reload(); // Auto logout
+            }
+            throw result;
         }
 
-        return contentType?.includes('application/json')
-            ? await response.json()
-            : await response.text();
+        return result; // { message, data, info, status }
+
     } catch (error) {
-        const { message } = JSON.parse(error.message) || {};
-        console.log(message);
-        if (message == "Invalid JWT token") {
-            document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/';
-            window.location.reload();   // Reload the page to clear the session
-        }
-        throw error;
+        const fallbackError = {
+            message: error?.message || 'Something went wrong',
+            status: 'FAILURE'
+        };
+
+        throw typeof error === 'object' && error.message ? error : fallbackError;
     }
 }
