@@ -47,7 +47,7 @@ const Poll = ({ poll, setPoll }) => {
                     );
                 })}
             </div>
-            {voted && <p className="poll-total-votes">Total Voters: {totalVotes}</p>}
+            {voted && <p className="poll-total-votes">{totalVotes} votes</p>}
         </div>
     );
 };

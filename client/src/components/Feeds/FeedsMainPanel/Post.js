@@ -9,10 +9,14 @@ import Popup from '../../Popup';
 import PostOptions from './PostOptions';
 import PostCommentsLayout from './PostCommentsLayout';
 import Poll from './Poll';
+import PostsLikedBy from './PostsLikedBy';
 
 const PostDescription = ({ html }) => <div className="post-description html-content-renderer postContent" dangerouslySetInnerHTML={{ __html: html }} />
 
-const PostHeader = ({ displayName, displayPicture, createdAt, setShowProfile, postId, isOptionOpen, onToggleOption, commentable, setCommentable, isCreator }) => {
+const PostHeader = ({ displayName, displayPicture, createdAt, setShowProfile, postId, isOptionOpen, setPopupData, onToggleOption, commentable, setCommentable, isCreator, poll }) => {
+
+    const [pollUpdatable, setPollUpdatable] = useState(poll?.updatable);
+    const [showLikesList, setShowLikesList] = useState(false);
 
     return <div className='PostHeader FRCB'>
         <div className='FRCS'>
@@ -23,7 +27,8 @@ const PostHeader = ({ displayName, displayPicture, createdAt, setShowProfile, po
             </div>
         </div>
         <i className='fa-solid fa-ellipsis cursP' onClick={onToggleOption}></i>
-        {isOptionOpen && <PostOptions postId={postId} commentable={commentable} setCommentable={setCommentable} isCreator={isCreator} />}
+        {showLikesList && <PostsLikedBy postId={postId} closeShowLikesList={() => setShowLikesList(false)} showLikesList={showLikesList} />}
+        {isOptionOpen && <PostOptions setPopupData={setPopupData} pollUpdatable={pollUpdatable} setPollUpdatable={setPollUpdatable} isOptionOpen={isOptionOpen} postId={postId} commentable={commentable} setCommentable={setCommentable} isCreator={isCreator} poll={poll} setShowLikesList={setShowLikesList} />}
     </div>
 }
 
@@ -147,7 +152,7 @@ const Post = ({ post, isOptionOpen, onToggleOption }) => {
         <div className='Post w100'>
             {popupData && <Popup message={popupData.message} type={popupData.type} />}
             {fullScreenImage ? <FullScreenImage closeFullScreen={closeFullScreen} fullScreenImage={fullScreenImage} /> : null}
-            <PostHeader isOptionOpen={isOptionOpen} onToggleOption={onToggleOption} postId={id} displayName={displayName} displayPicture={displayPicture} createdAt={createdAt} setShowProfile={setShowProfile} commentable={commentable} setCommentable={setCommentable} isCreator={isCreator} />
+            <PostHeader isOptionOpen={isOptionOpen} onToggleOption={onToggleOption} postId={id} displayName={displayName} displayPicture={displayPicture} createdAt={createdAt} setShowProfile={setShowProfile} commentable={commentable} setCommentable={setCommentable} setPopupData={setPopupData} isCreator={isCreator} poll={poll} />
             <PostBody title={title} description={description} media={media} toggleMaxHeight={toggleMaxHeight} tags={tags} poll={poll} setPoll={setPoll} />
             <PostFooter postId={id} likedPost={likedPost} likesCount={likesCount} commentsCount={commentsCount} setCommentsCount={setCommentsCount} commentable={commentable} bookmarkable={bookmarkable} bookmarked={bookmarked} likeHandler={likeHandler} />
             {showProfile && <Profile userId={userId} setShowProfile={setShowProfile} />}
