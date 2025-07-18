@@ -18,6 +18,8 @@ public class PollDto {
 
     private Long votedOptionId;
 
+    private boolean updatable;
+
     public static PollDto fromPoll(Poll poll, Long userId) {
 
         PollDto pollDto = new PollDto();
@@ -39,6 +41,7 @@ public class PollDto {
         }
 
         pollDto.setVotedOptionId(votedOptionId);
+        pollDto.setUpdatable(pollDto.isUpdatable());
         boolean finalRevealVotes = revealVotes;
         pollDto.setOptions(poll.getOptions().stream().map(opt -> PollOptionDto.fromPollOption(opt, finalRevealVotes)).toList());
 
