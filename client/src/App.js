@@ -48,12 +48,14 @@ function App() {
     }, [location.pathname, navigate]);
 
     useEffect(() => {
-        apiRequest("/api/v1/people/display-picture", "GET").then(({ data }) => {
-            const updatedProfile = { ...profile, image: data, icon: null };
-            setProfile(updatedProfile);
-        }).catch(({ message }) => {
-            console.error("Error fetching profile image:", message);
-        });
+        if (!isAuthPage) {
+            apiRequest("/api/v1/people/display-picture", "GET").then(({ data }) => {
+                const updatedProfile = { ...profile, image: data, icon: null };
+                setProfile(updatedProfile);
+            }).catch(({ message }) => {
+                console.error("Error fetching profile image:", message);
+            });
+        }
     }, [orgId]);
 
     return (
