@@ -10,7 +10,7 @@ public interface UserService {
 
     User getUserById(Long userId);
 
-    User createUser(CreateUserDto createUserDto);
+    User createUser(CreateUserDto createUserDto) throws Exception;
 
     Optional<UserLoginCheckDto> getUserLoginCheckByEmail(String email);
 

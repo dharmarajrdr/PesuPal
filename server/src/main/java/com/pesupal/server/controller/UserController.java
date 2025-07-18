@@ -19,7 +19,7 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping()
-    public ResponseEntity<ApiResponseDto> createUser(@RequestBody CreateUserDto createUserDto) {
+    public ResponseEntity<ApiResponseDto> createUser(@RequestBody CreateUserDto createUserDto) throws Exception {
 
         User createdUser = userService.createUser(createUserDto);
         return ResponseEntity.ok(new ApiResponseDto("User created successfully.", createdUser));
