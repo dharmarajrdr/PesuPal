@@ -1,10 +1,7 @@
 package com.pesupal.server.model.post;
 
 import com.pesupal.server.model.BaseModel;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import lombok.Data;
 
 import java.util.List;
@@ -13,7 +10,7 @@ import java.util.List;
 @Entity
 public class PollOption extends BaseModel {
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     private Poll poll;
 
     @Column(nullable = false)
