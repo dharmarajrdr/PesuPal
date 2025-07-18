@@ -1,19 +1,43 @@
 import { useState } from 'react';
 import './PostOptions.css';
-import PostsLikedBy from './PostsLikedBy';
 import { apiRequest } from '../../../http_request';
 import ConfirmationPopup from '../../Utils/ConfirmationPopup';
 
-const PostOptions = ({ postId, commentable, setCommentable, isCreator }) => {
+const PostOptions = ({ postId, commentable, setCommentable, isCreator, poll, pollUpdatable, setPollUpdatable, setPopupData, setShowLikesList }) => {
 
-    const [showLikesList, setShowLikesList] = useState(false);
     const [deletePostClicked, setDeletePostClicked] = useState(false);
+
+    const cleanupPopupAfterTimeout = () => {
+        setTimeout(() => {
+            setPopupData(null);
+        }, 3000);
+    }
+
+    const closeOptionsModal = () => {
+        document.getElementById('tag-posts-layout').click();
+    }
 
     const toggleCommentSectionHandler = () => {
         apiRequest(`/api/v1/post/${postId}`, "PATCH", { commentable: !commentable }).then(({ data }) => {
             setCommentable(!commentable);
+            setPopupData({ message: `Post comments ${!commentable ? 'enabled' : 'disabled'}`, type: 'success' });
+            closeOptionsModal();
+            cleanupPopupAfterTimeout();
         }).catch(({ message }) => {
-            console.error({ 'module': toggleCommentSectionHandler, message });  //eslint-disable-line no-console
+            closeOptionsModal();
+            console.error({ message });  //eslint-disable-line no-console
+        });
+    }
+
+    const pollUpdateHandler = () => {
+        apiRequest(`/api/v1/post/poll/${poll.id}`, "PATCH", { "votesUpdatable": !pollUpdatable }).then(({ data }) => {
+            setPollUpdatable(!pollUpdatable);
+            setPopupData({ message: `Poll update ${!pollUpdatable ? 'enabled' : 'disabled'}`, type: 'success' });
+            closeOptionsModal();
+            cleanupPopupAfterTimeout();
+        }).catch(({ message }) => {
+            closeOptionsModal();
+            console.error({ message });  //eslint-disable-line no-console
         });
     }
 
@@ -24,9 +48,11 @@ const PostOptions = ({ postId, commentable, setCommentable, isCreator }) => {
             onClick: () => {
                 apiRequest(`/api/v1/post/${postId}`, "DELETE").then(() => {
                     setDeletePostClicked(false);
+                    closeOptionsModal();
                     window.location.reload();
                 }).catch(({ message }) => {
-                    console.error({ 'module': 'deletePopupOptions', message }); // eslint-disable-line no-console
+                    closeOptionsModal();
+                    console.error({ message }); // eslint-disable-line no-console
                 });
             }
         },
@@ -38,16 +64,22 @@ const PostOptions = ({ postId, commentable, setCommentable, isCreator }) => {
     ];
 
     return (
-        <div className="FCSS" id="post-options">
+        <div div className="FCSS" id="post-options" >
 
-            {showLikesList && <PostsLikedBy postId={postId} closeShowLikesList={() => setShowLikesList(false)} />}
-            <div className='option' onClick={() => setShowLikesList(true)}>Show Post Likes</div>
+            <div className='option' onClick={() => { setShowLikesList(true); closeOptionsModal(); }}>Show Post Likes</div>
 
-            {isCreator && <>
-                <div className='option' onClick={toggleCommentSectionHandler} >{commentable ? 'Disable' : 'Enable'} Post Comments</div>
-                <div className='option' onClick={() => setDeletePostClicked(true)}>Delete Post</div>
-                {deletePostClicked && <ConfirmationPopup message={"Are you sure you want to delete this post?"} onClose={() => setDeletePostClicked(false)} options={deletePopupOptions} />}
-            </>}
+            {
+                isCreator && <>
+
+                    {poll && <div className='option' onClick={pollUpdateHandler} >{pollUpdatable ? 'Disable' : 'Enable'} Poll Update</div>}
+
+                    <div className='option' onClick={toggleCommentSectionHandler} >{commentable ? 'Disable' : 'Enable'} Post Comments</div>
+
+                    <div className='option' onClick={() => setDeletePostClicked(true)}>Delete Post</div>
+                    {deletePostClicked && <ConfirmationPopup message={"Are you sure you want to delete this post?"} onClose={() => setDeletePostClicked(false)} options={deletePopupOptions} />}
+
+                </>
+            }
         </div>
     )
 }
