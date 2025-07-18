@@ -56,7 +56,9 @@ public class PostCommentServiceImpl implements PostCommentService {
         PostComment postComment = createPostCommentDto.toPostComment();
         postComment.setPost(post);
         postComment.setCommenter(user);
-        return PostCommentDto.fromPostCommentAndOrgMember(postCommentRepository.save(postComment), orgMember);
+        PostCommentDto postCommentDto = PostCommentDto.fromPostCommentAndOrgMember(postCommentRepository.save(postComment), orgMember);
+        postCommentDto.setDeleteable(true);
+        return postCommentDto;
     }
 
     /**
