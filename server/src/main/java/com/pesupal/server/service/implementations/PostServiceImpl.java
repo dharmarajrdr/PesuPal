@@ -1,10 +1,7 @@
 package com.pesupal.server.service.implementations;
 
 import com.pesupal.server.dto.request.CreatePostDto;
-import com.pesupal.server.dto.response.PostDto;
-import com.pesupal.server.dto.response.PostImpressionDto;
-import com.pesupal.server.dto.response.PostsListDto;
-import com.pesupal.server.dto.response.UserBasicInfoDto;
+import com.pesupal.server.dto.response.*;
 import com.pesupal.server.enums.PostStatus;
 import com.pesupal.server.enums.SortOrder;
 import com.pesupal.server.exceptions.ActionProhibitedException;
@@ -20,6 +17,7 @@ import com.pesupal.server.model.user.User;
 import com.pesupal.server.repository.PostRepository;
 import com.pesupal.server.service.interfaces.*;
 import com.pesupal.server.strategies.media_storage.S3Service;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -44,6 +42,7 @@ public class PostServiceImpl implements PostService {
     private final PostRepository postRepository;
     private final OrgMemberService orgMemberService;
     private final PostTagService postTagService;
+    private final PollService pollService;
 
     /**
      * Creates a new post.
@@ -51,12 +50,16 @@ public class PostServiceImpl implements PostService {
      * @param createPostDto
      */
     @Override
+    @Transactional
     public Post createPost(CreatePostDto createPostDto, Long userId, Long orgId) {
 
         Org org = orgService.getOrgById(orgId);
         User user = userService.getUserById(userId);
 
         orgMemberService.validateUserIsOrgMember(user, org);
+
+        pollService.validateNewPoll(createPostDto.getPoll());
+        boolean hasPoll = createPostDto.getPoll() != null;
 
         Post post = createPostDto.toPost();
         post.setOrg(org);
@@ -67,7 +70,12 @@ public class PostServiceImpl implements PostService {
         post.setPostMedia(postMedia);
         List<PostTag> postTags = createPostDto.getTags().stream().map(tagName -> PostTag.builder().post(post).tag(tagService.createOrGet(tagName)).build()).collect(Collectors.toList());
         post.setTags(postTags);
-        return postRepository.save(post);
+        post.setHasPoll(hasPoll);
+        postRepository.save(post);
+        if (hasPoll) {
+            pollService.createPoll(createPostDto.getPoll(), post);
+        }
+        return post;
     }
 
     private boolean isLiked(List<PostLike> likes, User user) {
@@ -92,6 +100,9 @@ public class PostServiceImpl implements PostService {
         postDto.setOwner(UserBasicInfoDto.fromOrgMember(orgMember));
         postDto.setImpression(PostImpressionDto.builder().likes(post.getLikes().size()).comments(post.getComments().size()).build());
         postDto.setBookmarked(false);   // Feature not implemented yet
+        if (post.isHasPoll()) {
+            postDto.setPoll(PollDto.fromPoll(pollService.getPollByPost(post)));
+        }
         return postDto;
     }
 
@@ -278,6 +289,9 @@ public class PostServiceImpl implements PostService {
         Post post = getPostByIdAndOrgId(postId, orgId);
         if (!post.getUser().getId().equals(userId)) {
             throw new PermissionDeniedException("You do not have permission to delete this post.");
+        }
+        if (post.isHasPoll()) {
+            pollService.deleteByPost(post);
         }
         postRepository.delete(post);
     }
