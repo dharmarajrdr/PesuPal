@@ -8,7 +8,7 @@ import Profile from '../../OthersProfile/Profile';
 
 const NoCommentsFound = () => {
     return (
-        <div className='FCCC w100 h100' id='no-data-found'>
+        <div className='FCCC w100 h100P' id='no-data-found'>
             <p className='FRCC w100'>
                 <i className='fa fa-comment-slash' /> No comments found
             </p>
@@ -17,11 +17,25 @@ const NoCommentsFound = () => {
     )
 }
 
-const CreateCommentContainer = ({ postId }) => {
+const CreateCommentContainer = ({ postId, setComments, setCommentsCount }) => {
+
+    const [comment, setComment] = useState('');
+
+    const submitCommentHandler = () => {
+        if (!comment.trim()) { return; }
+        apiRequest(`/api/v1/post/comment`, "POST", { message: comment, postId }).then(({ data }) => {
+            setComment('');
+            setComments(prevComments => [data, ...prevComments]);
+            setCommentsCount(prevCount => prevCount + 1);
+        }).catch(({ message }) => {
+            console.error('Error creating comment:', message);
+        });
+    }
+
     return (
         <div id='create-comment' className='FRCC w100'>
-            <textarea className='create-comment-textarea' placeholder='Write a comment...' />
-            <button className='create-comment-button' onClick={() => console.log('Create comment for post:', postId)}>
+            <textarea className='create-comment-textarea' placeholder='Write a comment...' value={comment} onChange={(e) => setComment(e.target.value)} />
+            <button className='create-comment-button' onClick={submitCommentHandler}>
                 <i className='fa fa-paper-plane mR5' /> Post
             </button>
         </div>
@@ -81,7 +95,7 @@ const CommentReply = ({ commentId }) => {
     return null;
 }
 
-const CommentsContainer = ({ postId, commentable }) => {
+const CommentsContainer = ({ postId, commentable, setCommentsCount }) => {
 
     const [comments, setComments] = useState([]);
     const [error, setError] = useState(null);
@@ -104,19 +118,21 @@ const CommentsContainer = ({ postId, commentable }) => {
                     : error ? <ErrorMessage message={error} />
                         : <>
                             <h5 className='w100 alignCenter'>Post Comments({comments.length})</h5>
-                            {comments.length ? <CommentsList comments={comments} /> : <NoCommentsFound />}
-                            {commentable && <CreateCommentContainer postId={postId} />}
+                            <div className='w100' id='comments-list'>
+                                {comments.length ? <CommentsList comments={comments} /> : <NoCommentsFound />}
+                            </div>
+                            {commentable && <CreateCommentContainer setCommentsCount={setCommentsCount} postId={postId} setComments={setComments} />}
                         </>
             }
         </div>
     );
 }
 
-const PostCommentsLayout = ({ postId, commentable, closeShowCommentsList }) => {
+const PostCommentsLayout = ({ postId, commentable, closeShowCommentsList, setCommentsCount }) => {
 
     return (
         <div id='post-comments-layout' className='w100 h100 FRSC' onClick={closeShowCommentsList}>
-            <CommentsContainer postId={postId} commentable={commentable} />
+            <CommentsContainer postId={postId} commentable={commentable} setCommentsCount={setCommentsCount} />
         </div>
     )
 }
