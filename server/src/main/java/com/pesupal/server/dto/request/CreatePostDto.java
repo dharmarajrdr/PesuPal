@@ -28,6 +28,8 @@ public class CreatePostDto {
 
     private Boolean media = false;
 
+    private CreatePollDto poll;
+
     public Post toPost() {
 
         Post post = new Post();

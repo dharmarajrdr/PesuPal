@@ -40,6 +40,8 @@ public class PostDto {
 
     private boolean isCreator;
 
+    private PollDto poll;
+
     public static PostDto fromPost(Post post) {
 
         PostDto postDto = new PostDto();
