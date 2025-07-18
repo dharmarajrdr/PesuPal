@@ -45,13 +45,22 @@ const CreateCommentContainer = ({ postId, setComments, setCommentsCount }) => {
 
 const CommentContent = ({ html }) => <div className="comment-content html-content-renderer" dangerouslySetInnerHTML={{ __html: html }} />
 
-const Comment = ({ comment }) => {
+const Comment = ({ comment, setComments, setCommentsCount }) => {
 
-    const { userId, displayName, displayPicture, id, message, createdAt, replyCount, deleteable } = comment;
+    const { id, userId, displayName, displayPicture, message, createdAt, replyCount, deleteable } = comment;
 
     const [showReplies, setShowReplies] = useState(false);
     const [showProfile, setShowProfile] = useState(false);
     const [showDeleteIcon, setShowDeleteIcon] = useState(false);
+
+    const deleteCommentHandler = () => {
+        apiRequest(`/api/v1/post/comment/${id}`, 'DELETE').then(() => {
+            setComments(prevComments => prevComments.filter(c => c.id !== id));
+            setCommentsCount(prevCount => prevCount - 1);
+        }).catch(({ message }) => {
+            console.error('Error deleting comment:', message);
+        });
+    }
 
     return (
         <div className='comment-item FRSS w100' onMouseEnter={() => setShowDeleteIcon(true)} onMouseLeave={() => setShowDeleteIcon(false)}>
@@ -78,16 +87,16 @@ const Comment = ({ comment }) => {
                             {showReplies && <CommentReply commentId={id} />}
                         </>}
                     </div>
-                    {deleteable && showDeleteIcon && <p className='fs12 cursP delete-comment color555'><i className='fa fa-trash mR5 fs10 color777' />Delete</p>}
+                    {deleteable && showDeleteIcon && <p className='fs12 cursP delete-comment color555' onClick={deleteCommentHandler}><i className='fa fa-trash mR5 fs10 color777' />Delete</p>}
                 </div>
             </div>
         </div>
     )
 }
 
-const CommentsList = ({ comments }) => {
+const CommentsList = ({ comments, setComments, setCommentsCount }) => {
     return <>
-        {comments.map((comment, index) => <Comment key={index} comment={comment} />)}
+        {comments.map((comment, index) => <Comment key={index} comment={comment} setComments={setComments} setCommentsCount={setCommentsCount} />)}
     </>
 }
 
@@ -119,7 +128,7 @@ const CommentsContainer = ({ postId, commentable, setCommentsCount }) => {
                         : <>
                             <h5 className='w100 alignCenter'>Post Comments({comments.length})</h5>
                             <div className='w100' id='comments-list'>
-                                {comments.length ? <CommentsList comments={comments} /> : <NoCommentsFound />}
+                                {comments.length ? <CommentsList comments={comments} setComments={setComments} setCommentsCount={setCommentsCount} /> : <NoCommentsFound />}
                             </div>
                             {commentable && <CreateCommentContainer setCommentsCount={setCommentsCount} postId={postId} setComments={setComments} />}
                         </>
