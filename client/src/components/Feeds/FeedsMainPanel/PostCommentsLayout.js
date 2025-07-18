@@ -5,6 +5,7 @@ import Loader from '../../Loader';
 import ErrorMessage from '../../ErrorMessage';
 import utils from '../../../utils';
 import Profile from '../../OthersProfile/Profile';
+import ConfirmationPopup from '../../Utils/ConfirmationPopup';
 
 const NoCommentsFound = () => {
     return (
@@ -52,6 +53,7 @@ const Comment = ({ comment, setComments, setCommentsCount }) => {
     const [showReplies, setShowReplies] = useState(false);
     const [showProfile, setShowProfile] = useState(false);
     const [showDeleteIcon, setShowDeleteIcon] = useState(false);
+    const [clickedDelete, setClickedDelete] = useState(false);
 
     const deleteCommentHandler = () => {
         apiRequest(`/api/v1/post/comment/${id}`, 'DELETE').then(() => {
@@ -61,6 +63,15 @@ const Comment = ({ comment, setComments, setCommentsCount }) => {
             console.error('Error deleting comment:', message);
         });
     }
+
+    const deletePopupOptions = [{
+        "title": "Yes",
+        "color": "#ff4d4d",
+        "onClick": deleteCommentHandler
+    }, {
+        "title": "No",
+        "color": "#4CAF50",
+    }];
 
     return (
         <div className='comment-item FRSS w100' onMouseEnter={() => setShowDeleteIcon(true)} onMouseLeave={() => setShowDeleteIcon(false)}>
@@ -87,7 +98,8 @@ const Comment = ({ comment, setComments, setCommentsCount }) => {
                             {showReplies && <CommentReply commentId={id} />}
                         </>}
                     </div>
-                    {deleteable && showDeleteIcon && <p className='fs12 cursP delete-comment color555' onClick={deleteCommentHandler}><i className='fa fa-trash mR5 fs10 color777' />Delete</p>}
+                    {deleteable && showDeleteIcon && <p className='fs12 cursP delete-comment color555' onClick={() => setClickedDelete(true)}><i className='fa fa-trash mR5 fs10 color777' />Delete</p>}
+                    {clickedDelete && <ConfirmationPopup message={"Are you sure you want to delete this comment?"} onClose={() => setClickedDelete(false)} options={deletePopupOptions} />}
                 </div>
             </div>
         </div>
