@@ -38,10 +38,11 @@ public class PollServiceImpl implements PollService {
         return pollRepository.findByPost(post).orElseThrow(() -> new DataNotFoundException("No poll found for this post"));
     }
 
-    private List<PollOption> convertToPollOptions(Set<String> options) {
+    private List<PollOption> convertToPollOptions(Set<String> options, Poll poll) {
         return options.stream().map(option -> {
             PollOption pollOption = new PollOption();
             pollOption.setOption(option);
+            pollOption.setPoll(poll);
             return pollOption;
         }).collect(Collectors.toList());
     }
@@ -58,7 +59,7 @@ public class PollServiceImpl implements PollService {
 
         Poll poll = createPollDto.toPoll();
         poll.setPost(post);
-        poll.setOptions(convertToPollOptions(createPollDto.getOptions()));
+        poll.setOptions(convertToPollOptions(createPollDto.getOptions(), poll));
         return pollRepository.save(poll);
     }
 
