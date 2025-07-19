@@ -34,9 +34,9 @@ export async function apiRequest(endpoint, method = 'GET', data = null, customHe
         };
 
         if (!response.ok || result.status === 'FAILURE') {
-            if (result.message === "Invalid JWT token") {
+            if (response.status == 401) {
                 document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/';
-                window.location.reload(); // Auto logout
+                // window.location.reload(); // Auto logout
             }
             throw result;
         }

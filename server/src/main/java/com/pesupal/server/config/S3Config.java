@@ -1,6 +1,6 @@
 package com.pesupal.server.config;
 
-import io.github.cdimascio.dotenv.Dotenv;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
@@ -12,13 +12,14 @@ import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 @Configuration
 public class S3Config {
 
-    Dotenv dotenv = Dotenv.load();
+    @Value("${aws.s3.accessKey}")
+    private String accessKey;
 
-    private final String accessKey = dotenv.get("aws.s3.accessKey");
+    @Value("${aws.s3.secretKey}")
+    private String secretKey;
 
-    private final String secretKey = dotenv.get("aws.s3.secretKey");
-
-    private final String region = dotenv.get("aws.s3.region");
+    @Value("${aws.s3.region}")
+    private String region;
 
     @Bean
     public S3Client s3Client() {
