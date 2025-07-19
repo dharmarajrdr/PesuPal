@@ -1,6 +1,5 @@
 package com.pesupal.server.service.implementations;
 
-import com.pesupal.server.config.RequestContext;
 import com.pesupal.server.dto.request.ChatMessageDto;
 import com.pesupal.server.dto.request.GetConversationBetweenUsers;
 import com.pesupal.server.dto.response.DirectMessageResponseDto;
@@ -41,8 +40,8 @@ public class DirectMessageServiceImpl implements DirectMessageService {
     private final OrgMemberService orgMemberService;
 
     public DirectMessageServiceImpl(DirectMessageRepository directMessageRepository,
-            @Lazy DirectMessageReactionService directMessageReactionService, SecurityUtil securityUtil,
-            UserService userService, OrgService orgService, OrgMemberService orgMemberService) {
+                                    @Lazy DirectMessageReactionService directMessageReactionService, SecurityUtil securityUtil,
+                                    UserService userService, OrgService orgService, OrgMemberService orgMemberService) {
         this.directMessageRepository = directMessageRepository;
         this.directMessageReactionService = directMessageReactionService;
         this.securityUtil = securityUtil;
@@ -179,10 +178,10 @@ public class DirectMessageServiceImpl implements DirectMessageService {
     @Override
     public void save(ChatMessageDto chatMessageDto) {
 
-        Long orgId = RequestContext.getLong("X-ORG-ID");
+        Long orgId = chatMessageDto.getOrgId();
         Org org = orgService.getOrgById(orgId);
 
-        Long senderId = securityUtil.getCurrentUserId();
+        Long senderId = chatMessageDto.getSenderId();
         User sender = userService.getUserById(senderId);
         orgMemberService.validateUserIsOrgMember(sender, org);
 
