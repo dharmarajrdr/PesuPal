@@ -44,17 +44,15 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     @Transactional
-    public User createUser(CreateUserDto createUserDto) throws Exception {
+    public void createUser(CreateUserDto createUserDto) throws Exception {
 
         User user = createUserDto.toUser();
         user.setPassword(passwordEncoder.encode(user.getPassword()));   // Encode the password before saving
         user = userRepository.save(user);
-        user.setPassword(null);
         EmailNotificationRequestDto<SignupConfirmationTemplate> emailNotificationRequestDto = new EmailNotificationRequestDto<>();
         emailNotificationRequestDto.setRecipientEmail(user.getEmail());
         emailNotificationRequestDto.setTemplate(new SignupConfirmationTemplate("https://www.youtube.com"));
         emailNotification.sendNotification(emailNotificationRequestDto);
-        return user;
     }
 
     /**
