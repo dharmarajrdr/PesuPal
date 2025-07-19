@@ -5,6 +5,45 @@ import { apiRequest } from '../../http_request';
 import Loader from '../Loader';
 import ErrorMessage from '../ErrorMessage';
 
+const ContactInfo = ({ phone, email, Social }) => {
+    return <div id='contact_info'>
+        {/* <h4>User Information</h4> */}
+        <div className='FCSS w100 phone_email'>
+            <label>Phone</label>
+            <div className='FRCB w100'>
+                <b>{phone}</b>
+                <i className='fa-regular fa-copy copy_contact_info' title='Copy' />
+            </div>
+        </div>
+        <div className='FCSS w100 phone_email'>
+            <label>Email</label>
+            <div className='FRCB w100'>
+                <b>{email}</b>
+                <i className='fa-regular fa-copy copy_contact_info' title='Copy' />
+            </div>
+        </div>
+        {Social?.length && <div className='FCSS w100 phone_email'>
+            <label>Social</label>
+            <div className='FRCS w100'>
+                {Social.map(({ Name, icon, color, link }, index) =>
+                    <Link target='_blank' to={link} key={index} >
+                        <i title={Name} className={`social_accounts fa-brands ${icon}`} style={{ color }} />
+                    </Link>
+                )}
+            </div>
+        </div>}
+    </div>
+}
+
+const NavigationLink = ({ to, icon, label, count, setShowProfile }) => {
+
+    return <Link to={to} className='FRCC p10 navlink' onClick={() => setShowProfile(false)}>
+        <i className={`fa ${icon} mR5`} />
+        <h5>{label}</h5>
+        {count !== undefined && <span className='fs12'>({count})</span>}
+    </Link>
+}
+
 const Profile = ({ userId, setShowProfile }) => {
 
     const [profile, setProfile] = useState(null);
@@ -60,35 +99,12 @@ const Profile = ({ userId, setShowProfile }) => {
                                 </div>
                             </div>
                         </div>
-                        <div id='contact_info'>
-                            {/* <h4>User Information</h4> */}
-                            <div className='FCSS w100 phone_email'>
-                                <label>Phone</label>
-                                <div className='FRCB w100'>
-                                    <b>{phone}</b>
-                                    <i className='fa-regular fa-copy copy_contact_info' title='Copy' />
-                                </div>
-                            </div>
-                            <div className='FCSS w100 phone_email'>
-                                <label>Email</label>
-                                <div className='FRCB w100'>
-                                    <b>{email}</b>
-                                    <i className='fa-regular fa-copy copy_contact_info' title='Copy' />
-                                </div>
-                            </div>
-                            {Social?.length ?
-                                <div className='FCSS w100 phone_email'>
-                                    <label>Social</label>
-                                    <div className='FRCS w100'>
-                                        {Social.map(({ Name, icon, color, link }, index) =>
-                                            <Link target='_blank' to={link} key={index} >
-                                                <i title={Name} className={`social_accounts fa-brands ${icon}`} style={{ color }} />
-                                            </Link>
-                                        )}
-                                    </div>
-                                </div>
-                                : null}
 
+                        <ContactInfo phone={phone} email={email} Social={Social} />
+
+                        <div className='FRSS w100 navlinks'>
+                            <NavigationLink to={`/people/${userId}/posts`} icon='fa-newspaper' label='Posts' count={45} setShowProfile={setShowProfile} />
+                            <NavigationLink to={`/people/${userId}/file`} icon='fa-file' label='Files' count={12} setShowProfile={setShowProfile} />
                         </div>
                     </>
                 }

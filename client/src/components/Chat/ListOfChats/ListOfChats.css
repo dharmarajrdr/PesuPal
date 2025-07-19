@@ -2,16 +2,16 @@
   width: 20%;
   height: 100%;
   overflow-y: auto;
-  background-color: #fff;
+  background-color: var(--pure-white);
 }
 
 #searchPinnedFixedContainer {
   position: sticky;
   padding: 5px 0px;
   top: 0;
-  background-color: #fff;
+  background-color: var(--pure-white);
   z-index: 2;
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0px 4px 4px var(--box-shadow-color);
 }
 
 @media screen and (max-width: 768px) {

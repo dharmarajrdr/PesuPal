@@ -4,9 +4,9 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.pesupal.server.model.post.Post;
 import lombok.Data;
 
+import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
 
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -24,7 +24,7 @@ public class PostDto {
 
     private List<String> tags;
 
-    private List<UUID> media;
+    private List<URL> media;
 
     private PostImpressionDto impression;
 
@@ -33,6 +33,14 @@ public class PostDto {
     private boolean shareable;
 
     private boolean bookmarkable;
+
+    private boolean liked;
+
+    private boolean bookmarked;
+
+    private boolean isCreator;
+
+    private PollDto poll;
 
     public static PostDto fromPost(Post post) {
 

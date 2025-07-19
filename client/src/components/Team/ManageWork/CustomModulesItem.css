@@ -22,11 +22,11 @@
 
 .ActiveCustomView {
   background-color: rgb(70, 92, 138);
-  color: #fff;
+  color: var(--pure-white);
   border-color: transparent;
 }
 
 .ActiveCustomView i,
 .ActiveCustomView span {
-  color: #fff;
+  color: var(--pure-white);
 }

@@ -1,7 +1,7 @@
 .notfound-container {
     height: 100vh;
-    background-color: #f7f8fc;
-    color: #3f4c68;
+    background-color: var(--pure-white);
+    color: var(--primary-color);
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -17,7 +17,7 @@
 .notfound-container h1 {
     font-size: 6rem;
     margin: 0;
-    color: #3f4c68;
+    color: var(--primary-color);
     animation: bounceIn 0.6s ease-out forwards;
 }
 
@@ -30,7 +30,7 @@
 }
 
 .notfound-container button {
-    background-color: #3f4c68;
+    background-color: var(--primary-color);
     color: white;
     padding: 12px 24px;
     font-size: 1rem;

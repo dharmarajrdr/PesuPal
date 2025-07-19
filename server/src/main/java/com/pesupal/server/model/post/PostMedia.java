@@ -25,4 +25,7 @@ public class PostMedia extends CreationTimeAuditable {
 
     @Column(nullable = false, unique = true)
     private UUID mediaId;
+
+    @Column(nullable = false)
+    private String extension;
 }

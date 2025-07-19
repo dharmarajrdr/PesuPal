@@ -1,9 +1,11 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import './FeedsLayout.css'
-import FeedsLeftPanel from './FeedsLeftPanel/FeedsLeftPanel'
-import FeedsRightPanel from './FeedsRightPanel/FeedsRightPanel'
-import FeedsMainPanel from './FeedsMainPanel/FeedsMainPanel'
 import Popup from '../Popup'
+import { UsePopupFromSession } from '../../UsePopupFromSession'
+import Feeds from './Feeds'
+import { Route, Routes } from 'react-router-dom'
+import PageNotFound from '../Auth/PageNotFound'
+import TagPostsLayout from './TagPostsLayout'
 
 const FeedsLayout = () => {
 
@@ -13,16 +15,7 @@ const FeedsLayout = () => {
         setPopupData({ message, type });
     };
 
-    useEffect(() => {
-        const message = sessionStorage.getItem("popup-message");
-        const type = sessionStorage.getItem("popup-type");
-
-        if (message && type) {
-            showPopup(message, type);
-            sessionStorage.removeItem("popup-message");
-            sessionStorage.removeItem("popup-type");
-        }
-    }, []);
+    UsePopupFromSession(showPopup);
 
     const leftNavigationState = useState(true),
         [leftNavOpened,] = leftNavigationState,
@@ -33,11 +26,11 @@ const FeedsLayout = () => {
     return (
         <div id='FeedsLayout' className='Layout FRCS'>
             {popupData && <Popup message={popupData.message} type={popupData.type} />}
-            <FeedsLeftPanel leftNavigationState={leftNavigationState} width={leftNavOpened ? width.leftNavOpened : width.leftNavClosed} />
-            <div className='FRSC h100' id='FeedsMain' width={leftNavOpened ? `calc(100% - ${width.leftNavOpened})` : `calc(100% - ${width.leftNavClosed})`} >
-                <FeedsMainPanel />
-                <FeedsRightPanel />
-            </div>
+            <Routes>
+                <Route path='/' element={<Feeds leftNavigationState={leftNavigationState} leftNavOpened={leftNavOpened} width={width} />} />
+                <Route path='/tag/:tag' element={<TagPostsLayout />} />
+                <Route path="*" element={<PageNotFound />} />
+            </Routes>
         </div>
     )
 }

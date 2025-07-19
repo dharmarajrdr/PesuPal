@@ -15,6 +15,7 @@ import { combineReducers } from 'redux';
 import { Provider } from 'react-redux';
 import { VerticalLoaderReducer } from './store/reducers/VerticalLoader';
 import { NavigationReducers } from './store/reducers/Navigation';
+import PostReducer from './store/reducers/PostSlice';
 import PageNotFound from './components/Auth/PageNotFound';
 import SettingsLayout from './components/Settings/SettingsLayout';
 import MoreFeaturesLayout from './components/More/MoreFeaturesLayout';
@@ -24,7 +25,8 @@ import { apiRequest } from './http_request';
 const store = configureStore({
     reducer: combineReducers({
         Navigation: NavigationReducers,
-        VerticalLoader: VerticalLoaderReducer
+        VerticalLoader: VerticalLoaderReducer,
+        posts: PostReducer
     }),
     devTools: true
 });
@@ -46,12 +48,14 @@ function App() {
     }, [location.pathname, navigate]);
 
     useEffect(() => {
-        apiRequest("/api/v1/people/display-picture", "GET").then(({ data }) => {
-            const updatedProfile = { ...profile, image: data, icon: null };
-            setProfile(updatedProfile);
-        }).catch(({ message }) => {
-            console.error("Error fetching profile image:", message);
-        });
+        if (!isAuthPage) {
+            apiRequest("/api/v1/people/display-picture", "GET").then(({ data }) => {
+                const updatedProfile = { ...profile, image: data, icon: null };
+                setProfile(updatedProfile);
+            }).catch(({ message }) => {
+                console.error("Error fetching profile image:", message);
+            });
+        }
     }, [orgId]);
 
     return (
@@ -62,9 +66,9 @@ function App() {
                 <VerticalLoader />
 
                 <Routes>
-                    <Route path="/feeds" element={<FeedsLayout />} />
+                    <Route path="/feeds/*" element={<FeedsLayout />} />
                     <Route path="/chat" element={<ChatLayout />} />
-                    <Route path="/people" element={<PeopleLayout />} />
+                    <Route path="/people/*" element={<PeopleLayout />} />
                     <Route path="/team/*" element={<TeamLayout />} />
                     <Route path="/tracker" element={<TrackerLayout />} />
                     <Route path="/settings/*" element={<SettingsLayout />} />

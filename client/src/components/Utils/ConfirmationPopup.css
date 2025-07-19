@@ -1,0 +1,63 @@
+:root {
+    --bg-color: #e3e8ed;
+    --pure-white: #ffffff;
+    --pure-white-hover: #f5f5f5;
+    --text-color: #000000;
+    --primary-color: #3f4c68;
+    --primary-color-active: #273144;
+    --success-color: #28a745;
+    --error-color: #dc3545;
+    --info-color: #007bff;
+    --overlay-bg-color: #0000009f;
+    --box-shadow-color: #00000033;
+    --count-label-color: #ff4646;
+    --badge-color: #ff9800;
+}
+
+.confirmation-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--overlay-bg-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+}
+
+.confirmation-popup {
+    background-color: var(--pure-white);
+    padding: 25px 30px;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px var(--box-shadow-color);
+    width: 350px;
+    text-align: center;
+}
+
+.confirmation-message {
+    font-size: 16px;
+    color: var(--text-color);
+    margin-bottom: 20px;
+}
+
+.confirmation-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+.confirmation-button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    color: var(--pure-white);
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.confirmation-button:hover {
+    transform: scale(1.05);
+}

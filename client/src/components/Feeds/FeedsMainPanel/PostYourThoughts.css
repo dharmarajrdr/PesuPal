@@ -1,7 +1,7 @@
 #PostYourThoughts {
   border-radius: 10px;
   padding: 25px;
-  background-color: #fff;
+  background-color: var(--pure-white);
   /* position: sticky;
   top: 10px; */
 }
@@ -28,7 +28,7 @@
   padding: 9px 20px;
   border: none;
   background-color: blue;
-  color: #fff;
+  color: var(--pure-white);
   border-radius: 10px;
   cursor: pointer;
   font-size: 14px;
@@ -49,7 +49,7 @@
 }
 
 #PostYourThoughts .actions_post_creation:hover {
-  background-color: #f0f0f0;
+  background-color: var(--pure-white-hover);
 }
 
 @media screen and (max-width: 768px) {

@@ -1,38 +1,38 @@
 export default [
     {
         'title': '#AI',
-        'route': '/feeds/tags/AI',
+        'route': '/feeds/tag/AI',
     },
     {
         'title': '#happy_new_year',
-        'route': '/feeds/tags/happy_new_year',
+        'route': '/feeds/tag/happy_new_year',
     },
     {
         'title': '#financial_growth',
-        'route': '/feeds/tags/financial_growth',
+        'route': '/feeds/tag/financial_growth',
     },
     {
         'title': '#product_ideas',
-        'route': '/feeds/tags/product_ideas',
+        'route': '/feeds/tag/product_ideas',
     },
     {
         'title': '#optimisation',
-        'route': '/feeds/tags/optimisation',
+        'route': '/feeds/tag/optimisation',
     },
     {
         'title': '#google',
-        'route': '/feeds/tags/google',
+        'route': '/feeds/tag/google',
     },
     {
         'title': '#daily_news',
-        'route': '/feeds/tags/daily_news',
+        'route': '/feeds/tag/daily_news',
     },
     {
         'title': '#iphone17',
-        'route': '/feeds/tags/iphone17',
+        'route': '/feeds/tag/iphone17',
     },
     {
         'title': '#meta',
-        'route': '/feeds/tags/meta',
+        'route': '/feeds/tag/meta',
     }
 ]

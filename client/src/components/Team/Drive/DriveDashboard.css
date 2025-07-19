@@ -3,7 +3,7 @@
 }
 
 #DriveUsageStats {
-  background-color: #fff;
+  background-color: var(--pure-white);
 }
 
 #previews_stats {

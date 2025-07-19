@@ -15,15 +15,17 @@ public class OrgServiceImpl implements OrgService {
 
     private final UserService userService;
     private final OrgRepository orgRepository;
-    private final OrgConfigurationService orgConfigurationService;
     private final OrgMemberService orgMemberService;
+    private final UserOnboardingService userOnboardingService;
+    private final OrgConfigurationService orgConfigurationService;
     private final OrgSubscriptionHistoryService orgSubscriptionHistoryService;
 
-    public OrgServiceImpl(UserService userService, OrgRepository orgRepository, OrgConfigurationService orgConfigurationService, @Lazy OrgMemberService orgMemberService, @Lazy OrgSubscriptionHistoryService orgSubscriptionHistoryService) {
+    public OrgServiceImpl(UserService userService, OrgRepository orgRepository, OrgConfigurationService orgConfigurationService, @Lazy OrgMemberService orgMemberService, @Lazy OrgSubscriptionHistoryService orgSubscriptionHistoryService, UserOnboardingService userOnboardingService) {
         this.userService = userService;
         this.orgRepository = orgRepository;
-        this.orgConfigurationService = orgConfigurationService;
         this.orgMemberService = orgMemberService;
+        this.userOnboardingService = userOnboardingService;
+        this.orgConfigurationService = orgConfigurationService;
         this.orgSubscriptionHistoryService = orgSubscriptionHistoryService;
     }
 
@@ -50,6 +52,9 @@ public class OrgServiceImpl implements OrgService {
     public Org createOrg(CreateOrgDto createOrgDto, Long userId) {
 
         User owner = userService.getUserById(userId);
+        
+        userOnboardingService.hasDoneOnboardingVerification(owner);
+
         Org org = createOrgDto.toOrg();
         org.setOwner(owner);
         org.setActive(true);

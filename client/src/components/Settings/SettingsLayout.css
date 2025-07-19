@@ -1,4 +1,4 @@
 #settings-layout {
     width: calc(100% - 75px);
-    background-color: #e3e8ee;
+    background-color: var(--bg-color);
 }

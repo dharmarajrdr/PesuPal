@@ -1,12 +1,14 @@
-import React from 'react'
+import { useState } from 'react';
 import './AllPosts.css'
-import PostsList from './PostsList.js'
-import Post from './Post'
+import PostList from './PostList'
 
 const AllPosts = () => {
+
+    const [activePostId, setActivePostId] = useState(null); // only one can be open
+
     return (
         <div className='FCSS AllPosts'>
-            {PostsList.map((post, index) => <Post key={index} post={post} />)}
+            <PostList posts={[]} activePostId={activePostId} setActivePostId={setActivePostId} />
         </div>
     )
 }

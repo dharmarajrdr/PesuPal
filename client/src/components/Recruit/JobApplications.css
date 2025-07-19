@@ -5,7 +5,7 @@
 }
 
 #no-data-found p i {
-    color: #3f4c68;
+    color: var(--primary-color);
 }
 
 #job-applications {
@@ -19,28 +19,28 @@
 #job-applications-header {
     position: sticky;
     top: 0;
-    background-color: #fff;
-    box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.1);
+    background-color: var(--pure-white);
+    box-shadow: 4px 4px 10px var(--box-shadow-color);
 }
 
 .job-application {
     margin: 2.5px 5px;
     width: calc(100% - 10px);
     box-sizing: border-box;
-    background-color: #fff;
+    background-color: var(--pure-white);
     border-radius: 5px;
     border: 1px solid #ccc;
     cursor: pointer;
     overflow: hidden;
     padding: 12px 10px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 4px var(--box-shadow-color);
     margin-right: 0;
     min-height: fit-content;
 }
 
 .job-application.active {
     background-color: #f0faff;
-    border-color: #3f4c68;
+    border-color: var(--primary-color);
     width: calc(100% - 4px);
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;

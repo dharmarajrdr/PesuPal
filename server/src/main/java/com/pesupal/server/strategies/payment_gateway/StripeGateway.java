@@ -2,7 +2,6 @@ package com.pesupal.server.strategies.payment_gateway;
 
 import com.pesupal.server.dto.request.PaymentDto;
 import com.pesupal.server.dto.response.WebhookDto;
-import com.pesupal.server.repository.SubscriptionPlanRepository;
 import com.pesupal.server.service.interfaces.PaymentGateway;
 import com.pesupal.server.service.interfaces.WebhookService;
 import com.stripe.Stripe;
@@ -10,7 +9,7 @@ import com.stripe.exception.StripeException;
 import com.stripe.model.*;
 import com.stripe.param.*;
 import com.stripe.param.PriceCreateParams.Recurring.Interval;
-import org.springframework.beans.factory.annotation.Value;
+import io.github.cdimascio.dotenv.Dotenv;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
@@ -22,15 +21,11 @@ import java.util.Map;
 @Primary
 public class StripeGateway implements PaymentGateway, WebhookService {
 
-    private final SubscriptionPlanRepository subscriptionPlanRepository;
-    @Value("${stripe.api-key}")
-    private String API_KEY = "";
+    Dotenv dotenv = Dotenv.load();
+
+    private String API_KEY = dotenv.get("stripe.api-key");
 
     private final Long trialDays = 730L;
-
-    public StripeGateway(SubscriptionPlanRepository subscriptionPlanRepository) {
-        this.subscriptionPlanRepository = subscriptionPlanRepository;
-    }
 
     /**
      * Things needed are as follows.

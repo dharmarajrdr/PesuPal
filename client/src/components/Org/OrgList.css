@@ -2,7 +2,7 @@
     position: fixed;
     bottom: 0px;
     left: 0px;
-    background-color: #00000080;
+    background-color: var(--overlay-bg-color);
     width: 100vw;
     height: 100vh;
     z-index: 15;
@@ -13,7 +13,7 @@
     height: 400px;
     width: 410px;
     overflow: auto;
-    background-color: #fff;
+    background-color: var(--pure-white);
     box-shadow: 4px 4px 8px rgba(43, 42, 42, 0.2);
     top: 50%;
     left: 50%;

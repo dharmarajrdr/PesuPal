@@ -17,6 +17,8 @@ public class PostCommentDto extends UserBasicInfoDto {
 
     private int replyCount;
 
+    private boolean deleteable;
+
     public static PostCommentDto fromPostCommentAndOrgMember(PostComment postComment, OrgMember orgMember) {
 
         PostCommentDto dto = new PostCommentDto();

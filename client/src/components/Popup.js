@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import "./Popup.css"; // Styling is the same
 
 const Popup = ({ message, type = "info", duration = 30000 }) => {
@@ -7,7 +7,7 @@ const Popup = ({ message, type = "info", duration = 30000 }) => {
 
     useEffect(() => {
         const timer = setTimeout(() => setShow(false), duration);
-        // return () => clearTimeout(timer);
+        return () => clearTimeout(timer);
     }, [duration]);
 
     const iconClass = {
@@ -16,7 +16,7 @@ const Popup = ({ message, type = "info", duration = 30000 }) => {
         info: "fa fa-info-circle",
     };
 
-    return show && (
+    return show && message && (
         <div className={`popup-container ${type}`}>
             <i className={`icon ${iconClass[type]}`} aria-hidden="true" />
             <span className="message">{message}</span>

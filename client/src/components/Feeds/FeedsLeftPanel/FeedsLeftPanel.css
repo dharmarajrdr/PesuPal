@@ -3,7 +3,7 @@
   padding: 15px;
   overflow-y: auto;
   overflow-x: hidden;
-  background-color: #fff;
+  background-color: var(--pure-white);
 }
 
 #subtitle {

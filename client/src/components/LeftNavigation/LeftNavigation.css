@@ -13,6 +13,7 @@
   width: 75px;
   height: 100vh;
   overflow: hidden;
+  background-color: var(--primary-color);
 }
 
 .LeftNavigationItem {
@@ -40,13 +41,13 @@
 }
 
 .LeftNavigationItem:hover {
-  background-color: #273144;
+  background-color: var(--primary-color-active);
   border-radius: 0px;
 }
 
 .activeNav {
   cursor: default;
-  background-color: #273144;
+  background-color: var(--primary-color-active);
 }
 
 #closeLeftNav {
@@ -57,8 +58,8 @@
   position: absolute;
   top: 10px;
   right: 17px;
-  background-color: rgba(255, 0, 0, 0.493);
-  color: #fff;
+  background-color: var(--count-label-color);
+  color: var(--pure-white);
   border-radius: 100%;
   min-width: 15px;
   min-height: 15px;
@@ -77,7 +78,7 @@
 
   #LeftNavigationOverlay {
     width: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: var(--overlay-bg-color);
     position: fixed;
     top: 0;
     left: 0;
@@ -117,14 +118,14 @@
   }
 
   .LeftNavigationItem:hover {
-    background-color: #3f4c68;
+    background-color: var(--primary-color);
     border-radius: 0px;
   }
 
   #closeLeftNav {
     display: block;
     padding: 20px;
-    color: #fff;
+    color: var(--pure-white);
     text-align: right;
   }
 }

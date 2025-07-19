@@ -5,7 +5,7 @@
     width: 100vw;
     height: 7px;
     border-radius: 10px;
-    background-color: rgba(128, 128, 128, 0.7);
+    background-color: var(--overlay-bg-color);
     /* Grey with 70% opacity */
     display: flex;
     justify-content: center;
