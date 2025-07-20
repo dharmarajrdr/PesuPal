@@ -1,17 +1,19 @@
 .chat-input {
-    display: flex;
-    align-items: center;
     padding: 10px;
     background-color: var(--pure-white);
     border-top: 1px solid #ddd;
-    height: 60px;
+    min-height: 90px;
+    max-height: 200px;
+    width: 100%;
 }
 
-.chat-input input[type='text'] {
+.chat-input textarea {
     flex: 1;
     padding: 8px;
     border-radius: 4px;
-    border: 1px solid #ccc;
+    border: none;
+    resize: none;
+    max-height: 200px;
 }
 
 .file-upload {
@@ -19,7 +21,7 @@
 }
 
 .send-button {
-    background-color: #007bff;
+    background-color: var(--primary-color);
     color: white;
     border: none;
     margin-left: 10px;
@@ -30,4 +32,5 @@
 
 .send-button i {
     font-size: 16px;
+    color: #fff;
 }
