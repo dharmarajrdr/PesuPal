@@ -22,12 +22,14 @@ const UserAvatar = ({ displayPicture, displayName }) => {
 
     const [imageError, setImageError] = useState(false);
 
-    return (imageError || !displayPicture) ? displayName ? (
-        <div className="user-avatar-placeholder-first-character mR10" style={{ backgroundColor: getAvatarColor(displayName) }}>
-            {displayName.charAt(0).toUpperCase()}
-        </div>
-    ) : (
-        <i className="fa fa-user-circle user-avatar-placeholder mR10" aria-hidden="true" />
+    return (imageError || !displayPicture) ? (
+        displayName ? (
+            <div className="user-avatar-placeholder-first-character mR10" style={{ backgroundColor: getAvatarColor(displayName) }}>
+                {displayName.charAt(0).toUpperCase()}
+            </div>
+        ) : (
+            <i className="fa fa-user-circle user-avatar-placeholder mR10" aria-hidden="true" />
+        )
     ) : (
         <img src={displayPicture} alt="User" className="img_40_40 mR10" onError={() => setImageError(true)} />
     );
