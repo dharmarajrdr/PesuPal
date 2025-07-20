@@ -37,7 +37,8 @@ public interface DirectMessageRepository extends JpaRepository<DirectMessage, Lo
                 dm.message AS content,
                 dm.contains_media AS includedMedia,
                 dm.created_at AS createdAt,
-                dm.read_receipt AS readReceipt
+                dm.read_receipt AS readReceipt,
+                dm.chat_id AS chatId
             
             FROM direct_message dm
             

@@ -148,6 +148,7 @@ public class DirectMessageServiceImpl implements DirectMessageService {
             Boolean includedMedia = (Boolean) row[5];
             LocalDateTime createdAt = ((Timestamp) row[6]).toLocalDateTime();
             ReadReceipt readReceipt = ReadReceipt.valueOf((String) row[7]);
+            String chatId = (String) row[8];
 
             LastMessageDto lastMessage = new LastMessageDto();
             lastMessage.setSender(sender);
@@ -157,6 +158,7 @@ public class DirectMessageServiceImpl implements DirectMessageService {
             lastMessage.setReadReceipt(readReceipt);
 
             RecentChatDto dto = new RecentChatDto();
+            dto.setChatId(chatId);
             dto.setName(userName);
             dto.setImage(displayPicture);
             dto.setStatus(userStatus);
