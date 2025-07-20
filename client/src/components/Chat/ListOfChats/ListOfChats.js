@@ -5,7 +5,7 @@ import PinnedUsers from './PinnedUsers'
 import RecentChats from './RecentChats'
 import SubTabs from './SubTabs'
 
-const ListOfChats = () => {
+const ListOfChats = ({ activeRecentChat }) => {
     return (
         <div id='ListOfChats' className='custom-scrollbar'>
             <div id='searchPinnedFixedContainer'>
@@ -13,7 +13,7 @@ const ListOfChats = () => {
                 <PinnedUsers />
                 <SubTabs />
             </div>
-            <RecentChats />
+            <RecentChats activeRecentChat={activeRecentChat} />
         </div>
     )
 }
