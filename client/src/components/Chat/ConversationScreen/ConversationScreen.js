@@ -75,7 +75,7 @@ const ConversationScreen = ({ setActiveRecentChat }) => {
     <div id='ConversationScreen' className='FCSB'>
       <ChatHeader conversationInfo={conversationInfo} setActiveRecentChat={setActiveRecentChat} chatId={chatId} />
       <ChatMessages retrievingChat={retrievingChat} messages={messages} currentUserId={currentUserId} chatId={chatId} />
-      <ChatInput onSend={clickSendMessageHandler} setMessage={setMessage} message={message} />
+      <ChatInput clickSendMessageHandler={clickSendMessageHandler} setMessage={setMessage} message={message} />
     </div>
   )
 }

@@ -1,15 +1,15 @@
 import { useRef } from 'react';
 import './ChatInput.css'
 
-const ChatInput = ({ onSend, message, setMessage }) => {
+const ChatInput = ({ clickSendMessageHandler, message, setMessage }) => {
 
-    const fileInputRef = useRef();
+    // const fileInputRef = useRef();
 
     const handleSend = () => {
         if (message.trim()) {
-            onSend({ file: fileInputRef.current.files[0] });
+            clickSendMessageHandler({});
             setMessage('');
-            fileInputRef.current.value = '';
+            // fileInputRef?.current?.value = '';
         }
     };
 
