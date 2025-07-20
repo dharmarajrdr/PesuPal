@@ -41,8 +41,8 @@ const RecentChats = () => {
                 loading ? <Loader /> :
                     error ? <ErrorMessage message={error} /> :
                         recentChat.length ?
-                            recentChat.map(({ name, status, image, recentMessage }, index) =>
-                                <RecentChat key={index} name={name} image={image} status={status} recentMessage={recentMessage} />
+                            recentChat.map((recentChat, index) =>
+                                <RecentChat key={index} recentChat={recentChat} />
                             ) : <NoChatsFound />
             }
         </div>
