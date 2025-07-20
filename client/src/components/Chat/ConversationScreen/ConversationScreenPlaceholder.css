@@ -1,0 +1,13 @@
+#conversation-screen-placeholder {
+    width: 80%;
+    background-color: #ecedfe;
+}
+
+#conversation-screen-placeholder img {
+    width: 500px;
+}
+
+#conversation-screen-placeholder p {
+    color: var(--primary-color);
+    font-family: 'system-ui';
+}
