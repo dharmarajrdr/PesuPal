@@ -3,45 +3,64 @@
     height: calc(100vh - 50px - 60px);
     overflow-y: auto;
     overflow-x: hidden;
-    background-color: #fff;
 }
 
 .date-label {
     text-align: center;
     font-size: 12px;
-    margin: 10px 0;
+    margin: 10px 0px;
     color: gray;
 }
 
-.message {
+.chat-messages .row .message {
     margin-bottom: 10px;
-    max-width: 70%;
-    word-wrap: break-word;
+    max-width: 50%;
+    min-width: 25%;
 }
 
-.sent {
-    align-self: flex-end;
+.chat-messages .row .message.sent {
     margin-left: auto;
-    background-color: #dcf8c6;
+    background-color: var(--primary-color);
     border-radius: 10px 10px 0 10px;
+    border: 1px solid var(--primary-color-active)
 }
 
-.received {
-    align-self: flex-start;
+.chat-messages .row .message.sent .message-content div a {
+    color: #00d4ff;
+}
+
+.chat-messages .row .message.sent .message-content * {
+    color: #eee;
+}
+
+.chat-messages .row .message.received {
+
     margin-right: auto;
-    background-color: #f1f0f0;
+    background-color: #fff;
     border-radius: 10px 10px 10px 0;
+    border: 1px solid #eee;
+}
+
+.chat-messages .row .message.received .message-content div {
+    color: var(--primary-color);
+}
+
+.chat-messages .row .message .message-content div {
+    line-height: 20px;
 }
 
 .message-content {
     padding: 8px 12px;
     position: relative;
+    font-size: 14px;
+    word-break: normal;
 }
 
 .actions {
     margin-top: 4px;
     display: flex;
     gap: 8px;
+    display: none;
 }
 
 .delete-icon {
@@ -64,4 +83,14 @@
     color: #666;
     text-align: right;
     padding: 0 8px 4px;
+}
+
+.chat-messages .row .message.sent .message-meta .delivery-status,
+.chat-messages .row .message.sent .message-meta .time {
+    color: #ccc;
+}
+
+.chat-messages .row .message .time {
+    font-size: 10px;
+    color: #999;
 }
