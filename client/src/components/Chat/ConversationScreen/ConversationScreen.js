@@ -5,8 +5,11 @@ import ChatMessages from './ChatMessages';
 import ChatInput from './ChatInput';
 import Conversation from './Conversation';
 import useWebSocket from '../../../WebSocket';
+import { useParams } from 'react-router-dom';
 
 const ConversationScreen = () => {
+
+  const { chatId } = useParams();
 
   const [conversationInfo, setConversationInfo] = useState({
     'type': 'Direct Message',
