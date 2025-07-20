@@ -32,7 +32,7 @@ const ChatMessages = ({ messages, currentUserId }) => {
         if (chatContainerRef.current) {
             chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
         }
-    }, []);
+    }, [messages]);
 
     return (
         <div className="chat-messages" ref={chatContainerRef}>
