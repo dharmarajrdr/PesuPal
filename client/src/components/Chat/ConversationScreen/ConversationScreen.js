@@ -34,7 +34,7 @@ const ConversationScreen = ({ setActiveRecentChat }) => {
     onPrivateMessage: (msg) => {
       setMessages((prev) => [...prev, {
         "id": 101,
-        "createdAt": "2025-06-10T09:15:03.245000",
+        "createdAt": new Date().toISOString(),
         "sender": msg.senderId,
         "receiver": msg.receiverId,
         "message": msg.message,
@@ -61,7 +61,7 @@ const ConversationScreen = ({ setActiveRecentChat }) => {
     sendMessage('/app/chat.sendMessage', payload);
     setMessages((prev) => [...prev, {
       "id": 101,
-      "createdAt": "2025-06-10T09:15:03.245000",
+      "createdAt": new Date().toISOString(),
       "sender": currentUserId,
       "receiver": receiverId,
       "message": message,
