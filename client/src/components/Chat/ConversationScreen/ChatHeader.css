@@ -2,23 +2,15 @@
     display: flex;
     align-items: center;
     padding: 10px;
-    background-color: #fafafa;
-    border-bottom: 1px solid #ddd;
-}
-
-.avatar {
-    width: 36px;
-    height: 36px;
-    background-color: #007bff;
-    color: white;
-    border-radius: 50%;
-    text-align: center;
-    line-height: 36px;
-    font-weight: bold;
-    margin-right: 10px;
+    background-color: var(--pure-white-hover);
+    border-bottom: 1px solid #eee;
+    box-shadow: 20px 4px 16px rgba(247, 43, 43);
+    height: 50px;
 }
 
 .name {
     font-weight: 600;
     font-size: 16px;
+    cursor: default;
+    color: var(--primary-color-active);
 }
