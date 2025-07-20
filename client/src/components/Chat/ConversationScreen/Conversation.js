@@ -150,7 +150,7 @@ export default [
         "sender": 2,
         "receiver": 1,
         "message": "Also... that demo video we recorded has an <u>audio sync issue</u>. Gotta re-render 😭",
-        "deleted": false,
+        "deleted": true,
         "readReceipt": "DELIVERED",
         "reactions": {
             "ANGRY": 1
@@ -163,7 +163,7 @@ export default [
         "sender": 1,
         "receiver": 2,
         "message": "Ennada 😵. Ok will do it again. Send me the .srt file if you have.",
-        "deleted": false,
+        "deleted": true,
         "readReceipt": "SENT",
         "reactions": {},
         "directMessageMediaFiles": []

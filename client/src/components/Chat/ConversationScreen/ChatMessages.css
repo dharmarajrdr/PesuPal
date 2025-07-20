@@ -33,6 +33,11 @@
     color: #eee;
 }
 
+.chat-messages .row .message.sent .message-content.message-deleted span,
+.chat-messages .row .message.sent .message-content.message-deleted i {
+    color: #cde1fcb4;
+}
+
 .chat-messages .row .message.received {
 
     margin-right: auto;
