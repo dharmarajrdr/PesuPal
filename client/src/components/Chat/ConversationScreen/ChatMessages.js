@@ -47,12 +47,17 @@ const ChatMessages = ({ messages, currentUserId, chatId, retrievingChat }) => {
 
     useEffect(() => {
         if (chatContainerRef.current) {
-            chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+            chatContainerRef.current.scrollTo({
+                top: chatContainerRef.current.scrollHeight,
+                behavior: 'auto' // or 'smooth'
+            });
         }
     }, [chatId, messages]);
 
     return (
-        <div className="chat-messages FCCE w100" ref={chatContainerRef}>
+        <div className="chat-messages FCCS w100" ref={chatContainerRef}>
+
+            <div className="spacer" />
 
             {retrievingChat ? <Loader /> : messages.length ? messages.map((msg) => {
 

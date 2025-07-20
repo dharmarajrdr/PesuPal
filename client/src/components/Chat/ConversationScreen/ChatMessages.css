@@ -5,6 +5,10 @@
     overflow-x: hidden;
 }
 
+.spacer {
+  flex-grow: 1;
+}
+
 .date-label {
     text-align: center;
     font-size: 12px;
