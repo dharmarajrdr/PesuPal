@@ -17,7 +17,7 @@ const ConversationScreen = () => {
   return (
     <div id='ConversationScreen' className='FCSB'>
       <ChatHeader conversationInfo={conversationInfo} />
-      <ChatMessages messages={messages} />
+      <ChatMessages messages={messages} currentUserId={2} />
       <ChatInput />
     </div>
   )
