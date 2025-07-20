@@ -10,6 +10,7 @@ import com.pesupal.server.enums.Role;
 import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.exceptions.PermissionDeniedException;
+import com.pesupal.server.helpers.Chat;
 import com.pesupal.server.model.department.Department;
 import com.pesupal.server.model.org.Org;
 import com.pesupal.server.model.org.OrgConfiguration;
@@ -313,7 +314,11 @@ public class OrgMemberServiceImpl implements OrgMemberService {
 
         validateUserIsOrgMember(userId, orgId);
 
-        return orgMemberRepository.findAllByOrgIdOrderByDisplayNameAsc(orgId).stream().map(UserBasicInfoDto::fromOrgMember).toList();
+        return orgMemberRepository.findAllByOrgIdOrderByDisplayNameAsc(orgId).stream().map(orgMember -> {
+            UserBasicInfoDto userBasicInfoDto = UserBasicInfoDto.fromOrgMember(orgMember);
+            userBasicInfoDto.setChatId(Chat.getChatId(userId, orgMember.getUser().getId(), orgId));
+            return userBasicInfoDto;
+        }).toList();
     }
 
     /**
