@@ -96,6 +96,13 @@
   justify-content: center;
 }
 
+.FCSB {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: space-between;
+}
+
 .w20 {
   width: 20px;
 }

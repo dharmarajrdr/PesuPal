@@ -1,7 +1,8 @@
 .chat-messages {
     padding: 10px;
-    height: 400px;
+    height: calc(100vh - 50px - 60px);
     overflow-y: auto;
+    overflow-x: hidden;
     background-color: #fff;
 }
 
