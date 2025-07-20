@@ -1,40 +1,12 @@
 import { useEffect, useRef } from 'react';
 import './ChatMessages.css'
-import UserAvatar from '../../User/UserAvatar';
 import Loader from '../../Loader';
+import MessageDeleted from './MessageDeleted';
+import Message from './Message';
+import ReadReceipt from './ReadReceipt';
+import StartNewConversation from './StartNewConversation';
 
 const reactionsList = ['LIKE', 'LOVE', 'FUNNY', 'ANGRY', 'DISLIKE'];
-
-const ReadReceipt = ({ readReceipt }) => {
-
-    const icons = {
-        'PENDING': 'fa fa-clock',
-        'SENT': 'fa fa-check',
-        'DELIVERED': 'fa fa-check-double',
-        'READ': 'fa fa-check-double read'
-    }
-
-    return <i className={`${icons[readReceipt]} delivery-status mL5`} title={readReceipt.toLowerCase()} />
-}
-
-/**
- * Greet the user with a message to start a new conversation.
- * @returns 
- */
-const StartNewConversation = () => {
-
-    return <div id='start-new-conversation' className='FCCE'>
-        <div className='FRCC' id='users-avatars'>
-            <UserAvatar displayPicture={"/images/Users/user_8.jpg"} />
-            <UserAvatar displayPicture={"/images/Users/user_6.jpg"} />
-        </div>
-        <button id='say-hello-button' className='mT15'>Say hello <i class="fa fa-hand" id='wave-hands'></i></button>
-    </div>
-}
-
-const MessageDeleted = () => <p className='message-content message-deleted FRCS selectNone'><i className='fa fa-trash fs12 mR5 colorAAA' title="Deleted" /><span className="deleted-message colorAAA italic fs12">This message was deleted</span></p>
-
-const Message = ({ html }) => <div className="html-content-renderer" dangerouslySetInnerHTML={{ __html: html }} />
 
 const ChatMessages = ({ messages, currentUserId, chatId, retrievingChat }) => {
 
