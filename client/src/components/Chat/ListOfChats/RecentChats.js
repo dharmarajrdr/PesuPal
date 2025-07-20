@@ -20,11 +20,12 @@ const NoChatsFound = () => {
 }
 
 
-const RecentChats = ({ activeRecentChat }) => {
+const RecentChats = ({ activeRecentChatState, currentChatIdState }) => {
 
     const [recentChat, setRecentChat] = useState([]);
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [, setActiveRecentChat] = activeRecentChatState;
 
     const navigate = useNavigate();
 
@@ -38,9 +39,10 @@ const RecentChats = ({ activeRecentChat }) => {
         });
     }, []);
 
-    const openChatHandler = (chatId) => {
-        navigate(`/chat/${chatId}`);
-        activeRecentChat[1](chatId);
+    const openChatHandler = (chat) => {
+        console.log(chat);
+        navigate(`/chat/${chat.chatId}`);
+        setActiveRecentChat(chat);
     }
 
     return (
@@ -50,7 +52,7 @@ const RecentChats = ({ activeRecentChat }) => {
                     error ? <ErrorMessage message={error} /> :
                         recentChat.length ?
                             recentChat.map((recentChat, index) =>
-                                <RecentChat key={index} recentChat={recentChat} activeRecentChat={activeRecentChat[0]} openChatHandler={openChatHandler} />
+                                <RecentChat currentChatIdState={currentChatIdState} key={index} recentChat={recentChat} activeRecentChatState={activeRecentChatState} openChatHandler={openChatHandler} />
                             ) : <NoChatsFound />
             }
         </div>
