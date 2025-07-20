@@ -15,7 +15,7 @@ const ConversationScreen = () => {
   });
   const [messages, setMessages] = useState(Conversation);
   return (
-    <div id='ConversationScreen'>
+    <div id='ConversationScreen' className='FCSB'>
       <ChatHeader conversationInfo={conversationInfo} />
       <ChatMessages messages={messages} />
       <ChatInput />
