@@ -56,7 +56,7 @@ const ChatMessages = ({ messages, currentUserId, chatId, retrievingChat }) => {
 
             {retrievingChat ? <Loader /> : messages.length ? messages.map((msg) => {
 
-                const isCurrentUser = msg.sender === currentUserId;
+                const isCurrentUser = msg.sender == currentUserId;
                 const newDate = formatDate(msg.createdAt);
                 const showDate = newDate !== lastDate;
                 lastDate = newDate;
@@ -73,11 +73,7 @@ const ChatMessages = ({ messages, currentUserId, chatId, retrievingChat }) => {
                                             <i className='fa fa-trash delete-icon' title="Delete" />
                                             <div className="reactions">
                                                 {reactionsList.map((reaction) => (
-                                                    <i
-                                                        key={reaction}
-                                                        className={`fa fa-smile reaction-icon`}
-                                                        title={reaction}
-                                                    />
+                                                    <i key={reaction} className={`fa fa-smile reaction-icon`} title={reaction} />
                                                 ))}
                                             </div>
                                         </div>
