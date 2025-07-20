@@ -7,7 +7,7 @@ const users = {
     2: { name: 'Rathinavel' },
 };
 
-const ChatHeader = ({ conversationInfo }) => {
+const ChatHeader = ({ conversationInfo, setActiveRecentChat, chatId }) => {
 
     const navigate = useNavigate();
 
@@ -15,6 +15,7 @@ const ChatHeader = ({ conversationInfo }) => {
 
     const closeChatHandler = () => {
         navigate('/chat');
+        setActiveRecentChat(chatId);
     }
 
     return (
