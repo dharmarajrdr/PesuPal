@@ -7,9 +7,13 @@ import useWebSocket from '../../../WebSocket';
 import { useParams } from 'react-router-dom';
 import { apiRequest } from '../../../http_request';
 
-const ConversationScreen = ({ setActiveRecentChat }) => {
+const ConversationScreen = ({ activeRecentChatState, currentChatIdState }) => {
 
   const { chatId } = useParams();
+  const [, setCurrentChatId] = currentChatIdState;
+  const [activeRecentChat, setActiveRecentChat] = activeRecentChatState;
+
+  setCurrentChatId(chatId);
 
   const [conversationInfo, setConversationInfo] = useState({
     'type': 'Direct Message',
@@ -50,6 +54,7 @@ const ConversationScreen = ({ setActiveRecentChat }) => {
   });
 
   const clickSendMessageHandler = () => {
+
     const payload = {
       orgId: sessionStorage.getItem('org-id'),
       chatId: 'room123',
@@ -81,7 +86,7 @@ const ConversationScreen = ({ setActiveRecentChat }) => {
     setPivotMessageId(null); // reset state — this takes effect after render
 
     setRetrievingChat(true);
-    setActiveRecentChat(chatId);
+    setActiveRecentChat(activeRecentChat);
 
     const url = `/api/v1/direct-messages/${chatId}?page=${page}&size=${size}` + (pivot ? `&pivot_message_id=${pivot}` : '');
 
@@ -100,14 +105,13 @@ const ConversationScreen = ({ setActiveRecentChat }) => {
     });
   }, [chatId]);
 
-
-  return (
+  return activeRecentChat ? (
     <div id='ConversationScreen' className='FCSB'>
-      <ChatHeader conversationInfo={conversationInfo} setActiveRecentChat={setActiveRecentChat} chatId={chatId} />
+      <ChatHeader activeRecentChatState={activeRecentChatState} />
       <ChatMessages retrievingChat={retrievingChat} messages={messages} currentUserId={currentUserId} chatId={chatId} />
       <ChatInput clickSendMessageHandler={clickSendMessageHandler} setMessage={setMessage} message={message} />
     </div>
-  )
+  ) : null;
 }
 
 export default ConversationScreen
