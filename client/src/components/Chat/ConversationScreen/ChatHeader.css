@@ -2,9 +2,9 @@
     display: flex;
     align-items: center;
     padding: 10px;
-    background-color: var(--pure-white-hover);
+    background-color: var(--pure-white);
     border-bottom: 1px solid #eee;
-    box-shadow: 20px 4px 16px rgba(247, 43, 43);
+    box-shadow: 20px 4px 16px rgb(--box-shadow-color);
     height: 50px;
 }
 
