@@ -7,9 +7,10 @@ import Conversation from './Conversation';
 import useWebSocket from '../../../WebSocket';
 import { useParams } from 'react-router-dom';
 
-const ConversationScreen = () => {
+const ConversationScreen = ({ setActiveRecentChat }) => {
 
   const { chatId } = useParams();
+  setActiveRecentChat(chatId);
 
   const [conversationInfo, setConversationInfo] = useState({
     'type': 'Direct Message',
@@ -18,7 +19,9 @@ const ConversationScreen = () => {
     ]
   });
 
+  const [retrievingChat, setRetrievingChat] = useState(false);
   const [messages, setMessages] = useState(Conversation);
+
   const [message, setMessage] = useState('');
 
   const currentUserId = sessionStorage.getItem('user-id');
@@ -70,8 +73,8 @@ const ConversationScreen = () => {
 
   return (
     <div id='ConversationScreen' className='FCSB'>
-      <ChatHeader conversationInfo={conversationInfo} />
-      <ChatMessages messages={messages} currentUserId={currentUserId} />
+      <ChatHeader conversationInfo={conversationInfo} setActiveRecentChat={setActiveRecentChat} chatId={chatId} />
+      <ChatMessages retrievingChat={retrievingChat} messages={messages} currentUserId={currentUserId} chatId={chatId} />
       <ChatInput onSend={clickSendMessageHandler} setMessage={setMessage} message={message} />
     </div>
   )

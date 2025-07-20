@@ -61,6 +61,13 @@
   justify-content: flex-start;
 }
 
+.FREC {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  justify-content: center;
+}
+
 .FCCB {
   display: flex;
   flex-direction: column;
@@ -103,6 +110,13 @@
   justify-content: space-between;
 }
 
+.FCCE {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+}
+
 .w20 {
   width: 20px;
 }
@@ -137,6 +151,10 @@
 
 .mT10 {
   margin-top: 10px;
+}
+
+.mT15 {
+  margin-top: 15px;
 }
 
 .mT20 {
@@ -237,6 +255,10 @@
 
 .selectNone {
   user-select: none;
+}
+
+.italic {
+  font-style: italic;
 }
 
 /* Hide scrollbar for Chrome, Safari and Opera */
