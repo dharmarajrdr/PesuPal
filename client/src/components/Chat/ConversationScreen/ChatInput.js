@@ -1,13 +1,13 @@
 import { useRef, useState } from 'react';
 import './ChatInput.css'
 
-const ChatInput = ({ onSend }) => {
-    const [message, setMessage] = useState('');
+const ChatInput = ({ onSend, message, setMessage }) => {
+    
     const fileInputRef = useRef();
 
     const handleSend = () => {
         if (message.trim()) {
-            onSend({ message, file: fileInputRef.current.files[0] });
+            onSend({ file: fileInputRef.current.files[0] });
             setMessage('');
             fileInputRef.current.value = '';
         }

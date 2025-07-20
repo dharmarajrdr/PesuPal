@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import useWebSocket from '../../../WebSocket';
+import utils from '../../../utils';
 
 const ChatBox = () => {
 
@@ -8,10 +9,7 @@ const ChatBox = () => {
     const [message, setMessage] = useState('');
     const [chatLog, setChatLog] = useState([]);
 
-    const token = document.cookie
-        .split('; ')
-        .find(row => row.startsWith('token='))
-        ?.split('=')[1] || '';
+    const token = utils.parseCookie().get('token');
     const orgId = sessionStorage.getItem('org-id');
 
     const { sendMessage } = useWebSocket({
