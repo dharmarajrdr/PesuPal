@@ -16,7 +16,6 @@ import com.pesupal.server.model.chat.DirectMessage;
 import com.pesupal.server.model.org.Org;
 import com.pesupal.server.model.user.User;
 import com.pesupal.server.repository.DirectMessageRepository;
-import com.pesupal.server.security.SecurityUtil;
 import com.pesupal.server.service.interfaces.*;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
@@ -33,11 +32,11 @@ import java.util.List;
 @Service
 public class DirectMessageServiceImpl implements DirectMessageService {
 
-    private final OrgService orgService;
-    private final UserService userService;
-    private final OrgMemberService orgMemberService;
     private final DirectMessageRepository directMessageRepository;
     private final DirectMessageReactionService directMessageReactionService;
+    private final UserService userService;
+    private final OrgService orgService;
+    private final OrgMemberService orgMemberService;
 
     public DirectMessageServiceImpl(DirectMessageRepository directMessageRepository,
                                     @Lazy DirectMessageReactionService directMessageReactionService,

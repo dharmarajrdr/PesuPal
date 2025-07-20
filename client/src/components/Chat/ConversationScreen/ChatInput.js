@@ -1,4 +1,3 @@
-import { useRef } from 'react';
 import './ChatInput.css'
 
 const ChatInput = ({ clickSendMessageHandler, message, setMessage }) => {
