@@ -3,15 +3,13 @@ import './ChatMessages.css'
 import Loader from '../../Loader';
 import MessageDeleted from './MessageDeleted';
 import Message from './Message';
-import ReadReceipt from './ReadReceipt';
 import StartNewConversation from './StartNewConversation';
-
-const reactionsList = ['LIKE', 'LOVE', 'FUNNY', 'ANGRY', 'DISLIKE'];
+import MessageActions from './MessageActions';
+import MessageMeta from './MessageMeta';
 
 const ChatMessages = ({ messages, currentUserId, chatId, retrievingChat }) => {
 
     const formatDate = (iso) => new Date(iso).toDateString();
-    const formatTime = (iso) => new Date(iso).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
     let lastDate = null;
 
@@ -45,20 +43,10 @@ const ChatMessages = ({ messages, currentUserId, chatId, retrievingChat }) => {
                             <div className={`message ${isCurrentUser ? 'sent' : 'received'}`}>
                                 {msg.deleted ? <MessageDeleted /> : <>
                                     <div className="message-content">
-                                        <Message html={msg.message} />
-                                        <div className="actions">
-                                            <i className='fa fa-trash delete-icon' title="Delete" />
-                                            <div className="reactions">
-                                                {reactionsList.map((reaction) => (
-                                                    <i key={reaction} className={`fa fa-smile reaction-icon`} title={reaction} />
-                                                ))}
-                                            </div>
-                                        </div>
+                                        <Message html={msg.id} />
+                                        <MessageActions />
                                     </div>
-                                    <div className="message-meta FRCE">
-                                        <span className="time">{formatTime(msg.createdAt)}</span>
-                                        {isCurrentUser && <ReadReceipt readReceipt={msg.readReceipt} />}
-                                    </div>
+                                    <MessageMeta createdAt={msg.createdAt} readReceipt={msg.readReceipt} isCurrentUser={isCurrentUser} />
                                 </>}
                             </div>
                         </div>

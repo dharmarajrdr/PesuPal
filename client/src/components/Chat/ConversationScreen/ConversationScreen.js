@@ -21,7 +21,7 @@ const ConversationScreen = ({ setActiveRecentChat }) => {
   const [retrievingChat, setRetrievingChat] = useState(true);
   const [messages, setMessages] = useState([]);
   const [page, setPage] = useState(0);
-  const [size, setSize] = useState(10);
+  const [size, setSize] = useState(25);
   const [pivotMessageId, setPivotMessageId] = useState(null);
 
   const [message, setMessage] = useState('');
