@@ -4,6 +4,7 @@ import RecentChat from './RecentChat'
 import { apiRequest } from '../../../http_request'
 import Loader from '../../Loader'
 import ErrorMessage from '../../ErrorMessage'
+import { useNavigate } from 'react-router-dom'
 
 const NoChatsFound = () => {
 
@@ -19,11 +20,13 @@ const NoChatsFound = () => {
 }
 
 
-const RecentChats = () => {
+const RecentChats = ({ activeRecentChat }) => {
 
     const [recentChat, setRecentChat] = useState([]);
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(true);
+
+    const navigate = useNavigate();
 
     useEffect(() => {
         apiRequest('/api/v1/direct-messages/recent?page=0&size=10', 'GET').then(({ data }) => {
@@ -35,6 +38,11 @@ const RecentChats = () => {
         });
     }, []);
 
+    const openChatHandler = (chatId) => {
+        navigate(`/chat/${chatId}`);
+        activeRecentChat[1](chatId);
+    }
+
     return (
         <div id='RecentChats' className='FCCS w100'>
             {
@@ -42,7 +50,7 @@ const RecentChats = () => {
                     error ? <ErrorMessage message={error} /> :
                         recentChat.length ?
                             recentChat.map((recentChat, index) =>
-                                <RecentChat key={index} recentChat={recentChat} />
+                                <RecentChat key={index} recentChat={recentChat} activeRecentChat={activeRecentChat[0]} openChatHandler={openChatHandler} />
                             ) : <NoChatsFound />
             }
         </div>

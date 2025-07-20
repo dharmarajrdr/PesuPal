@@ -7,9 +7,17 @@
   overflow: hidden;
   border-bottom: 1px solid #ddd;
   padding: 10px;
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+  border-left: 5px solid transparent;
 }
 
-.RecentChatContainer:hover {
+.RecentChatContainer.active {
+  background-color: var(--bg-color);
+  border-left: 5px solid var(--primary-color);
+}
+
+.RecentChatContainer:not(.active):hover {
   background-color: var(--pure-white-hover);
   transition-duration: 0.25s;
 }
