@@ -5,6 +5,19 @@
 
 #conversation-screen-placeholder img {
     width: 500px;
+    animation: dropdown 0.25s ease-in 1 alternate;
+    user-select: none;
+}
+
+@keyframes dropdown {
+    from {
+        transform: translateY(-20px);
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
 }
 
 #conversation-screen-placeholder p {
