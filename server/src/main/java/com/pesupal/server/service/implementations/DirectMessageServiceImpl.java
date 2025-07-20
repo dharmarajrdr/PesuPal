@@ -27,24 +27,23 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
 public class DirectMessageServiceImpl implements DirectMessageService {
 
+    private final OrgService orgService;
+    private final UserService userService;
+    private final OrgMemberService orgMemberService;
     private final DirectMessageRepository directMessageRepository;
     private final DirectMessageReactionService directMessageReactionService;
-    private final SecurityUtil securityUtil;
-    private final UserService userService;
-    private final OrgService orgService;
-    private final OrgMemberService orgMemberService;
 
     public DirectMessageServiceImpl(DirectMessageRepository directMessageRepository,
-                                    @Lazy DirectMessageReactionService directMessageReactionService, SecurityUtil securityUtil,
+                                    @Lazy DirectMessageReactionService directMessageReactionService,
                                     UserService userService, OrgService orgService, OrgMemberService orgMemberService) {
         this.directMessageRepository = directMessageRepository;
         this.directMessageReactionService = directMessageReactionService;
-        this.securityUtil = securityUtil;
         this.userService = userService;
         this.orgService = orgService;
         this.orgMemberService = orgMemberService;
@@ -60,15 +59,22 @@ public class DirectMessageServiceImpl implements DirectMessageService {
     public List<DirectMessageResponseDto> getDirectMessagesBetweenUsers(
             GetConversationBetweenUsers getConversationBetweenUsers) {
 
-        Pageable pageable = PageRequest.of(getConversationBetweenUsers.getPage(), getConversationBetweenUsers.getSize(),
+        Pageable pageable = PageRequest.of(
+                getConversationBetweenUsers.getPage(),
+                getConversationBetweenUsers.getSize(),
                 Sort.by("createdAt").descending());
-        Page<DirectMessage> messages = directMessageRepository.findByChatId(getConversationBetweenUsers.getChatId(),
-                pageable);
+        Page<DirectMessage> messages = null;
+        Long pivotMessageId = getConversationBetweenUsers.getPivotMessageId();
+        if (pivotMessageId != null) {
+            messages = directMessageRepository.findByChatIdAndIdLessThan(getConversationBetweenUsers.getChatId(), getConversationBetweenUsers.getPivotMessageId(), pageable);
+        } else {
+            messages = directMessageRepository.findByChatId(getConversationBetweenUsers.getChatId(), pageable);
+        }
         return messages.stream().map(dm -> {
             DirectMessageResponseDto directMessageResponseDto = DirectMessageResponseDto.fromDirectMessage(dm);
             directMessageResponseDto.setReactions(directMessageReactionService.getReactionsCountForMessage(dm));
             return directMessageResponseDto;
-        }).toList();
+        }).sorted(Comparator.comparing(DirectMessageResponseDto::getCreatedAt)).toList();
     }
 
     /**
