@@ -1,0 +1,32 @@
+.chat-header {
+    display: flex;
+    align-items: center;
+    padding: 10px 25px 10px 15px;
+    background-color: var(--pure-white);
+    border-bottom: 1px solid #eee;
+    box-shadow: 0px 4px 8px var(--box-shadow-color);
+    height: 60px;
+}
+
+.name {
+    font-weight: 600;
+    font-size: 16px;
+    cursor: default;
+    color: var(--primary-color-active);
+}
+
+#close-chat {
+    background-color: var(--pure-white-hover);
+    color: #555;
+    width: 30px;
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+#close-chat:hover {
+    color: var(--primary-color-active);
+    scale: 1.1;
+}

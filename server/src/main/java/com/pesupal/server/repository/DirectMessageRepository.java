@@ -18,6 +18,8 @@ public interface DirectMessageRepository extends JpaRepository<DirectMessage, Lo
 
     Page<DirectMessage> findByChatId(String chatId, Pageable pageable);
 
+    Page<DirectMessage> findByChatIdAndIdLessThan(String chatId, Long pivotMessageId, Pageable pageable);
+
     @Modifying
     @Transactional
     @Query("UPDATE DirectMessage dm SET dm.readReceipt = :readReceipt WHERE dm.chatId = :chatId AND dm.receiver.id = :receiverId AND dm.readReceipt <> :readReceipt")
@@ -37,7 +39,8 @@ public interface DirectMessageRepository extends JpaRepository<DirectMessage, Lo
                 dm.message AS content,
                 dm.contains_media AS includedMedia,
                 dm.created_at AS createdAt,
-                dm.read_receipt AS readReceipt
+                dm.read_receipt AS readReceipt,
+                dm.chat_id AS chatId
             
             FROM direct_message dm
             

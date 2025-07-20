@@ -1,7 +1,5 @@
 import utils from "./utils";
 
-const BASE_URL = 'http://localhost:8080'; // Update as needed
-
 export async function apiRequest(endpoint, method = 'GET', data = null, customHeaders = {}) {
     const token = utils.parseCookie().get('token');
     const orgId = sessionStorage.getItem('org-id'); // Optional: get orgId from session
@@ -24,7 +22,7 @@ export async function apiRequest(endpoint, method = 'GET', data = null, customHe
     }
 
     try {
-        const response = await fetch(`${BASE_URL}${endpoint}`, config);
+        const response = await fetch(`${utils.serverDomain}${endpoint}`, config);
         const contentType = response.headers.get('content-type') || '';
 
         const isJson = contentType.includes('application/json');

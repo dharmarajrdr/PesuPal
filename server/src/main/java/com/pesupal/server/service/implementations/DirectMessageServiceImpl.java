@@ -1,6 +1,5 @@
 package com.pesupal.server.service.implementations;
 
-import com.pesupal.server.config.RequestContext;
 import com.pesupal.server.dto.request.ChatMessageDto;
 import com.pesupal.server.dto.request.GetConversationBetweenUsers;
 import com.pesupal.server.dto.response.DirectMessageResponseDto;
@@ -17,7 +16,6 @@ import com.pesupal.server.model.chat.DirectMessage;
 import com.pesupal.server.model.org.Org;
 import com.pesupal.server.model.user.User;
 import com.pesupal.server.repository.DirectMessageRepository;
-import com.pesupal.server.security.SecurityUtil;
 import com.pesupal.server.service.interfaces.*;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
@@ -28,6 +26,7 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -35,17 +34,15 @@ public class DirectMessageServiceImpl implements DirectMessageService {
 
     private final DirectMessageRepository directMessageRepository;
     private final DirectMessageReactionService directMessageReactionService;
-    private final SecurityUtil securityUtil;
     private final UserService userService;
     private final OrgService orgService;
     private final OrgMemberService orgMemberService;
 
     public DirectMessageServiceImpl(DirectMessageRepository directMessageRepository,
-            @Lazy DirectMessageReactionService directMessageReactionService, SecurityUtil securityUtil,
-            UserService userService, OrgService orgService, OrgMemberService orgMemberService) {
+                                    @Lazy DirectMessageReactionService directMessageReactionService,
+                                    UserService userService, OrgService orgService, OrgMemberService orgMemberService) {
         this.directMessageRepository = directMessageRepository;
         this.directMessageReactionService = directMessageReactionService;
-        this.securityUtil = securityUtil;
         this.userService = userService;
         this.orgService = orgService;
         this.orgMemberService = orgMemberService;
@@ -61,15 +58,22 @@ public class DirectMessageServiceImpl implements DirectMessageService {
     public List<DirectMessageResponseDto> getDirectMessagesBetweenUsers(
             GetConversationBetweenUsers getConversationBetweenUsers) {
 
-        Pageable pageable = PageRequest.of(getConversationBetweenUsers.getPage(), getConversationBetweenUsers.getSize(),
+        Pageable pageable = PageRequest.of(
+                getConversationBetweenUsers.getPage(),
+                getConversationBetweenUsers.getSize(),
                 Sort.by("createdAt").descending());
-        Page<DirectMessage> messages = directMessageRepository.findByChatId(getConversationBetweenUsers.getChatId(),
-                pageable);
+        Page<DirectMessage> messages = null;
+        Long pivotMessageId = getConversationBetweenUsers.getPivotMessageId();
+        if (pivotMessageId != null) {
+            messages = directMessageRepository.findByChatIdAndIdLessThan(getConversationBetweenUsers.getChatId(), getConversationBetweenUsers.getPivotMessageId(), pageable);
+        } else {
+            messages = directMessageRepository.findByChatId(getConversationBetweenUsers.getChatId(), pageable);
+        }
         return messages.stream().map(dm -> {
             DirectMessageResponseDto directMessageResponseDto = DirectMessageResponseDto.fromDirectMessage(dm);
             directMessageResponseDto.setReactions(directMessageReactionService.getReactionsCountForMessage(dm));
             return directMessageResponseDto;
-        }).toList();
+        }).sorted(Comparator.comparing(DirectMessageResponseDto::getCreatedAt)).toList();
     }
 
     /**
@@ -149,6 +153,7 @@ public class DirectMessageServiceImpl implements DirectMessageService {
             Boolean includedMedia = (Boolean) row[5];
             LocalDateTime createdAt = ((Timestamp) row[6]).toLocalDateTime();
             ReadReceipt readReceipt = ReadReceipt.valueOf((String) row[7]);
+            String chatId = (String) row[8];
 
             LastMessageDto lastMessage = new LastMessageDto();
             lastMessage.setSender(sender);
@@ -158,6 +163,7 @@ public class DirectMessageServiceImpl implements DirectMessageService {
             lastMessage.setReadReceipt(readReceipt);
 
             RecentChatDto dto = new RecentChatDto();
+            dto.setChatId(chatId);
             dto.setName(userName);
             dto.setImage(displayPicture);
             dto.setStatus(userStatus);
@@ -179,10 +185,10 @@ public class DirectMessageServiceImpl implements DirectMessageService {
     @Override
     public void save(ChatMessageDto chatMessageDto) {
 
-        Long orgId = RequestContext.getLong("X-ORG-ID");
+        Long orgId = chatMessageDto.getOrgId();
         Org org = orgService.getOrgById(orgId);
 
-        Long senderId = securityUtil.getCurrentUserId();
+        Long senderId = chatMessageDto.getSenderId();
         User sender = userService.getUserById(senderId);
         orgMemberService.validateUserIsOrgMember(sender, org);
 

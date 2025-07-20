@@ -5,6 +5,8 @@ import lombok.Data;
 @Data
 public class RecentChatDto {
 
+    private String chatId;
+
     private String name;
 
     private String image;

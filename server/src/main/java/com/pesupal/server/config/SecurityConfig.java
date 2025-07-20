@@ -45,6 +45,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/user/**").permitAll()     // Allow all requests to user endpoints
                         .requestMatchers("/api/v1/media/**").permitAll()    // Allow all requests to media endpoints
                         .requestMatchers("/chat/**").permitAll()  // Allow all requests to the chat endpoint
+                        .requestMatchers("/ws/**").permitAll()    // Allow all requests to WebSocket endpoint
                         .anyRequest().authenticated()   // All other requests require authentication
         );
 

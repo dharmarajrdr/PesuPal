@@ -4,6 +4,7 @@ import RecentChat from './RecentChat'
 import { apiRequest } from '../../../http_request'
 import Loader from '../../Loader'
 import ErrorMessage from '../../ErrorMessage'
+import { useNavigate } from 'react-router-dom'
 
 const NoChatsFound = () => {
 
@@ -19,11 +20,14 @@ const NoChatsFound = () => {
 }
 
 
-const RecentChats = () => {
+const RecentChats = ({ activeRecentChatState, currentChatIdState }) => {
 
     const [recentChat, setRecentChat] = useState([]);
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [, setActiveRecentChat] = activeRecentChatState;
+
+    const navigate = useNavigate();
 
     useEffect(() => {
         apiRequest('/api/v1/direct-messages/recent?page=0&size=10', 'GET').then(({ data }) => {
@@ -35,14 +39,20 @@ const RecentChats = () => {
         });
     }, []);
 
+    const openChatHandler = (chat) => {
+        console.log(chat);
+        navigate(`/chat/${chat.chatId}`);
+        setActiveRecentChat(chat);
+    }
+
     return (
         <div id='RecentChats' className='FCCS w100'>
             {
                 loading ? <Loader /> :
                     error ? <ErrorMessage message={error} /> :
                         recentChat.length ?
-                            recentChat.map(({ name, status, image, recentMessage }, index) =>
-                                <RecentChat key={index} name={name} image={image} status={status} recentMessage={recentMessage} />
+                            recentChat.map((recentChat, index) =>
+                                <RecentChat currentChatIdState={currentChatIdState} key={index} recentChat={recentChat} activeRecentChatState={activeRecentChatState} openChatHandler={openChatHandler} />
                             ) : <NoChatsFound />
             }
         </div>

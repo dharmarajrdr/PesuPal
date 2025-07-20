@@ -155,5 +155,18 @@ export default {
         } catch (error) {
             console.error({ error, str });  //eslint-disable-line no-console
         }
+    },
+    "parseCookie": () => {
+        const cookies = document.cookie
+            .split(';')
+            .map(cookie => cookie.trim().split('='))
+            .reduce((acc, [key, value]) => {
+                acc[key] = decodeURIComponent(value);
+                return acc;
+            }, {});
+
+        return {
+            get: (name) => cookies[name] || null
+        };
     }
 }

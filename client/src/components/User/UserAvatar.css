@@ -1,9 +1,21 @@
 .user-avatar-placeholder {
-    font-size: 40px;
+    font-size: 35px;
     color: #aaa;
-    width: 40px;
-    height: 40px;
+    width: 35px;
+    height: 35px;
     border-radius: 50%;
     text-align: center;
-    line-height: 40px;
+    line-height: 35px;
+}
+
+.user-avatar-placeholder-first-character {
+    width: 35px;
+    height: 35px;
+    background-color: #007bff;
+    color: white;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 35px;
+    font-weight: bold;
+    margin-right: 10px;
 }

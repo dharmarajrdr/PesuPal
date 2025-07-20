@@ -1,0 +1,36 @@
+.chat-input {
+    padding: 10px;
+    background-color: var(--pure-white);
+    border-top: 1px solid #ddd;
+    min-height: 90px;
+    max-height: 200px;
+    width: 100%;
+}
+
+.chat-input textarea {
+    flex: 1;
+    padding: 8px;
+    border-radius: 4px;
+    border: none;
+    resize: none;
+    max-height: 200px;
+}
+
+.file-upload {
+    margin-left: 10px;
+}
+
+.send-button {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    margin-left: 10px;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.send-button i {
+    font-size: 16px;
+    color: #fff;
+}
