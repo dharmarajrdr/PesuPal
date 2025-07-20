@@ -350,6 +350,18 @@
   width: 30px;
 }
 
+.border000 {
+  border: 1px solid #000;
+}
+
+.border555 {
+  border: 1px solid #555;
+}
+
+.border999 {
+  border: 1px solid #999;
+}
+
 .img_20_20 {
   width: 20px;
   height: 20px;

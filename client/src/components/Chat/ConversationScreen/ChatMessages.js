@@ -52,7 +52,7 @@ const ChatMessages = ({ messages, currentUserId, chatId, retrievingChat }) => {
     }, [chatId, messages]);
 
     return (
-        <div className="chat-messages" ref={chatContainerRef}>
+        <div className="chat-messages FCCE w100" ref={chatContainerRef}>
 
             {retrievingChat ? <Loader /> : messages.length ? messages.map((msg) => {
 
@@ -62,7 +62,7 @@ const ChatMessages = ({ messages, currentUserId, chatId, retrievingChat }) => {
                 lastDate = newDate;
 
                 return (
-                    <div key={msg.id}>
+                    <div key={msg.id} className='w100'>
                         {showDate && <div className="date-label">{newDate}</div>}
                         <div className='row w100 FRCS'>
                             <div className={`message ${isCurrentUser ? 'sent' : 'received'}`}>
