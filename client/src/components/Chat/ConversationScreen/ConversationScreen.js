@@ -8,7 +8,7 @@ import { useParams } from 'react-router-dom';
 import { apiRequest } from '../../../http_request';
 import { useDispatch, useSelector } from 'react-redux';
 import { setCurrentChatPreview } from '../../../store/reducers/CurrentChatPreviewSlice';
-import { setActiveRecentChat } from '../../../store/reducers/ActiveRecentChatSlice';
+import { setChatId } from '../../../store/reducers/ChatIdSlice';
 
 const readAllMessages = ({ chatId }) => {
   apiRequest(`/api/v1/direct-messages/${chatId}/read_all`, "PUT").then(() => {
@@ -18,19 +18,16 @@ const readAllMessages = ({ chatId }) => {
   });
 }
 
-const ConversationScreen = ({ currentChatIdState }) => {
+const ConversationScreen = () => {
 
   const { chatId } = useParams();
+
   const dispatch = useDispatch();
 
-  const [, setCurrentChatId] = currentChatIdState;
-
-  setCurrentChatId(chatId);
-
-  const [retrievingChat, setRetrievingChat] = useState(true);
-  const [messages, setMessages] = useState([]);
   const [page, setPage] = useState(0);
   const [size, setSize] = useState(25);
+  const [messages, setMessages] = useState([]);
+  const [retrievingChat, setRetrievingChat] = useState(true);
   const [pivotMessageId, setPivotMessageId] = useState(null);
 
   const currentChatPreview = useSelector(state => state.currentChatPreviewSlice);
@@ -114,7 +111,7 @@ const ConversationScreen = ({ currentChatIdState }) => {
 
   useEffect(() => {
 
-    // dispatch(setActiveRecentChat());
+    dispatch(setChatId(chatId));
     setPivotMessageId(null); // reset state — this takes effect after render
     setRetrievingChat(true);
     getChatPreview(chatId);
@@ -124,7 +121,7 @@ const ConversationScreen = ({ currentChatIdState }) => {
 
   return currentChatPreview ? (
     <div id='ConversationScreen' className='FCSB'>
-      <ChatHeader setCurrentChatId={setCurrentChatId} />
+      <ChatHeader />
       <ChatMessages retrievingChat={retrievingChat} messages={messages} currentUserId={currentUser.id} chatId={chatId} clickSendMessageHandler={clickSendMessageHandler} />
       <ChatInput clickSendMessageHandler={clickSendMessageHandler} />
     </div>

@@ -5,7 +5,7 @@ import PinnedUsers from './PinnedUsers'
 import RecentChats from './RecentChats'
 import SubTabs from './SubTabs'
 
-const ListOfChats = ({ currentChatIdState }) => {
+const ListOfChats = () => {
 
     return (
         <div id='ListOfChats' className='custom-scrollbar'>
@@ -14,7 +14,7 @@ const ListOfChats = ({ currentChatIdState }) => {
                 <PinnedUsers />
                 <SubTabs />
             </div>
-            <RecentChats currentChatIdState={currentChatIdState} />
+            <RecentChats />
         </div>
     )
 }

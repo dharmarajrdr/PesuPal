@@ -22,7 +22,7 @@ const NoChatsFound = () => {
     )
 }
 
-const RecentChats = ({ currentChatIdState }) => {
+const RecentChats = () => {
 
     const [page, setPage] = useState(0);
     const [size, setSize] = useState(10);
@@ -54,7 +54,7 @@ const RecentChats = ({ currentChatIdState }) => {
                     error ? <ErrorMessage message={error} /> :
                         recentChats?.length ?
                             recentChats.map((recentChat, index) =>
-                                <RecentChat currentChatIdState={currentChatIdState} key={index} recentChat={recentChat} openChatHandler={openChatHandler} />
+                                <RecentChat key={index} recentChat={recentChat} openChatHandler={openChatHandler} />
                             ) : <NoChatsFound />
             }
         </div>

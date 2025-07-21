@@ -5,7 +5,7 @@ const ActiveRecentChatSlice = createSlice({
     'initialState': {},
     'reducers': {
         'setActiveRecentChat': (state, action) => {
-            state.activeRecentChat = action.payload;
+            return action.payload;
         }
     }
 });

@@ -11,7 +11,7 @@ import { addPinnedDirectMessage, removePinnedDirectMessage } from '../../../stor
 import { setCurrentChatPreview } from '../../../store/reducers/CurrentChatPreviewSlice';
 import { setActiveRecentChat } from '../../../store/reducers/ActiveRecentChatSlice';
 
-const ChatHeader = ({ setCurrentChatId }) => {
+const ChatHeader = () => {
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -23,7 +23,6 @@ const ChatHeader = ({ setCurrentChatId }) => {
     const { chatId } = currentChatPreview || {};
 
     const closeChatHandler = () => {
-        setCurrentChatId(null);
         dispatch(setActiveRecentChat({}));
         navigate('/chat');
     }

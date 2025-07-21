@@ -2,10 +2,9 @@ import { useDispatch } from 'react-redux';
 import { setActiveRecentChat } from '../../../store/reducers/ActiveRecentChatSlice';
 import './ConversationScreenPlaceholder.css';
 
-const ConversationScreenPlaceholder = ({ setCurrentChatId }) => {
+const ConversationScreenPlaceholder = () => {
 
     const dispatch = useDispatch();
-    setCurrentChatId(null);
     dispatch(setActiveRecentChat(null));
 
     return (

@@ -7,14 +7,12 @@ import { useState } from 'react';
 
 const ChatLayout = () => {
 
-    const currentChatIdState = useState(null);
-
     return (
         <div className='Layout FRCS'>
-            <ListOfChats currentChatIdState={currentChatIdState} />
+            <ListOfChats />
             <Routes>
-                <Route path='/' element={<ConversationScreenPlaceholder setCurrentChatId={currentChatIdState[1]} />} />
-                <Route path="/:chatId" element={<ConversationScreen currentChatIdState={currentChatIdState} />} />
+                <Route path='/' element={<ConversationScreenPlaceholder />} />
+                <Route path="/:chatId" element={<ConversationScreen />} />
             </Routes>
         </div>
     )
