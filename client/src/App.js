@@ -14,8 +14,10 @@ import { configureStore } from '@reduxjs/toolkit';
 import { combineReducers } from 'redux';
 import { Provider } from 'react-redux';
 import { VerticalLoaderReducer } from './store/reducers/VerticalLoader';
+import PinnedDirectMessageSlice from './store/reducers/PinnedDirectMessageSlice';
 import { NavigationReducers } from './store/reducers/Navigation';
 import PostReducer from './store/reducers/PostSlice';
+import ShowChatHeaderOptionsModalSlice from './store/reducers/ShowChatHeaderOptionsModalSlice';
 import PageNotFound from './components/Auth/PageNotFound';
 import SettingsLayout from './components/Settings/SettingsLayout';
 import MoreFeaturesLayout from './components/More/MoreFeaturesLayout';
@@ -26,7 +28,9 @@ const store = configureStore({
     reducer: combineReducers({
         Navigation: NavigationReducers,
         VerticalLoader: VerticalLoaderReducer,
-        posts: PostReducer
+        posts: PostReducer,
+        pinnedDirectMessage: PinnedDirectMessageSlice,
+        showChatHeaderOptionsModalSlice: ShowChatHeaderOptionsModalSlice
     }),
     devTools: true
 });
