@@ -1,16 +1,12 @@
 package com.pesupal.server.controller;
 
-import com.pesupal.server.config.RequestContext;
 import com.pesupal.server.dto.request.AddReactionDto;
 import com.pesupal.server.dto.request.ChatMessageDto;
 import com.pesupal.server.dto.request.GetConversationBetweenUsers;
-import com.pesupal.server.dto.response.ApiResponseDto;
-import com.pesupal.server.dto.response.DirectMessageResponseDto;
-import com.pesupal.server.dto.response.ReactMessageResponseDto;
-import com.pesupal.server.dto.response.RecentChatPagedDto;
+import com.pesupal.server.dto.response.*;
 import com.pesupal.server.exceptions.PermissionDeniedException;
 import com.pesupal.server.helpers.Chat;
-import com.pesupal.server.security.SecurityUtil;
+import com.pesupal.server.helpers.CurrentValueRetriever;
 import com.pesupal.server.service.interfaces.DirectMessageReactionService;
 import com.pesupal.server.service.interfaces.DirectMessageService;
 import lombok.AllArgsConstructor;
@@ -23,16 +19,15 @@ import java.util.List;
 @RestController
 @AllArgsConstructor
 @RequestMapping("/api/v1/direct-messages")
-public class DirectMessageController {
+public class DirectMessageController extends CurrentValueRetriever {
 
-    private final SecurityUtil securityUtil;
     private final DirectMessageService directMessageService;
     private final DirectMessageReactionService directMessageReactionService;
 
     @GetMapping("/{chatId}")
     public ResponseEntity<ApiResponseDto> getDirectMessagesByUserId(@PathVariable String chatId, @RequestParam Integer page, @RequestParam Integer size, @RequestParam(name = "pivot_message_id", required = false) Long pivotMessageId) {
 
-        Long userId = securityUtil.getCurrentUserId();
+        Long userId = getCurrentUserId();
         if (!Chat.isUserInChat(chatId, userId)) {
             throw new PermissionDeniedException("You do not have permission to access this chat.");
         }
@@ -44,11 +39,8 @@ public class DirectMessageController {
     @GetMapping("/recent")
     public ResponseEntity<ApiResponseDto> getRecentChats(@RequestParam Integer page, @RequestParam Integer size) {
 
-        Long userId = securityUtil.getCurrentUserId();
-        Long orgId = RequestContext.getLong("X-ORG-ID");
-
         Pageable pageable = Pageable.ofSize(size).withPage(page);
-        RecentChatPagedDto recentChats = directMessageService.getRecentChatsPaged(userId, orgId, pageable);
+        RecentChatPagedDto recentChats = directMessageService.getRecentChatsPaged(getCurrentUserId(), getCurrentOrgId(), pageable);
         return ResponseEntity.ok(new ApiResponseDto("Recent chats retrieved successfully", recentChats.getChats(), recentChats.getPageable()));
     }
 
@@ -62,7 +54,7 @@ public class DirectMessageController {
     @PutMapping("/{chatId}/read_all")
     public ResponseEntity<ApiResponseDto> markAllMessagesAsRead(@PathVariable String chatId) {
 
-        Long userId = securityUtil.getCurrentUserId();
+        Long userId = getCurrentUserId();
         if (!Chat.isUserInChat(chatId, userId)) {
             throw new PermissionDeniedException("You do not have permission to access this chat.");
         }
@@ -73,24 +65,28 @@ public class DirectMessageController {
     @DeleteMapping("/{messageId}")
     public ResponseEntity<ApiResponseDto> deleteMessage(@PathVariable Long messageId) {
 
-        Long userId = securityUtil.getCurrentUserId();
-        directMessageService.deleteMessage(userId, messageId);
+        directMessageService.deleteMessage(getCurrentUserId(), messageId);
         return ResponseEntity.ok(new ApiResponseDto("Message deleted successfully"));
     }
 
     @PostMapping("/{messageId}/react")
     public ResponseEntity<ApiResponseDto> reactToMessage(@PathVariable Long messageId, @RequestBody AddReactionDto addReactionDto) {
 
-        Long userId = securityUtil.getCurrentUserId();
-        ReactMessageResponseDto reactMessageResponseDto = directMessageReactionService.reactToMessage(messageId, userId, addReactionDto.getReaction());
+        ReactMessageResponseDto reactMessageResponseDto = directMessageReactionService.reactToMessage(messageId, getCurrentUserId(), addReactionDto.getReaction());
         return ResponseEntity.ok(new ApiResponseDto("Reaction added successfully", reactMessageResponseDto));
     }
 
     @DeleteMapping("/react/{reactionId}")
     public ResponseEntity<ApiResponseDto> unReactMessage(@PathVariable Long reactionId) {
 
-        Long userId = securityUtil.getCurrentUserId();
-        directMessageReactionService.unreactToMessage(reactionId, userId);
+        directMessageReactionService.unreactToMessage(reactionId, getCurrentUserId());
         return ResponseEntity.ok(new ApiResponseDto("Reaction removed successfully"));
+    }
+
+    @GetMapping("/preview/{chatId}")
+    public ResponseEntity<ApiResponseDto> getDirectMessagePreview(@PathVariable String chatId) {
+
+        DirectMessagePreviewDto directMessagePreviewDto = directMessageService.getDirectMessagePreviewByChatId(chatId, getCurrentUserId(), getCurrentOrgId());
+        return ResponseEntity.ok(new ApiResponseDto("Direct message preview retrieved successfully", directMessagePreviewDto));
     }
 }
