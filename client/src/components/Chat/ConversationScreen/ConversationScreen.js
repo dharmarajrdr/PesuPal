@@ -27,6 +27,7 @@ const ConversationScreen = ({ activeRecentChatState, currentChatIdState }) => {
   const [page, setPage] = useState(0);
   const [size, setSize] = useState(25);
   const [pivotMessageId, setPivotMessageId] = useState(null);
+  const [activeChatPreview, setActiveChatPreview] = useState(null);
 
   const [message, setMessage] = useState('');
 
@@ -78,37 +79,48 @@ const ConversationScreen = ({ activeRecentChatState, currentChatIdState }) => {
     setMessage('');
   };
 
-  useEffect(() => {
+  const getChatPreview = (chatId) => {
 
     const isFirstLoad = true; // since chatId changed
     const pivot = isFirstLoad ? null : pivotMessageId;
 
-    setPivotMessageId(null); // reset state — this takes effect after render
+    apiRequest(`/api/v1/direct-messages/preview/${chatId}`, "GET").then(({ data }) => {
+      setActiveChatPreview(data);
 
-    setRetrievingChat(true);
-    setActiveRecentChat(activeRecentChat);
+      apiRequest(`/api/v1/direct-messages/${chatId}?page=${page}&size=${size}${pivot ? `&pivot_message_id=${pivot}` : ''}`, "GET").then(({ data }) => {
+        setMessages(data);
+        setRetrievingChat(false);
 
-    const url = `/api/v1/direct-messages/${chatId}?page=${page}&size=${size}` + (pivot ? `&pivot_message_id=${pivot}` : '');
+        // Update pivot to the last message’s ID
+        if (data.length > 0) {
+          setPivotMessageId(data.at(-1)?.id);
+        }
 
-    apiRequest(url, "GET").then(({ data }) => {
-      setMessages(data);
-      setRetrievingChat(false);
-
-      // Update pivot to the last message’s ID
-      if (data.length > 0) {
-        setPivotMessageId(data.at(-1)?.id);
-      }
+      }).catch(({ message }) => {
+        console.error(message);
+        setRetrievingChat(false);
+      });
 
     }).catch(({ message }) => {
       console.error(message);
       setRetrievingChat(false);
     });
+
+  };
+
+  useEffect(() => {
+
+    setActiveRecentChat(activeRecentChat);
+    setPivotMessageId(null); // reset state — this takes effect after render
+    setRetrievingChat(true);
+    getChatPreview(chatId);
+
   }, [chatId]);
 
-  return activeRecentChat ? (
+  return activeChatPreview ? (
     <div id='ConversationScreen' className='FCSB'>
-      <ChatHeader activeRecentChatState={activeRecentChatState} />
-      <ChatMessages retrievingChat={retrievingChat} messages={messages} currentUserId={currentUserId} chatId={chatId} />
+      <ChatHeader activeRecentChatState={activeRecentChatState} activeChatPreview={activeChatPreview} />
+      <ChatMessages activeChatPreview={activeChatPreview} retrievingChat={retrievingChat} messages={messages} currentUserId={currentUserId} chatId={chatId} />
       <ChatInput clickSendMessageHandler={clickSendMessageHandler} setMessage={setMessage} message={message} />
     </div>
   ) : null;
