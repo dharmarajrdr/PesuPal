@@ -1,6 +1,7 @@
 package com.pesupal.server.service.interfaces;
 
 import com.pesupal.server.dto.request.GetConversationBetweenUsers;
+import com.pesupal.server.dto.response.DirectMessagePreviewDto;
 import com.pesupal.server.dto.response.DirectMessageResponseDto;
 import com.pesupal.server.dto.response.RecentChatPagedDto;
 import com.pesupal.server.model.chat.DirectMessage;
@@ -19,4 +20,6 @@ public interface DirectMessageService extends ChatService {
     void deleteMessage(Long userId, Long messageId);
 
     RecentChatPagedDto getRecentChatsPaged(Long userId, Long orgId, Pageable pageable);
+
+    DirectMessagePreviewDto getDirectMessagePreviewByChatId(String chatId, Long userId, Long orgId);
 }

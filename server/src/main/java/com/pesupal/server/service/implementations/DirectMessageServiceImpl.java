@@ -2,10 +2,7 @@ package com.pesupal.server.service.implementations;
 
 import com.pesupal.server.dto.request.ChatMessageDto;
 import com.pesupal.server.dto.request.GetConversationBetweenUsers;
-import com.pesupal.server.dto.response.DirectMessageResponseDto;
-import com.pesupal.server.dto.response.LastMessageDto;
-import com.pesupal.server.dto.response.RecentChatDto;
-import com.pesupal.server.dto.response.RecentChatPagedDto;
+import com.pesupal.server.dto.response.*;
 import com.pesupal.server.enums.ReadReceipt;
 import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.exceptions.DataNotFoundException;
@@ -65,9 +62,9 @@ public class DirectMessageServiceImpl implements DirectMessageService {
         Page<DirectMessage> messages = null;
         Long pivotMessageId = getConversationBetweenUsers.getPivotMessageId();
         if (pivotMessageId != null) {
-            messages = directMessageRepository.findByChatIdAndIdLessThan(getConversationBetweenUsers.getChatId(), getConversationBetweenUsers.getPivotMessageId(), pageable);
+            messages = directMessageRepository.findAllByChatIdAndIdLessThan(getConversationBetweenUsers.getChatId(), getConversationBetweenUsers.getPivotMessageId(), pageable);
         } else {
-            messages = directMessageRepository.findByChatId(getConversationBetweenUsers.getChatId(), pageable);
+            messages = directMessageRepository.findAllByChatId(getConversationBetweenUsers.getChatId(), pageable);
         }
         return messages.stream().map(dm -> {
             DirectMessageResponseDto directMessageResponseDto = DirectMessageResponseDto.fromDirectMessage(dm);
@@ -207,5 +204,33 @@ public class DirectMessageServiceImpl implements DirectMessageService {
         directMessage.setReadReceipt(ReadReceipt.SENT);
         directMessage.setMessage(chatMessageDto.getMessage());
         directMessageRepository.save(directMessage);
+    }
+
+    /**
+     * Retrieves a direct message preview by chat ID for a specific user and organization.
+     *
+     * @param chatId
+     * @param userId
+     * @param orgId
+     * @return
+     */
+    @Override
+    public DirectMessagePreviewDto getDirectMessagePreviewByChatId(String chatId, Long userId, Long orgId) {
+
+        if (!Chat.isUserInChat(chatId, userId)) {
+            throw new PermissionDeniedException("You do not have permission to access this chat.");
+        }
+
+        Long[] parsedChatId = Chat.parseChatId(chatId);
+        if (!orgId.equals(parsedChatId[2])) {
+            throw new PermissionDeniedException("Chat not found in the specified organization.");
+        }
+
+        Long otherUserId = parsedChatId[0].equals(userId) ? parsedChatId[1] : parsedChatId[0];
+
+        DirectMessagePreviewDto directMessagePreviewDto = new DirectMessagePreviewDto();
+        directMessagePreviewDto.setCurrentUser(UserPreviewDto.fromOrgMember(orgMemberService.getOrgMemberByUserIdAndOrgId(userId, orgId)));
+        directMessagePreviewDto.setOtherUser(UserPreviewDto.fromOrgMember(orgMemberService.getOrgMemberByUserIdAndOrgId(otherUserId, orgId)));
+        return directMessagePreviewDto;
     }
 }
