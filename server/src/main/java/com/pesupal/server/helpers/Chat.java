@@ -31,4 +31,21 @@ public class Chat {
         Long userId2 = Long.parseLong(parts[1]);
         return userId1.equals(userId) || userId2.equals(userId);
     }
+
+    /**
+     * Parses a chat ID into its constituent user IDs and organization ID.
+     *
+     * @param chatId
+     * @return
+     */
+    public static Long[] parseChatId(String chatId) {
+        String[] parts = chatId.split("_");
+        if (parts.length < 3) {
+            throw new IllegalArgumentException("Invalid chat ID format");
+        }
+        Long userId1 = Long.parseLong(parts[0]);
+        Long userId2 = Long.parseLong(parts[1]);
+        Long orgId = Long.parseLong(parts[2]);
+        return new Long[]{userId1, userId2, orgId};
+    }
 }
