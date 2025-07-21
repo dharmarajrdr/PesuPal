@@ -23,9 +23,15 @@ const RecentChatsSlice = createSlice({
                 const [chat] = state.splice(chatIndex, 1);
                 state.unshift(chat);
             }
+        },
+        'updateRecentChat': (state, action) => {
+            const chatIndex = state.findIndex(({ chatId }) => chatId == action.payload.chatId);
+            if (chatIndex !== -1) {
+                state[chatIndex] = { ...state[chatIndex], ...action.payload };
+            }
         }
     }
 });
 
-export const { setRecentChats, addRecentChat, removeRecentChat, moveRecentChatToTop } = RecentChatsSlice.actions;
+export const { setRecentChats, addRecentChat, removeRecentChat, moveRecentChatToTop, updateRecentChat } = RecentChatsSlice.actions;
 export default RecentChatsSlice.reducer;

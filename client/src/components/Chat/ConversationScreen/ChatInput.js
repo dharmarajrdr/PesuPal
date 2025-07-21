@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import './ChatInput.css'
 import { useDispatch, useSelector } from 'react-redux';
-import { moveRecentChatToTop } from '../../../store/reducers/RecentChatsSlice';
+import { moveRecentChatToTop, updateRecentChat } from '../../../store/reducers/RecentChatsSlice';
+import utils from '../../../utils';
 
 const ChatInput = ({ clickSendMessageHandler }) => {
 
@@ -14,8 +15,16 @@ const ChatInput = ({ clickSendMessageHandler }) => {
     const handleSend = () => {
         if (message.trim()) {
             clickSendMessageHandler({ message });
-            setMessage("");
+            const recentMessage = {
+                createdAt: utils.convertTime(new Date(), 12),
+                media: false,
+                message,
+                readReceipt: "SENT",
+                sender: "Me"
+            };
+            dispatch(updateRecentChat({ chatId, recentMessage }));
             dispatch(moveRecentChatToTop(chatId));
+            setMessage("");
             // fileInputRef?.current?.value = '';
         }
     };

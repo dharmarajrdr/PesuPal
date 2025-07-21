@@ -168,7 +168,7 @@ export default {
                 let am_pm = hours >= 12 ? 'PM' : 'AM';
                 if (hoursMode === 12) {
                     hours = hours > 12 ? hours - 12 : hours;
-                    return toTwoDigits(hours) + ":" + toTwoDigits(d.getMinutes()) + " " + am_pm;
+                    return toTwoDigits(hours || 12) + ":" + toTwoDigits(d.getMinutes()) + " " + am_pm;
                 } else {
                     return toTwoDigits(d.getHours()) + ":" + toTwoDigits(d.getMinutes());
                 }
