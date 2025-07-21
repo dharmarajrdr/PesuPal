@@ -15,10 +15,10 @@ const RecentChatsSlice = createSlice({
             }
         },
         'removeRecentChat': (state, action) => {
-            return state.filter(chat => chat.chatId !== action.payload.chatId);
+            return state.filter(({ chatId }) => chatId !== action.payload);
         },
         'moveRecentChatToTop': (state, action) => {
-            const chatIndex = state.findIndex(chat => chat.chatId === action.payload.chatId);
+            const chatIndex = state.findIndex(({ chatId }) => chatId == action.payload);
             if (chatIndex !== -1) {
                 const [chat] = state.splice(chatIndex, 1);
                 state.unshift(chat);
