@@ -3,27 +3,18 @@ import { useEffect, useState } from 'react';
 import PinnedUser from './PinnedUser';
 import { apiRequest } from '../../../http_request';
 import ErrorMessage from '../../ErrorMessage';
-
-const NoPinnedUsers = () => {
-    return (
-        <div className='FCCC w100 h100' id='no-data-found'>
-            <p className='FRCC w100'>
-                <i className='fa fa-briefcase mR5' />
-                No job applications found.
-            </p>
-            <p className='w100 alignCenter'>Start creating a new job opening.</p>
-        </div>
-    )
-}
+import { useDispatch, useSelector } from 'react-redux';
+import { setPinnedDirectMessages } from '../../../store/reducers/PinnedDirectMessageSlice';
 
 const PinnedUsers = () => {
 
-    const [pinnedUsers, setPinnedUsers] = useState([]);
     const [error, setError] = useState(null);
+    const pinnedUsers = useSelector(state => state.pinnedDirectMessage.pinnedDirectMessages);
+    const dispatch = useDispatch();
 
     useEffect(() => {
         apiRequest("/api/v1/pinned-direct-messages", "GET").then(({ data }) => {
-            setPinnedUsers(data);
+            dispatch(setPinnedDirectMessages(data));
         }).catch(({ message }) => {
             setError(message);
         });
