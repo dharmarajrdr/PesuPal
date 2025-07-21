@@ -1,9 +1,7 @@
 import './PinnedUsers.css'
 import { useEffect, useState } from 'react';
-import pinnedUsersList from './PinnedUsersList';
 import PinnedUser from './PinnedUser';
 import { apiRequest } from '../../../http_request';
-import Loader from '../../Loader';
 import ErrorMessage from '../../ErrorMessage';
 
 const NoPinnedUsers = () => {
