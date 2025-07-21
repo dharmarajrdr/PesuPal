@@ -1,16 +1,18 @@
 import './RecentChats.css';
 import { StatusIndicator } from '../../Auth/utils';
+import { setActiveRecentChat } from '../../../store/reducers/ActiveRecentChatSlice';
+import { useDispatch } from 'react-redux';
 
-const RecentChat = ({ recentChat, openChatHandler, activeRecentChatState, currentChatIdState }) => {
+const RecentChat = ({ recentChat, openChatHandler, currentChatIdState }) => {
 
-    const [, setActiveRecentChat] = activeRecentChatState;
+    const dispatch = useDispatch();
     const [currentChatId,] = currentChatIdState;
     const { chatId, image, name, status, recentMessage } = recentChat;
     const { message, media, createdAt, sender, number_of_unread_messages } = recentMessage;
 
     const isActive = currentChatId == chatId;
     if (isActive) {
-        setActiveRecentChat(recentChat);
+        dispatch(setActiveRecentChat(recentChat));
     }
 
     return (

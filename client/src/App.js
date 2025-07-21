@@ -17,6 +17,7 @@ import { VerticalLoaderReducer } from './store/reducers/VerticalLoader';
 import PinnedDirectMessageSlice from './store/reducers/PinnedDirectMessageSlice';
 import { NavigationReducers } from './store/reducers/Navigation';
 import PostReducer from './store/reducers/PostSlice';
+import ActiveRecentChatSlice from './store/reducers/ActiveRecentChatSlice';
 import ShowChatHeaderOptionsModalSlice from './store/reducers/ShowChatHeaderOptionsModalSlice';
 import CurrentChatPreviewSlice from './store/reducers/CurrentChatPreviewSlice';
 import PageNotFound from './components/Auth/PageNotFound';
@@ -30,6 +31,7 @@ const store = configureStore({
         Navigation: NavigationReducers,
         VerticalLoader: VerticalLoaderReducer,
         posts: PostReducer,
+        activeRecentChat: ActiveRecentChatSlice,
         pinnedDirectMessage: PinnedDirectMessageSlice,
         showChatHeaderOptionsModalSlice: ShowChatHeaderOptionsModalSlice,
         currentChatPreviewSlice: CurrentChatPreviewSlice

@@ -5,6 +5,8 @@ import { apiRequest } from '../../../http_request'
 import Loader from '../../Loader'
 import ErrorMessage from '../../ErrorMessage'
 import { useNavigate } from 'react-router-dom'
+import { useDispatch } from 'react-redux'
+import { setActiveRecentChat } from '../../../store/reducers/ActiveRecentChatSlice'
 
 const NoChatsFound = () => {
 
@@ -20,12 +22,12 @@ const NoChatsFound = () => {
 }
 
 
-const RecentChats = ({ activeRecentChatState, currentChatIdState }) => {
+const RecentChats = ({ currentChatIdState }) => {
 
     const [recentChat, setRecentChat] = useState([]);
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [, setActiveRecentChat] = activeRecentChatState;
+    const dispatch = useDispatch();
 
     const navigate = useNavigate();
 
@@ -41,7 +43,7 @@ const RecentChats = ({ activeRecentChatState, currentChatIdState }) => {
 
     const openChatHandler = (chat) => {
         navigate(`/chat/${chat.chatId}`);
-        setActiveRecentChat(chat);
+        dispatch(setActiveRecentChat(chat));
     }
 
     return (
@@ -51,7 +53,7 @@ const RecentChats = ({ activeRecentChatState, currentChatIdState }) => {
                     error ? <ErrorMessage message={error} /> :
                         recentChat.length ?
                             recentChat.map((recentChat, index) =>
-                                <RecentChat currentChatIdState={currentChatIdState} key={index} recentChat={recentChat} activeRecentChatState={activeRecentChatState} openChatHandler={openChatHandler} />
+                                <RecentChat currentChatIdState={currentChatIdState} key={index} recentChat={recentChat} openChatHandler={openChatHandler} />
                             ) : <NoChatsFound />
             }
         </div>

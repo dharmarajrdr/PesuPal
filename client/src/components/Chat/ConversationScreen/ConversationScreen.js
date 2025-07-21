@@ -8,6 +8,7 @@ import { useParams } from 'react-router-dom';
 import { apiRequest } from '../../../http_request';
 import { useDispatch, useSelector } from 'react-redux';
 import { setCurrentChatPreview } from '../../../store/reducers/CurrentChatPreviewSlice';
+import { setActiveRecentChat } from '../../../store/reducers/ActiveRecentChatSlice';
 
 const readAllMessages = ({ chatId }) => {
   apiRequest(`/api/v1/direct-messages/${chatId}/read_all`, "PUT").then(() => {
@@ -17,13 +18,12 @@ const readAllMessages = ({ chatId }) => {
   });
 }
 
-const ConversationScreen = ({ activeRecentChatState, currentChatIdState }) => {
+const ConversationScreen = ({ currentChatIdState }) => {
 
   const { chatId } = useParams();
   const dispatch = useDispatch();
 
   const [, setCurrentChatId] = currentChatIdState;
-  const [activeRecentChat, setActiveRecentChat] = activeRecentChatState;
 
   setCurrentChatId(chatId);
 
@@ -88,7 +88,7 @@ const ConversationScreen = ({ activeRecentChatState, currentChatIdState }) => {
     const pivot = isFirstLoad ? null : pivotMessageId;
 
     apiRequest(`/api/v1/direct-messages/preview/${chatId}`, "GET").then(({ data }) => {
-      
+
       dispatch(setCurrentChatPreview(data));
 
       apiRequest(`/api/v1/direct-messages/${chatId}?page=${page}&size=${size}${pivot ? `&pivot_message_id=${pivot}` : ''}`, "GET").then(({ data }) => {
@@ -114,7 +114,7 @@ const ConversationScreen = ({ activeRecentChatState, currentChatIdState }) => {
 
   useEffect(() => {
 
-    setActiveRecentChat(activeRecentChat);
+    // dispatch(setActiveRecentChat());
     setPivotMessageId(null); // reset state — this takes effect after render
     setRetrievingChat(true);
     getChatPreview(chatId);
@@ -124,7 +124,7 @@ const ConversationScreen = ({ activeRecentChatState, currentChatIdState }) => {
 
   return currentChatPreview ? (
     <div id='ConversationScreen' className='FCSB'>
-      <ChatHeader setCurrentChatId={setCurrentChatId} activeRecentChatState={activeRecentChatState} />
+      <ChatHeader setCurrentChatId={setCurrentChatId} />
       <ChatMessages retrievingChat={retrievingChat} messages={messages} currentUserId={currentUser.id} chatId={chatId} clickSendMessageHandler={clickSendMessageHandler} />
       <ChatInput clickSendMessageHandler={clickSendMessageHandler} />
     </div>

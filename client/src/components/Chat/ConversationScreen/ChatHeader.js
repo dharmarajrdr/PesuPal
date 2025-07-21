@@ -9,14 +9,14 @@ import OptionsModal from '../../Utils/OptionsModal';
 import { apiRequest } from '../../../http_request';
 import { addPinnedDirectMessage, removePinnedDirectMessage } from '../../../store/reducers/PinnedDirectMessageSlice';
 import { setCurrentChatPreview } from '../../../store/reducers/CurrentChatPreviewSlice';
+import { setActiveRecentChat } from '../../../store/reducers/ActiveRecentChatSlice';
 
-const ChatHeader = ({ activeRecentChatState, setCurrentChatId }) => {
+const ChatHeader = ({ setCurrentChatId }) => {
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const showChatHeaderOptionsModalSlice = useSelector(state => state.showChatHeaderOptionsModalSlice);
     const [showProfile, setShowProfile] = useState(false);
-    const [, setActiveRecentChat] = activeRecentChatState;
     const currentChatPreview = useSelector(state => state.currentChatPreviewSlice);
     const [pinnedId, setPinnedIdState] = useState(null);
     const { id: otherUserId, displayName, displayPicture } = currentChatPreview?.otherUser || {};
@@ -24,7 +24,7 @@ const ChatHeader = ({ activeRecentChatState, setCurrentChatId }) => {
 
     const closeChatHandler = () => {
         setCurrentChatId(null);
-        setActiveRecentChat(null);
+        dispatch(setActiveRecentChat({}));
         navigate('/chat');
     }
 
