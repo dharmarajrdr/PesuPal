@@ -1,13 +1,15 @@
+import { useState } from 'react';
 import './ChatInput.css'
 
-const ChatInput = ({ clickSendMessageHandler, message, setMessage }) => {
+const ChatInput = ({ clickSendMessageHandler }) => {
 
     // const fileInputRef = useRef();
+    const [message, setMessage] = useState('');
 
     const handleSend = () => {
         if (message.trim()) {
-            clickSendMessageHandler({});
-            setMessage('');
+            clickSendMessageHandler({ message });
+            setMessage("");
             // fileInputRef?.current?.value = '';
         }
     };
