@@ -10,12 +10,14 @@ import com.pesupal.server.exceptions.PermissionDeniedException;
 import com.pesupal.server.helpers.Chat;
 import com.pesupal.server.helpers.TimeFormatterUtil;
 import com.pesupal.server.model.chat.DirectMessage;
+import com.pesupal.server.model.chat.DirectMessageMediaFile;
 import com.pesupal.server.model.chat.PinnedDirectMessage;
 import com.pesupal.server.model.org.Org;
 import com.pesupal.server.model.user.User;
 import com.pesupal.server.repository.DirectMessageMediaFileRepository;
 import com.pesupal.server.repository.DirectMessageRepository;
 import com.pesupal.server.service.interfaces.*;
+import com.pesupal.server.strategies.media_storage.S3Service;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -39,10 +41,11 @@ public class DirectMessageServiceImpl implements DirectMessageService {
     private final PinnedDirectMessageService pinnedDirectMessageService;
     private final DirectMessageReactionService directMessageReactionService;
     private final DirectMessageMediaFileRepository directMessageMediaFileRepository;
+    private final S3Service s3Service;
 
     public DirectMessageServiceImpl(DirectMessageRepository directMessageRepository,
                                     @Lazy DirectMessageReactionService directMessageReactionService,
-                                    UserService userService, OrgService orgService, OrgMemberService orgMemberService, PinnedDirectMessageService pinnedDirectMessageService, DirectMessageMediaFileRepository directMessageMediaFileRepository) {
+                                    UserService userService, OrgService orgService, OrgMemberService orgMemberService, PinnedDirectMessageService pinnedDirectMessageService, DirectMessageMediaFileRepository directMessageMediaFileRepository, S3Service s3Service) {
         this.directMessageRepository = directMessageRepository;
         this.orgService = orgService;
         this.userService = userService;
@@ -50,6 +53,7 @@ public class DirectMessageServiceImpl implements DirectMessageService {
         this.pinnedDirectMessageService = pinnedDirectMessageService;
         this.directMessageReactionService = directMessageReactionService;
         this.directMessageMediaFileRepository = directMessageMediaFileRepository;
+        this.s3Service = s3Service;
     }
 
     /**
@@ -76,7 +80,13 @@ public class DirectMessageServiceImpl implements DirectMessageService {
         return messages.stream().map(dm -> {
             DirectMessageResponseDto directMessageResponseDto = DirectMessageResponseDto.fromDirectMessage(dm);
             if (dm.getContainsMedia()) {
-                directMessageResponseDto.setMedia(directMessageMediaFileRepository.findByDirectMessage(dm));
+                DirectMessageMediaFile directMessageMediaFile = directMessageMediaFileRepository.findByDirectMessage(dm);
+                if (directMessageMediaFile != null) {
+                    DirectMessageMediaFileDto directMessageMediaFileDto = DirectMessageMediaFileDto.fromDirectMessageMediaFile(directMessageMediaFile);
+                    String key = directMessageMediaFile.getMediaId() + "." + directMessageMediaFile.getExtension();
+                    directMessageMediaFileDto.setMediaUrl(s3Service.generatePresignedUrl(key));
+                    directMessageResponseDto.setMedia(directMessageMediaFileDto);
+                }
             }
             directMessageResponseDto.setReactions(directMessageReactionService.getReactionsCountForMessage(dm));
             return directMessageResponseDto;
