@@ -18,7 +18,7 @@ const getAvatarColor = (name) => {
     return colors[index];
 }
 
-const UserAvatar = ({ displayPicture, displayName }) => {
+const UserAvatar = ({ displayPicture, displayName, setShowProfile }) => {
 
     const [imageError, setImageError] = useState(false);
 
@@ -31,7 +31,7 @@ const UserAvatar = ({ displayPicture, displayName }) => {
             <i className="fa fa-user-circle user-avatar-placeholder mR10" aria-hidden="true" />
         )
     ) : (
-        <img src={displayPicture} alt="User" className="img_40_40 mR10" onError={() => setImageError(true)} />
+        <img src={displayPicture} alt="User" className="img_40_40 mR10 cursP" onError={() => setImageError(true)} onClick={() => setShowProfile ? setShowProfile(true) : null} />
     );
 };
 
