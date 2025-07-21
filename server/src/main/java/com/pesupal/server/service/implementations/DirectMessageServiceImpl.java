@@ -10,6 +10,7 @@ import com.pesupal.server.exceptions.PermissionDeniedException;
 import com.pesupal.server.helpers.Chat;
 import com.pesupal.server.helpers.TimeFormatterUtil;
 import com.pesupal.server.model.chat.DirectMessage;
+import com.pesupal.server.model.chat.PinnedDirectMessage;
 import com.pesupal.server.model.org.Org;
 import com.pesupal.server.model.user.User;
 import com.pesupal.server.repository.DirectMessageRepository;
@@ -25,24 +26,27 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class DirectMessageServiceImpl implements DirectMessageService {
 
-    private final DirectMessageRepository directMessageRepository;
-    private final DirectMessageReactionService directMessageReactionService;
-    private final UserService userService;
     private final OrgService orgService;
+    private final UserService userService;
     private final OrgMemberService orgMemberService;
+    private final DirectMessageRepository directMessageRepository;
+    private final PinnedDirectMessageService pinnedDirectMessageService;
+    private final DirectMessageReactionService directMessageReactionService;
 
     public DirectMessageServiceImpl(DirectMessageRepository directMessageRepository,
                                     @Lazy DirectMessageReactionService directMessageReactionService,
-                                    UserService userService, OrgService orgService, OrgMemberService orgMemberService) {
+                                    UserService userService, OrgService orgService, OrgMemberService orgMemberService, PinnedDirectMessageService pinnedDirectMessageService) {
         this.directMessageRepository = directMessageRepository;
-        this.directMessageReactionService = directMessageReactionService;
-        this.userService = userService;
         this.orgService = orgService;
+        this.userService = userService;
         this.orgMemberService = orgMemberService;
+        this.pinnedDirectMessageService = pinnedDirectMessageService;
+        this.directMessageReactionService = directMessageReactionService;
     }
 
     /**
@@ -231,6 +235,11 @@ public class DirectMessageServiceImpl implements DirectMessageService {
         DirectMessagePreviewDto directMessagePreviewDto = new DirectMessagePreviewDto();
         directMessagePreviewDto.setCurrentUser(UserPreviewDto.fromOrgMember(orgMemberService.getOrgMemberByUserIdAndOrgId(userId, orgId)));
         directMessagePreviewDto.setOtherUser(UserPreviewDto.fromOrgMember(orgMemberService.getOrgMemberByUserIdAndOrgId(otherUserId, orgId)));
+        directMessagePreviewDto.setChatId(chatId);
+        Optional<PinnedDirectMessage> pinnedDirectMessage = pinnedDirectMessageService.getPinnedDirectMessageByPinnedByIdAndPinnedUserIdAndOrgId(userId, otherUserId, orgId);
+        if (pinnedDirectMessage.isPresent()) {
+            directMessagePreviewDto.setPinnedId(pinnedDirectMessage.get().getId());
+        }
         return directMessagePreviewDto;
     }
 }

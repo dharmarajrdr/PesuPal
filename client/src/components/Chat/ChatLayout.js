@@ -6,16 +6,13 @@ import ConversationScreenPlaceholder from './ConversationScreen/ConversationScre
 import { useState } from 'react';
 
 const ChatLayout = () => {
-    
-    const activeRecentChatState = useState(null);
-    const currentChatIdState = useState(null);
 
     return (
         <div className='Layout FRCS'>
-            <ListOfChats activeRecentChatState={activeRecentChatState} currentChatIdState={currentChatIdState} />
+            <ListOfChats />
             <Routes>
-                <Route path='/' element={<ConversationScreenPlaceholder activeRecentChatState={activeRecentChatState} />} />
-                <Route path="/:chatId" element={<ConversationScreen activeRecentChatState={activeRecentChatState} currentChatIdState={currentChatIdState} />} />
+                <Route path='/' element={<ConversationScreenPlaceholder />} />
+                <Route path="/:chatId" element={<ConversationScreen />} />
             </Routes>
         </div>
     )

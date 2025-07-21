@@ -4,7 +4,7 @@ import Loader from '../../Loader';
 import StartNewConversation from './StartNewConversation';
 import ChatMessageItem from './ChatMessageItem';
 
-const ChatMessages = ({ messages, currentUserId, chatId, retrievingChat }) => {
+const ChatMessages = ({ messages, chatId, retrievingChat, clickSendMessageHandler }) => {
 
     const formatDate = (iso) => new Date(iso).toDateString();
 
@@ -35,10 +35,10 @@ const ChatMessages = ({ messages, currentUserId, chatId, retrievingChat }) => {
                 return (
                     <div key={msg.id} className='w100'>
                         {showDate && <div className="date-label">{newDate}</div>}
-                        <ChatMessageItem currentUserId={currentUserId} msg={msg} />
+                        <ChatMessageItem msg={msg} />
                     </div>
                 );
-            }) : <StartNewConversation />}
+            }) : <StartNewConversation clickSendMessageHandler={clickSendMessageHandler} />}
         </div>
     );
 };

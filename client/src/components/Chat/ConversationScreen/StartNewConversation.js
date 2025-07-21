@@ -1,15 +1,25 @@
+import { useSelector } from "react-redux";
 import UserAvatar from "../../User/UserAvatar";
 
-const StartNewConversation = () => (
-    <div id='start-new-conversation' className='FCCE'>
+const StartNewConversation = ({ clickSendMessageHandler }) => {
+
+    const currentChatPreview = useSelector(state => state.currentChatPreviewSlice);
+    const { currentUser, otherUser, chatId } = currentChatPreview || {};
+    const { displayName: otherUserName } = otherUser || {};
+
+    const sayHelloButtonClickHandler = () => {
+        clickSendMessageHandler({ message: `Hello ${otherUserName || 'there'}! 👋` });
+    }
+
+    return <div id='start-new-conversation' className='FCCE'>
         <div className='FRCC' id='users-avatars'>
-            <UserAvatar displayPicture={"/images/Users/user_8.jpg"} />
-            <UserAvatar displayPicture={"/images/Users/user_6.jpg"} />
+            <UserAvatar displayPicture={currentUser?.displayPicture} />
+            <UserAvatar displayPicture={otherUser?.displayPicture} />
         </div>
-        <button id='say-hello-button' className='mT15'>
-            Say hello <i className="fa fa-hand" id='wave-hands'></i>
+        <button id='say-hello-button' className='mT15' onClick={sayHelloButtonClickHandler}>
+            Say Hello <i className="fa fa-hand" id='wave-hands'></i>
         </button>
     </div>
-);
+};
 
 export default StartNewConversation;

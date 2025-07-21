@@ -2,20 +2,24 @@ import MessageDeleted from './MessageDeleted';
 import Message from './Message';
 import MessageActions from './MessageActions';
 import MessageMeta from './MessageMeta';
+import { useSelector } from 'react-redux';
 
-const ChatMessageItem = ({ msg, currentUserId }) => {
+const ChatMessageItem = ({ msg }) => {
 
-    const isCurrentUser = msg.sender == currentUserId;
+    const { sender, deleted, createdAt, readReceipt, message } = msg;
+
+    const currentChatPreview = useSelector(state => state.currentChatPreviewSlice);
+    const isCurrentUser = sender == currentChatPreview?.currentUser?.id;
 
     return (
         <div className='row w100 FRCS'>
             <div className={`message ${isCurrentUser ? 'sent' : 'received'}`}>
-                {msg.deleted ? <MessageDeleted /> : <>
+                {deleted ? <MessageDeleted /> : <>
                     <div className="message-content">
-                        <Message html={msg.message} />
+                        <Message html={message} />
                         <MessageActions />
                     </div>
-                    <MessageMeta createdAt={msg.createdAt} readReceipt={msg.readReceipt} isCurrentUser={isCurrentUser} />
+                    <MessageMeta createdAt={createdAt} readReceipt={readReceipt} isCurrentUser={isCurrentUser} />
                 </>}
             </div>
         </div>

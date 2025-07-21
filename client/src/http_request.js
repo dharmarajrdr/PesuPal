@@ -1,7 +1,8 @@
 import utils from "./utils";
 
 export async function apiRequest(endpoint, method = 'GET', data = null, customHeaders = {}) {
-    const token = utils.parseCookie().get('token');
+    
+    const token = sessionStorage.getItem('token') || utils.parseCookie().get('token');;
     const orgId = sessionStorage.getItem('org-id'); // Optional: get orgId from session
 
     const headers = {
@@ -33,6 +34,7 @@ export async function apiRequest(endpoint, method = 'GET', data = null, customHe
 
         if (!response.ok || result.status === 'FAILURE') {
             if (response.status == 401) {
+                sessionStorage.setItem('token', null);
                 document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/';
                 // window.location.reload(); // Auto logout
             }

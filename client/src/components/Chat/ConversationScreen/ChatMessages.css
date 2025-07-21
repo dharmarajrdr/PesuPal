@@ -106,6 +106,7 @@
 
 #start-new-conversation {
     height: 75vh;
+    margin-bottom: 10vh;
 }
 
 #start-new-conversation #users-avatars img {

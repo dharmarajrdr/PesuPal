@@ -8,4 +8,8 @@ public class DirectMessagePreviewDto {
     private UserPreviewDto currentUser;
 
     private UserPreviewDto otherUser;
+
+    private Long pinnedId;
+
+    private String chatId;
 }

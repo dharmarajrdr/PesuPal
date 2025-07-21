@@ -1,11 +1,10 @@
+import utils from "../../../utils";
 import ReadReceipt from "./ReadReceipt"
-
-const formatTime = (iso) => new Date(iso).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
 const MessageMeta = ({ createdAt, readReceipt, isCurrentUser }) => {
     return (
         <div className="message-meta FRCE">
-            <span className="time">{formatTime(createdAt)}</span>
+            <span className="time">{utils.convertTime(createdAt, 12)}</span>
             {isCurrentUser && <ReadReceipt readReceipt={readReceipt} />}
         </div>
     )

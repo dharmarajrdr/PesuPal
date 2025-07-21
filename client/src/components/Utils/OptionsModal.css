@@ -1,0 +1,30 @@
+#options-container {
+    background-color: var(--pure-white);
+    position: absolute;
+    top: 40px;
+    right: 30px;
+    border-radius: 5px;
+    box-shadow: 0px 4px 8px var(--box-shadow-color);
+}
+
+#options-container .option {
+    padding: 10px 15px;
+    cursor: pointer;
+    color: var(--primary-color-active);
+    border-bottom: 1px solid #eee;
+}
+
+#options-container .option:hover {
+    background-color: var(--pure-white-hover);
+}
+
+#options-container .option i {
+    margin-right: 10px;
+    color: var(--primary-color-active);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+#options-container .option span {
+    font-size: 14px;
+}

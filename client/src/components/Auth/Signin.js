@@ -21,6 +21,7 @@ const Signin = () => {
         }).then(({ data }) => {
             const { token } = data || {};
             if (token) {
+                sessionStorage.setItem('token', token);
                 document.cookie = `token=${token}; path=/;`;
                 sessionStorage.setItem('org-id', '1');
                 navigate('/feeds');

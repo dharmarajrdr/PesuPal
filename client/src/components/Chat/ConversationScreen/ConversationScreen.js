@@ -6,35 +6,36 @@ import ChatInput from './ChatInput';
 import useWebSocket from '../../../WebSocket';
 import { useParams } from 'react-router-dom';
 import { apiRequest } from '../../../http_request';
+import { useDispatch, useSelector } from 'react-redux';
+import { setCurrentChatPreview } from '../../../store/reducers/CurrentChatPreviewSlice';
+import { setChatId } from '../../../store/reducers/ChatIdSlice';
 
-const ConversationScreen = ({ activeRecentChatState, currentChatIdState }) => {
+const readAllMessages = ({ chatId }) => {
+  apiRequest(`/api/v1/direct-messages/${chatId}/read_all`, "PUT").then(() => {
+    // TODO: Inform the receiver that messages have been read via WebSocket
+  }).catch(({ message }) => {
+    console.error(message);
+  });
+}
+
+const ConversationScreen = () => {
 
   const { chatId } = useParams();
-  const [, setCurrentChatId] = currentChatIdState;
-  const [activeRecentChat, setActiveRecentChat] = activeRecentChatState;
 
-  setCurrentChatId(chatId);
+  const dispatch = useDispatch();
 
-  const [conversationInfo, setConversationInfo] = useState({
-    'type': 'Direct Message',
-    'participants': [
-      { 'id': 2, 'name': 'MohanKumar', 'avatar': 'M' }
-    ]
-  });
-
-  const [retrievingChat, setRetrievingChat] = useState(true);
-  const [messages, setMessages] = useState([]);
   const [page, setPage] = useState(0);
   const [size, setSize] = useState(25);
+  const [messages, setMessages] = useState([]);
+  const [retrievingChat, setRetrievingChat] = useState(true);
   const [pivotMessageId, setPivotMessageId] = useState(null);
 
-  const [message, setMessage] = useState('');
-
-  const currentUserId = sessionStorage.getItem('user-id');
-  const receiverId = currentUserId === '1' ? '2' : '1';
+  const currentChatPreview = useSelector(state => state.currentChatPreviewSlice);
+  const currentUser = currentChatPreview.currentUser || {};
+  const otherUser = currentChatPreview.otherUser || {};
 
   const { sendMessage } = useWebSocket({
-    userId: currentUserId,
+    userId: currentUser.id,
     onPrivateMessage: (msg) => {
       setMessages((prev) => [...prev, {
         "id": 101,
@@ -53,63 +54,76 @@ const ConversationScreen = ({ activeRecentChatState, currentChatIdState }) => {
     },
   });
 
-  const clickSendMessageHandler = () => {
+  const clickSendMessageHandler = ({ message }) => {
 
     const payload = {
       orgId: sessionStorage.getItem('org-id'),
       chatId: 'room123',
-      senderId: currentUserId,
-      receiverId: receiverId,
+      senderId: currentUser.id,
+      receiverId: otherUser.id,
       message,
       isGroupMessage: false,
     };
+
     sendMessage('/app/chat.sendMessage', payload);
     setMessages((prev) => [...prev, {
       "id": 101,
       "createdAt": new Date().toISOString(),
-      "sender": currentUserId,
-      "receiver": receiverId,
+      "sender": currentUser.id,
+      "receiver": otherUser.id,
       "message": message,
       "deleted": false,
       "readReceipt": "SENT",
       "reactions": {},
       "directMessageMediaFiles": []
     }]);
-    setMessage('');
   };
 
-  useEffect(() => {
+  const getChatPreview = (chatId) => {
 
     const isFirstLoad = true; // since chatId changed
     const pivot = isFirstLoad ? null : pivotMessageId;
 
-    setPivotMessageId(null); // reset state — this takes effect after render
+    apiRequest(`/api/v1/direct-messages/preview/${chatId}`, "GET").then(({ data }) => {
 
-    setRetrievingChat(true);
-    setActiveRecentChat(activeRecentChat);
+      dispatch(setCurrentChatPreview(data));
 
-    const url = `/api/v1/direct-messages/${chatId}?page=${page}&size=${size}` + (pivot ? `&pivot_message_id=${pivot}` : '');
+      apiRequest(`/api/v1/direct-messages/${chatId}?page=${page}&size=${size}${pivot ? `&pivot_message_id=${pivot}` : ''}`, "GET").then(({ data }) => {
+        setMessages(data);
+        setRetrievingChat(false);
 
-    apiRequest(url, "GET").then(({ data }) => {
-      setMessages(data);
-      setRetrievingChat(false);
+        // Update pivot to the last message’s ID
+        if (data.length > 0) {
+          setPivotMessageId(data.at(-1)?.id);
+        }
 
-      // Update pivot to the last message’s ID
-      if (data.length > 0) {
-        setPivotMessageId(data.at(-1)?.id);
-      }
+      }).catch(({ message }) => {
+        console.error(message);
+        setRetrievingChat(false);
+      });
 
     }).catch(({ message }) => {
       console.error(message);
       setRetrievingChat(false);
     });
+
+  };
+
+  useEffect(() => {
+
+    dispatch(setChatId(chatId));
+    setPivotMessageId(null); // reset state — this takes effect after render
+    setRetrievingChat(true);
+    getChatPreview(chatId);
+    readAllMessages({ chatId });
+
   }, [chatId]);
 
-  return activeRecentChat ? (
+  return currentChatPreview ? (
     <div id='ConversationScreen' className='FCSB'>
-      <ChatHeader activeRecentChatState={activeRecentChatState} />
-      <ChatMessages retrievingChat={retrievingChat} messages={messages} currentUserId={currentUserId} chatId={chatId} />
-      <ChatInput clickSendMessageHandler={clickSendMessageHandler} setMessage={setMessage} message={message} />
+      <ChatHeader />
+      <ChatMessages retrievingChat={retrievingChat} messages={messages} chatId={chatId} clickSendMessageHandler={clickSendMessageHandler} />
+      <ChatInput clickSendMessageHandler={clickSendMessageHandler} />
     </div>
   ) : null;
 }
