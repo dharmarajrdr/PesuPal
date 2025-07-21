@@ -5,8 +5,9 @@ import { apiRequest } from '../../../http_request'
 import Loader from '../../Loader'
 import ErrorMessage from '../../ErrorMessage'
 import { useNavigate } from 'react-router-dom'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { setActiveRecentChat } from '../../../store/reducers/ActiveRecentChatSlice'
+import { setRecentChats } from '../../../store/reducers/RecentChatsSlice'
 
 const NoChatsFound = () => {
 
@@ -21,19 +22,19 @@ const NoChatsFound = () => {
     )
 }
 
-
 const RecentChats = ({ currentChatIdState }) => {
 
-    const [recentChat, setRecentChat] = useState([]);
+    const [page, setPage] = useState(0);
+    const [size, setSize] = useState(10);
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(true);
     const dispatch = useDispatch();
-
     const navigate = useNavigate();
+    const recentChats = useSelector(state => state.recentChats);
 
     useEffect(() => {
-        apiRequest('/api/v1/direct-messages/recent?page=0&size=10', 'GET').then(({ data }) => {
-            setRecentChat(data);
+        apiRequest(`/api/v1/direct-messages/recent?page=${page}&size=${size}`, 'GET').then(({ data }) => {
+            dispatch(setRecentChats(data));
             setLoading(false);
         }).catch(({ message }) => {
             setError(message);
@@ -51,8 +52,8 @@ const RecentChats = ({ currentChatIdState }) => {
             {
                 loading ? <Loader /> :
                     error ? <ErrorMessage message={error} /> :
-                        recentChat.length ?
-                            recentChat.map((recentChat, index) =>
+                        recentChats?.length ?
+                            recentChats.map((recentChat, index) =>
                                 <RecentChat currentChatIdState={currentChatIdState} key={index} recentChat={recentChat} openChatHandler={openChatHandler} />
                             ) : <NoChatsFound />
             }
