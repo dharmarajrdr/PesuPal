@@ -2,11 +2,11 @@ import UserAvatar from '../../User/UserAvatar';
 import './ChatHeader.css';
 import { useNavigate } from 'react-router-dom';
 
-const ChatHeader = ({ activeRecentChatState }) => {
+const ChatHeader = ({ activeRecentChatState, activeChatPreview }) => {
 
     const navigate = useNavigate();
-    const [activeRecentChat, setActiveRecentChat] = activeRecentChatState;
-    const { name, image } = activeRecentChat || {};
+    const [, setActiveRecentChat] = activeRecentChatState;
+    const { id, displayName, displayPicture } = activeChatPreview?.otherUser || {};
 
     const closeChatHandler = () => {
         navigate('/chat');
@@ -16,8 +16,8 @@ const ChatHeader = ({ activeRecentChatState }) => {
     return (
         <div className="chat-header FRCB w100">
             <div className='FRCS'>
-                <UserAvatar displayPicture={image} displayName={name} />
-                <div className="name">{name}</div>
+                <UserAvatar displayPicture={displayPicture} displayName={displayName} />
+                <div className="name">{displayName}</div>
             </div>
             <div>
                 <i className='fa fa-close' id='close-chat' onClick={closeChatHandler}></i>
