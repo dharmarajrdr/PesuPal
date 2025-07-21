@@ -29,20 +29,22 @@ import java.util.List;
 @Service
 public class DirectMessageServiceImpl implements DirectMessageService {
 
-    private final DirectMessageRepository directMessageRepository;
-    private final DirectMessageReactionService directMessageReactionService;
-    private final UserService userService;
     private final OrgService orgService;
+    private final UserService userService;
     private final OrgMemberService orgMemberService;
+    private final DirectMessageRepository directMessageRepository;
+    private final PinnedDirectMessageService pinnedDirectMessageService;
+    private final DirectMessageReactionService directMessageReactionService;
 
     public DirectMessageServiceImpl(DirectMessageRepository directMessageRepository,
                                     @Lazy DirectMessageReactionService directMessageReactionService,
-                                    UserService userService, OrgService orgService, OrgMemberService orgMemberService) {
+                                    UserService userService, OrgService orgService, OrgMemberService orgMemberService, PinnedDirectMessageService pinnedDirectMessageService) {
         this.directMessageRepository = directMessageRepository;
-        this.directMessageReactionService = directMessageReactionService;
-        this.userService = userService;
         this.orgService = orgService;
+        this.userService = userService;
         this.orgMemberService = orgMemberService;
+        this.pinnedDirectMessageService = pinnedDirectMessageService;
+        this.directMessageReactionService = directMessageReactionService;
     }
 
     /**
@@ -231,6 +233,7 @@ public class DirectMessageServiceImpl implements DirectMessageService {
         DirectMessagePreviewDto directMessagePreviewDto = new DirectMessagePreviewDto();
         directMessagePreviewDto.setCurrentUser(UserPreviewDto.fromOrgMember(orgMemberService.getOrgMemberByUserIdAndOrgId(userId, orgId)));
         directMessagePreviewDto.setOtherUser(UserPreviewDto.fromOrgMember(orgMemberService.getOrgMemberByUserIdAndOrgId(otherUserId, orgId)));
+        directMessagePreviewDto.setChatPinned(pinnedDirectMessageService.isChatPinned(userId, otherUserId, orgId));
         return directMessagePreviewDto;
     }
 }
