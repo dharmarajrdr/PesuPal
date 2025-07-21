@@ -31,4 +31,11 @@ public class PinnedDirectMessageController extends CurrentValueRetriever {
         PinnedDirectMessageDto pinnedDirectMessageDto = pinnedDirectMessageService.pinDirectMessage(createPinDirectMessageDto, getCurrentUserId(), getCurrentOrgId());
         return ResponseEntity.ok().body(new ApiResponseDto("Direct message pinned successfully", pinnedDirectMessageDto));
     }
+
+    @DeleteMapping("/pin/{id}")
+    public ResponseEntity<ApiResponseDto> unpinDirectMessage(@PathVariable Long id) {
+
+        pinnedDirectMessageService.unpinDirectMessage(id, getCurrentUserId(), getCurrentOrgId());
+        return ResponseEntity.ok().body(new ApiResponseDto("Direct message unpinned successfully", null));
+    }
 }
