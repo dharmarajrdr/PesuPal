@@ -2,7 +2,7 @@ import UserAvatar from "../../User/UserAvatar";
 
 const StartNewConversation = ({ activeChatPreview, clickSendMessageHandler }) => {
 
-    const { currentUser, otherUser, chatId } = activeChatPreview;
+    const { currentUser, otherUser, chatId } = activeChatPreview || {};
     const { displayName: otherUserName } = otherUser || {};
 
     const sayHelloButtonClickHandler = () => {
@@ -11,8 +11,8 @@ const StartNewConversation = ({ activeChatPreview, clickSendMessageHandler }) =>
 
     return <div id='start-new-conversation' className='FCCE'>
         <div className='FRCC' id='users-avatars'>
-            <UserAvatar displayPicture={currentUser.displayPicture} />
-            <UserAvatar displayPicture={otherUser.displayPicture} />
+            <UserAvatar displayPicture={currentUser?.displayPicture} />
+            <UserAvatar displayPicture={otherUser?.displayPicture} />
         </div>
         <button id='say-hello-button' className='mT15' onClick={sayHelloButtonClickHandler}>
             Say Hello <i className="fa fa-hand" id='wave-hands'></i>
