@@ -156,6 +156,27 @@ export default {
             console.error({ error, str });  //eslint-disable-line no-console
         }
     },
+    "convertTime": (str, hoursMode) => {
+        try {
+            const toTwoDigits = function (str) {
+                str = str + '';
+                return str.length == 2 ? str : '0' + str;
+            }
+            let d = new Date(str);
+            if (d) {
+                let hours = d.getHours();
+                let am_pm = hours >= 12 ? 'PM' : 'AM';
+                if (hoursMode === 12) {
+                    hours = hours > 12 ? hours - 12 : hours;
+                    return toTwoDigits(hours) + ":" + toTwoDigits(d.getMinutes()) + " " + am_pm;
+                } else {
+                    return toTwoDigits(d.getHours()) + ":" + toTwoDigits(d.getMinutes());
+                }
+            }
+        } catch (error) {
+            console.error({ error, str });  //eslint-disable-line no-console
+        }
+    },
     "parseCookie": () => {
         const cookies = document.cookie
             .split(';')
