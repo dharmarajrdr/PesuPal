@@ -7,6 +7,14 @@ import useWebSocket from '../../../WebSocket';
 import { useParams } from 'react-router-dom';
 import { apiRequest } from '../../../http_request';
 
+const readAllMessages = ({ chatId }) => {
+  apiRequest(`/api/v1/direct-messages/${chatId}/read_all`, "PUT").then(() => {
+    // TODO: Inform the receiver that messages have been read via WebSocket
+  }).catch(({ message }) => {
+    console.error(message);
+  });
+}
+
 const ConversationScreen = ({ activeRecentChatState, currentChatIdState }) => {
 
   const { chatId } = useParams();
@@ -20,13 +28,13 @@ const ConversationScreen = ({ activeRecentChatState, currentChatIdState }) => {
   const [page, setPage] = useState(0);
   const [size, setSize] = useState(25);
   const [pivotMessageId, setPivotMessageId] = useState(null);
-  const [activeChatPreview, setActiveChatPreview] = useState(null);
+  const [activeChatPreview, setActiveChatPreview] = useState({});
 
-  const currentUserId = sessionStorage.getItem('user-id');
-  const receiverId = currentUserId === '1' ? '2' : '1';
+  const [currentUser, setCurrentUser] = useState(activeChatPreview.currentUser || {});
+  const [otherUser, setOtherUser] = useState(activeChatPreview.otherUser || {});
 
   const { sendMessage } = useWebSocket({
-    userId: currentUserId,
+    userId: currentUser.id,
     onPrivateMessage: (msg) => {
       setMessages((prev) => [...prev, {
         "id": 101,
@@ -50,8 +58,8 @@ const ConversationScreen = ({ activeRecentChatState, currentChatIdState }) => {
     const payload = {
       orgId: sessionStorage.getItem('org-id'),
       chatId: 'room123',
-      senderId: currentUserId,
-      receiverId: receiverId,
+      senderId: currentUser.id,
+      receiverId: otherUser.id,
       message,
       isGroupMessage: false,
     };
@@ -60,8 +68,8 @@ const ConversationScreen = ({ activeRecentChatState, currentChatIdState }) => {
     setMessages((prev) => [...prev, {
       "id": 101,
       "createdAt": new Date().toISOString(),
-      "sender": currentUserId,
-      "receiver": receiverId,
+      "sender": currentUser.id,
+      "receiver": otherUser.id,
       "message": message,
       "deleted": false,
       "readReceipt": "SENT",
@@ -77,6 +85,8 @@ const ConversationScreen = ({ activeRecentChatState, currentChatIdState }) => {
 
     apiRequest(`/api/v1/direct-messages/preview/${chatId}`, "GET").then(({ data }) => {
       setActiveChatPreview(data);
+      setCurrentUser(data.currentUser);
+      setOtherUser(data.otherUser);
 
       apiRequest(`/api/v1/direct-messages/${chatId}?page=${page}&size=${size}${pivot ? `&pivot_message_id=${pivot}` : ''}`, "GET").then(({ data }) => {
         setMessages(data);
@@ -105,13 +115,14 @@ const ConversationScreen = ({ activeRecentChatState, currentChatIdState }) => {
     setPivotMessageId(null); // reset state — this takes effect after render
     setRetrievingChat(true);
     getChatPreview(chatId);
+    readAllMessages({ chatId });
 
   }, [chatId]);
 
   return activeChatPreview ? (
     <div id='ConversationScreen' className='FCSB'>
       <ChatHeader setCurrentChatId={setCurrentChatId} activeRecentChatState={activeRecentChatState} activeChatPreview={activeChatPreview} />
-      <ChatMessages activeChatPreview={activeChatPreview} retrievingChat={retrievingChat} messages={messages} currentUserId={currentUserId} chatId={chatId} clickSendMessageHandler={clickSendMessageHandler} />
+      <ChatMessages activeChatPreview={activeChatPreview} retrievingChat={retrievingChat} messages={messages} currentUserId={currentUser.id} chatId={chatId} clickSendMessageHandler={clickSendMessageHandler} />
       <ChatInput clickSendMessageHandler={clickSendMessageHandler} />
     </div>
   ) : null;
