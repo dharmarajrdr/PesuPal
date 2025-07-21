@@ -2,15 +2,16 @@ import UserAvatar from '../../User/UserAvatar';
 import './ChatHeader.css';
 import { useNavigate } from 'react-router-dom';
 
-const ChatHeader = ({ activeRecentChatState, activeChatPreview }) => {
+const ChatHeader = ({ activeRecentChatState, activeChatPreview, setCurrentChatId }) => {
 
     const navigate = useNavigate();
     const [, setActiveRecentChat] = activeRecentChatState;
     const { id, displayName, displayPicture } = activeChatPreview?.otherUser || {};
 
     const closeChatHandler = () => {
-        navigate('/chat');
+        setCurrentChatId(null);
         setActiveRecentChat(null);
+        navigate('/chat');
     }
 
     return (
