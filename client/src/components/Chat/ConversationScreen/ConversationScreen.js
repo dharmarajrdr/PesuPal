@@ -6,6 +6,8 @@ import ChatInput from './ChatInput';
 import useWebSocket from '../../../WebSocket';
 import { useParams } from 'react-router-dom';
 import { apiRequest } from '../../../http_request';
+import { useDispatch, useSelector } from 'react-redux';
+import { setCurrentChatPreview } from '../../../store/reducers/CurrentChatPreviewSlice';
 
 const readAllMessages = ({ chatId }) => {
   apiRequest(`/api/v1/direct-messages/${chatId}/read_all`, "PUT").then(() => {
@@ -18,6 +20,8 @@ const readAllMessages = ({ chatId }) => {
 const ConversationScreen = ({ activeRecentChatState, currentChatIdState }) => {
 
   const { chatId } = useParams();
+  const dispatch = useDispatch();
+
   const [, setCurrentChatId] = currentChatIdState;
   const [activeRecentChat, setActiveRecentChat] = activeRecentChatState;
 
@@ -28,10 +32,10 @@ const ConversationScreen = ({ activeRecentChatState, currentChatIdState }) => {
   const [page, setPage] = useState(0);
   const [size, setSize] = useState(25);
   const [pivotMessageId, setPivotMessageId] = useState(null);
-  const [activeChatPreview, setActiveChatPreview] = useState({});
 
-  const [currentUser, setCurrentUser] = useState(activeChatPreview.currentUser || {});
-  const [otherUser, setOtherUser] = useState(activeChatPreview.otherUser || {});
+  const currentChatPreview = useSelector(state => state.currentChatPreviewSlice);
+  const currentUser = currentChatPreview.currentUser || {};
+  const otherUser = currentChatPreview.otherUser || {};
 
   const { sendMessage } = useWebSocket({
     userId: currentUser.id,
@@ -84,9 +88,8 @@ const ConversationScreen = ({ activeRecentChatState, currentChatIdState }) => {
     const pivot = isFirstLoad ? null : pivotMessageId;
 
     apiRequest(`/api/v1/direct-messages/preview/${chatId}`, "GET").then(({ data }) => {
-      setActiveChatPreview(data);
-      setCurrentUser(data.currentUser);
-      setOtherUser(data.otherUser);
+      
+      dispatch(setCurrentChatPreview(data));
 
       apiRequest(`/api/v1/direct-messages/${chatId}?page=${page}&size=${size}${pivot ? `&pivot_message_id=${pivot}` : ''}`, "GET").then(({ data }) => {
         setMessages(data);
@@ -119,10 +122,10 @@ const ConversationScreen = ({ activeRecentChatState, currentChatIdState }) => {
 
   }, [chatId]);
 
-  return activeChatPreview ? (
+  return currentChatPreview ? (
     <div id='ConversationScreen' className='FCSB'>
-      <ChatHeader setCurrentChatId={setCurrentChatId} activeRecentChatState={activeRecentChatState} activeChatPreview={activeChatPreview} />
-      <ChatMessages activeChatPreview={activeChatPreview} retrievingChat={retrievingChat} messages={messages} currentUserId={currentUser.id} chatId={chatId} clickSendMessageHandler={clickSendMessageHandler} />
+      <ChatHeader setCurrentChatId={setCurrentChatId} activeRecentChatState={activeRecentChatState} />
+      <ChatMessages retrievingChat={retrievingChat} messages={messages} currentUserId={currentUser.id} chatId={chatId} clickSendMessageHandler={clickSendMessageHandler} />
       <ChatInput clickSendMessageHandler={clickSendMessageHandler} />
     </div>
   ) : null;

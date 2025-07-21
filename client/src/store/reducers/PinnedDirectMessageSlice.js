@@ -19,7 +19,6 @@ const pinnedDirectMessageSlice = createSlice({
       }
     },
     removePinnedDirectMessage: (state, action) => {
-      console.log(action.payload);
       state.pinnedDirectMessages = state.pinnedDirectMessages.filter(
         message => message.chatId !== action.payload
       );

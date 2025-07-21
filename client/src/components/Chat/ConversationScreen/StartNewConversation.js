@@ -1,8 +1,10 @@
+import { useSelector } from "react-redux";
 import UserAvatar from "../../User/UserAvatar";
 
-const StartNewConversation = ({ activeChatPreview, clickSendMessageHandler }) => {
+const StartNewConversation = ({ clickSendMessageHandler }) => {
 
-    const { currentUser, otherUser, chatId } = activeChatPreview || {};
+    const currentChatPreview = useSelector(state => state.currentChatPreviewSlice);
+    const { currentUser, otherUser, chatId } = currentChatPreview || {};
     const { displayName: otherUserName } = otherUser || {};
 
     const sayHelloButtonClickHandler = () => {
