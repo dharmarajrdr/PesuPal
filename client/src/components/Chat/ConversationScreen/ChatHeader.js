@@ -10,6 +10,7 @@ import { apiRequest } from '../../../http_request';
 import { addPinnedDirectMessage, removePinnedDirectMessage } from '../../../store/reducers/PinnedDirectMessageSlice';
 import { setCurrentChatPreview } from '../../../store/reducers/CurrentChatPreviewSlice';
 import { setActiveRecentChat } from '../../../store/reducers/ActiveRecentChatSlice';
+import { setChatId } from '../../../store/reducers/ChatIdSlice';
 
 const ChatHeader = () => {
 
@@ -23,7 +24,8 @@ const ChatHeader = () => {
     const { chatId } = currentChatPreview || {};
 
     const closeChatHandler = () => {
-        dispatch(setActiveRecentChat({}));
+        dispatch(setActiveRecentChat(null));
+        dispatch(setChatId(null));
         navigate('/chat');
     }
 

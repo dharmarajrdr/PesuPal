@@ -1,11 +1,13 @@
 import { useDispatch } from 'react-redux';
 import { setActiveRecentChat } from '../../../store/reducers/ActiveRecentChatSlice';
 import './ConversationScreenPlaceholder.css';
+import { setChatId } from '../../../store/reducers/ChatIdSlice';
 
 const ConversationScreenPlaceholder = () => {
 
     const dispatch = useDispatch();
     dispatch(setActiveRecentChat(null));
+    dispatch(setChatId(null));
 
     return (
         <div id='conversation-screen-placeholder' className='FCCC h100'>
