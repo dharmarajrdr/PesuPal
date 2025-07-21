@@ -1,5 +1,5 @@
 export const hasCookie = () => {
-    return document.cookie.split(';').some((item) => item.trim().startsWith('token='));
+    return sessionStorage.getItem('token') !== null || utils.parseCookie().get('token') !== null;
 }, StatusIndicator = ({ status, style }) => {
     let color = '#aaa', icon = 'fa-circle';
     switch (status) {
