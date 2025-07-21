@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.pesupal.server.enums.FileType;
 import com.pesupal.server.model.CreationTimeAuditable;
 import jakarta.persistence.Entity;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import lombok.Data;
 
 @Data
@@ -13,7 +13,7 @@ import lombok.Data;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class DirectMessageMediaFile extends CreationTimeAuditable {
 
-    @ManyToOne
+    @OneToOne
     @JsonIgnore
     private DirectMessage directMessage;
 

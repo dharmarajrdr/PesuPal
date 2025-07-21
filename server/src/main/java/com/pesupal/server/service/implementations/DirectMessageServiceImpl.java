@@ -13,6 +13,7 @@ import com.pesupal.server.model.chat.DirectMessage;
 import com.pesupal.server.model.chat.PinnedDirectMessage;
 import com.pesupal.server.model.org.Org;
 import com.pesupal.server.model.user.User;
+import com.pesupal.server.repository.DirectMessageMediaFileRepository;
 import com.pesupal.server.repository.DirectMessageRepository;
 import com.pesupal.server.service.interfaces.*;
 import org.springframework.context.annotation.Lazy;
@@ -37,16 +38,18 @@ public class DirectMessageServiceImpl implements DirectMessageService {
     private final DirectMessageRepository directMessageRepository;
     private final PinnedDirectMessageService pinnedDirectMessageService;
     private final DirectMessageReactionService directMessageReactionService;
+    private final DirectMessageMediaFileRepository directMessageMediaFileRepository;
 
     public DirectMessageServiceImpl(DirectMessageRepository directMessageRepository,
                                     @Lazy DirectMessageReactionService directMessageReactionService,
-                                    UserService userService, OrgService orgService, OrgMemberService orgMemberService, PinnedDirectMessageService pinnedDirectMessageService) {
+                                    UserService userService, OrgService orgService, OrgMemberService orgMemberService, PinnedDirectMessageService pinnedDirectMessageService, DirectMessageMediaFileRepository directMessageMediaFileRepository) {
         this.directMessageRepository = directMessageRepository;
         this.orgService = orgService;
         this.userService = userService;
         this.orgMemberService = orgMemberService;
         this.pinnedDirectMessageService = pinnedDirectMessageService;
         this.directMessageReactionService = directMessageReactionService;
+        this.directMessageMediaFileRepository = directMessageMediaFileRepository;
     }
 
     /**
@@ -72,6 +75,9 @@ public class DirectMessageServiceImpl implements DirectMessageService {
         }
         return messages.stream().map(dm -> {
             DirectMessageResponseDto directMessageResponseDto = DirectMessageResponseDto.fromDirectMessage(dm);
+            if (dm.getContainsMedia()) {
+                directMessageResponseDto.setMedia(directMessageMediaFileRepository.findByDirectMessage(dm));
+            }
             directMessageResponseDto.setReactions(directMessageReactionService.getReactionsCountForMessage(dm));
             return directMessageResponseDto;
         }).sorted(Comparator.comparing(DirectMessageResponseDto::getCreatedAt)).toList();
@@ -98,8 +104,7 @@ public class DirectMessageServiceImpl implements DirectMessageService {
     @Override
     public DirectMessage getDirectMessageById(Long messageId) {
 
-        return directMessageRepository.findById(messageId)
-                .orElseThrow(() -> new DataNotFoundException("Message with ID " + messageId + " not found"));
+        return directMessageRepository.findById(messageId).orElseThrow(() -> new DataNotFoundException("Message with ID " + messageId + " not found"));
     }
 
     /**

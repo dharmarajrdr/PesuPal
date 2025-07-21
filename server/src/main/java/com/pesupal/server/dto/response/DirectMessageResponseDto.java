@@ -7,7 +7,6 @@ import com.pesupal.server.model.chat.DirectMessageMediaFile;
 import lombok.Data;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Map;
 
 @Data
@@ -29,7 +28,7 @@ public class DirectMessageResponseDto {
 
     private Map<Reaction, Integer> reactions;
 
-    private List<DirectMessageMediaFile> directMessageMediaFiles;
+    private DirectMessageMediaFile media;
 
     public static DirectMessageResponseDto fromDirectMessage(DirectMessage directMessage) {
 
@@ -43,7 +42,6 @@ public class DirectMessageResponseDto {
         responseDto.setCreatedAt(directMessage.getCreatedAt());
         responseDto.setDeleted(directMessage.isDeleted());
         responseDto.setReadReceipt(directMessage.getReadReceipt());
-        responseDto.setDirectMessageMediaFiles(directMessage.getMedia());
         return responseDto;
     }
 }

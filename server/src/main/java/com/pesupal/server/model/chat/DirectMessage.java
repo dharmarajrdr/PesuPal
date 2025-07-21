@@ -4,10 +4,11 @@ import com.pesupal.server.enums.ReadReceipt;
 import com.pesupal.server.model.CreationTimeAuditable;
 import com.pesupal.server.model.org.Org;
 import com.pesupal.server.model.user.User;
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.ManyToOne;
 import lombok.Data;
-
-import java.util.List;
 
 @Data
 @Entity
@@ -33,6 +34,4 @@ public class DirectMessage extends CreationTimeAuditable {
     @Enumerated(EnumType.STRING)
     private ReadReceipt readReceipt;
 
-    @OneToMany(mappedBy = "directMessage", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<DirectMessageMediaFile> media;
 }
