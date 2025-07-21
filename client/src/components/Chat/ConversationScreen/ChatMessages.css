@@ -20,6 +20,7 @@
     margin-bottom: 10px;
     max-width: 50%;
     min-width: 25%;
+    overflow: hidden;
 }
 
 .chat-messages .row .message.sent {
@@ -56,6 +57,18 @@
 
 .chat-messages .row .message .message-content div {
     line-height: 20px;
+}
+
+.chat-messages .row .message .message-media {
+    width: 100%;
+    max-height: 300px;
+    overflow: hidden;
+}
+
+.chat-messages .row .message .message-media .media-image {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
 }
 
 .message-content {
