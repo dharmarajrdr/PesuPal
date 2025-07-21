@@ -1,3 +1,5 @@
+import utils from "../../utils";
+
 export const hasCookie = () => {
     return sessionStorage.getItem('token') !== null || utils.parseCookie().get('token') !== null;
 }, StatusIndicator = ({ status, style }) => {
