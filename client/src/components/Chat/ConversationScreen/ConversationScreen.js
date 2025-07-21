@@ -122,7 +122,7 @@ const ConversationScreen = () => {
   return currentChatPreview ? (
     <div id='ConversationScreen' className='FCSB'>
       <ChatHeader />
-      <ChatMessages retrievingChat={retrievingChat} messages={messages} currentUserId={currentUser.id} chatId={chatId} clickSendMessageHandler={clickSendMessageHandler} />
+      <ChatMessages retrievingChat={retrievingChat} messages={messages} chatId={chatId} clickSendMessageHandler={clickSendMessageHandler} />
       <ChatInput clickSendMessageHandler={clickSendMessageHandler} />
     </div>
   ) : null;
