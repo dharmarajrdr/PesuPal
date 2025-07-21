@@ -15,6 +15,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -37,7 +38,7 @@ public class PinnedDirectMessageServiceImpl implements PinnedDirectMessageServic
         Org org = orgMember.getOrg();
         return pinnedDirectMessageRepository.findAllByOrgIdAndPinnedByIdOrderByOrderIndexAscPinnedUser_IdAsc(userId, orgId).stream().map(pinnedDirectMessage -> {
             OrgMember pinnedUser = orgMemberService.getOrgMemberByUserAndOrg(pinnedDirectMessage.getPinnedUser(), org);
-            return PinnedDirectMessageDto.fromUserAndOrgMember(orgMember.getUser(), pinnedUser);
+            return PinnedDirectMessageDto.fromUserAndOrgMemberAndPinnedDirectMessage(orgMember.getUser(), pinnedUser, pinnedDirectMessage);
         }).toList();
     }
 
@@ -50,9 +51,9 @@ public class PinnedDirectMessageServiceImpl implements PinnedDirectMessageServic
      * @return
      */
     @Override
-    public PinnedDirectMessage getPinnedDirectMessageByPinnedByIdAndPinnedUserIdAndOrgId(Long pinnedById, Long pinnedUserId, Long orgId) {
+    public Optional<PinnedDirectMessage> getPinnedDirectMessageByPinnedByIdAndPinnedUserIdAndOrgId(Long pinnedById, Long pinnedUserId, Long orgId) {
 
-        return pinnedDirectMessageRepository.findByPinnedByIdAndPinnedUserIdAndOrgId(pinnedById, pinnedUserId, orgId).orElseThrow(() -> new DataNotFoundException("Pinned direct message not found."));
+        return pinnedDirectMessageRepository.findByPinnedByIdAndPinnedUserIdAndOrgId(pinnedById, pinnedUserId, orgId);
     }
 
     /**
@@ -92,7 +93,7 @@ public class PinnedDirectMessageServiceImpl implements PinnedDirectMessageServic
         pinnedDirectMessage.setOrg(orgMember.getOrg());
         pinnedDirectMessage.setOrderIndex(createPinDirectMessageDto.getOrderIndex());
         pinnedDirectMessageRepository.save(pinnedDirectMessage);
-        return PinnedDirectMessageDto.fromUserAndOrgMember(orgMember.getUser(), pinnedUser);
+        return PinnedDirectMessageDto.fromUserAndOrgMemberAndPinnedDirectMessage(orgMember.getUser(), pinnedUser, pinnedDirectMessage);
     }
 
     /**

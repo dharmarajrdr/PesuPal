@@ -5,12 +5,13 @@ import com.pesupal.server.dto.request.PinnedDirectMessageDto;
 import com.pesupal.server.model.chat.PinnedDirectMessage;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface PinnedDirectMessageService {
 
     List<PinnedDirectMessageDto> getAllPinnedDirectMessages(Long currentUserId, Long currentOrgId);
 
-    PinnedDirectMessage getPinnedDirectMessageByPinnedByIdAndPinnedUserIdAndOrgId(Long pinnedById, Long pinnedUserId, Long orgId);
+    Optional<PinnedDirectMessage> getPinnedDirectMessageByPinnedByIdAndPinnedUserIdAndOrgId(Long pinnedById, Long pinnedUserId, Long orgId);
 
     PinnedDirectMessage getPinnedDirectMessageById(Long id);
 

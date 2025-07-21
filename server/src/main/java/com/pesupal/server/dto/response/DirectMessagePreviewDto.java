@@ -9,5 +9,7 @@ public class DirectMessagePreviewDto {
 
     private UserPreviewDto otherUser;
 
-    private boolean chatPinned;
+    private Long pinnedId;
+
+    private String chatId;
 }

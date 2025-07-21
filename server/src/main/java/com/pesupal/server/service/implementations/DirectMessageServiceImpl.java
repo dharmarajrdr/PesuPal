@@ -10,6 +10,7 @@ import com.pesupal.server.exceptions.PermissionDeniedException;
 import com.pesupal.server.helpers.Chat;
 import com.pesupal.server.helpers.TimeFormatterUtil;
 import com.pesupal.server.model.chat.DirectMessage;
+import com.pesupal.server.model.chat.PinnedDirectMessage;
 import com.pesupal.server.model.org.Org;
 import com.pesupal.server.model.user.User;
 import com.pesupal.server.repository.DirectMessageRepository;
@@ -25,6 +26,7 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class DirectMessageServiceImpl implements DirectMessageService {
@@ -233,7 +235,11 @@ public class DirectMessageServiceImpl implements DirectMessageService {
         DirectMessagePreviewDto directMessagePreviewDto = new DirectMessagePreviewDto();
         directMessagePreviewDto.setCurrentUser(UserPreviewDto.fromOrgMember(orgMemberService.getOrgMemberByUserIdAndOrgId(userId, orgId)));
         directMessagePreviewDto.setOtherUser(UserPreviewDto.fromOrgMember(orgMemberService.getOrgMemberByUserIdAndOrgId(otherUserId, orgId)));
-        directMessagePreviewDto.setChatPinned(pinnedDirectMessageService.isChatPinned(userId, otherUserId, orgId));
+        directMessagePreviewDto.setChatId(chatId);
+        Optional<PinnedDirectMessage> pinnedDirectMessage = pinnedDirectMessageService.getPinnedDirectMessageByPinnedByIdAndPinnedUserIdAndOrgId(userId, otherUserId, orgId);
+        if (pinnedDirectMessage.isPresent()) {
+            directMessagePreviewDto.setPinnedId(pinnedDirectMessage.get().getId());
+        }
         return directMessagePreviewDto;
     }
 }
