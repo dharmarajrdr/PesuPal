@@ -10,4 +10,6 @@ import java.util.List;
 public interface PinnedDirectMessageRepository extends JpaRepository<PinnedDirectMessage, Long> {
 
     List<PinnedDirectMessage> findAllByOrgIdAndPinnedByIdOrderByOrderIndexAscPinnedUser_IdAsc(Long pinnedById, Long orgId);
+
+    boolean existsByPinnedByIdAndPinnedUserIdAndOrgId(Long pinnedById, Long pinnedUserId, Long orgId);
 }
