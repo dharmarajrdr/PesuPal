@@ -6,7 +6,7 @@
 }
 
 .spacer {
-  flex-grow: 1;
+    flex-grow: 1;
 }
 
 .date-label {
@@ -61,13 +61,13 @@
 
 .chat-messages .row .message .message-media {
     width: 100%;
-    max-height: 300px;
+    height: 300px;
     overflow: hidden;
 }
 
 .chat-messages .row .message .message-media .media-image {
     width: 100%;
-    height: auto;
+    height: 100%;
     object-fit: cover;
 }
 
