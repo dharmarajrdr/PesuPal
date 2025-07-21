@@ -8,4 +8,6 @@ public class DirectMessagePreviewDto {
     private UserPreviewDto currentUser;
 
     private UserPreviewDto otherUser;
+
+    private boolean chatPinned;
 }
