@@ -15,21 +15,12 @@ const ConversationScreen = ({ activeRecentChatState, currentChatIdState }) => {
 
   setCurrentChatId(chatId);
 
-  const [conversationInfo, setConversationInfo] = useState({
-    'type': 'Direct Message',
-    'participants': [
-      { 'id': 2, 'name': 'MohanKumar', 'avatar': 'M' }
-    ]
-  });
-
   const [retrievingChat, setRetrievingChat] = useState(true);
   const [messages, setMessages] = useState([]);
   const [page, setPage] = useState(0);
   const [size, setSize] = useState(25);
   const [pivotMessageId, setPivotMessageId] = useState(null);
   const [activeChatPreview, setActiveChatPreview] = useState(null);
-
-  const [message, setMessage] = useState('');
 
   const currentUserId = sessionStorage.getItem('user-id');
   const receiverId = currentUserId === '1' ? '2' : '1';
@@ -54,7 +45,7 @@ const ConversationScreen = ({ activeRecentChatState, currentChatIdState }) => {
     },
   });
 
-  const clickSendMessageHandler = () => {
+  const clickSendMessageHandler = ({ message }) => {
 
     const payload = {
       orgId: sessionStorage.getItem('org-id'),
@@ -64,6 +55,7 @@ const ConversationScreen = ({ activeRecentChatState, currentChatIdState }) => {
       message,
       isGroupMessage: false,
     };
+
     sendMessage('/app/chat.sendMessage', payload);
     setMessages((prev) => [...prev, {
       "id": 101,
@@ -76,7 +68,6 @@ const ConversationScreen = ({ activeRecentChatState, currentChatIdState }) => {
       "reactions": {},
       "directMessageMediaFiles": []
     }]);
-    setMessage('');
   };
 
   const getChatPreview = (chatId) => {
@@ -120,8 +111,8 @@ const ConversationScreen = ({ activeRecentChatState, currentChatIdState }) => {
   return activeChatPreview ? (
     <div id='ConversationScreen' className='FCSB'>
       <ChatHeader setCurrentChatId={setCurrentChatId} activeRecentChatState={activeRecentChatState} activeChatPreview={activeChatPreview} />
-      <ChatMessages activeChatPreview={activeChatPreview} retrievingChat={retrievingChat} messages={messages} currentUserId={currentUserId} chatId={chatId} />
-      <ChatInput clickSendMessageHandler={clickSendMessageHandler} setMessage={setMessage} message={message} />
+      <ChatMessages activeChatPreview={activeChatPreview} retrievingChat={retrievingChat} messages={messages} currentUserId={currentUserId} chatId={chatId} clickSendMessageHandler={clickSendMessageHandler} />
+      <ChatInput clickSendMessageHandler={clickSendMessageHandler} />
     </div>
   ) : null;
 }
