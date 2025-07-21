@@ -1,9 +1,12 @@
 import './PeopleCard.css';
 import { StatusIndicator } from '../../Auth/utils';
+import { useNavigate } from 'react-router-dom';
 
 const PeopleCard = ({ person, setShowProfile }) => {
 
-    const { displayName, displayPicture, designation, status, id } = person;
+    const { displayName, displayPicture, designation, status, id, chatId } = person;
+
+    const navigate = useNavigate();
 
     return (
         <div className='FCCC PeopleCard' onClick={() => setShowProfile(true)}>
@@ -17,7 +20,7 @@ const PeopleCard = ({ person, setShowProfile }) => {
                 <span className='color777 fs10 mB5'>{designation}</span>
             </div>
             <div className='mT5 FRCC'>
-                <i className='profile_contacts fa fa-comment' style={{ backgroundColor: 'blue' }} />
+                <i className='profile_contacts fa fa-comment' style={{ backgroundColor: 'blue' }} onClick={() => navigate(`/chat/${chatId}`)} />
                 <i className='profile_contacts fa fa-phone' style={{ backgroundColor: 'green' }} />
                 <i className='profile_contacts fa fa-video' style={{ backgroundColor: 'red' }} />
             </div>

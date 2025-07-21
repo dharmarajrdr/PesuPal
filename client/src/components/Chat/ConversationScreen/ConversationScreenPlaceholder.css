@@ -3,8 +3,12 @@
     background-color: #ecedfe;
 }
 
+#conversation-screen-placeholder #conversation-screen-placeholder-image {
+    height: 300px;
+}
+
 #conversation-screen-placeholder img {
-    width: 500px;
+    height: 100%;
     animation: dropdown 0.25s ease-in 1 alternate;
     user-select: none;
 }

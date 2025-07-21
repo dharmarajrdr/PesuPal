@@ -26,6 +26,8 @@ public class UserBasicInfoDto {
 
     private Integer employeeId;
 
+    private String chatId;
+
     public static UserBasicInfoDto fromOrgMember(OrgMember orgMember) {
 
         UserBasicInfoDto userBasicInfoDto = new UserBasicInfoDto();
