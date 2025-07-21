@@ -119,7 +119,7 @@ const ConversationScreen = ({ activeRecentChatState, currentChatIdState }) => {
 
   return activeChatPreview ? (
     <div id='ConversationScreen' className='FCSB'>
-      <ChatHeader activeRecentChatState={activeRecentChatState} activeChatPreview={activeChatPreview} />
+      <ChatHeader setCurrentChatId={setCurrentChatId} activeRecentChatState={activeRecentChatState} activeChatPreview={activeChatPreview} />
       <ChatMessages activeChatPreview={activeChatPreview} retrievingChat={retrievingChat} messages={messages} currentUserId={currentUserId} chatId={chatId} />
       <ChatInput clickSendMessageHandler={clickSendMessageHandler} setMessage={setMessage} message={message} />
     </div>

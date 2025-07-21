@@ -40,7 +40,6 @@ const RecentChats = ({ activeRecentChatState, currentChatIdState }) => {
     }, []);
 
     const openChatHandler = (chat) => {
-        console.log(chat);
         navigate(`/chat/${chat.chatId}`);
         setActiveRecentChat(chat);
     }
