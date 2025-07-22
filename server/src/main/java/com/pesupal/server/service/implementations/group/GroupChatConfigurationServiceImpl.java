@@ -1,11 +1,15 @@
 package com.pesupal.server.service.implementations.group;
 
+import com.pesupal.server.dto.request.group.UpdateGroupChatConfigurationDto;
 import com.pesupal.server.enums.Role;
 import com.pesupal.server.exceptions.DataNotFoundException;
+import com.pesupal.server.exceptions.PermissionDeniedException;
 import com.pesupal.server.model.group.Group;
 import com.pesupal.server.model.group.GroupChatConfiguration;
+import com.pesupal.server.model.group.GroupChatMember;
 import com.pesupal.server.repository.GroupChatConfigurationRepository;
 import com.pesupal.server.service.interfaces.group.GroupChatConfigurationService;
+import com.pesupal.server.service.interfaces.group.GroupChatMemberService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +17,7 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 public class GroupChatConfigurationServiceImpl implements GroupChatConfigurationService {
 
+    private final GroupChatMemberService groupChatMemberService;
     private final GroupChatConfigurationRepository groupChatConfigurationRepository;
 
     /**
@@ -62,5 +67,36 @@ public class GroupChatConfigurationServiceImpl implements GroupChatConfiguration
     public GroupChatConfiguration getConfigurationByGroupAndRole(Group group, Role role) {
 
         return groupChatConfigurationRepository.findByGroupAndRole(group, role).orElseThrow(() -> new DataNotFoundException("Configuration not found for group: " + group.getId() + " and role: " + role));
+    }
+
+    /**
+     * Updates the group chat configuration for a specific group, role, user, and organization.
+     *
+     * @param updateGroupChatConfigurationDto
+     * @param userId
+     * @param orgId
+     * @return
+     */
+    @Override
+    public void updateGroupChatConfiguration(UpdateGroupChatConfigurationDto updateGroupChatConfigurationDto, Long userId, Long orgId) {
+
+        Long groupId = updateGroupChatConfigurationDto.getGroupId();
+        Role role = updateGroupChatConfigurationDto.getRole();
+
+        GroupChatMember groupChatMember = groupChatMemberService.getGroupMemberByGroupIdAndUserId(groupId, userId);
+        Group group = groupChatMember.getGroup();
+        if (!group.getOrg().getId().equals(orgId)) {
+            throw new DataNotFoundException("Group with ID " + groupId + " does not exist.");
+        }
+
+        Role userRole = groupChatMember.getRole();
+
+        if (!userRole.equals(Role.SUPER_ADMIN)) {
+            throw new PermissionDeniedException("You do not have permission to update the group chat configuration.");
+        }
+
+        GroupChatConfiguration groupChatConfiguration = getConfigurationByGroupAndRole(group, role);
+        updateGroupChatConfigurationDto.applyToGroupChatConfiguration(groupChatConfiguration);
+        groupChatConfigurationRepository.save(groupChatConfiguration);
     }
 }
