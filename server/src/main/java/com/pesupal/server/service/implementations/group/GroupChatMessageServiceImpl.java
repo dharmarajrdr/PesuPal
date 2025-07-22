@@ -29,7 +29,6 @@ public class GroupChatMessageServiceImpl implements GroupChatMessageService {
     private final GroupChatMessageRepository groupChatMessageRepository;
     private final GroupChatConfigurationService groupChatConfigurationService;
 
-
     /**
      * Posts a message in a group chat.
      *

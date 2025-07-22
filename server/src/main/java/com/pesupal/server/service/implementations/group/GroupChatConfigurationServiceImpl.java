@@ -10,15 +10,19 @@ import com.pesupal.server.model.group.GroupChatMember;
 import com.pesupal.server.repository.GroupChatConfigurationRepository;
 import com.pesupal.server.service.interfaces.group.GroupChatConfigurationService;
 import com.pesupal.server.service.interfaces.group.GroupChatMemberService;
-import lombok.AllArgsConstructor;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 @Service
-@AllArgsConstructor
 public class GroupChatConfigurationServiceImpl implements GroupChatConfigurationService {
 
     private final GroupChatMemberService groupChatMemberService;
     private final GroupChatConfigurationRepository groupChatConfigurationRepository;
+
+    public GroupChatConfigurationServiceImpl(@Lazy GroupChatMemberService groupChatMemberService, GroupChatConfigurationRepository groupChatConfigurationRepository) {
+        this.groupChatMemberService = groupChatMemberService;
+        this.groupChatConfigurationRepository = groupChatConfigurationRepository;
+    }
 
     /**
      * Initializes the default configuration of group chat for a given group.
