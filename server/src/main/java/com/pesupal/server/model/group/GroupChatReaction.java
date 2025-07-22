@@ -14,7 +14,7 @@ import lombok.Data;
 public class GroupChatReaction extends CreationTimeAuditable {
 
     @ManyToOne
-    private GroupChatMessage groupMessage;
+    private GroupChatMessage groupChatMessage;
 
     @ManyToOne
     private User user;
