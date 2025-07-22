@@ -39,7 +39,7 @@ public class GroupChatMemberServiceImpl implements GroupChatMemberService {
     @Override
     public GroupChatMember getGroupMemberByGroupIdAndUserId(Long groupId, Long userId) {
 
-        return groupChatMemberRepository.findByGroupIdAndUserId(groupId, userId).orElseThrow(() -> new DataNotFoundException("User with ID: " + userId + " is not a member of group with ID: " + groupId + "."));
+        return groupChatMemberRepository.findByGroupIdAndUserId(groupId, userId).orElseThrow(() -> new DataNotFoundException("User with ID " + userId + " is not a member of group with ID " + groupId + "."));
     }
 
     /**
@@ -57,7 +57,7 @@ public class GroupChatMemberServiceImpl implements GroupChatMemberService {
 
         Group group = groupService.getGroupById(groupId);
         if (!group.getOrg().getId().equals(orgId)) {
-            throw new DataNotFoundException("Group with ID: " + groupId + " does not belong to organization with ID: " + orgId + ".");
+            throw new DataNotFoundException("Group with ID " + groupId + " does not belong to organization with ID " + orgId + ".");
         }
 
         boolean alreadyMember = groupChatMemberRepository.existsByGroupIdAndUserId(groupId, userId);

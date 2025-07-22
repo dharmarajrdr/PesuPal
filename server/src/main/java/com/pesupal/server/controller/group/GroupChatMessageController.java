@@ -7,10 +7,7 @@ import com.pesupal.server.helpers.CurrentValueRetriever;
 import com.pesupal.server.service.interfaces.group.GroupChatMessageService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @AllArgsConstructor
@@ -24,5 +21,11 @@ public class GroupChatMessageController extends CurrentValueRetriever {
 
         GroupMessageDto groupMessageDto = groupChatMessageService.postMessageInGroup(createGroupMessageDto, getCurrentUserId(), getCurrentOrgId());
         return ResponseEntity.ok().body(new ApiResponseDto("Group message posted successfully", groupMessageDto));
+    }
+
+    @DeleteMapping("/{messageId}")
+    public ResponseEntity<ApiResponseDto> deleteGroupMessage(@PathVariable Long messageId) {
+        groupChatMessageService.deleteGroupMessage(messageId, getCurrentUserId(), getCurrentOrgId());
+        return ResponseEntity.ok().body(new ApiResponseDto("Group message deleted successfully"));
     }
 }
