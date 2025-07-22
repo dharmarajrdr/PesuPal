@@ -1,6 +1,7 @@
 package com.pesupal.server.service.implementations.group;
 
 import com.pesupal.server.enums.Role;
+import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.model.group.Group;
 import com.pesupal.server.model.group.GroupChatMember;
 import com.pesupal.server.model.user.OrgMember;
@@ -30,5 +31,18 @@ public class GroupChatMemberServiceImpl implements GroupChatMemberService {
         groupChatMember.setActive(true);
         groupChatMember.setRole(Role.SUPER_ADMIN);
         groupChatMemberRepository.save(groupChatMember);
+    }
+
+    /**
+     * Retrieves a group chat member by group ID, user ID, and organization ID.
+     *
+     * @param groupId
+     * @param userId
+     * @return
+     */
+    @Override
+    public GroupChatMember getGroupMemberByGroupIdAndUserId(Long groupId, Long userId) {
+
+        return groupChatMemberRepository.findByGroupIdAndUserId(groupId, userId).orElseThrow(() -> new DataNotFoundException("User with ID: " + userId + " is not a member of group with ID: " + groupId + "."));
     }
 }
