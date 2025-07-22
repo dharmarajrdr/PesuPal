@@ -20,7 +20,7 @@ const PeopleCard = ({ person, setShowProfile }) => {
                 <span className='color777 fs10 mB5'>{designation}</span>
             </div>
             <div className='mT5 FRCC'>
-                <i className='profile_contacts fa fa-comment' style={{ backgroundColor: 'blue' }} onClick={() => navigate(`/chat/${chatId}`)} />
+                <i className='profile_contacts fa fa-comment' style={{ backgroundColor: 'blue' }} onClick={() => navigate(`/chat/messages/${chatId}`)} />
                 <i className='profile_contacts fa fa-phone' style={{ backgroundColor: 'green' }} />
                 <i className='profile_contacts fa fa-video' style={{ backgroundColor: 'red' }} />
             </div>

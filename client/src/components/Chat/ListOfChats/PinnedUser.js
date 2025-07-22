@@ -10,7 +10,7 @@ const PinnedUser = ({ item }) => {
     const { displayName, displayPicture, status, chatId } = item || {};
 
     const pinnedUserClickHandler = () => {
-        navigate(`/chat/${chatId}`);
+        navigate(`/chat/messages/${chatId}`);
     }
 
     return (
