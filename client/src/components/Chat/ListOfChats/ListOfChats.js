@@ -1,4 +1,3 @@
-import React from 'react'
 import './ListOfChats.css'
 import SearchUsers from './SearchUsers'
 import PinnedUsers from './PinnedUsers'
