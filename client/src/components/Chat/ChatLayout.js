@@ -14,6 +14,7 @@ const ChatLayout = () => {
                 <Route path='/*' element={<Navigate to={"/chat/messages"} />} />
                 <Route path='/messages' element={<ConversationScreenPlaceholder />} />
                 <Route path="/messages/:chatId" element={<ConversationScreen />} />
+                <Route path='/groups' element={<ConversationScreenPlaceholder />} />
             </Routes>
         </div>
     )

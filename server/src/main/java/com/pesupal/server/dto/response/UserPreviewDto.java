@@ -12,12 +12,15 @@ public class UserPreviewDto {
 
     private String displayPicture;
 
+    private boolean archived;
+
     public static UserPreviewDto fromOrgMember(OrgMember orgMember) {
 
         UserPreviewDto userPreviewDto = new UserPreviewDto();
         userPreviewDto.setId(orgMember.getUser().getId());
         userPreviewDto.setDisplayName(orgMember.getDisplayName());
         userPreviewDto.setDisplayPicture(orgMember.getDisplayPicture());
+        userPreviewDto.setArchived(orgMember.isArchived());
         return userPreviewDto;
     }
 }

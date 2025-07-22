@@ -1,0 +1,15 @@
+#chat-input-user-archived {
+    background-color: var(--pure-white);
+}
+
+#chat-input-user-archived p {
+    color: var(--primary-color);
+    font-size: 13px;
+    font-weight: 300;
+    user-select: none;
+}
+
+#chat-input-user-archived i {
+    color: var(--primary-color);
+    font-size: 12px;
+}
