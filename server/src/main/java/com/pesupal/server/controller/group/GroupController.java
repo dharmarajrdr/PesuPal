@@ -2,6 +2,7 @@ package com.pesupal.server.controller.group;
 
 import com.pesupal.server.dto.request.group.CreateGroupDto;
 import com.pesupal.server.dto.response.ApiResponseDto;
+import com.pesupal.server.dto.response.RecentChatPagedDto;
 import com.pesupal.server.dto.response.group.GroupDto;
 import com.pesupal.server.helpers.CurrentValueRetriever;
 import com.pesupal.server.service.interfaces.group.GroupService;
@@ -28,5 +29,12 @@ public class GroupController extends CurrentValueRetriever {
 
         groupService.deleteGroup(groupId, getCurrentUserId(), getCurrentOrgId());
         return ResponseEntity.ok().body(new ApiResponseDto("Group deleted successfully"));
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<ApiResponseDto> getAllGroups(@RequestParam Long page, @RequestParam Long size) {
+
+        RecentChatPagedDto recentChatPagedDto = groupService.getAllGroups(page, size, getCurrentUserId(), getCurrentOrgId());
+        return ResponseEntity.ok().body(new ApiResponseDto("Groups retrieved successfully", recentChatPagedDto.getChats(), recentChatPagedDto.getPageable()));
     }
 }

@@ -1,6 +1,7 @@
 package com.pesupal.server.service.implementations.group;
 
 import com.pesupal.server.dto.request.group.CreateGroupDto;
+import com.pesupal.server.dto.response.RecentChatPagedDto;
 import com.pesupal.server.dto.response.group.GroupDto;
 import com.pesupal.server.enums.Role;
 import com.pesupal.server.exceptions.ActionProhibitedException;
@@ -109,5 +110,18 @@ public class GroupServiceImpl implements GroupService {
 
         group.setActive(false);
         groupRepository.save(group);
+    }
+
+    /**
+     * Retrieves all groups for a user in a specific organization.
+     *
+     * @param userId
+     * @param orgId
+     * @return
+     */
+    @Override
+    public RecentChatPagedDto getAllGroups(Long page, Long size, Long userId, Long orgId) {
+
+        return null;
     }
 }

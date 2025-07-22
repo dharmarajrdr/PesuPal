@@ -1,6 +1,7 @@
 package com.pesupal.server.service.interfaces.group;
 
 import com.pesupal.server.dto.request.group.CreateGroupDto;
+import com.pesupal.server.dto.response.RecentChatPagedDto;
 import com.pesupal.server.dto.response.group.GroupDto;
 import com.pesupal.server.model.group.Group;
 
@@ -11,4 +12,6 @@ public interface GroupService {
     Group getGroupById(Long groupId);
 
     void deleteGroup(Long groupId, Long userId, Long orgId);
+
+    RecentChatPagedDto getAllGroups(Long page, Long size, Long userId, Long orgId);
 }
