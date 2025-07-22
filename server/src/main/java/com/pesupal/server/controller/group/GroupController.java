@@ -32,7 +32,7 @@ public class GroupController extends CurrentValueRetriever {
         return ResponseEntity.ok().body(new ApiResponseDto("Group deleted successfully"));
     }
 
-    @GetMapping("/all")
+    @GetMapping("/recent")
     public ResponseEntity<ApiResponseDto> getAllGroups(@RequestParam Integer page, @RequestParam Integer size) {
 
         Pageable pageable = Pageable.ofSize(size).withPage(page);
