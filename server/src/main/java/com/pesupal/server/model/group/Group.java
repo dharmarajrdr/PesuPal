@@ -7,6 +7,8 @@ import com.pesupal.server.model.user.User;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 @Entity(name = "groups")
 public class Group extends CreationTimeAuditable {
@@ -28,4 +30,7 @@ public class Group extends CreationTimeAuditable {
     private boolean active;
 
     private boolean showOldMessagesToNewJoiners;
+
+    @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<GroupChatMember> members;
 }

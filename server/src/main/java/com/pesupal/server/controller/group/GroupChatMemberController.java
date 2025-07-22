@@ -4,11 +4,15 @@ import com.pesupal.server.dto.request.group.AddGroupMemberDto;
 import com.pesupal.server.dto.response.ApiResponseDto;
 import com.pesupal.server.dto.response.UserPreviewDto;
 import com.pesupal.server.dto.response.group.GroupDto;
+import com.pesupal.server.enums.Role;
 import com.pesupal.server.helpers.CurrentValueRetriever;
 import com.pesupal.server.service.interfaces.group.GroupChatMemberService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @AllArgsConstructor
@@ -29,5 +33,12 @@ public class GroupChatMemberController extends CurrentValueRetriever {
 
         UserPreviewDto userPreviewDto = groupChatMemberService.addMemberToGroup(addGroupMemberDto, getCurrentUserId(), getCurrentOrgId());
         return ResponseEntity.ok().body(new ApiResponseDto("Member added successfully", userPreviewDto));
+    }
+
+    @GetMapping("/members/{groupId}")
+    public ResponseEntity<ApiResponseDto> getGroupMembers(@PathVariable Long groupId) {
+
+        Map<Role, List<UserPreviewDto>> roleListMap = groupChatMemberService.getGroupMembers(groupId, getCurrentUserId(), getCurrentOrgId());
+        return ResponseEntity.ok().body(new ApiResponseDto("Group members retrieved successfully", roleListMap));
     }
 }

@@ -20,6 +20,11 @@ import com.pesupal.server.service.interfaces.group.GroupService;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 @Service
 public class GroupChatMemberServiceImpl implements GroupChatMemberService {
 
@@ -122,5 +127,40 @@ public class GroupChatMemberServiceImpl implements GroupChatMemberService {
         newGroupMember.setActive(true);
         groupChatMemberRepository.save(newGroupMember);
         return UserPreviewDto.fromOrgMember(orgMember);
+    }
+
+    /**
+     * Retrieves the members of a group categorized by their roles.
+     *
+     * @param groupId
+     * @param userId
+     * @param orgId
+     * @return
+     */
+    @Override
+    public Map<Role, List<UserPreviewDto>> getGroupMembers(Long groupId, Long userId, Long orgId) {
+
+        GroupChatMember groupChatMember = getGroupMemberByGroupIdAndUserId(groupId, userId);
+        Group group = groupChatMember.getGroup();
+        if (!group.getOrg().getId().equals(orgId)) {
+            throw new DataNotFoundException("Group with ID " + groupId + " does not exist.");
+        }
+
+        Role role = groupChatMember.getRole();
+        GroupChatConfiguration groupChatConfiguration = groupChatConfigurationService.getConfigurationByGroupAndRole(group, role);
+        if (!groupChatConfiguration.isViewMembers()) {
+            throw new PermissionDeniedException("You do not have permission to view members of this group.");
+        }
+
+        return group.getMembers().stream().collect(Collectors.groupingBy(
+                GroupChatMember::getRole,
+                Collectors.mapping(
+                        member -> UserPreviewDto.fromOrgMember(orgMemberService.getOrgMemberByUserIdAndOrgId(member.getUser().getId(), orgId)),
+                        Collectors.toList()
+                )
+        )).entrySet().stream().collect(Collectors.toMap(
+                Map.Entry::getKey, e -> e.getValue().stream().sorted(Comparator.comparing(UserPreviewDto::getDisplayName, String.CASE_INSENSITIVE_ORDER)).collect(Collectors.toList())
+        ));
+
     }
 }
