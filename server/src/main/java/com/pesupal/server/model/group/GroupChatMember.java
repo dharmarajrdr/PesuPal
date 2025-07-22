@@ -11,7 +11,7 @@ import lombok.Data;
 
 @Data
 @Entity
-public class GroupMember extends CreationTimeAuditable {
+public class GroupChatMember extends CreationTimeAuditable {
 
     @ManyToOne
     private Group group;
@@ -22,5 +22,8 @@ public class GroupMember extends CreationTimeAuditable {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    private Boolean active;
+    private boolean active;
+
+    @ManyToOne
+    private GroupChatMessage lastReadMessage;
 }

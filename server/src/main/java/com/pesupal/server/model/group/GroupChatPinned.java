@@ -1,6 +1,6 @@
 package com.pesupal.server.model.group;
 
-import com.pesupal.server.model.CreationTimeAuditable;
+import com.pesupal.server.model.BaseModel;
 import com.pesupal.server.model.user.User;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
@@ -8,17 +8,11 @@ import lombok.Data;
 
 @Data
 @Entity
-public class GroupMessage extends CreationTimeAuditable {
+public class GroupChatPinned extends BaseModel {
 
     @ManyToOne
     private Group group;
 
     @ManyToOne
-    private User sender;
-
-    private String message;
-
-    private Boolean containsMedia;
-
-    private Boolean deleted;
+    private User pinnedBy;
 }

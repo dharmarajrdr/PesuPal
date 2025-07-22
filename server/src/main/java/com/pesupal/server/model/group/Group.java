@@ -27,7 +27,7 @@ public class Group extends CreationTimeAuditable {
     @Enumerated(EnumType.STRING)
     private Visibility visibility;
 
-    private Boolean active;
+    private boolean active;
 
-    private Boolean showOldMessagesToNewJoiners;
+    private boolean showOldMessagesToNewJoiners;
 }
