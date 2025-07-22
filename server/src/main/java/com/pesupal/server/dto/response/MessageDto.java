@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.pesupal.server.enums.Reaction;
 import com.pesupal.server.enums.ReadReceipt;
 import com.pesupal.server.model.chat.DirectMessage;
+import com.pesupal.server.model.group.GroupChatMessage;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -27,7 +28,7 @@ public class MessageDto {
 
     private Map<Reaction, Integer> reactions;
 
-    private DirectMessageMediaFileDto media;
+    private MediaFileDto media;
 
     public static MessageDto fromDirectMessage(DirectMessage directMessage) {
 
@@ -40,6 +41,19 @@ public class MessageDto {
         responseDto.setCreatedAt(directMessage.getCreatedAt());
         responseDto.setDeleted(directMessage.isDeleted());
         responseDto.setReadReceipt(directMessage.getReadReceipt());
+        return responseDto;
+    }
+
+    public static MessageDto fromGroupMessage(GroupChatMessage groupChatMessage) {
+
+        MessageDto responseDto = new MessageDto();
+        responseDto.setId(groupChatMessage.getId());
+        responseDto.setSender(groupChatMessage.getSender().getId());
+        if (!groupChatMessage.isDeleted()) {
+            responseDto.setMessage(groupChatMessage.getMessage()); // Only set message if not deleted
+        }
+        responseDto.setCreatedAt(groupChatMessage.getCreatedAt());
+        responseDto.setDeleted(groupChatMessage.isDeleted());
         return responseDto;
     }
 }
