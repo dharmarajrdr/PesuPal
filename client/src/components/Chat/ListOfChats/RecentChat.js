@@ -2,6 +2,7 @@ import './RecentChats.css';
 import { StatusIndicator } from '../../Auth/utils';
 import { setActiveRecentChat } from '../../../store/reducers/ActiveRecentChatSlice';
 import { useDispatch, useSelector } from 'react-redux';
+import UserAvatar from '../../User/UserAvatar';
 
 const RecentChat = ({ recentChat, openChatHandler }) => {
 
@@ -9,6 +10,7 @@ const RecentChat = ({ recentChat, openChatHandler }) => {
     const currentChatId = useSelector(state => state.chatId);
     const { chatId, image, name, status, recentMessage } = recentChat;
     const { message, media, createdAt, sender, number_of_unread_messages } = recentMessage;
+    const activeChatTab = useSelector(state => state.activeChatTab);
 
     const isActive = currentChatId == chatId;
     if (isActive) {
@@ -18,12 +20,12 @@ const RecentChat = ({ recentChat, openChatHandler }) => {
     return (
         <div className={`RecentChatContainer cursP FRCS w100 ${isActive ? 'active' : ''}`} onClick={() => openChatHandler(recentChat)}>
             <div className='pR'>
-                {image ? <img src={image} /> : <i className='fa fa-user-circle fs20' aria-hidden='true'></i>}
-                <StatusIndicator status={status} />
+                <UserAvatar displayPicture={image} displayName={name} />
+                {activeChatTab?.showStatusIndicator && <StatusIndicator status={status} />}
             </div>
             <div className='FCSC w100 name_message_date'>
                 <div className='FRCB w100'>
-                    <span className='name'>{name}</span>
+                    <span className='name' title={name}>{name}</span>
                     <span className='createdAt'>{createdAt}</span>
                 </div>
                 <div className='FRCB w100'>
