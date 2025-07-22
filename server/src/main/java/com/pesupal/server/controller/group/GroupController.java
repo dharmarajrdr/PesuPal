@@ -7,6 +7,7 @@ import com.pesupal.server.dto.response.group.GroupDto;
 import com.pesupal.server.helpers.CurrentValueRetriever;
 import com.pesupal.server.service.interfaces.group.GroupService;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,9 +33,10 @@ public class GroupController extends CurrentValueRetriever {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<ApiResponseDto> getAllGroups(@RequestParam Long page, @RequestParam Long size) {
+    public ResponseEntity<ApiResponseDto> getAllGroups(@RequestParam Integer page, @RequestParam Integer size) {
 
-        RecentChatPagedDto recentChatPagedDto = groupService.getAllGroups(page, size, getCurrentUserId(), getCurrentOrgId());
+        Pageable pageable = Pageable.ofSize(size).withPage(page);
+        RecentChatPagedDto recentChatPagedDto = groupService.getAllGroups(getCurrentUserId(), getCurrentOrgId(), pageable);
         return ResponseEntity.ok().body(new ApiResponseDto("Groups retrieved successfully", recentChatPagedDto.getChats(), recentChatPagedDto.getPageable()));
     }
 }

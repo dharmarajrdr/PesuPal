@@ -21,6 +21,8 @@ public class Group extends CreationTimeAuditable {
 
     private String description;
 
+    private String displayPicture;
+
     @ManyToOne
     private User owner;
 
