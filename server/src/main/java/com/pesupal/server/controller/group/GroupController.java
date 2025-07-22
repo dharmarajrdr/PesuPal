@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("/api/v1/group-message")
+@RequestMapping("/api/v1/group")
 public class GroupController extends CurrentValueRetriever {
 
     private final GroupService groupService;

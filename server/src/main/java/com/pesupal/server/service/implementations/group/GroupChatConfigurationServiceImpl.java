@@ -28,14 +28,6 @@ public class GroupChatConfigurationServiceImpl implements GroupChatConfiguration
                 case SUPER_ADMIN: {
                     break;  // Super Admin has all permissions by default
                 }
-                case ADMIN: {
-                    groupChatConfiguration.setDeleteGroup(false);
-                    groupChatConfiguration.setClearChat(false);
-                    groupChatConfiguration.setChangeName(false);
-                    groupChatConfiguration.setRemoveMember(false);
-                    groupChatConfiguration.setChangeDescription(false);
-                    groupChatConfiguration.setChangeProfilePicture(false);
-                }
                 case USER: {
                     groupChatConfiguration.setAddMember(false);
                     groupChatConfiguration.setLeaveGroup(false);
@@ -43,6 +35,15 @@ public class GroupChatConfigurationServiceImpl implements GroupChatConfiguration
                     groupChatConfiguration.setPinMessage(false);
                     groupChatConfiguration.setDeleteMessage(false);
                     groupChatConfiguration.setRoleUpdate(false);
+                }
+                case ADMIN: {
+                    groupChatConfiguration.setDeleteGroup(false);
+                    groupChatConfiguration.setClearChat(false);
+                    groupChatConfiguration.setChangeName(false);
+                    groupChatConfiguration.setRemoveMember(false);
+                    groupChatConfiguration.setChangeDescription(false);
+                    groupChatConfiguration.setChangeProfilePicture(false);
+                    break;
                 }
             }
             groupChatConfigurationRepository.save(groupChatConfiguration);
