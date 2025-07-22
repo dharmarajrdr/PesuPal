@@ -9,6 +9,7 @@ import { apiRequest } from '../../../http_request';
 import { useDispatch, useSelector } from 'react-redux';
 import { setCurrentChatPreview } from '../../../store/reducers/CurrentChatPreviewSlice';
 import { setChatId } from '../../../store/reducers/ChatIdSlice';
+import PermissionDenied from '../../Auth/PermissionDenied';
 
 const readAllMessages = ({ chatId }) => {
   apiRequest(`/api/v1/direct-messages/${chatId}/read_all`, "PUT").then(() => {
@@ -26,6 +27,7 @@ const ConversationScreen = () => {
 
   const [page, setPage] = useState(0);
   const [size, setSize] = useState(25);
+  const [permissionDenied, setPermissionDenied] = useState(false);
   const [messages, setMessages] = useState([]);
   const [retrievingChat, setRetrievingChat] = useState(true);
   const [pivotMessageId, setPivotMessageId] = useState(null);
@@ -86,6 +88,7 @@ const ConversationScreen = () => {
 
     apiRequest(`/api/v1/direct-messages/preview/${chatId}`, "GET").then(({ data }) => {
 
+      setPermissionDenied(false);
       dispatch(setCurrentChatPreview(data));
 
       apiRequest(`/api/v1/direct-messages/${chatId}?page=${page}&size=${size}${pivot ? `&pivot_message_id=${pivot}` : ''}`, "GET").then(({ data }) => {
@@ -102,9 +105,13 @@ const ConversationScreen = () => {
         setRetrievingChat(false);
       });
 
-    }).catch(({ message }) => {
-      console.error(message);
+    }).catch(({ message, statusCode }) => {
+
       setRetrievingChat(false);
+      if (statusCode === 403) {
+        setPermissionDenied(true);
+      }
+
     });
 
   };
@@ -121,9 +128,11 @@ const ConversationScreen = () => {
 
   return currentChatPreview ? (
     <div id='ConversationScreen' className='FCSB'>
-      <ChatHeader />
-      <ChatMessages retrievingChat={retrievingChat} messages={messages} chatId={chatId} clickSendMessageHandler={clickSendMessageHandler} />
-      <ChatInput clickSendMessageHandler={clickSendMessageHandler} />
+      {permissionDenied ? <PermissionDenied /> : <>
+        <ChatHeader />
+        <ChatMessages retrievingChat={retrievingChat} messages={messages} chatId={chatId} clickSendMessageHandler={clickSendMessageHandler} />
+        <ChatInput clickSendMessageHandler={clickSendMessageHandler} />
+      </>}
     </div>
   ) : null;
 }

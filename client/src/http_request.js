@@ -1,7 +1,7 @@
 import utils from "./utils";
 
 export async function apiRequest(endpoint, method = 'GET', data = null, customHeaders = {}) {
-    
+
     const token = sessionStorage.getItem('token') || utils.parseCookie().get('token');;
     const orgId = sessionStorage.getItem('org-id'); // Optional: get orgId from session
 
@@ -27,14 +27,19 @@ export async function apiRequest(endpoint, method = 'GET', data = null, customHe
         const contentType = response.headers.get('content-type') || '';
 
         const isJson = contentType.includes('application/json');
+
+        const statusCode = response.status;
+
         const result = isJson ? await response.json() : {
             message: await response.text(),
-            status: 'FAILURE',
+            status: 'FAILURE'
         };
 
+        Object.assign(result, { statusCode });
+
         if (!response.ok || result.status === 'FAILURE') {
-            if (response.status == 401) {
-                sessionStorage.setItem('token', null);
+            if (statusCode == 401) {
+                sessionStorage.removeItem('token');
                 document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/';
                 // window.location.reload(); // Auto logout
             }

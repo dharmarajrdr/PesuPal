@@ -10,9 +10,9 @@ import java.util.Optional;
 @Repository
 public interface PinnedDirectMessageRepository extends JpaRepository<PinnedDirectMessage, Long> {
 
-    List<PinnedDirectMessage> findAllByOrgIdAndPinnedByIdOrderByOrderIndexAscPinnedUser_IdAsc(Long pinnedById, Long orgId);
-
     boolean existsByPinnedByIdAndPinnedUserIdAndOrgId(Long pinnedById, Long pinnedUserId, Long orgId);
 
     Optional<PinnedDirectMessage> findByPinnedByIdAndPinnedUserIdAndOrgId(Long pinnedById, Long pinnedUserId, Long orgId);
+
+    List<PinnedDirectMessage> findAllByPinnedByIdAndOrgIdOrderByOrderIndexAscPinnedUser_IdAsc(Long pinnedById, Long orgId);
 }
