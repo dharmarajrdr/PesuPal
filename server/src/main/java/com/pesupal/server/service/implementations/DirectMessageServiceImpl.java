@@ -45,8 +45,10 @@ public class DirectMessageServiceImpl implements DirectMessageService {
     private final S3Service s3Service;
 
     public DirectMessageServiceImpl(DirectMessageRepository directMessageRepository,
-                                    @Lazy DirectMessageReactionService directMessageReactionService,
-                                    UserService userService, OrgService orgService, OrgMemberService orgMemberService, PinnedDirectMessageService pinnedDirectMessageService, DirectMessageMediaFileRepository directMessageMediaFileRepository, S3Service s3Service) {
+            @Lazy DirectMessageReactionService directMessageReactionService,
+            UserService userService, OrgService orgService, OrgMemberService orgMemberService,
+            PinnedDirectMessageService pinnedDirectMessageService,
+            DirectMessageMediaFileRepository directMessageMediaFileRepository, S3Service s3Service) {
         this.directMessageRepository = directMessageRepository;
         this.orgService = orgService;
         this.userService = userService;
@@ -61,10 +63,10 @@ public class DirectMessageServiceImpl implements DirectMessageService {
      * Retrieves direct messages between two users by their IDs.
      *
      * @param getConversationBetweenUsers
-     * @return List of DirectMessageResponseDto
+     * @return List of MessageDto
      */
     @Override
-    public List<DirectMessageResponseDto> getDirectMessagesBetweenUsers(GetConversationBetweenUsers getConversationBetweenUsers) {
+    public List<MessageDto> getDirectMessagesBetweenUsers(GetConversationBetweenUsers getConversationBetweenUsers) {
 
         Pageable pageable = PageRequest.of(
                 getConversationBetweenUsers.getPage(),
@@ -78,7 +80,7 @@ public class DirectMessageServiceImpl implements DirectMessageService {
             messages = directMessageRepository.findAllByChatId(getConversationBetweenUsers.getChatId(), pageable);
         }
         return messages.stream().map(dm -> {
-            DirectMessageResponseDto directMessageResponseDto = DirectMessageResponseDto.fromDirectMessage(dm);
+            MessageDto directMessageResponseDto = MessageDto.fromDirectMessage(dm);
             if (dm.getContainsMedia()) {
                 DirectMessageMediaFile directMessageMediaFile = directMessageMediaFileRepository.findByDirectMessage(dm);
                 if (directMessageMediaFile != null) {
@@ -90,7 +92,7 @@ public class DirectMessageServiceImpl implements DirectMessageService {
             }
             directMessageResponseDto.setReactions(directMessageReactionService.getReactionsCountForMessage(dm));
             return directMessageResponseDto;
-        }).sorted(Comparator.comparing(DirectMessageResponseDto::getCreatedAt)).toList();
+        }).sorted(Comparator.comparing(MessageDto::getCreatedAt)).toList();
     }
 
     /**
@@ -232,7 +234,8 @@ public class DirectMessageServiceImpl implements DirectMessageService {
     }
 
     /**
-     * Retrieves a direct message preview by chat ID for a specific user and organization.
+     * Retrieves a direct message preview by chat ID for a specific user and
+     * organization.
      *
      * @param chatId
      * @param userId

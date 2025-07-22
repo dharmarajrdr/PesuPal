@@ -11,15 +11,13 @@ import java.util.Map;
 
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class DirectMessageResponseDto {
+public class MessageDto {
 
     private Long id;
 
     private LocalDateTime createdAt;
 
     private Long sender;
-
-    private Long receiver;
 
     private String message;
 
@@ -31,12 +29,11 @@ public class DirectMessageResponseDto {
 
     private DirectMessageMediaFileDto media;
 
-    public static DirectMessageResponseDto fromDirectMessage(DirectMessage directMessage) {
+    public static MessageDto fromDirectMessage(DirectMessage directMessage) {
 
-        DirectMessageResponseDto responseDto = new DirectMessageResponseDto();
+        MessageDto responseDto = new MessageDto();
         responseDto.setId(directMessage.getId());
         responseDto.setSender(directMessage.getSender().getId());
-        responseDto.setReceiver(directMessage.getReceiver().getId());
         if (!directMessage.isDeleted()) {
             responseDto.setMessage(directMessage.getMessage()); // Only set message if not deleted
         }

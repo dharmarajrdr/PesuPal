@@ -25,15 +25,21 @@ public class GroupChatMessageController extends CurrentValueRetriever {
 
     @DeleteMapping("/{messageId}")
     public ResponseEntity<ApiResponseDto> deleteGroupMessage(@PathVariable Long messageId) {
-        
+
         groupChatMessageService.deleteGroupMessage(messageId, getCurrentUserId(), getCurrentOrgId());
         return ResponseEntity.ok().body(new ApiResponseDto("Group message deleted successfully"));
     }
 
     @DeleteMapping("/clear/{groupId}")
     public ResponseEntity<ApiResponseDto> clearGroupChatMessages(@PathVariable Long groupId) {
-        
+
         groupChatMessageService.clearGroupChatMessages(groupId, getCurrentUserId(), getCurrentOrgId());
         return ResponseEntity.ok().body(new ApiResponseDto("Group chat messages cleared successfully"));
+    }
+
+    @GetMapping("/{groupId}")
+    public ResponseEntity<ApiResponseDto> getGroupChatMessages(@PathVariable String groupId, @RequestParam Integer page, @RequestParam Integer size, @RequestParam(name = "pivot_message_id", required = false) Long pivotMessageId) {
+
+        return null;
     }
 }

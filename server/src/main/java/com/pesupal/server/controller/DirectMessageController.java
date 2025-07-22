@@ -32,7 +32,7 @@ public class DirectMessageController extends CurrentValueRetriever {
             throw new PermissionDeniedException("You do not have permission to access this chat.");
         }
         GetConversationBetweenUsers getConversationBetweenUsers = new GetConversationBetweenUsers(chatId, pivotMessageId, page, size);
-        List<DirectMessageResponseDto> directMessageResponseDtos = directMessageService.getDirectMessagesBetweenUsers(getConversationBetweenUsers);
+        List<MessageDto> directMessageResponseDtos = directMessageService.getDirectMessagesBetweenUsers(getConversationBetweenUsers);
         return ResponseEntity.ok(new ApiResponseDto("Direct messages retrieved successfully", directMessageResponseDtos));
     }
 
