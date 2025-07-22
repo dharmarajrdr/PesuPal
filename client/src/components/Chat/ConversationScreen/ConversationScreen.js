@@ -10,6 +10,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setCurrentChatPreview } from '../../../store/reducers/CurrentChatPreviewSlice';
 import { setChatId } from '../../../store/reducers/ChatIdSlice';
 import PermissionDenied from '../../Auth/PermissionDenied';
+import ChatInputUserArchived from './ChatInputUserArchived';
 
 const readAllMessages = ({ chatId }) => {
   apiRequest(`/api/v1/direct-messages/${chatId}/read_all`, "PUT").then(() => {
@@ -131,7 +132,7 @@ const ConversationScreen = () => {
       {permissionDenied ? <PermissionDenied /> : <>
         <ChatHeader />
         <ChatMessages retrievingChat={retrievingChat} messages={messages} chatId={chatId} clickSendMessageHandler={clickSendMessageHandler} />
-        <ChatInput clickSendMessageHandler={clickSendMessageHandler} />
+        {otherUser.archived ? <ChatInputUserArchived displayName={otherUser.displayName} /> : <ChatInput clickSendMessageHandler={clickSendMessageHandler} />}
       </>}
     </div>
   ) : null;

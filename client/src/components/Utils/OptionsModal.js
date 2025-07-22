@@ -1,9 +1,9 @@
 import './OptionsModal.css';
 
-const OptionsModal = ({ options }) => {
+const OptionsModal = ({ options, style }) => {
 
     return (
-        <div id='options-container' className='FCCS'>
+        <div id='options-container' className='FCCS' style={style}>
             {options.map(({ icon, name, onClick }, index) => (
                 <div key={index} className='option FRCS w100' onClick={onClick}>
                     <i className={icon} />

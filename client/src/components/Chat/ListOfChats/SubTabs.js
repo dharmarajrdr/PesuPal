@@ -1,11 +1,10 @@
-import React from 'react'
 import './SubTabs.css';
 import { Link } from 'react-router-dom'
 
 const SubTabs = () => {
     return (
         <div className='FRCC' id='subtab_container'>
-            <Link to='/chat' className='subtabs'>
+            <Link to='/chat/messages' className='subtabs'>
                 <span>Messages</span>
                 <b className='notifyCount'>17</b>
             </Link>

@@ -1,9 +1,8 @@
 import ConversationScreen from './ConversationScreen/ConversationScreen'
 import ListOfChats from './ListOfChats/ListOfChats';
 import './ChatLayout.css'
-import { Route, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes } from 'react-router-dom';
 import ConversationScreenPlaceholder from './ConversationScreen/ConversationScreenPlaceholder';
-import { useState } from 'react';
 
 const ChatLayout = () => {
 
@@ -11,8 +10,11 @@ const ChatLayout = () => {
         <div className='Layout FRCS'>
             <ListOfChats />
             <Routes>
-                <Route path='/' element={<ConversationScreenPlaceholder />} />
-                <Route path="/:chatId" element={<ConversationScreen />} />
+                <Route path='/' element={<Navigate to={"/chat/messages"} />} />
+                <Route path='/*' element={<Navigate to={"/chat/messages"} />} />
+                <Route path='/messages' element={<ConversationScreenPlaceholder />} />
+                <Route path="/messages/:chatId" element={<ConversationScreen />} />
+                <Route path='/groups' element={<ConversationScreenPlaceholder />} />
             </Routes>
         </div>
     )
