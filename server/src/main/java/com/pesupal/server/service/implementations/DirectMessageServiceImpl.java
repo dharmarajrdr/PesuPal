@@ -13,6 +13,7 @@ import com.pesupal.server.model.chat.DirectMessage;
 import com.pesupal.server.model.chat.DirectMessageMediaFile;
 import com.pesupal.server.model.chat.PinnedDirectMessage;
 import com.pesupal.server.model.org.Org;
+import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.model.user.User;
 import com.pesupal.server.repository.DirectMessageMediaFileRepository;
 import com.pesupal.server.repository.DirectMessageRepository;
@@ -63,8 +64,7 @@ public class DirectMessageServiceImpl implements DirectMessageService {
      * @return List of DirectMessageResponseDto
      */
     @Override
-    public List<DirectMessageResponseDto> getDirectMessagesBetweenUsers(
-            GetConversationBetweenUsers getConversationBetweenUsers) {
+    public List<DirectMessageResponseDto> getDirectMessagesBetweenUsers(GetConversationBetweenUsers getConversationBetweenUsers) {
 
         Pageable pageable = PageRequest.of(
                 getConversationBetweenUsers.getPage(),
@@ -206,11 +206,17 @@ public class DirectMessageServiceImpl implements DirectMessageService {
 
         Long senderId = chatMessageDto.getSenderId();
         User sender = userService.getUserById(senderId);
-        orgMemberService.validateUserIsOrgMember(sender, org);
+        OrgMember senderOrgMember = orgMemberService.getOrgMemberByUserAndOrg(sender, org);
+        if (senderOrgMember.isArchived()) {
+            throw new PermissionDeniedException("You are no longer a member of this org.");
+        }
 
         Long receiverId = chatMessageDto.getReceiverId();
         User receiver = userService.getUserById(receiverId);
-        orgMemberService.validateUserIsOrgMember(receiver, org);
+        OrgMember receiverOrgMember = orgMemberService.getOrgMemberByUserAndOrg(receiver, org);
+        if (receiverOrgMember.isArchived()) {
+            throw new ActionProhibitedException("User " + receiverOrgMember.getDisplayName() + " is no longer a member of this org.");
+        }
 
         String chatId = Chat.getChatId(senderId, receiverId, orgId);
         DirectMessage directMessage = new DirectMessage();
