@@ -1,6 +1,19 @@
 package com.pesupal.server.service.implementations.group;
 
+import com.pesupal.server.dto.request.group.CreateGroupMessageDto;
+import com.pesupal.server.dto.response.group.GroupMessageDto;
+import com.pesupal.server.enums.Role;
+import com.pesupal.server.exceptions.DataNotFoundException;
+import com.pesupal.server.exceptions.PermissionDeniedException;
+import com.pesupal.server.model.group.Group;
+import com.pesupal.server.model.group.GroupChatConfiguration;
+import com.pesupal.server.model.group.GroupChatMember;
+import com.pesupal.server.model.group.GroupChatMessage;
+import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.repository.GroupChatMessageRepository;
+import com.pesupal.server.service.interfaces.OrgMemberService;
+import com.pesupal.server.service.interfaces.group.GroupChatConfigurationService;
+import com.pesupal.server.service.interfaces.group.GroupChatMemberService;
 import com.pesupal.server.service.interfaces.group.GroupChatMessageService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -9,5 +22,41 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 public class GroupChatMessageServiceImpl implements GroupChatMessageService {
 
+    private final OrgMemberService orgMemberService;
+    private final GroupChatMemberService groupChatMemberService;
     private final GroupChatMessageRepository groupChatMessageRepository;
+    private final GroupChatConfigurationService groupChatConfigurationService;
+
+
+    /**
+     * Posts a message in a group chat.
+     *
+     * @param createGroupMessageDto
+     * @param userId
+     * @param orgId
+     * @return
+     */
+    @Override
+    public GroupMessageDto postMessageInGroup(CreateGroupMessageDto createGroupMessageDto, Long userId, Long orgId) {
+
+        OrgMember orgMember = orgMemberService.getOrgMemberByUserIdAndOrgId(userId, orgId);
+        GroupChatMember groupChatMember = groupChatMemberService.getGroupMemberByGroupIdAndUserId(createGroupMessageDto.getGroupId(), userId);
+        Group group = groupChatMember.getGroup();
+        if (!group.getOrg().getId().equals(orgId)) {
+            throw new DataNotFoundException("Group not found with ID: " + createGroupMessageDto.getGroupId() + ".");
+        }
+
+        Role role = groupChatMember.getRole();
+        GroupChatConfiguration groupChatConfiguration = groupChatConfigurationService.getConfigurationByGroupAndRole(group, role);
+        if (!groupChatConfiguration.isPostMessage()) {
+            throw new PermissionDeniedException("You do not have permission to post messages in this group.");
+        }
+
+        GroupChatMessage groupChatMessage = createGroupMessageDto.toGroupChatMessage();
+        groupChatMessage.setSender(groupChatMember.getUser());
+        groupChatMessage.setDeleted(false);
+        groupChatMessage.setGroup(group);
+        groupChatMessageRepository.save(groupChatMessage);
+        return GroupMessageDto.fromGroupMessageAndOrgMember(groupChatMessage, orgMember);
+    }
 }
