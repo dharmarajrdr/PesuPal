@@ -1,7 +1,7 @@
-package com.pesupal.server.service.implementations.chat;
+package com.pesupal.server.service.implementations.group;
 
 import com.pesupal.server.repository.GroupRepository;
-import com.pesupal.server.service.interfaces.chat.GroupService;
+import com.pesupal.server.service.interfaces.group.GroupService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 

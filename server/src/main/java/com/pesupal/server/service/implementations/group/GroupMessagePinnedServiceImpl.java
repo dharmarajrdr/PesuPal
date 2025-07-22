@@ -1,7 +1,7 @@
-package com.pesupal.server.service.implementations.chat;
+package com.pesupal.server.service.implementations.group;
 
 import com.pesupal.server.repository.GroupMessagePinnedRepository;
-import com.pesupal.server.service.interfaces.chat.GroupMessagePinnedService;
+import com.pesupal.server.service.interfaces.group.GroupMessagePinnedService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
