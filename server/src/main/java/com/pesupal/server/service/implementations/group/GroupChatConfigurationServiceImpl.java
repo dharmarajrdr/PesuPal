@@ -1,6 +1,7 @@
 package com.pesupal.server.service.implementations.group;
 
 import com.pesupal.server.enums.Role;
+import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.model.group.Group;
 import com.pesupal.server.model.group.GroupChatConfiguration;
 import com.pesupal.server.repository.GroupChatConfigurationRepository;
@@ -48,5 +49,18 @@ public class GroupChatConfigurationServiceImpl implements GroupChatConfiguration
             }
             groupChatConfigurationRepository.save(groupChatConfiguration);
         }
+    }
+
+    /**
+     * Retrieves the group chat configuration for a specific group and role.
+     *
+     * @param group
+     * @param role
+     * @return
+     */
+    @Override
+    public GroupChatConfiguration getConfigurationByGroupAndRole(Group group, Role role) {
+
+        return groupChatConfigurationRepository.findByGroupAndRole(group, role).orElseThrow(() -> new DataNotFoundException("Configuration not found for group: " + group.getId() + " and role: " + role));
     }
 }
