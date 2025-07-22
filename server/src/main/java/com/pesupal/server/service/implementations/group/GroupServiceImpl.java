@@ -1,30 +1,45 @@
 package com.pesupal.server.service.implementations.group;
 
 import com.pesupal.server.dto.request.group.CreateGroupDto;
+import com.pesupal.server.dto.response.LastMessageDto;
+import com.pesupal.server.dto.response.RecentChatDto;
 import com.pesupal.server.dto.response.RecentChatPagedDto;
 import com.pesupal.server.dto.response.group.GroupDto;
 import com.pesupal.server.enums.Role;
+import com.pesupal.server.enums.Visibility;
 import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.exceptions.PermissionDeniedException;
+import com.pesupal.server.helpers.TimeFormatterUtil;
 import com.pesupal.server.model.group.Group;
 import com.pesupal.server.model.group.GroupChatConfiguration;
 import com.pesupal.server.model.group.GroupChatMember;
+import com.pesupal.server.model.org.Org;
 import com.pesupal.server.model.user.OrgMember;
+import com.pesupal.server.model.user.User;
 import com.pesupal.server.repository.GroupChatMemberRepository;
 import com.pesupal.server.repository.GroupRepository;
 import com.pesupal.server.service.interfaces.OrgMemberService;
+import com.pesupal.server.service.interfaces.OrgService;
+import com.pesupal.server.service.interfaces.UserService;
 import com.pesupal.server.service.interfaces.group.GroupChatConfigurationService;
 import com.pesupal.server.service.interfaces.group.GroupChatMemberService;
 import com.pesupal.server.service.interfaces.group.GroupService;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @AllArgsConstructor
 public class GroupServiceImpl implements GroupService {
 
+    private final OrgService orgService;
+    private final UserService userService;
     private final GroupRepository groupRepository;
     private final OrgMemberService orgMemberService;
     private final GroupChatMemberService groupChatMemberService;
@@ -120,8 +135,48 @@ public class GroupServiceImpl implements GroupService {
      * @return
      */
     @Override
-    public RecentChatPagedDto getAllGroups(Long page, Long size, Long userId, Long orgId) {
+    public RecentChatPagedDto getAllGroups(Long userId, Long orgId, Pageable pageable) {
 
-        return null;
+        int page = pageable.getPageNumber();
+        int size = pageable.getPageSize();
+        int offset = page * size;
+
+        User user = userService.getUserById(userId);
+        Org org = orgService.getOrgById(orgId);
+
+        orgMemberService.validateUserIsOrgMember(user, org);
+
+        List<Object[]> rows = groupRepository.findRecentGroupChatsPaged(userId, orgId, size, offset);
+
+        List<RecentChatDto> chats = rows.stream().map(row -> {
+
+            Long groupId = (Long) row[0];
+            String groupName = (String) row[1];
+            String visibility = (String) row[2];
+            String displayPicture = (String) row[3];
+            String sender = (String) row[4];
+            String content = (String) row[5];
+            Boolean includedMedia = (Boolean) row[6];
+            LocalDateTime createdAt = ((Timestamp) row[7]).toLocalDateTime();
+
+            LastMessageDto lastMessage = new LastMessageDto();
+            lastMessage.setSender(sender);
+            lastMessage.setMessage(content);
+            lastMessage.setMedia(includedMedia);
+            lastMessage.setCreatedAt(TimeFormatterUtil.formatShort(createdAt));
+
+            RecentChatDto dto = new RecentChatDto();
+            dto.setChatId(Long.toString(groupId));
+            dto.setName(groupName);
+            dto.setImage(displayPicture);
+            dto.setVisibility(Visibility.valueOf(visibility));
+            dto.setRecentMessage(lastMessage);
+
+            return dto;
+        }).toList();
+
+        Long total = groupRepository.countRecentGroupChats(userId, orgId);
+
+        return new RecentChatPagedDto(chats, pageable, total);
     }
 }
