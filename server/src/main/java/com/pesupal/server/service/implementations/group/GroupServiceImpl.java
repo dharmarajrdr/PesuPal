@@ -2,13 +2,15 @@ package com.pesupal.server.service.implementations.group;
 
 import com.pesupal.server.dto.request.group.CreateGroupDto;
 import com.pesupal.server.dto.response.group.GroupDto;
+import com.pesupal.server.enums.Role;
 import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.model.group.Group;
+import com.pesupal.server.model.group.GroupChatMember;
 import com.pesupal.server.model.user.OrgMember;
+import com.pesupal.server.repository.GroupChatMemberRepository;
 import com.pesupal.server.repository.GroupRepository;
 import com.pesupal.server.service.interfaces.OrgMemberService;
 import com.pesupal.server.service.interfaces.group.GroupChatConfigurationService;
-import com.pesupal.server.service.interfaces.group.GroupChatMemberService;
 import com.pesupal.server.service.interfaces.group.GroupService;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -20,8 +22,24 @@ public class GroupServiceImpl implements GroupService {
 
     private final GroupRepository groupRepository;
     private final OrgMemberService orgMemberService;
-    private final GroupChatMemberService groupChatMemberService;
+    private final GroupChatMemberRepository groupChatMemberRepository;
     private final GroupChatConfigurationService groupChatConfigurationService;
+
+    /**
+     * Initializes the group chat member for a given group and organization member.
+     *
+     * @param group
+     * @param orgMember
+     */
+    private void initializeGroupChatMember(Group group, OrgMember orgMember) {
+
+        GroupChatMember groupChatMember = new GroupChatMember();
+        groupChatMember.setGroup(group);
+        groupChatMember.setUser(orgMember.getUser());
+        groupChatMember.setActive(true);
+        groupChatMember.setRole(Role.SUPER_ADMIN);
+        groupChatMemberRepository.save(groupChatMember);
+    }
 
     /**
      * Creates a new group based on the provided CreateGroupDto.
@@ -41,7 +59,7 @@ public class GroupServiceImpl implements GroupService {
         group.setOrg(orgMember.getOrg());
         groupRepository.save(group);
         groupChatConfigurationService.initializeGroupChatConfiguration(group);
-        groupChatMemberService.initializeGroupChatMember(group, orgMember);
+        initializeGroupChatMember(group, orgMember);
         return GroupDto.fromGroupAndOrgMember(group, orgMember);
     }
 

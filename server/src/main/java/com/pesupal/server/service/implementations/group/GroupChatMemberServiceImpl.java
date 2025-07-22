@@ -30,23 +30,6 @@ public class GroupChatMemberServiceImpl implements GroupChatMemberService {
     private final GroupChatConfigurationService groupChatConfigurationService;
 
     /**
-     * Initializes the group chat member for a given group and organization member.
-     *
-     * @param group
-     * @param orgMember
-     */
-    @Override
-    public void initializeGroupChatMember(Group group, OrgMember orgMember) {
-
-        GroupChatMember groupChatMember = new GroupChatMember();
-        groupChatMember.setGroup(group);
-        groupChatMember.setUser(orgMember.getUser());
-        groupChatMember.setActive(true);
-        groupChatMember.setRole(Role.SUPER_ADMIN);
-        groupChatMemberRepository.save(groupChatMember);
-    }
-
-    /**
      * Retrieves a group chat member by group ID, user ID, and organization ID.
      *
      * @param groupId
@@ -109,7 +92,7 @@ public class GroupChatMemberServiceImpl implements GroupChatMemberService {
 
         GroupChatMember groupChatMember = getGroupMemberByGroupIdAndUserId(addGroupMemberDto.getGroupId(), userId);
         Group group = groupChatMember.getGroup();
-        if (!group.getOrg().equals(orgId)) {
+        if (!group.getOrg().getId().equals(orgId)) {
             throw new DataNotFoundException("Group with ID " + addGroupMemberDto.getGroupId() + " does not exist.");
         }
 
