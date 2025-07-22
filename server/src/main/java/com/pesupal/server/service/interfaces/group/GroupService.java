@@ -9,4 +9,6 @@ public interface GroupService {
     GroupDto createGroup(CreateGroupDto createGroupDto, Long userId, Long orgId);
 
     Group getGroupById(Long groupId);
+
+    void deleteGroup(Long groupId, Long userId, Long orgId);
 }

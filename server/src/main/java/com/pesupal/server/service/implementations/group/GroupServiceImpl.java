@@ -4,13 +4,16 @@ import com.pesupal.server.dto.request.group.CreateGroupDto;
 import com.pesupal.server.dto.response.group.GroupDto;
 import com.pesupal.server.enums.Role;
 import com.pesupal.server.exceptions.DataNotFoundException;
+import com.pesupal.server.exceptions.PermissionDeniedException;
 import com.pesupal.server.model.group.Group;
+import com.pesupal.server.model.group.GroupChatConfiguration;
 import com.pesupal.server.model.group.GroupChatMember;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.repository.GroupChatMemberRepository;
 import com.pesupal.server.repository.GroupRepository;
 import com.pesupal.server.service.interfaces.OrgMemberService;
 import com.pesupal.server.service.interfaces.group.GroupChatConfigurationService;
+import com.pesupal.server.service.interfaces.group.GroupChatMemberService;
 import com.pesupal.server.service.interfaces.group.GroupService;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -22,6 +25,7 @@ public class GroupServiceImpl implements GroupService {
 
     private final GroupRepository groupRepository;
     private final OrgMemberService orgMemberService;
+    private final GroupChatMemberService groupChatMemberService;
     private final GroupChatMemberRepository groupChatMemberRepository;
     private final GroupChatConfigurationService groupChatConfigurationService;
 
@@ -73,5 +77,32 @@ public class GroupServiceImpl implements GroupService {
     public Group getGroupById(Long groupId) {
 
         return groupRepository.findById(groupId).orElseThrow(() -> new DataNotFoundException("Group with ID " + groupId + " not found."));
+    }
+
+    /**
+     * Deletes a group based on the provided group ID, user ID, and organization ID.
+     *
+     * @param groupId
+     * @param userId
+     * @param orgId
+     */
+    @Override
+    public void deleteGroup(Long groupId, Long userId, Long orgId) {
+
+        GroupChatMember groupChatMember = groupChatMemberService.getGroupMemberByGroupIdAndUserId(groupId, userId);
+        Group group = getGroupById(groupId);
+        if (!group.getOrg().getId().equals(orgId)) {
+            throw new DataNotFoundException("Group with ID " + groupId + " does not exist.");
+        }
+
+        Role role = groupChatMember.getRole();
+
+        GroupChatConfiguration groupChatConfiguration = groupChatConfigurationService.getConfigurationByGroupAndRole(group, role);
+        if (!groupChatConfiguration.isDeleteGroup()) {
+            throw new PermissionDeniedException("You do not have permission to delete this group.");
+        }
+
+        group.setActive(false);
+        groupRepository.save(group);
     }
 }

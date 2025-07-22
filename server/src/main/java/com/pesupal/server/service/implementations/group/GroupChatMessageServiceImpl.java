@@ -48,6 +48,10 @@ public class GroupChatMessageServiceImpl implements GroupChatMessageService {
             throw new DataNotFoundException("Group not found with ID " + createGroupMessageDto.getGroupId() + ".");
         }
 
+        if (!group.isActive()) {
+            throw new ActionProhibitedException("This group is no longer active.");
+        }
+
         Role role = groupChatMember.getRole();
         GroupChatConfiguration groupChatConfiguration = groupChatConfigurationService.getConfigurationByGroupAndRole(group, role);
         if (!groupChatConfiguration.isPostMessage()) {
@@ -94,6 +98,10 @@ public class GroupChatMessageServiceImpl implements GroupChatMessageService {
         GroupChatMember groupChatMember = groupChatMemberService.getGroupMemberByGroupIdAndUserId(group.getId(), userId);
         if (!groupChatMember.isActive()) {
             throw new PermissionDeniedException("You're not part of this group anymore.");
+        }
+
+        if (!group.isActive()) {
+            throw new ActionProhibitedException("This group is no longer active.");
         }
 
         if (groupChatMessage.isDeleted()) {

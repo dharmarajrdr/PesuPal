@@ -17,7 +17,7 @@ public class GroupChatMessageController extends CurrentValueRetriever {
     private final GroupChatMessageService groupChatMessageService;
 
     @PostMapping("")
-    public ResponseEntity<ApiResponseDto> postmessageInGroup(@RequestBody CreateGroupMessageDto createGroupMessageDto) {
+    public ResponseEntity<ApiResponseDto> postMessageInGroup(@RequestBody CreateGroupMessageDto createGroupMessageDto) {
 
         GroupMessageDto groupMessageDto = groupChatMessageService.postMessageInGroup(createGroupMessageDto, getCurrentUserId(), getCurrentOrgId());
         return ResponseEntity.ok().body(new ApiResponseDto("Group message posted successfully", groupMessageDto));
