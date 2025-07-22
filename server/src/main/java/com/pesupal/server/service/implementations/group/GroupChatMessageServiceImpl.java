@@ -119,4 +119,42 @@ public class GroupChatMessageServiceImpl implements GroupChatMessageService {
 
         groupChatMessageRepository.delete(groupChatMessage);
     }
+
+    /**
+     * Clears all messages in a group chat.
+     *
+     * @param groupId
+     * @param userId
+     * @param orgId
+     */
+    @Override
+    public void clearGroupChatMessages(Long groupId, Long userId, Long orgId) {
+
+        GroupChatMember groupChatMember = groupChatMemberService.getGroupMemberByGroupIdAndUserId(groupId, userId);
+        Group group = groupChatMember.getGroup();
+
+        if (group.getOrg().getId().equals(orgId)) {
+            throw new DataNotFoundException("Group with ID " + groupId + " does not exist.");
+        }
+
+        if (!groupChatMember.isActive()) {
+            throw new PermissionDeniedException("You're not part of this group anymore.");
+        }
+
+        if (!group.isActive()) {
+            throw new ActionProhibitedException("This group is no longer active.");
+        }
+
+        Role role = groupChatMember.getRole();
+
+        if (!role.equals(Role.SUPER_ADMIN)) {
+
+            GroupChatConfiguration groupChatConfiguration = groupChatConfigurationService.getConfigurationByGroupAndRole(group, role);
+            if (!groupChatConfiguration.isClearChat()) {
+                throw new PermissionDeniedException("You do not have permission to clear messages in this group.");
+            }
+        }
+
+        groupChatMessageRepository.deleteAllByGroup(group);
+    }
 }

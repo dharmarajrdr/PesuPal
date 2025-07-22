@@ -11,4 +11,6 @@ public interface GroupChatMessageService {
     GroupChatMessage getGroupChatMessageById(Long messageId);
 
     void deleteGroupMessage(Long messageId, Long userId, Long orgId);
+
+    void clearGroupChatMessages(Long groupId, Long userId, Long orgId);
 }
