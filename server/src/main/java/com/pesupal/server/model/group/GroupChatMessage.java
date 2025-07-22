@@ -17,14 +17,13 @@ public class GroupChatMessage extends CreationTimeAuditable {
     @ManyToOne
     private User sender;
 
+    @Column(nullable = false)
     private String message;
 
     private boolean containsMedia;
 
     private boolean deleted;
-
-    private String readStatus;
-
+    
     @OneToMany(mappedBy = "lastReadMessage", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<GroupChatMember> readBy;
 }
