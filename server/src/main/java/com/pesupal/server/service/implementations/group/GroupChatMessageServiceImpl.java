@@ -3,12 +3,14 @@ package com.pesupal.server.service.implementations.group;
 import com.pesupal.server.dto.request.group.CreateGroupMessageDto;
 import com.pesupal.server.dto.response.group.GroupMessageDto;
 import com.pesupal.server.enums.Role;
+import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.exceptions.PermissionDeniedException;
 import com.pesupal.server.model.group.Group;
 import com.pesupal.server.model.group.GroupChatConfiguration;
 import com.pesupal.server.model.group.GroupChatMember;
 import com.pesupal.server.model.group.GroupChatMessage;
+import com.pesupal.server.model.org.Org;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.repository.GroupChatMessageRepository;
 import com.pesupal.server.service.interfaces.OrgMemberService;
@@ -43,7 +45,7 @@ public class GroupChatMessageServiceImpl implements GroupChatMessageService {
         GroupChatMember groupChatMember = groupChatMemberService.getGroupMemberByGroupIdAndUserId(createGroupMessageDto.getGroupId(), userId);
         Group group = groupChatMember.getGroup();
         if (!group.getOrg().getId().equals(orgId)) {
-            throw new DataNotFoundException("Group not found with ID: " + createGroupMessageDto.getGroupId() + ".");
+            throw new DataNotFoundException("Group not found with ID " + createGroupMessageDto.getGroupId() + ".");
         }
 
         Role role = groupChatMember.getRole();
@@ -58,5 +60,55 @@ public class GroupChatMessageServiceImpl implements GroupChatMessageService {
         groupChatMessage.setGroup(group);
         groupChatMessageRepository.save(groupChatMessage);
         return GroupMessageDto.fromGroupMessageAndOrgMember(groupChatMessage, orgMember);
+    }
+
+    /**
+     * Retrieves a group chat message by its ID.
+     *
+     * @param messageId
+     * @return
+     */
+    @Override
+    public GroupChatMessage getGroupChatMessageById(Long messageId) {
+
+        return groupChatMessageRepository.findById(messageId).orElseThrow(() -> new DataNotFoundException("Group message not found with ID " + messageId + "."));
+    }
+
+    /**
+     * Deletes a group message.
+     *
+     * @param messageId
+     * @param userId
+     * @param orgId
+     */
+    @Override
+    public void deleteGroupMessage(Long messageId, Long userId, Long orgId) {
+
+        GroupChatMessage groupChatMessage = getGroupChatMessageById(messageId);
+        Group group = groupChatMessage.getGroup();
+        Org org = group.getOrg();
+        if (!org.getId().equals(orgId)) {
+            throw new DataNotFoundException("Message not found in this organization.");
+        }
+
+        GroupChatMember groupChatMember = groupChatMemberService.getGroupMemberByGroupIdAndUserId(group.getId(), userId);
+        if (!groupChatMember.isActive()) {
+            throw new PermissionDeniedException("You're not part of this group anymore.");
+        }
+
+        if (groupChatMessage.isDeleted()) {
+            throw new ActionProhibitedException("This message has already been deleted.");
+        }
+
+        Role role = groupChatMember.getRole();
+
+        if (!role.equals(Role.SUPER_ADMIN)) {
+            GroupChatConfiguration groupChatConfiguration = groupChatConfigurationService.getConfigurationByGroupAndRole(group, role);
+            if (!groupChatConfiguration.isDeleteMessage()) {
+                throw new PermissionDeniedException("You do not have permission to delete messages in this group.");
+            }
+        }
+
+        groupChatMessageRepository.delete(groupChatMessage);
     }
 }
