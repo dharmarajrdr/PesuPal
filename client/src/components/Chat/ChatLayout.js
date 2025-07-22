@@ -12,9 +12,9 @@ const ChatLayout = () => {
             <Routes>
                 <Route path='/' element={<Navigate to={"/chat/messages"} />} />
                 <Route path='/*' element={<Navigate to={"/chat/messages"} />} />
-                <Route path='/messages' element={<ConversationScreenPlaceholder />} />
-                <Route path="/messages/:chatId" element={<ConversationScreen />} />
-                <Route path='/groups' element={<ConversationScreenPlaceholder />} />
+                <Route path='/messages' element={<ConversationScreenPlaceholder activeTabName={'directMessage'} />} />
+                <Route path="/messages/:chatId" element={<ConversationScreen activeTabName={'directMessage'} />} />
+                <Route path='/groups' element={<ConversationScreenPlaceholder activeTabName={'groupMessage'} />} />
             </Routes>
         </div>
     )
