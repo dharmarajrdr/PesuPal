@@ -1,5 +1,6 @@
 package com.pesupal.server.dto.response.group;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.pesupal.server.dto.response.UserPreviewDto;
 import com.pesupal.server.enums.Visibility;
 import com.pesupal.server.model.group.Group;
@@ -7,6 +8,7 @@ import com.pesupal.server.model.user.OrgMember;
 import lombok.Data;
 
 @Data
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class GroupDto {
 
     private Long id;
@@ -34,7 +36,6 @@ public class GroupDto {
     public static GroupDto fromGroupAndOrgMember(Group group, OrgMember orgMember) {
 
         GroupDto groupDto = fromGroup(group);
-        groupDto.setId(orgMember.getId());
         groupDto.setOwner(UserPreviewDto.fromOrgMember(orgMember));
         return groupDto;
     }
