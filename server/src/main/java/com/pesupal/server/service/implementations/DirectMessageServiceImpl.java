@@ -84,7 +84,7 @@ public class DirectMessageServiceImpl implements DirectMessageService {
             if (dm.getContainsMedia()) {
                 DirectMessageMediaFile directMessageMediaFile = directMessageMediaFileRepository.findByDirectMessage(dm);
                 if (directMessageMediaFile != null) {
-                    DirectMessageMediaFileDto directMessageMediaFileDto = DirectMessageMediaFileDto.fromDirectMessageMediaFile(directMessageMediaFile);
+                    MediaFileDto directMessageMediaFileDto = MediaFileDto.fromDirectMessageMediaFile(directMessageMediaFile);
                     String key = directMessageMediaFile.getMediaId() + "." + directMessageMediaFile.getExtension();
                     directMessageMediaFileDto.setMediaUrl(s3Service.generatePresignedUrl(key));
                     directMessageResponseDto.setMedia(directMessageMediaFileDto);
