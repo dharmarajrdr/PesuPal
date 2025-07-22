@@ -3,6 +3,7 @@ package com.pesupal.server.service.implementations.group;
 import com.pesupal.server.dto.request.group.CreateGroupDto;
 import com.pesupal.server.dto.response.group.GroupDto;
 import com.pesupal.server.enums.Role;
+import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.exceptions.PermissionDeniedException;
 import com.pesupal.server.model.group.Group;
@@ -100,6 +101,10 @@ public class GroupServiceImpl implements GroupService {
         GroupChatConfiguration groupChatConfiguration = groupChatConfigurationService.getConfigurationByGroupAndRole(group, role);
         if (!groupChatConfiguration.isDeleteGroup()) {
             throw new PermissionDeniedException("You do not have permission to delete this group.");
+        }
+
+        if (!group.isActive()) {
+            throw new ActionProhibitedException("This group is no longer active.");
         }
 
         group.setActive(false);

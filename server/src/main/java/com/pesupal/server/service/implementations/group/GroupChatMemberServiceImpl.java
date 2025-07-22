@@ -17,17 +17,23 @@ import com.pesupal.server.service.interfaces.OrgMemberService;
 import com.pesupal.server.service.interfaces.group.GroupChatConfigurationService;
 import com.pesupal.server.service.interfaces.group.GroupChatMemberService;
 import com.pesupal.server.service.interfaces.group.GroupService;
-import lombok.AllArgsConstructor;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 @Service
-@AllArgsConstructor
 public class GroupChatMemberServiceImpl implements GroupChatMemberService {
 
     private final GroupService groupService;
     private final OrgMemberService orgMemberService;
     private final GroupChatMemberRepository groupChatMemberRepository;
     private final GroupChatConfigurationService groupChatConfigurationService;
+
+    public GroupChatMemberServiceImpl(@Lazy GroupService groupService, OrgMemberService orgMemberService, GroupChatMemberRepository groupChatMemberRepository, GroupChatConfigurationService groupChatConfigurationService) {
+        this.groupService = groupService;
+        this.orgMemberService = orgMemberService;
+        this.groupChatMemberRepository = groupChatMemberRepository;
+        this.groupChatConfigurationService = groupChatConfigurationService;
+    }
 
     /**
      * Retrieves a group chat member by group ID, user ID, and organization ID.
