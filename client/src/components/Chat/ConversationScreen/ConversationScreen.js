@@ -11,6 +11,7 @@ import { setCurrentChatPreview } from '../../../store/reducers/CurrentChatPrevie
 import { setChatId } from '../../../store/reducers/ChatIdSlice';
 import PermissionDenied from '../../Auth/PermissionDenied';
 import ChatInputUserArchived from './ChatInputUserArchived';
+import { setActiveChatTab } from '../../../store/reducers/ActiveChatTabSlice';
 
 const readAllMessages = ({ chatId }) => {
   apiRequest(`/api/v1/direct-messages/${chatId}/read_all`, "PUT").then(() => {
@@ -20,11 +21,13 @@ const readAllMessages = ({ chatId }) => {
   });
 }
 
-const ConversationScreen = () => {
+const ConversationScreen = ({ activeTabName }) => {
 
   const { chatId } = useParams();
 
   const dispatch = useDispatch();
+
+  dispatch(setActiveChatTab(activeTabName));
 
   const [page, setPage] = useState(0);
   const [size, setSize] = useState(25);
