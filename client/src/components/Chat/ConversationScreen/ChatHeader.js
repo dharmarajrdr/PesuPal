@@ -11,6 +11,7 @@ import { addPinnedDirectMessage, removePinnedDirectMessage } from '../../../stor
 import { setCurrentChatPreview } from '../../../store/reducers/CurrentChatPreviewSlice';
 import { setActiveRecentChat } from '../../../store/reducers/ActiveRecentChatSlice';
 import { setChatId } from '../../../store/reducers/ChatIdSlice';
+import GroupMembers from '../Group/GroupMembers';
 
 const ParticipantsCount = ({ count }) => {
     return (
@@ -27,6 +28,7 @@ const ChatHeader = () => {
     const dispatch = useDispatch();
     const showChatHeaderOptionsModalSlice = useSelector(state => state.showChatHeaderOptionsModalSlice);
     const [showProfile, setShowProfile] = useState(false);
+    const [showGroupMembers, setShowGroupMembers] = useState(false);
     const currentChatPreview = useSelector(state => state.currentChatPreviewSlice);
     const [pinnedId, setPinnedIdState] = useState(null);
     const activeChatTab = useSelector(state => state.activeChatTab);
@@ -74,7 +76,8 @@ const ChatHeader = () => {
             name: activeChatTab.name == 'groupMessage' ? 'View Members' : null,
             icon: 'fa fa-users',
             onClick: () => {
-                // Show members in group chat
+                setShowGroupMembers(true);
+                dispatch(setShowChatHeaderOptionsModal(false));
             }
         },
         { name: 'View Media', icon: 'fa fa-image' }
@@ -83,6 +86,7 @@ const ChatHeader = () => {
     return (
         <div className="chat-header FRCB w100">
             {showProfile && <Profile userId={userId} setShowProfile={setShowProfile} />}
+            {showGroupMembers && <GroupMembers groupId={chatId} setShowGroupMembers={setShowGroupMembers} />}
             <div className='FRCS'>
                 <UserAvatar displayPicture={displayPicture} displayName={displayName} setShowProfile={setShowProfile} />
                 <p className="name mL10">{displayName}</p>

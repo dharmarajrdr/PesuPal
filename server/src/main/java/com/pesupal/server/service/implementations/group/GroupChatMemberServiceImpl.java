@@ -152,7 +152,7 @@ public class GroupChatMemberServiceImpl implements GroupChatMemberService {
             throw new PermissionDeniedException("You do not have permission to view members of this group.");
         }
 
-        return group.getMembers().stream().collect(Collectors.groupingBy(
+        return group.getMembers().stream().filter(GroupChatMember::isActive).collect(Collectors.groupingBy(
                 GroupChatMember::getRole,
                 Collectors.mapping(
                         member -> UserPreviewDto.fromOrgMember(orgMemberService.getOrgMemberByUserIdAndOrgId(member.getUser().getId(), orgId)),
@@ -173,7 +173,7 @@ public class GroupChatMemberServiceImpl implements GroupChatMemberService {
      */
     @Override
     public boolean isUserMemberOfGroup(Long groupId, Long userId) {
-       
+
         return groupChatMemberRepository.existsByGroupIdAndUserId(groupId, userId);
     }
 
