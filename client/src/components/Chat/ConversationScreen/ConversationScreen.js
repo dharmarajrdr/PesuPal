@@ -81,7 +81,7 @@ const ConversationScreen = ({ activeTabName }) => {
     setMessages((prev) => [...prev, {
       "id": 101,
       "createdAt": new Date().toISOString(),
-      "sender": myProfile.id,
+      "sender": myProfile,
       "receiver": userId,
       "message": message,
       "deleted": false,
