@@ -1,5 +1,7 @@
 package com.pesupal.server.dto.request;
 
+import java.time.LocalDateTime;
+
 import lombok.Data;
 import lombok.ToString;
 
@@ -14,4 +16,6 @@ public class ChatMessageDto {
     private Long receiverId;
 
     private String message;
+
+    private LocalDateTime createdAt;
 }

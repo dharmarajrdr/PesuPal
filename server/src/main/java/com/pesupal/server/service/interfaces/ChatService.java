@@ -4,5 +4,5 @@ import com.pesupal.server.dto.request.ChatMessageDto;
 
 public interface ChatService {
 
-    public void save(ChatMessageDto chatMessageDto);
+    void save(ChatMessageDto chatMessageDto);
 }
