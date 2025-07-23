@@ -7,6 +7,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface GroupChatMessageRepository extends JpaRepository<GroupChatMessage, Long> {
 
@@ -15,4 +17,6 @@ public interface GroupChatMessageRepository extends JpaRepository<GroupChatMessa
     Page<GroupChatMessage> findAllByGroupIdAndIdLessThan(Long groupId, Long pivotMessageId, Pageable pageable);
 
     Page<GroupChatMessage> findAllByGroupId(Long groupId, Pageable pageable);
+
+    Optional<GroupChatMessage> findFirstByGroupOrderByCreatedAtDesc(Group group);
 }
