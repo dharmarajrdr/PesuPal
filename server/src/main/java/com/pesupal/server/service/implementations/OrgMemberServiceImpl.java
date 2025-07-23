@@ -6,6 +6,7 @@ import com.pesupal.server.dto.request.CreateDesignationDto;
 import com.pesupal.server.dto.response.LatestSubscriptionDto;
 import com.pesupal.server.dto.response.OrgDetailDto;
 import com.pesupal.server.dto.response.UserBasicInfoDto;
+import com.pesupal.server.dto.response.UserPreviewDto;
 import com.pesupal.server.enums.Role;
 import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.exceptions.DataNotFoundException;
@@ -332,5 +333,18 @@ public class OrgMemberServiceImpl implements OrgMemberService {
     public String getOrgMemberImageByUserIdAndOrgId(Long userId, Long orgId) {
 
         return getOrgMemberByUserIdAndOrgId(userId, orgId).getDisplayPicture();
+    }
+
+    /**
+     * Retrieve user's profile as preview
+     *
+     * @param userId
+     * @param orgId
+     * @return
+     */
+    @Override
+    public UserPreviewDto getUserPreview(Long userId, Long orgId) {
+
+        return UserPreviewDto.fromOrgMember(getOrgMemberByUserIdAndOrgId(userId, orgId));
     }
 }

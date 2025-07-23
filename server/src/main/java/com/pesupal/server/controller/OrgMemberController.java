@@ -4,6 +4,7 @@ import com.pesupal.server.dto.request.AddOrgMemberDto;
 import com.pesupal.server.dto.response.ApiResponseDto;
 import com.pesupal.server.dto.response.OrgDetailDto;
 import com.pesupal.server.dto.response.UserBasicInfoDto;
+import com.pesupal.server.dto.response.UserPreviewDto;
 import com.pesupal.server.helpers.OrgSubscriptionManager;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.service.interfaces.OrgMemberService;
@@ -39,7 +40,7 @@ public class OrgMemberController extends OrgSubscriptionManager {
     @GetMapping("/display-picture")
     public ResponseEntity<ApiResponseDto> getOrgMemberImage(@RequestParam(required = false) Long userId) {
 
-        if(userId == null) {
+        if (userId == null) {
             userId = getCurrentUserId();
         }
 
@@ -59,5 +60,12 @@ public class OrgMemberController extends OrgSubscriptionManager {
 
         List<UserBasicInfoDto> orgMembers = orgMemberService.getAllOrgMembers(getCurrentUserId(), getCurrentOrgId());
         return ResponseEntity.ok(new ApiResponseDto("List of organization members retrieved successfully.", orgMembers));
+    }
+
+    @GetMapping("/profile")
+    public ResponseEntity<ApiResponseDto> getMyProfile() {
+
+        UserPreviewDto userPreviewDto = orgMemberService.getUserPreview(getCurrentUserId(), getCurrentOrgId());
+        return ResponseEntity.ok().body(new ApiResponseDto("Profile fetched successfully", userPreviewDto));
     }
 }
