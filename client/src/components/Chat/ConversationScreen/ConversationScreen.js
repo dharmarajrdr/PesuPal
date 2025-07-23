@@ -38,11 +38,11 @@ const ConversationScreen = ({ activeTabName }) => {
 
   const currentChatPreview = useSelector(state => state.currentChatPreviewSlice);
   const activeChatTab = useSelector(state => state.activeChatTab);
-  const currentUser = currentChatPreview.currentUser || {};
-  const otherUser = currentChatPreview.otherUser || {};
+  const myProfile = useSelector(state => state.myProfile) || {};
+  const { displayName, userId, active } = currentChatPreview || {};
 
   const { sendMessage } = useWebSocket({
-    userId: currentUser.id,
+    userId: myProfile.id,
     onPrivateMessage: (msg) => {
       setMessages((prev) => [...prev, {
         "id": 101,
@@ -66,8 +66,8 @@ const ConversationScreen = ({ activeTabName }) => {
     const payload = {
       orgId: sessionStorage.getItem('org-id'),
       chatId: 'room123',
-      senderId: currentUser.id,
-      receiverId: otherUser.id,
+      senderId: myProfile.id,
+      receiverId: userId,
       message,
       isGroupMessage: false,
     };
@@ -76,8 +76,8 @@ const ConversationScreen = ({ activeTabName }) => {
     setMessages((prev) => [...prev, {
       "id": 101,
       "createdAt": new Date().toISOString(),
-      "sender": currentUser.id,
-      "receiver": otherUser.id,
+      "sender": myProfile.id,
+      "receiver": userId,
       "message": message,
       "deleted": false,
       "readReceipt": "SENT",
@@ -140,7 +140,7 @@ const ConversationScreen = ({ activeTabName }) => {
       {permissionDenied ? <PermissionDenied /> : <>
         <ChatHeader />
         <ChatMessages retrievingChat={retrievingChat} messages={messages} chatId={chatId} clickSendMessageHandler={clickSendMessageHandler} />
-        {otherUser.archived ? <ChatInputUserArchived displayName={otherUser.displayName} /> : <ChatInput clickSendMessageHandler={clickSendMessageHandler} />}
+        {active ? <ChatInput clickSendMessageHandler={clickSendMessageHandler} /> : <ChatInputUserArchived displayName={displayName} />}
       </>}
     </div>
   ) : null;
