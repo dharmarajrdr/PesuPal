@@ -29,9 +29,12 @@ const RecentChatsSlice = createSlice({
             if (chatIndex !== -1) {
                 state[chatIndex] = { ...state[chatIndex], ...action.payload };
             }
+        },
+        'clearRecentChats': (state) => {
+            return [];
         }
     }
 });
 
-export const { setRecentChats, addRecentChat, removeRecentChat, moveRecentChatToTop, updateRecentChat } = RecentChatsSlice.actions;
+export const { setRecentChats, addRecentChat, removeRecentChat, moveRecentChatToTop, updateRecentChat, clearRecentChats } = RecentChatsSlice.actions;
 export default RecentChatsSlice.reducer;
