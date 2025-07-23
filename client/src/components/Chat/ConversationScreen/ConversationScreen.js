@@ -91,12 +91,16 @@ const ConversationScreen = ({ activeTabName }) => {
     const isFirstLoad = true; // since chatId changed
     const pivot = isFirstLoad ? null : pivotMessageId;
 
-    apiRequest(`/api/v1/direct-messages/preview/${chatId}`, "GET").then(({ data }) => {
+    const { chatPreviewApi, retrieveConversationApi } = activeChatTab || {};
+
+    if (!chatPreviewApi) { return; }
+
+    apiRequest(`${chatPreviewApi}/${chatId}`, "GET").then(({ data }) => {
 
       setPermissionDenied(false);
       dispatch(setCurrentChatPreview(data));
 
-      apiRequest(`/api/v1/direct-messages/${chatId}?page=${page}&size=${size}${pivot ? `&pivot_message_id=${pivot}` : ''}`, "GET").then(({ data }) => {
+      apiRequest(`${retrieveConversationApi}/${chatId}?page=${page}&size=${size}${pivot ? `&pivot_message_id=${pivot}` : ''}`, "GET").then(({ data }) => {
         setMessages(data);
         setRetrievingChat(false);
 

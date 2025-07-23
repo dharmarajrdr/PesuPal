@@ -46,7 +46,7 @@ const RecentChats = () => {
     }, [activeChatTab]);
 
     const openChatHandler = (chat) => {
-        navigate(`/chat/messages/${chat.chatId}`);
+        navigate(`${activeChatTab.route}/${chat.chatId}`);
         dispatch(setActiveRecentChat(chat));
     }
 

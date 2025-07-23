@@ -15,6 +15,7 @@ const ChatLayout = () => {
                 <Route path='/messages' element={<ConversationScreenPlaceholder activeTabName={'directMessage'} />} />
                 <Route path="/messages/:chatId" element={<ConversationScreen activeTabName={'directMessage'} />} />
                 <Route path='/groups' element={<ConversationScreenPlaceholder activeTabName={'groupMessage'} />} />
+                <Route path='/groups/:chatId' element={<ConversationScreen activeTabName={'groupMessage'} />} />
             </Routes>
         </div>
     )
