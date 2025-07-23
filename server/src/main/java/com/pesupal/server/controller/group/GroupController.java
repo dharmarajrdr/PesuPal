@@ -2,6 +2,7 @@ package com.pesupal.server.controller.group;
 
 import com.pesupal.server.dto.request.group.CreateGroupDto;
 import com.pesupal.server.dto.response.ApiResponseDto;
+import com.pesupal.server.dto.response.ChatPreviewDto;
 import com.pesupal.server.dto.response.RecentChatPagedDto;
 import com.pesupal.server.dto.response.group.GroupDto;
 import com.pesupal.server.helpers.CurrentValueRetriever;
@@ -38,5 +39,12 @@ public class GroupController extends CurrentValueRetriever {
         Pageable pageable = Pageable.ofSize(size).withPage(page);
         RecentChatPagedDto recentChatPagedDto = groupService.getAllGroups(getCurrentUserId(), getCurrentOrgId(), pageable);
         return ResponseEntity.ok().body(new ApiResponseDto("Groups retrieved successfully", recentChatPagedDto.getChats(), recentChatPagedDto.getPageable()));
+    }
+
+    @GetMapping("/preview/{groupId}")
+    public ResponseEntity<ApiResponseDto> getgroupChatPreview(@PathVariable Long groupId) {
+
+        ChatPreviewDto chatPreviewDto = groupService.getGroupChatPreviewByChatId(groupId, getCurrentUserId(), getCurrentOrgId());
+        return ResponseEntity.ok(new ApiResponseDto("Group chat preview retrieved successfully", chatPreviewDto));
     }
 }
