@@ -5,10 +5,13 @@ import { apiRequest } from '../../../http_request';
 
 const RoleComponent = ({ role, members }) => {
 
-    return <div key={role} id='group-member-role'>
-        <h3>{role.replace(/_/g, ' ')}</h3>
+    const items = members[role] || [];
+    const formattedRole = role.replace(/_/g, ' ').toLowerCase().replace(/\b\w/g, char => char.toUpperCase());
+
+    return items.length > 0 && <div key={role} id='group-member-role'>
+        <h3>{formattedRole}</h3>
         <ul>
-            {members[role]?.map(member => (
+            {items.map(member => (
                 !member.archived && <UserPreview user_detail={member} key={member.id} />
             ))}
         </ul>

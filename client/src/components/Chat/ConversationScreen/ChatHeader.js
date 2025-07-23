@@ -37,7 +37,7 @@ const ChatHeader = () => {
     const closeChatHandler = () => {
         dispatch(setActiveRecentChat(null));
         dispatch(setChatId(null));
-        navigate('/chat');
+        navigate(activeChatTab.name == 'groupMessage' ? '/chat/groups' : '/chat/messages');
     }
 
     const chatHeaderOptionsClickHandler = () => {
