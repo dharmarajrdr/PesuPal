@@ -56,7 +56,10 @@ const ConversationScreen = ({ activeTabName }) => {
   });
 
   const readAllMessages = ({ chatId }) => {
-    apiRequest(`/api/v1/direct-messages/${chatId}/read_all`, "PUT").then(() => {
+
+    const { readAllMessagesApi } = activeChatTab || {};
+
+    apiRequest(`${readAllMessagesApi}/${chatId}/read_all`, "PUT").then(() => {
       // TODO: Inform the receiver that messages have been read via WebSocket
     }).catch(({ message }) => {
       dispatch(showPopup({ message, type: 'error' }));
@@ -93,7 +96,7 @@ const ConversationScreen = ({ activeTabName }) => {
     const isFirstLoad = true; // since chatId changed
     const pivot = isFirstLoad ? null : pivotMessageId;
 
-    const { chatPreviewApi, retrieveConversationApi } = activeChatTab || {};
+    const { chatPreviewApi, retrieveConversationApi, readAllMessagesApi } = activeChatTab || {};
 
     if (!chatPreviewApi) { return; }
 

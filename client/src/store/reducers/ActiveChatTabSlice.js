@@ -7,6 +7,7 @@ const details = {
         'recentChatsApi': '/api/v1/direct-messages/recent',
         'chatPreviewApi': '/api/v1/direct-messages/preview',
         'retrieveConversationApi': '/api/v1/direct-messages',
+        'readAllMessagesApi': '/api/v1/direct-messages',
         'showStatusIndicator': true
     },
     'groupMessage': {
@@ -14,7 +15,8 @@ const details = {
         'route': '/chat/groups',
         'recentChatsApi': '/api/v1/group/recent',
         'chatPreviewApi': '/api/v1/group/preview',
-        'retrieveConversationApi': '/api/v1/group/conversation',
+        'retrieveConversationApi': '/api/v1/group-chat-message',
+        'readAllMessagesApi': '/api/v1/group-chat-message',
         'showStatusIndicator': false
     }
 }
