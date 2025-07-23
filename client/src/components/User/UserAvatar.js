@@ -3,7 +3,7 @@ import './UserAvatar.css';
 
 const getAvatarColor = (name) => {
     const colors = [
-        '#FF5733', '#33FF57', '#3357FF', '#FF33A6', '#33FFF5',
+        '#FF5733', '#330F57', '#30FE15', '#FF33A6', '#318E15',
         '#A7AF45', '#8E44AD', '#3498DB', '#E67E22', '#2ECC71',
         '#E74C3C', '#1ABC9C', '#9B59B6', '#34495E', '#7F8C8D',
         '#F1C40F', '#D35400', '#C0392B', '#16A085', '#2980B9'

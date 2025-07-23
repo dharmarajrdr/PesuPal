@@ -34,3 +34,18 @@
     color: var(--primary-color-active);
     scale: 1.1;
 }
+
+#participants-count {
+    background-color: var(--pure-white-hover);
+    border: 1px solid #eee;
+    cursor: default;
+}
+
+#participants-count i,
+#participants-count span {
+    color: #999;
+}
+
+#participants-count:hover {
+    background-color: #eee;
+}

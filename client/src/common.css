@@ -461,6 +461,10 @@ span {
   padding-right: 5px;
 }
 
+.borderRadius5 {
+  border-radius: 5px;
+}
+
 .bL_line {
   border-left: 1px solid #aaa;
   padding-left: 5px;
