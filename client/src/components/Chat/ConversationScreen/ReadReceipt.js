@@ -3,7 +3,7 @@ const ReadReceipt = ({ readReceipt = "SENT" }) => {
         PENDING: 'fa fa-clock',
         SENT: 'fa fa-check',
         DELIVERED: 'fa fa-check-double',
-        READ: 'fa fa-check-double read',
+        READ: 'fa fa-eye',
     };
 
     return <i className={`${icons[readReceipt]} delivery-status mL5`} title={readReceipt?.toLowerCase()} />;
