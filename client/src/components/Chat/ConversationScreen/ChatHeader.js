@@ -20,8 +20,7 @@ const ChatHeader = () => {
     const [showProfile, setShowProfile] = useState(false);
     const currentChatPreview = useSelector(state => state.currentChatPreviewSlice);
     const [pinnedId, setPinnedIdState] = useState(null);
-    const { id: otherUserId, displayName, displayPicture } = currentChatPreview?.otherUser || {};
-    const { chatId } = currentChatPreview || {};
+    const { chatId, displayName, displayPicture, userId } = currentChatPreview || {};
 
     const closeChatHandler = () => {
         dispatch(setActiveRecentChat(null));
@@ -51,7 +50,7 @@ const ChatHeader = () => {
 
                     });
                 } else {
-                    apiRequest(`/api/v1/pinned-direct-messages/pin`, 'POST', { 'pinnedUserId': otherUserId, 'orderIndex': 1 }).then(({ data }) => {
+                    apiRequest(`/api/v1/pinned-direct-messages/pin`, 'POST', { 'pinnedUserId': userId, 'orderIndex': 1 }).then(({ data }) => {
                         dispatch(addPinnedDirectMessage(data));
                         dispatch(setShowChatHeaderOptionsModal(false));
                         dispatch(setCurrentChatPreview({ ...currentChatPreview, pinnedId: data.id }));
@@ -66,7 +65,7 @@ const ChatHeader = () => {
 
     return (
         <div className="chat-header FRCB w100">
-            {showProfile && <Profile userId={otherUserId} setShowProfile={setShowProfile} />}
+            {showProfile && <Profile userId={userId} setShowProfile={setShowProfile} />}
             <div className='FRCS'>
                 <UserAvatar displayPicture={displayPicture} displayName={displayName} setShowProfile={setShowProfile} />
                 <div className="name">{displayName}</div>
