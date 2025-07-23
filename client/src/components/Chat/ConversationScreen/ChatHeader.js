@@ -12,6 +12,15 @@ import { setCurrentChatPreview } from '../../../store/reducers/CurrentChatPrevie
 import { setActiveRecentChat } from '../../../store/reducers/ActiveRecentChatSlice';
 import { setChatId } from '../../../store/reducers/ChatIdSlice';
 
+const ParticipantsCount = ({ count }) => {
+    return (
+        <div id="participants-count" className='FRCC pY5 pX10 mL10 borderRadius5'>
+            <i className="fa fa-users pR5 fs12"></i>
+            <span className="count fs14">{count}</span>
+        </div>
+    );
+};
+
 const ChatHeader = () => {
 
     const navigate = useNavigate();
@@ -20,7 +29,8 @@ const ChatHeader = () => {
     const [showProfile, setShowProfile] = useState(false);
     const currentChatPreview = useSelector(state => state.currentChatPreviewSlice);
     const [pinnedId, setPinnedIdState] = useState(null);
-    const { chatId, displayName, displayPicture, userId } = currentChatPreview || {};
+    const activeChatTab = useSelector(state => state.activeChatTab);
+    const { chatId, displayName, displayPicture, userId, participantsCount } = currentChatPreview || {};
 
     const closeChatHandler = () => {
         dispatch(setActiveRecentChat(null));
@@ -60,6 +70,13 @@ const ChatHeader = () => {
                 }
             }
         },
+        {
+            name: activeChatTab.name == 'groupMessage' ? 'View Members' : null,
+            icon: 'fa fa-users',
+            onClick: () => {
+                // Show members in group chat
+            }
+        },
         { name: 'View Media', icon: 'fa fa-image' }
     ];
 
@@ -68,7 +85,8 @@ const ChatHeader = () => {
             {showProfile && <Profile userId={userId} setShowProfile={setShowProfile} />}
             <div className='FRCS'>
                 <UserAvatar displayPicture={displayPicture} displayName={displayName} setShowProfile={setShowProfile} />
-                <div className="name mL10">{displayName}</div>
+                <p className="name mL10">{displayName}</p>
+                {participantsCount && <ParticipantsCount count={participantsCount} />}
             </div>
             <div className='FRCE'>
                 {showChatHeaderOptionsModalSlice && <OptionsModal options={options} />}
