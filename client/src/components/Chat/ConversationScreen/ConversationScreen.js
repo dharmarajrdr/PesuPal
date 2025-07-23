@@ -13,6 +13,7 @@ import PermissionDenied from '../../Auth/PermissionDenied';
 import ChatInputUserArchived from './ChatInputUserArchived';
 import { setActiveChatTab } from '../../../store/reducers/ActiveChatTabSlice';
 import { showPopup } from '../../../store/reducers/PopupSlice';
+import { setShowChatHeaderOptionsModal } from '../../../store/reducers/ShowChatHeaderOptionsModalSlice';
 
 const ConversationScreen = ({ activeTabName }) => {
 
@@ -128,6 +129,7 @@ const ConversationScreen = ({ activeTabName }) => {
 
   useEffect(() => {
 
+    dispatch(setShowChatHeaderOptionsModal(false));
     dispatch(clearCurrentChatPreview());
     dispatch(setChatId(chatId));
     setPivotMessageId(null); // reset state — this takes effect after render
