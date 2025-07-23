@@ -30,7 +30,7 @@ const RecentChat = ({ recentChat, openChatHandler }) => {
                 </div>
                 <div className='FRCB w100'>
                     <span className='message FRCS'>
-                        {sender != name ? <span className='sent_by_me mR5'>{sender}:</span> : ''}
+                        {(sender && sender != name) ? <span className='sent_by_me mR5'>{sender}:</span> : ''}
                         {media && <i className='fa-solid fa-image fs10 mR5 color777'></i>}
                         {message}
                     </span>
