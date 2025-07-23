@@ -268,8 +268,14 @@ public class DirectMessageServiceImpl implements DirectMessageService {
 
         Long otherUserId = parsedChatId[0].equals(userId) ? parsedChatId[1] : parsedChatId[0];
 
+        OrgMember otherUserOrgMember = orgMemberService.getOrgMemberByUserIdAndOrgId(otherUserId, orgId);
+
         ChatPreviewDto chatPreviewDto = new ChatPreviewDto();
+        chatPreviewDto.setUserId(otherUserId);
         chatPreviewDto.setChatId(chatId);
+        chatPreviewDto.setActive(!otherUserOrgMember.isArchived());
+        chatPreviewDto.setDisplayName(otherUserOrgMember.getDisplayName());
+        chatPreviewDto.setDisplayPicture(otherUserOrgMember.getDisplayPicture());
         Optional<PinnedDirectMessage> pinnedDirectMessage = pinnedDirectMessageService.getPinnedDirectMessageByPinnedByIdAndPinnedUserIdAndOrgId(userId, otherUserId, orgId);
         if (pinnedDirectMessage.isPresent()) {
             chatPreviewDto.setPinnedId(pinnedDirectMessage.get().getId());
