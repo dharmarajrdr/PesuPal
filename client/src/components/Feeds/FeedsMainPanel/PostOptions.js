@@ -2,16 +2,13 @@ import { useState } from 'react';
 import './PostOptions.css';
 import { apiRequest } from '../../../http_request';
 import ConfirmationPopup from '../../Utils/ConfirmationPopup';
+import { showPopup } from '../../../store/reducers/PopupSlice';
+import { useDispatch } from 'react-redux';
 
-const PostOptions = ({ postId, commentable, setCommentable, isCreator, poll, pollUpdatable, setPollUpdatable, setPopupData, setShowLikesList }) => {
+const PostOptions = ({ postId, commentable, setCommentable, isCreator, poll, pollUpdatable, setPollUpdatable, setShowLikesList }) => {
 
+    const dispatch = useDispatch();
     const [deletePostClicked, setDeletePostClicked] = useState(false);
-
-    const cleanupPopupAfterTimeout = () => {
-        setTimeout(() => {
-            setPopupData(null);
-        }, 3000);
-    }
 
     const closeOptionsModal = () => {
         const postsLayout = document.getElementsByClassName('posts-layout');
@@ -23,24 +20,22 @@ const PostOptions = ({ postId, commentable, setCommentable, isCreator, poll, pol
     const toggleCommentSectionHandler = () => {
         apiRequest(`/api/v1/post/${postId}`, "PATCH", { commentable: !commentable }).then(({ data }) => {
             setCommentable(!commentable);
-            setPopupData({ message: `Post comments ${!commentable ? 'enabled' : 'disabled'}`, type: 'success' });
+            dispatch(showPopup({ message: `Post comments ${!commentable ? 'enabled' : 'disabled'}`, type: 'success' }));
             closeOptionsModal();
-            cleanupPopupAfterTimeout();
         }).catch(({ message }) => {
             closeOptionsModal();
-            setPopupData({ message, type: 'error' });
+            dispatch(showPopup({ message, type: 'error' }));
         });
     }
 
     const pollUpdateHandler = () => {
         apiRequest(`/api/v1/post/poll/${poll.id}`, "PATCH", { "votesUpdatable": !pollUpdatable }).then(({ data }) => {
             setPollUpdatable(!pollUpdatable);
-            setPopupData({ message: `Poll update ${!pollUpdatable ? 'enabled' : 'disabled'}`, type: 'success' });
+            dispatch(showPopup({ message: `Poll update ${!pollUpdatable ? 'enabled' : 'disabled'}`, type: 'success' }));
             closeOptionsModal();
-            cleanupPopupAfterTimeout();
         }).catch(({ message }) => {
             closeOptionsModal();
-            setPopupData({ message, type: 'error' });
+            dispatch(showPopup({ message, type: 'error' }));
         });
     }
 

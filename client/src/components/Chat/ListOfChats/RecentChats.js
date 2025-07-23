@@ -31,24 +31,27 @@ const RecentChats = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const recentChats = useSelector(state => state.recentChats);
+    const activeChatTab = useSelector(state => state.activeChatTab);
 
     useEffect(() => {
-        apiRequest(`/api/v1/direct-messages/recent?page=${page}&size=${size}`, 'GET').then(({ data }) => {
+        const { recentChatsApi } = activeChatTab;
+        if (!recentChatsApi) { return; }
+        apiRequest(`${recentChatsApi}?page=${page}&size=${size}`, 'GET').then(({ data }) => {
             dispatch(setRecentChats(data));
             setLoading(false);
         }).catch(({ message }) => {
             setError(message);
             setLoading(false);
         });
-    }, []);
+    }, [activeChatTab]);
 
     const openChatHandler = (chat) => {
-        navigate(`/chat/messages/${chat.chatId}`);
+        navigate(`${activeChatTab.route}/${chat.chatId}`);
         dispatch(setActiveRecentChat(chat));
     }
 
-    return (
-        <div id='RecentChats' className='FCCS w100'>
+    return activeChatTab ? (
+        <div id='RecentChats' className='FCCS w100 pT5'>
             {
                 loading ? <Loader /> :
                     error ? <ErrorMessage message={error} /> :
@@ -58,7 +61,7 @@ const RecentChats = () => {
                             ) : <NoChatsFound />
             }
         </div>
-    )
+    ) : null;
 }
 
 export default RecentChats

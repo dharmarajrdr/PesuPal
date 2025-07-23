@@ -163,4 +163,18 @@ public class GroupChatMemberServiceImpl implements GroupChatMemberService {
         ));
 
     }
+
+    /**
+     * Checks if a user is a member of a group.
+     *
+     * @param groupId
+     * @param userId
+     * @return
+     */
+    @Override
+    public boolean isUserMemberOfGroup(Long groupId, Long userId) {
+       
+        return groupChatMemberRepository.existsByGroupIdAndUserId(groupId, userId);
+    }
+
 }

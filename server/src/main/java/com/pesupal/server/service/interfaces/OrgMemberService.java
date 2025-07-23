@@ -3,6 +3,7 @@ package com.pesupal.server.service.interfaces;
 import com.pesupal.server.dto.request.AddOrgMemberDto;
 import com.pesupal.server.dto.response.OrgDetailDto;
 import com.pesupal.server.dto.response.UserBasicInfoDto;
+import com.pesupal.server.dto.response.UserPreviewDto;
 import com.pesupal.server.model.org.Org;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.model.user.User;
@@ -36,4 +37,6 @@ public interface OrgMemberService {
     List<UserBasicInfoDto> getAllOrgMembers(Long currentUserId, Long currentOrgId);
 
     String getOrgMemberImageByUserIdAndOrgId(Long userId, Long currentOrgId);
+
+    UserPreviewDto getUserPreview(Long userId, Long orgId);
 }

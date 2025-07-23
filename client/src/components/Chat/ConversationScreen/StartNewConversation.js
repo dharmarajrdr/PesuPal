@@ -4,22 +4,22 @@ import UserAvatar from "../../User/UserAvatar";
 const StartNewConversation = ({ clickSendMessageHandler }) => {
 
     const currentChatPreview = useSelector(state => state.currentChatPreviewSlice);
-    const { currentUser, otherUser, chatId } = currentChatPreview || {};
-    const { displayName: otherUserName } = otherUser || {};
+    const { displayPicture: otherUserDisplayPicture, displayName } = currentChatPreview || {};
+    const myProfile = useSelector(state => state.myProfile);
 
     const sayHelloButtonClickHandler = () => {
-        clickSendMessageHandler({ message: `Hello ${otherUserName || 'there'}! 👋` });
+        clickSendMessageHandler({ message: `Hello ${displayName || 'there'}! 👋` });
     }
 
-    return <div id='start-new-conversation' className='FCCE'>
+    return (currentChatPreview && myProfile) ? (<div id='start-new-conversation' className='FCCE'>
         <div className='FRCC' id='users-avatars'>
-            <UserAvatar displayPicture={currentUser?.displayPicture} />
-            <UserAvatar displayPicture={otherUser?.displayPicture} />
+            <UserAvatar displayPicture={myProfile.displayPicture} />
+            <UserAvatar displayPicture={otherUserDisplayPicture} />
         </div>
         <button id='say-hello-button' className='mT15' onClick={sayHelloButtonClickHandler}>
             Say Hello <i className="fa fa-hand" id='wave-hands'></i>
         </button>
-    </div>
+    </div>) : null;
 };
 
 export default StartNewConversation;

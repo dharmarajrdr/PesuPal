@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.pesupal.server.enums.Reaction;
 import com.pesupal.server.enums.ReadReceipt;
 import com.pesupal.server.model.chat.DirectMessage;
+import com.pesupal.server.model.group.GroupChatMessage;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -11,15 +12,13 @@ import java.util.Map;
 
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class DirectMessageResponseDto {
+public class MessageDto {
 
     private Long id;
 
     private LocalDateTime createdAt;
 
-    private Long sender;
-
-    private Long receiver;
+    private UserPreviewDto sender;
 
     private String message;
 
@@ -29,20 +28,30 @@ public class DirectMessageResponseDto {
 
     private Map<Reaction, Integer> reactions;
 
-    private DirectMessageMediaFileDto media;
+    private MediaFileDto media;
 
-    public static DirectMessageResponseDto fromDirectMessage(DirectMessage directMessage) {
+    public static MessageDto fromDirectMessage(DirectMessage directMessage) {
 
-        DirectMessageResponseDto responseDto = new DirectMessageResponseDto();
+        MessageDto responseDto = new MessageDto();
         responseDto.setId(directMessage.getId());
-        responseDto.setSender(directMessage.getSender().getId());
-        responseDto.setReceiver(directMessage.getReceiver().getId());
         if (!directMessage.isDeleted()) {
             responseDto.setMessage(directMessage.getMessage()); // Only set message if not deleted
         }
         responseDto.setCreatedAt(directMessage.getCreatedAt());
         responseDto.setDeleted(directMessage.isDeleted());
         responseDto.setReadReceipt(directMessage.getReadReceipt());
+        return responseDto;
+    }
+
+    public static MessageDto fromGroupMessage(GroupChatMessage groupChatMessage) {
+
+        MessageDto responseDto = new MessageDto();
+        responseDto.setId(groupChatMessage.getId());
+        if (!groupChatMessage.isDeleted()) {
+            responseDto.setMessage(groupChatMessage.getMessage()); // Only set message if not deleted
+        }
+        responseDto.setCreatedAt(groupChatMessage.getCreatedAt());
+        responseDto.setDeleted(groupChatMessage.isDeleted());
         return responseDto;
     }
 }

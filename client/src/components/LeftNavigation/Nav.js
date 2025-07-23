@@ -1,10 +1,11 @@
 import { NavLink } from 'react-router-dom';
 import './LeftNavigation.css'
+import UserAvatar from '../User/UserAvatar';
 
 const NavContent = ({ icon, image, notifyCount, title }) => {
     return <>
         {
-            icon ? <i className={`fas ${icon} colorFFF`}></i> : <img src={image} />
+            icon ? <i className={`fas ${icon} colorFFF`}></i> : <UserAvatar displayPicture={image} />
         }
         {notifyCount && notifyCount != '0' && <b className='notifyCount'>{notifyCount}</b>}
         <span className='colorFFF'>{title}</span>

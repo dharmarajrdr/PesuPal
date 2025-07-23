@@ -7,24 +7,21 @@ import useWebSocket from '../../../WebSocket';
 import { useParams } from 'react-router-dom';
 import { apiRequest } from '../../../http_request';
 import { useDispatch, useSelector } from 'react-redux';
-import { setCurrentChatPreview } from '../../../store/reducers/CurrentChatPreviewSlice';
+import { clearCurrentChatPreview, setCurrentChatPreview } from '../../../store/reducers/CurrentChatPreviewSlice';
 import { setChatId } from '../../../store/reducers/ChatIdSlice';
 import PermissionDenied from '../../Auth/PermissionDenied';
 import ChatInputUserArchived from './ChatInputUserArchived';
+import { setActiveChatTab } from '../../../store/reducers/ActiveChatTabSlice';
+import { showPopup } from '../../../store/reducers/PopupSlice';
+import { setShowChatHeaderOptionsModal } from '../../../store/reducers/ShowChatHeaderOptionsModalSlice';
 
-const readAllMessages = ({ chatId }) => {
-  apiRequest(`/api/v1/direct-messages/${chatId}/read_all`, "PUT").then(() => {
-    // TODO: Inform the receiver that messages have been read via WebSocket
-  }).catch(({ message }) => {
-    console.error(message);
-  });
-}
-
-const ConversationScreen = () => {
+const ConversationScreen = ({ activeTabName }) => {
 
   const { chatId } = useParams();
 
   const dispatch = useDispatch();
+
+  dispatch(setActiveChatTab(activeTabName));
 
   const [page, setPage] = useState(0);
   const [size, setSize] = useState(25);
@@ -34,11 +31,12 @@ const ConversationScreen = () => {
   const [pivotMessageId, setPivotMessageId] = useState(null);
 
   const currentChatPreview = useSelector(state => state.currentChatPreviewSlice);
-  const currentUser = currentChatPreview.currentUser || {};
-  const otherUser = currentChatPreview.otherUser || {};
+  const activeChatTab = useSelector(state => state.activeChatTab);
+  const myProfile = useSelector(state => state.myProfile) || {};
+  const { displayName, userId, active } = currentChatPreview || {};
 
   const { sendMessage } = useWebSocket({
-    userId: currentUser.id,
+    userId: myProfile.id,
     onPrivateMessage: (msg) => {
       setMessages((prev) => [...prev, {
         "id": 101,
@@ -57,13 +55,24 @@ const ConversationScreen = () => {
     },
   });
 
+  const readAllMessages = ({ chatId }) => {
+
+    const { readAllMessagesApi } = activeChatTab || {};
+
+    apiRequest(`${readAllMessagesApi}/${chatId}/read_all`, "PUT").then(() => {
+      // TODO: Inform the receiver that messages have been read via WebSocket
+    }).catch(({ message }) => {
+      dispatch(showPopup({ message, type: 'error' }));
+    });
+  }
+
   const clickSendMessageHandler = ({ message }) => {
 
     const payload = {
       orgId: sessionStorage.getItem('org-id'),
       chatId: 'room123',
-      senderId: currentUser.id,
-      receiverId: otherUser.id,
+      senderId: myProfile.id,
+      receiverId: userId,
       message,
       isGroupMessage: false,
     };
@@ -72,8 +81,8 @@ const ConversationScreen = () => {
     setMessages((prev) => [...prev, {
       "id": 101,
       "createdAt": new Date().toISOString(),
-      "sender": currentUser.id,
-      "receiver": otherUser.id,
+      "sender": myProfile,
+      "receiver": userId,
       "message": message,
       "deleted": false,
       "readReceipt": "SENT",
@@ -87,12 +96,16 @@ const ConversationScreen = () => {
     const isFirstLoad = true; // since chatId changed
     const pivot = isFirstLoad ? null : pivotMessageId;
 
-    apiRequest(`/api/v1/direct-messages/preview/${chatId}`, "GET").then(({ data }) => {
+    const { chatPreviewApi, retrieveConversationApi, readAllMessagesApi } = activeChatTab || {};
+
+    if (!chatPreviewApi) { return; }
+
+    apiRequest(`${chatPreviewApi}/${chatId}`, "GET").then(({ data }) => {
 
       setPermissionDenied(false);
       dispatch(setCurrentChatPreview(data));
 
-      apiRequest(`/api/v1/direct-messages/${chatId}?page=${page}&size=${size}${pivot ? `&pivot_message_id=${pivot}` : ''}`, "GET").then(({ data }) => {
+      apiRequest(`${retrieveConversationApi}/${chatId}?page=${page}&size=${size}${pivot ? `&pivot_message_id=${pivot}` : ''}`, "GET").then(({ data }) => {
         setMessages(data);
         setRetrievingChat(false);
 
@@ -119,6 +132,8 @@ const ConversationScreen = () => {
 
   useEffect(() => {
 
+    dispatch(setShowChatHeaderOptionsModal(false));
+    dispatch(clearCurrentChatPreview());
     dispatch(setChatId(chatId));
     setPivotMessageId(null); // reset state — this takes effect after render
     setRetrievingChat(true);
@@ -132,7 +147,7 @@ const ConversationScreen = () => {
       {permissionDenied ? <PermissionDenied /> : <>
         <ChatHeader />
         <ChatMessages retrievingChat={retrievingChat} messages={messages} chatId={chatId} clickSendMessageHandler={clickSendMessageHandler} />
-        {otherUser.archived ? <ChatInputUserArchived displayName={otherUser.displayName} /> : <ChatInput clickSendMessageHandler={clickSendMessageHandler} />}
+        {active ? <ChatInput clickSendMessageHandler={clickSendMessageHandler} /> : <ChatInputUserArchived displayName={displayName} />}
       </>}
     </div>
   ) : null;

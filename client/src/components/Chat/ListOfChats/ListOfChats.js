@@ -10,8 +10,8 @@ const ListOfChats = () => {
         <div id='ListOfChats' className='custom-scrollbar'>
             <div id='searchPinnedFixedContainer'>
                 <SearchUsers />
-                <PinnedUsers />
                 <SubTabs />
+                <PinnedUsers />
             </div>
             <RecentChats />
         </div>

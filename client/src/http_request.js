@@ -2,7 +2,7 @@ import utils from "./utils";
 
 export async function apiRequest(endpoint, method = 'GET', data = null, customHeaders = {}) {
 
-    const token = sessionStorage.getItem('token') || utils.parseCookie().get('token');;
+    const token = sessionStorage.getItem('token') || utils.parseCookie().get('token');
     const orgId = sessionStorage.getItem('org-id'); // Optional: get orgId from session
 
     const headers = {

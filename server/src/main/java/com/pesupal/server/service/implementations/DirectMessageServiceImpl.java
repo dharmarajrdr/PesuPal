@@ -29,7 +29,9 @@ import org.springframework.stereotype.Service;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -45,8 +47,10 @@ public class DirectMessageServiceImpl implements DirectMessageService {
     private final S3Service s3Service;
 
     public DirectMessageServiceImpl(DirectMessageRepository directMessageRepository,
-                                    @Lazy DirectMessageReactionService directMessageReactionService,
-                                    UserService userService, OrgService orgService, OrgMemberService orgMemberService, PinnedDirectMessageService pinnedDirectMessageService, DirectMessageMediaFileRepository directMessageMediaFileRepository, S3Service s3Service) {
+            @Lazy DirectMessageReactionService directMessageReactionService,
+            UserService userService, OrgService orgService, OrgMemberService orgMemberService,
+            PinnedDirectMessageService pinnedDirectMessageService,
+            DirectMessageMediaFileRepository directMessageMediaFileRepository, S3Service s3Service) {
         this.directMessageRepository = directMessageRepository;
         this.orgService = orgService;
         this.userService = userService;
@@ -61,10 +65,14 @@ public class DirectMessageServiceImpl implements DirectMessageService {
      * Retrieves direct messages between two users by their IDs.
      *
      * @param getConversationBetweenUsers
-     * @return List of DirectMessageResponseDto
+     * @return List of MessageDto
      */
     @Override
-    public List<DirectMessageResponseDto> getDirectMessagesBetweenUsers(GetConversationBetweenUsers getConversationBetweenUsers) {
+    public List<MessageDto> getDirectMessagesBetweenUsers(GetConversationBetweenUsers getConversationBetweenUsers, Long userId, Long orgId) {
+
+        if (!Chat.isUserInChat(getConversationBetweenUsers.getChatId(), userId)) {
+            throw new PermissionDeniedException("You do not have permission to access this chat.");
+        }
 
         Pageable pageable = PageRequest.of(
                 getConversationBetweenUsers.getPage(),
@@ -77,20 +85,26 @@ public class DirectMessageServiceImpl implements DirectMessageService {
         } else {
             messages = directMessageRepository.findAllByChatId(getConversationBetweenUsers.getChatId(), pageable);
         }
+        Map<Long, UserPreviewDto> memo = new HashMap<>();
         return messages.stream().map(dm -> {
-            DirectMessageResponseDto directMessageResponseDto = DirectMessageResponseDto.fromDirectMessage(dm);
+            MessageDto messageDto = MessageDto.fromDirectMessage(dm);
+            Long senderId = dm.getSender().getId();
+            if(!memo.containsKey(senderId)) {
+                memo.put(senderId, UserPreviewDto.fromOrgMember(orgMemberService.getOrgMemberByUserIdAndOrgId(senderId, orgId)));
+            }
+            messageDto.setSender(memo.get(senderId));
             if (dm.getContainsMedia()) {
                 DirectMessageMediaFile directMessageMediaFile = directMessageMediaFileRepository.findByDirectMessage(dm);
                 if (directMessageMediaFile != null) {
-                    DirectMessageMediaFileDto directMessageMediaFileDto = DirectMessageMediaFileDto.fromDirectMessageMediaFile(directMessageMediaFile);
+                    MediaFileDto directMessageMediaFileDto = MediaFileDto.fromDirectMessageMediaFile(directMessageMediaFile);
                     String key = directMessageMediaFile.getMediaId() + "." + directMessageMediaFile.getExtension();
                     directMessageMediaFileDto.setMediaUrl(s3Service.generatePresignedUrl(key));
-                    directMessageResponseDto.setMedia(directMessageMediaFileDto);
+                    messageDto.setMedia(directMessageMediaFileDto);
                 }
             }
-            directMessageResponseDto.setReactions(directMessageReactionService.getReactionsCountForMessage(dm));
-            return directMessageResponseDto;
-        }).sorted(Comparator.comparing(DirectMessageResponseDto::getCreatedAt)).toList();
+            messageDto.setReactions(directMessageReactionService.getReactionsCountForMessage(dm));
+            return messageDto;
+        }).sorted(Comparator.comparing(MessageDto::getCreatedAt)).toList();
     }
 
     /**
@@ -232,7 +246,8 @@ public class DirectMessageServiceImpl implements DirectMessageService {
     }
 
     /**
-     * Retrieves a direct message preview by chat ID for a specific user and organization.
+     * Retrieves a direct message preview by chat ID for a specific user and
+     * organization.
      *
      * @param chatId
      * @param userId
@@ -240,7 +255,7 @@ public class DirectMessageServiceImpl implements DirectMessageService {
      * @return
      */
     @Override
-    public DirectMessagePreviewDto getDirectMessagePreviewByChatId(String chatId, Long userId, Long orgId) {
+    public ChatPreviewDto getDirectMessagePreviewByChatId(String chatId, Long userId, Long orgId) {
 
         if (!Chat.isUserInChat(chatId, userId)) {
             throw new PermissionDeniedException("You do not have permission to access this chat.");
@@ -253,14 +268,18 @@ public class DirectMessageServiceImpl implements DirectMessageService {
 
         Long otherUserId = parsedChatId[0].equals(userId) ? parsedChatId[1] : parsedChatId[0];
 
-        DirectMessagePreviewDto directMessagePreviewDto = new DirectMessagePreviewDto();
-        directMessagePreviewDto.setCurrentUser(UserPreviewDto.fromOrgMember(orgMemberService.getOrgMemberByUserIdAndOrgId(userId, orgId)));
-        directMessagePreviewDto.setOtherUser(UserPreviewDto.fromOrgMember(orgMemberService.getOrgMemberByUserIdAndOrgId(otherUserId, orgId)));
-        directMessagePreviewDto.setChatId(chatId);
+        OrgMember otherUserOrgMember = orgMemberService.getOrgMemberByUserIdAndOrgId(otherUserId, orgId);
+
+        ChatPreviewDto chatPreviewDto = new ChatPreviewDto();
+        chatPreviewDto.setUserId(otherUserId);
+        chatPreviewDto.setChatId(chatId);
+        chatPreviewDto.setActive(!otherUserOrgMember.isArchived());
+        chatPreviewDto.setDisplayName(otherUserOrgMember.getDisplayName());
+        chatPreviewDto.setDisplayPicture(otherUserOrgMember.getDisplayPicture());
         Optional<PinnedDirectMessage> pinnedDirectMessage = pinnedDirectMessageService.getPinnedDirectMessageByPinnedByIdAndPinnedUserIdAndOrgId(userId, otherUserId, orgId);
         if (pinnedDirectMessage.isPresent()) {
-            directMessagePreviewDto.setPinnedId(pinnedDirectMessage.get().getId());
+            chatPreviewDto.setPinnedId(pinnedDirectMessage.get().getId());
         }
-        return directMessagePreviewDto;
+        return chatPreviewDto;
     }
 }

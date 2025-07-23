@@ -1,4 +1,4 @@
-const ReadReceipt = ({ readReceipt }) => {
+const ReadReceipt = ({ readReceipt = "SENT" }) => {
     const icons = {
         PENDING: 'fa fa-clock',
         SENT: 'fa fa-check',
@@ -6,7 +6,7 @@ const ReadReceipt = ({ readReceipt }) => {
         READ: 'fa fa-check-double read',
     };
 
-    return <i className={`${icons[readReceipt]} delivery-status mL5`} title={readReceipt.toLowerCase()} />;
+    return <i className={`${icons[readReceipt]} delivery-status mL5`} title={readReceipt?.toLowerCase()} />;
 };
 
 export default ReadReceipt;

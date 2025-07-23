@@ -3,8 +3,10 @@ import './LeftNavigation.css'
 import Nav from './Nav'
 import { useDispatch, useSelector } from 'react-redux';
 import OrgList from '../Org/OrgList';
+import { setMyProfile } from '../../store/reducers/MyProfileSlice';
+import { apiRequest } from '../../http_request';
 
-const LeftNavigation = ({ profile }) => {
+const LeftNavigation = () => {
 
     const ListOfNavigations = useSelector((state) => {
         return state.Navigation;
@@ -23,9 +25,21 @@ const LeftNavigation = ({ profile }) => {
         }
     }, dispatch = useDispatch();
 
+    const [showOrgList, setShowOrgList] = useState(false);
+    const [orgId, setOrgId] = useState(sessionStorage.getItem('org-id'));
+    const [profile, setProfile] = useState({ 'id': 8, 'title': 'Me', 'route': '/profile', 'icon': 'fa-regular fa-user', 'isActive': false });
+
     const { id, icon, image, title, route } = profile;
 
-    const [showOrgList, setShowOrgList] = useState(false);
+    useEffect(() => {
+        apiRequest("/api/v1/people/profile", "GET").then(({ data }) => {
+            dispatch(setMyProfile(data));
+            const updatedProfile = { ...profile, image: data.displayPicture, icon: null };
+            setProfile(updatedProfile);
+        }).catch(({ message }) => {
+            console.error("Error fetching profile:", message);
+        });
+    }, [orgId]);
 
     const toggleOrgList = (e) => {
 

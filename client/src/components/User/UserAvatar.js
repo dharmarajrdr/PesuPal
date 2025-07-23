@@ -3,8 +3,8 @@ import './UserAvatar.css';
 
 const getAvatarColor = (name) => {
     const colors = [
-        '#FF5733', '#33FF57', '#3357FF', '#FF33A6', '#33FFF5',
-        '#F3FF33', '#8E44AD', '#3498DB', '#E67E22', '#2ECC71',
+        '#FF5733', '#330F57', '#30FE15', '#FF33A6', '#318E15',
+        '#A7AF45', '#8E44AD', '#3498DB', '#E67E22', '#2ECC71',
         '#E74C3C', '#1ABC9C', '#9B59B6', '#34495E', '#7F8C8D',
         '#F1C40F', '#D35400', '#C0392B', '#16A085', '#2980B9'
     ];
@@ -24,14 +24,14 @@ const UserAvatar = ({ displayPicture, displayName, setShowProfile }) => {
 
     return (imageError || !displayPicture) ? (
         displayName ? (
-            <div className="user-avatar-placeholder-first-character mR10" style={{ backgroundColor: getAvatarColor(displayName) }}>
+            <div className="user-avatar-placeholder-first-character" style={{ backgroundColor: getAvatarColor(displayName) }}>
                 {displayName.charAt(0).toUpperCase()}
             </div>
         ) : (
-            <i className="fa fa-user-circle user-avatar-placeholder mR10" aria-hidden="true" />
+            <i className="fa fa-user-circle user-avatar-placeholder" aria-hidden="true" />
         )
     ) : (
-        <img src={displayPicture} alt="User" className="img_40_40 mR10 cursP" onError={() => setImageError(true)} onClick={() => setShowProfile ? setShowProfile(true) : null} />
+        <img src={displayPicture} alt="User" className="img_40_40 cursP" onError={() => setImageError(true)} onClick={() => setShowProfile ? setShowProfile(true) : null} />
     );
 };
 

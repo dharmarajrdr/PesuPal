@@ -27,12 +27,8 @@ public class DirectMessageController extends CurrentValueRetriever {
     @GetMapping("/{chatId}")
     public ResponseEntity<ApiResponseDto> getDirectMessagesByUserId(@PathVariable String chatId, @RequestParam Integer page, @RequestParam Integer size, @RequestParam(name = "pivot_message_id", required = false) Long pivotMessageId) {
 
-        Long userId = getCurrentUserId();
-        if (!Chat.isUserInChat(chatId, userId)) {
-            throw new PermissionDeniedException("You do not have permission to access this chat.");
-        }
         GetConversationBetweenUsers getConversationBetweenUsers = new GetConversationBetweenUsers(chatId, pivotMessageId, page, size);
-        List<DirectMessageResponseDto> directMessageResponseDtos = directMessageService.getDirectMessagesBetweenUsers(getConversationBetweenUsers);
+        List<MessageDto> directMessageResponseDtos = directMessageService.getDirectMessagesBetweenUsers(getConversationBetweenUsers, getCurrentUserId(), getCurrentOrgId());
         return ResponseEntity.ok(new ApiResponseDto("Direct messages retrieved successfully", directMessageResponseDtos));
     }
 
@@ -86,7 +82,7 @@ public class DirectMessageController extends CurrentValueRetriever {
     @GetMapping("/preview/{chatId}")
     public ResponseEntity<ApiResponseDto> getDirectMessagePreview(@PathVariable String chatId) {
 
-        DirectMessagePreviewDto directMessagePreviewDto = directMessageService.getDirectMessagePreviewByChatId(chatId, getCurrentUserId(), getCurrentOrgId());
+        ChatPreviewDto directMessagePreviewDto = directMessageService.getDirectMessagePreviewByChatId(chatId, getCurrentUserId(), getCurrentOrgId());
         return ResponseEntity.ok(new ApiResponseDto("Direct message preview retrieved successfully", directMessagePreviewDto));
     }
 }
