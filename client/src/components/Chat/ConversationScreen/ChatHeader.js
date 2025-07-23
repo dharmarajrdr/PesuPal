@@ -68,7 +68,7 @@ const ChatHeader = () => {
             {showProfile && <Profile userId={userId} setShowProfile={setShowProfile} />}
             <div className='FRCS'>
                 <UserAvatar displayPicture={displayPicture} displayName={displayName} setShowProfile={setShowProfile} />
-                <div className="name">{displayName}</div>
+                <div className="name mL10">{displayName}</div>
             </div>
             <div className='FRCE'>
                 {showChatHeaderOptionsModalSlice && <OptionsModal options={options} />}
