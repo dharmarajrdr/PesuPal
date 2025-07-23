@@ -1,0 +1,42 @@
+#group-members-overlay {
+    position: fixed;
+}
+
+#group-members-list {
+    width: 400px;
+    height: 50%;
+    overflow-y: auto;
+    background-color: var(--pure-white);
+    box-shadow: 0 2px 10px var(--box-shadow-color);
+    border-radius: 5px;
+}
+
+#group-members-header {
+    padding: 10px;
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background-color: var(--pure-white);
+    border-bottom: 1px solid #ddd;
+}
+
+#group-members-header h2 {
+    margin: 0;
+    font-size: 18px;
+    color: var(--text-color);
+    z-index: 2;
+    background-color: var(--pure-white);
+}
+
+#group-members-content {
+    height: calc(100% - 50px);
+}
+
+#group-member-role h3 {
+    margin: 0;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 10px 15px;
+    cursor: default;
+    color: var(--header-text-color);
+}
