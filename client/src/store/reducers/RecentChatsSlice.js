@@ -27,6 +27,8 @@ const RecentChatsSlice = createSlice({
         'updateRecentChat': (state, action) => {
             const chatIndex = state.findIndex(({ chatId }) => chatId == action.payload.chatId);
             if (chatIndex !== -1) {
+                const updatedRecentMessage = Object.assign({}, state[chatIndex].recentMessage, action.payload.recentMessage);
+                action.payload.recentMessage = updatedRecentMessage;
                 state[chatIndex] = { ...state[chatIndex], ...action.payload };
             }
         },
