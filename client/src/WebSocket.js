@@ -57,7 +57,7 @@ const useWebSocket = ({ onPrivateMessage, onGroupMessage, onError, onMessageDeli
         send: (message) => {
             if (stompClientRef.current?.connected) {
                 stompClientRef.current.publish({
-                    destination: `/app/chat.sendMessage`,
+                    destination: `/app/chat.direct-message`,
                     body: JSON.stringify(message),
                 });
             }
@@ -68,7 +68,7 @@ const useWebSocket = ({ onPrivateMessage, onGroupMessage, onError, onMessageDeli
         send: (message) => {
             if (stompClientRef.current?.connected) {
                 stompClientRef.current.publish({
-                    destination: `/app/chat.sendGroupMessage`,
+                    destination: `/app/chat.group-message`,
                     body: JSON.stringify(message),
                 });
             }

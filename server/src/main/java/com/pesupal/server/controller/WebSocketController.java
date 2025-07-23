@@ -16,7 +16,7 @@ public class WebSocketController {
     private final ChatService chatService;
     private final SimpMessagingTemplate messagingTemplate;
 
-    @MessageMapping("/chat.sendMessage")
+    @MessageMapping("/chat.direct-message")
     public void sendMessage(@Payload ChatMessageDto chatMessage) {
 
         try {
