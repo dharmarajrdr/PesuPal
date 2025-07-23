@@ -63,11 +63,11 @@ const ChatMessageItem = ({ msg }) => {
 
     const { sender, deleted, createdAt, readReceipt, message, media } = msg;
 
-    const currentChatPreview = useSelector(state => state.currentChatPreviewSlice);
+    const myProfile = useSelector(state => state.myProfile);
 
-    const isCurrentUser = sender.id == currentChatPreview?.userId;
+    const isCurrentUser = sender.id == myProfile?.id;
 
-    return (
+    return myProfile ? (
         <div className='row w100 FRCS'>
             <div className={`message ${isCurrentUser ? 'sent' : 'received'}`}>
                 {deleted ? <MessageDeleted /> : <>
@@ -80,7 +80,7 @@ const ChatMessageItem = ({ msg }) => {
                 </>}
             </div>
         </div>
-    );
+    ) : null;
 };
 
 export default ChatMessageItem;
