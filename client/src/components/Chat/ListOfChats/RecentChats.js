@@ -51,7 +51,7 @@ const RecentChats = () => {
     }
 
     return activeChatTab ? (
-        <div id='RecentChats' className='FCCS w100'>
+        <div id='RecentChats' className='FCCS w100 pT5'>
             {
                 loading ? <Loader /> :
                     error ? <ErrorMessage message={error} /> :
