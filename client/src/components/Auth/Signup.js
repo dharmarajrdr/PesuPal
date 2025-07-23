@@ -8,6 +8,7 @@ import { UsePopupFromSession } from '../../UsePopupFromSession'
 import Popup from '../Popup'
 import { clearMyProfile } from '../../store/reducers/MyProfileSlice'
 import { useDispatch } from 'react-redux'
+import { showPopup } from '../../store/reducers/PopupSlice'
 
 const Signup = () => {
 
@@ -20,21 +21,13 @@ const Signup = () => {
     const [error, setError] = useState("");
     const [passwordVisible, setPasswordVisible] = useState(false);
 
-    const [popupData, setPopupData] = useState(null);
-
-    const showPopup = (message, type) => {
-        setPopupData({ message, type });
-    };
-
-    UsePopupFromSession(showPopup);
-
     const signupFormHandler = (e) => {
         e.preventDefault();
         apiRequest("/api/v1/user", 'POST', { email, password, phone }).then(({ data }) => {
             setEmail("");
             setPassword("");
             setPhone("");
-            showPopup("Account created successfully!", "success");
+            dispatch(showPopup({ message: "Account created successfully!", type: "success" }));
         }).catch(({ message }) => {
             setError(message || "An error occurred during login");
         });
@@ -56,7 +49,6 @@ const Signup = () => {
     return (
         <div className='auth_component w100 FRCC'>
             <ChatGifComponent />
-            {popupData && <Popup message={popupData.message} type={popupData.type} />}
             <div className='auth_component_form_container FRCC'>
                 <form className='auth_component_form FCCC' onSubmit={signupFormHandler}>
                     <h1>Create Account</h1>

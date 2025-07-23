@@ -12,14 +12,7 @@ import { setChatId } from '../../../store/reducers/ChatIdSlice';
 import PermissionDenied from '../../Auth/PermissionDenied';
 import ChatInputUserArchived from './ChatInputUserArchived';
 import { setActiveChatTab } from '../../../store/reducers/ActiveChatTabSlice';
-
-const readAllMessages = ({ chatId }) => {
-  apiRequest(`/api/v1/direct-messages/${chatId}/read_all`, "PUT").then(() => {
-    // TODO: Inform the receiver that messages have been read via WebSocket
-  }).catch(({ message }) => {
-    console.error(message);
-  });
-}
+import { showPopup } from '../../../store/reducers/PopupSlice';
 
 const ConversationScreen = ({ activeTabName }) => {
 
@@ -60,6 +53,14 @@ const ConversationScreen = ({ activeTabName }) => {
       // setChatLog((prev) => [...prev, msg]);
     },
   });
+
+  const readAllMessages = ({ chatId }) => {
+    apiRequest(`/api/v1/direct-messages/${chatId}/read_all`, "PUT").then(() => {
+      // TODO: Inform the receiver that messages have been read via WebSocket
+    }).catch(({ message }) => {
+      dispatch(showPopup({ message, type: 'error' }));
+    });
+  }
 
   const clickSendMessageHandler = ({ message }) => {
 

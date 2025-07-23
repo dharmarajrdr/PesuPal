@@ -1,14 +1,22 @@
-import { useEffect, useState } from "react";
-import "./Popup.css"; // Styling is the same
+import { useEffect } from "react";
+import "./Popup.css";
+import { useDispatch, useSelector } from "react-redux";
+import { hidePopup } from "../store/reducers/PopupSlice";
 
-const Popup = ({ message, type = "info", duration = 30000 }) => {
-
-    const [show, setShow] = useState(true);
+const Popup = () => {
+    const duration = 3000;
+    const dispatch = useDispatch();
+    const { message, type } = useSelector(state => state.popup) || {};
 
     useEffect(() => {
-        const timer = setTimeout(() => setShow(false), duration);
+        if (!message) return;
+
+        const timer = setTimeout(() => {
+            dispatch(hidePopup());
+        }, duration);
+
         return () => clearTimeout(timer);
-    }, [duration]);
+    }, [message]);
 
     const iconClass = {
         success: "fa fa-check-circle",
@@ -16,7 +24,7 @@ const Popup = ({ message, type = "info", duration = 30000 }) => {
         info: "fa fa-info-circle",
     };
 
-    return show && message && (
+    return message && (
         <div className={`popup-container ${type}`}>
             <i className={`icon ${iconClass[type]}`} aria-hidden="true" />
             <span className="message">{message}</span>

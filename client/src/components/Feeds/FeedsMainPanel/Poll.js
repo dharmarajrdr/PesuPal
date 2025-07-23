@@ -1,9 +1,12 @@
 import { useState } from "react";
 import "./Poll.css";
 import { apiRequest } from "../../../http_request";
+import { useDispatch } from "react-redux";
+import { showPopup } from "../../../store/reducers/PopupSlice";
 
-const Poll = ({ poll, setPoll, showPopup }) => {
+const Poll = ({ poll, setPoll }) => {
 
+    const dispatch = useDispatch();
     const [selectedOptionId, setSelectedOptionId] = useState(poll.votedOptionId || null);
     const [voted, setVoted] = useState(poll.votedOptionId);
 
@@ -14,8 +17,7 @@ const Poll = ({ poll, setPoll, showPopup }) => {
     const handleVote = ({ id }) => {
 
         if (selectedOptionId === id) {
-            showPopup("You have already voted for this option.", 'error');
-            setTimeout(() => showPopup(null), 3000);
+            dispatch(showPopup({ message: "You have already voted for this option.", type: 'error' }));
             return;
         }
 
@@ -26,8 +28,7 @@ const Poll = ({ poll, setPoll, showPopup }) => {
             setSelectedOptionId(id);
 
         }).catch(({ message }) => {
-            showPopup(message, 'error');
-            setTimeout(() => showPopup(null), 3000);
+            dispatch(showPopup({ message, type: 'error' }));
         });
 
     };

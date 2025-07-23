@@ -21,6 +21,7 @@ import ActiveRecentChatSlice from './store/reducers/ActiveRecentChatSlice';
 import RecentChatsSlice from './store/reducers/RecentChatsSlice';
 import ChatIdSlice from './store/reducers/ChatIdSlice';
 import MyProfileSlice from './store/reducers/MyProfileSlice';
+import PopupSlice from './store/reducers/PopupSlice';
 import ActiveChatTabSlice from './store/reducers/ActiveChatTabSlice';
 import ShowChatHeaderOptionsModalSlice from './store/reducers/ShowChatHeaderOptionsModalSlice';
 import CurrentChatPreviewSlice from './store/reducers/CurrentChatPreviewSlice';
@@ -28,7 +29,7 @@ import PageNotFound from './components/Auth/PageNotFound';
 import SettingsLayout from './components/Settings/SettingsLayout';
 import MoreFeaturesLayout from './components/More/MoreFeaturesLayout';
 import VerticalLoader from './components/VerticalLoader';
-import { apiRequest } from './http_request';
+import CommonContainer from './components/CommonContainer';
 
 const store = configureStore({
     reducer: combineReducers({
@@ -36,6 +37,7 @@ const store = configureStore({
         recentChats: RecentChatsSlice,
         VerticalLoader: VerticalLoaderReducer,
         posts: PostReducer,
+        popup: PopupSlice,
         chatId: ChatIdSlice,
         myProfile: MyProfileSlice,
         activeChatTab: ActiveChatTabSlice,
@@ -63,6 +65,8 @@ function App() {
     return (
         <Provider store={store}>
             <div className="App FRCS">
+
+                <CommonContainer />
                 {/* ✅ Only render LeftNavigation if not on /signin or /signup */}
                 {!isAuthPage && <LeftNavigation />}
                 <VerticalLoader />
