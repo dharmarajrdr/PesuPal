@@ -30,6 +30,7 @@ import SettingsLayout from './components/Settings/SettingsLayout';
 import MoreFeaturesLayout from './components/More/MoreFeaturesLayout';
 import VerticalLoader from './components/VerticalLoader';
 import CommonContainer from './components/CommonContainer';
+import utils from './utils';
 
 const store = configureStore({
     reducer: combineReducers({
@@ -59,6 +60,8 @@ function App() {
     useEffect(() => {
         if (!hasCookie() && !isAuthPage) {
             navigate('/signin');
+        } else if (utils.getCurrentOrgId() == null) {
+            navigate('/settings');
         }
     }, [location.pathname, navigate]);
 

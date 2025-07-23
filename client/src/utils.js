@@ -189,5 +189,9 @@ export default {
         return {
             get: (name) => cookies[name] || null
         };
+    },
+    "getCurrentOrgId": () => {
+
+        return sessionStorage.getItem('org-id');
     }
 }
