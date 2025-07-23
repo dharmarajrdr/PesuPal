@@ -6,7 +6,7 @@ const ReadReceipt = ({ readReceipt = "SENT" }) => {
         READ: 'fa fa-eye',
     };
 
-    return <i className={`${icons[readReceipt]} delivery-status mL5`} title={readReceipt?.toLowerCase()} />;
+    return <i className={`${icons[readReceipt]} delivery-status mL5`} title={readReceipt} />;
 };
 
 export default ReadReceipt;
