@@ -19,7 +19,7 @@ public class GroupChatPinnedServiceImpl implements GroupChatPinnedService {
     /**
      * Retrieves a pinned group by the ID of the user who pinned it, the group ID, and the organization ID.
      *
-     * @param userId
+     * @param pinnedBy
      * @param group
      * @return
      */
