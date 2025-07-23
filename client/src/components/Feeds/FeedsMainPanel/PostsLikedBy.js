@@ -5,6 +5,7 @@ import ErrorMessage from '../../ErrorMessage'
 import { apiRequest } from '../../../http_request'
 import utils from '../../../utils'
 import Profile from '../../OthersProfile/Profile'
+import UserPreview from '../../User/UserPreview'
 
 const NoLikesFound = () => {
 
@@ -17,20 +18,6 @@ const NoLikesFound = () => {
             <p className='w100 alignCenter'>There are no users who liked this post.</p>
         </div>
     )
-}
-
-const LikedByItem = ({ likedBy }) => {
-
-    const [showProfile, setShowProfile] = useState(false);
-
-    return <div key={likedBy.userId} className='likedByItem FRCB w100'>
-        {showProfile && <Profile userId={likedBy.userId} setShowProfile={setShowProfile} />}
-        <div className='FRCS'>
-            <img src={likedBy.displayPicture} alt={likedBy.displayName} className='img_30_30 mR10' onClick={() => setShowProfile(true)} />
-            <h6>{likedBy.displayName}</h6>
-        </div>
-        <span className='fs10 color777'>{utils.convertDateAndTime(likedBy.createdAt)}</span>
-    </div>
 }
 
 const PostsLikedByContainer = ({ postId }) => {
@@ -57,7 +44,7 @@ const PostsLikedByContainer = ({ postId }) => {
                         : <>
                             <h5 className='w100 alignCenter'>Post Likes({likedBy.length})</h5>
                             {likedBy.length ? <>
-                                {likedBy.map((like, index) => <LikedByItem likedBy={like} key={index} />)}
+                                {likedBy.map((user_detail, index) => <UserPreview user_detail={user_detail} key={index} />)}
                             </> : <NoLikesFound />}
                         </>
             }
