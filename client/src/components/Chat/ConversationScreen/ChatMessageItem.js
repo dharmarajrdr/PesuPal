@@ -64,7 +64,8 @@ const ChatMessageItem = ({ msg }) => {
     const { sender, deleted, createdAt, readReceipt, message, media } = msg;
 
     const currentChatPreview = useSelector(state => state.currentChatPreviewSlice);
-    const isCurrentUser = sender == currentChatPreview?.currentUser?.id;
+
+    const isCurrentUser = sender.id == currentChatPreview?.userId;
 
     return (
         <div className='row w100 FRCS'>
