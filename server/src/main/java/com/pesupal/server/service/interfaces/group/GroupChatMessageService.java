@@ -19,4 +19,6 @@ public interface GroupChatMessageService {
     void clearGroupChatMessages(Long groupId, Long userId, Long orgId);
 
     List<MessageDto> getGroupChatMessages(GetGroupConversationDto getGroupConversationDto, Long userId, Long orgId);
+
+    void markAllGroupMessagesAsRead(Long groupId, Long currentUserId, Long currentOrgId);
 }

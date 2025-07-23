@@ -13,6 +13,7 @@ import com.pesupal.server.exceptions.PermissionDeniedException;
 import com.pesupal.server.model.group.*;
 import com.pesupal.server.model.org.Org;
 import com.pesupal.server.model.user.OrgMember;
+import com.pesupal.server.repository.GroupChatMemberRepository;
 import com.pesupal.server.repository.GroupChatMessageRepository;
 import com.pesupal.server.repository.GroupMessageMediaFileRepository;
 import com.pesupal.server.service.interfaces.OrgMemberService;
@@ -28,10 +29,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 @AllArgsConstructor
@@ -44,6 +42,7 @@ public class GroupChatMessageServiceImpl implements GroupChatMessageService {
     private final GroupChatMessageRepository groupChatMessageRepository;
     private final GroupChatConfigurationService groupChatConfigurationService;
     private final GroupMessageMediaFileRepository groupMessageMediaFileRepository;
+    private final GroupChatMemberRepository groupChatMemberRepository;
 
     /**
      * Posts a message in a group chat.
@@ -199,7 +198,7 @@ public class GroupChatMessageServiceImpl implements GroupChatMessageService {
         return messages.stream().map(gm -> {
             MessageDto messageDto = MessageDto.fromGroupMessage(gm);
             Long senderId = gm.getSender().getId();
-            if(!memo.containsKey(senderId)) {
+            if (!memo.containsKey(senderId)) {
                 memo.put(senderId, UserPreviewDto.fromOrgMember(orgMemberService.getOrgMemberByUserIdAndOrgId(senderId, orgId)));
             }
             messageDto.setSender(memo.get(senderId));
@@ -215,5 +214,29 @@ public class GroupChatMessageServiceImpl implements GroupChatMessageService {
             messageDto.setReactions(groupChatReactionService.getReactionsCountForMessage(gm));
             return messageDto;
         }).sorted(Comparator.comparing(MessageDto::getCreatedAt)).toList();
+    }
+
+    /**
+     * Marks all messages in a group as read.
+     *
+     * @param groupId
+     * @param userId
+     * @param orgId
+     */
+    @Override
+    public void markAllGroupMessagesAsRead(Long groupId, Long userId, Long orgId) {
+
+        GroupChatMember groupChatMember = groupChatMemberService.getGroupMemberByGroupIdAndUserId(groupId, userId);
+        if (!groupChatMember.isActive()) {
+            throw new PermissionDeniedException("You're not part of this group anymore.");
+        }
+
+        Group group = groupChatMember.getGroup();
+        Optional<GroupChatMessage> lastMessageOfGroup = groupChatMessageRepository.findFirstByGroupOrderByCreatedAtDesc(group);
+        if (lastMessageOfGroup.isPresent()) {
+            groupChatMember.setLastReadMessage(lastMessageOfGroup.get());
+        }
+
+        groupChatMemberRepository.save(groupChatMember);
     }
 }
