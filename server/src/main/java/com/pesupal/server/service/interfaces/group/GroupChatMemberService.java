@@ -13,6 +13,8 @@ public interface GroupChatMemberService {
 
     GroupChatMember getGroupMemberByGroupIdAndUserId(Long groupId, Long userId);
 
+    boolean isUserMemberOfGroup(Long groupId, Long userId);
+
     GroupDto joinGroup(Long groupId, Long currentUserId, Long currentOrgId);
 
     UserPreviewDto addMemberToGroup(AddGroupMemberDto addGroupMemberDto, Long userId, Long orgId);
