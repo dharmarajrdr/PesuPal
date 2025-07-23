@@ -7,7 +7,7 @@ import useWebSocket from '../../../WebSocket';
 import { useParams } from 'react-router-dom';
 import { apiRequest } from '../../../http_request';
 import { useDispatch, useSelector } from 'react-redux';
-import { setCurrentChatPreview } from '../../../store/reducers/CurrentChatPreviewSlice';
+import { clearCurrentChatPreview, setCurrentChatPreview } from '../../../store/reducers/CurrentChatPreviewSlice';
 import { setChatId } from '../../../store/reducers/ChatIdSlice';
 import PermissionDenied from '../../Auth/PermissionDenied';
 import ChatInputUserArchived from './ChatInputUserArchived';
@@ -127,6 +127,7 @@ const ConversationScreen = ({ activeTabName }) => {
 
   useEffect(() => {
 
+    dispatch(clearCurrentChatPreview());
     dispatch(setChatId(chatId));
     setPivotMessageId(null); // reset state — this takes effect after render
     setRetrievingChat(true);
