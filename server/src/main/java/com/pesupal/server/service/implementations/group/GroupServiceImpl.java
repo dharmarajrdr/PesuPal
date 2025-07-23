@@ -1,6 +1,7 @@
 package com.pesupal.server.service.implementations.group;
 
 import com.pesupal.server.dto.request.group.CreateGroupDto;
+import com.pesupal.server.dto.response.ChatPreviewDto;
 import com.pesupal.server.dto.response.LastMessageDto;
 import com.pesupal.server.dto.response.RecentChatDto;
 import com.pesupal.server.dto.response.RecentChatPagedDto;
@@ -14,6 +15,7 @@ import com.pesupal.server.helpers.TimeFormatterUtil;
 import com.pesupal.server.model.group.Group;
 import com.pesupal.server.model.group.GroupChatConfiguration;
 import com.pesupal.server.model.group.GroupChatMember;
+import com.pesupal.server.model.group.GroupChatPinned;
 import com.pesupal.server.model.org.Org;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.model.user.User;
@@ -24,6 +26,7 @@ import com.pesupal.server.service.interfaces.OrgService;
 import com.pesupal.server.service.interfaces.UserService;
 import com.pesupal.server.service.interfaces.group.GroupChatConfigurationService;
 import com.pesupal.server.service.interfaces.group.GroupChatMemberService;
+import com.pesupal.server.service.interfaces.group.GroupChatPinnedService;
 import com.pesupal.server.service.interfaces.group.GroupService;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -33,6 +36,7 @@ import org.springframework.stereotype.Service;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -44,6 +48,7 @@ public class GroupServiceImpl implements GroupService {
     private final OrgMemberService orgMemberService;
     private final GroupChatMemberService groupChatMemberService;
     private final GroupChatMemberRepository groupChatMemberRepository;
+    private final GroupChatPinnedService groupchatPinnedService;
     private final GroupChatConfigurationService groupChatConfigurationService;
 
     /**
@@ -178,5 +183,39 @@ public class GroupServiceImpl implements GroupService {
         Long total = groupRepository.countRecentGroupChats(userId, orgId);
 
         return new RecentChatPagedDto(chats, pageable, total);
+    }
+
+    /**
+     * Retrieves a group chat by its ID, user ID, and organization ID.
+     *
+     * @param groupId
+     * @param userId
+     * @param orgId
+     * @return
+     */
+    @Override
+    public ChatPreviewDto getGroupChatPreviewByChatId(Long groupId, Long userId, Long orgId) {
+
+        Group group = getGroupById(groupId);
+        if (!group.getOrg().getId().equals(orgId)) {
+            throw new DataNotFoundException("Group with ID " + groupId + " does not exist");
+        }
+
+        OrgMember orgMember = orgMemberService.getOrgMemberByUserIdAndOrgId(userId, orgId);
+
+        if (!groupChatMemberService.isUserMemberOfGroup(groupId, userId)) {
+            throw new PermissionDeniedException("You are not a member of this group.");
+        }
+
+        ChatPreviewDto chatPreviewDto = new ChatPreviewDto();
+        chatPreviewDto.setChatId(Long.toString(group.getId()));
+        chatPreviewDto.setActive(group.isActive());
+        chatPreviewDto.setDisplayName(group.getName());
+        chatPreviewDto.setDisplayPicture(group.getDisplayPicture());
+        Optional<GroupChatPinned> pinnedGroupChat = groupchatPinnedService.getPinnedGroupByPinnedByAndGroup(orgMember.getUser(), group);
+        if (pinnedGroupChat.isPresent()) {
+            chatPreviewDto.setPinnedId(pinnedGroupChat.get().getId());
+        }
+        return chatPreviewDto;
     }
 }
