@@ -1,6 +1,7 @@
 package com.pesupal.server.controller;
 
 import com.pesupal.server.dto.request.ChatMessageDto;
+import com.pesupal.server.dto.response.MessageDto;
 import com.pesupal.server.exceptions.WebsocketException;
 import com.pesupal.server.service.interfaces.ChatService;
 import lombok.AllArgsConstructor;
@@ -20,9 +21,9 @@ public class WebSocketController {
     public void sendMessage(@Payload ChatMessageDto chatMessage) {
 
         try {
-            chatService.save(chatMessage);
-            messagingTemplate.convertAndSend("/topic/user." + chatMessage.getReceiverId(), chatMessage);
-            messagingTemplate.convertAndSend("/topic/message-delivery." + chatMessage.getSenderId(), chatMessage);
+            MessageDto messageDto = chatService.save(chatMessage);
+            messagingTemplate.convertAndSend("/topic/direct-message." + chatMessage.getReceiverId(), messageDto);
+            messagingTemplate.convertAndSend("/topic/message-delivery." + chatMessage.getSenderId(), messageDto);
         } catch (Exception e) {
             WebsocketException error = new WebsocketException(e.getMessage());
             messagingTemplate.convertAndSend("/queue/errors." + chatMessage.getSenderId(), error);

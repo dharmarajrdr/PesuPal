@@ -28,15 +28,12 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class DirectMessageServiceImpl implements DirectMessageService {
 
+    private final S3Service s3Service;
     private final OrgService orgService;
     private final UserService userService;
     private final OrgMemberService orgMemberService;
@@ -44,13 +41,8 @@ public class DirectMessageServiceImpl implements DirectMessageService {
     private final PinnedDirectMessageService pinnedDirectMessageService;
     private final DirectMessageReactionService directMessageReactionService;
     private final DirectMessageMediaFileRepository directMessageMediaFileRepository;
-    private final S3Service s3Service;
 
-    public DirectMessageServiceImpl(DirectMessageRepository directMessageRepository,
-            @Lazy DirectMessageReactionService directMessageReactionService,
-            UserService userService, OrgService orgService, OrgMemberService orgMemberService,
-            PinnedDirectMessageService pinnedDirectMessageService,
-            DirectMessageMediaFileRepository directMessageMediaFileRepository, S3Service s3Service) {
+    public DirectMessageServiceImpl(DirectMessageRepository directMessageRepository, @Lazy DirectMessageReactionService directMessageReactionService, UserService userService, OrgService orgService, OrgMemberService orgMemberService, PinnedDirectMessageService pinnedDirectMessageService, DirectMessageMediaFileRepository directMessageMediaFileRepository, S3Service s3Service) {
         this.directMessageRepository = directMessageRepository;
         this.orgService = orgService;
         this.userService = userService;
@@ -59,6 +51,35 @@ public class DirectMessageServiceImpl implements DirectMessageService {
         this.directMessageReactionService = directMessageReactionService;
         this.directMessageMediaFileRepository = directMessageMediaFileRepository;
         this.s3Service = s3Service;
+    }
+
+    /**
+     * Converts a DirectMessage entity to a MessageDto.
+     *
+     * @param dm
+     * @param orgId
+     * @param memo
+     * @return
+     */
+    private MessageDto toMessageDto(DirectMessage dm, Long orgId, Map<Long, UserPreviewDto> memo) {
+
+        MessageDto messageDto = MessageDto.fromDirectMessage(dm);
+        Long senderId = dm.getSender().getId();
+        if (!memo.containsKey(senderId)) {
+            memo.put(senderId, UserPreviewDto.fromOrgMember(orgMemberService.getOrgMemberByUserIdAndOrgId(senderId, orgId)));
+        }
+        messageDto.setSender(memo.get(senderId));
+        if (dm.getContainsMedia()) {
+            DirectMessageMediaFile directMessageMediaFile = directMessageMediaFileRepository.findByDirectMessage(dm);
+            if (directMessageMediaFile != null) {
+                MediaFileDto directMessageMediaFileDto = MediaFileDto.fromDirectMessageMediaFile(directMessageMediaFile);
+                String key = directMessageMediaFile.getMediaId() + "." + directMessageMediaFile.getExtension();
+                directMessageMediaFileDto.setMediaUrl(s3Service.generatePresignedUrl(key));
+                messageDto.setMedia(directMessageMediaFileDto);
+            }
+        }
+        messageDto.setReactions(directMessageReactionService.getReactionsCountForMessage(dm));
+        return messageDto;
     }
 
     /**
@@ -74,10 +95,7 @@ public class DirectMessageServiceImpl implements DirectMessageService {
             throw new PermissionDeniedException("You do not have permission to access this chat.");
         }
 
-        Pageable pageable = PageRequest.of(
-                getConversationBetweenUsers.getPage(),
-                getConversationBetweenUsers.getSize(),
-                Sort.by("createdAt").descending());
+        Pageable pageable = PageRequest.of(getConversationBetweenUsers.getPage(), getConversationBetweenUsers.getSize(), Sort.by("createdAt").descending());
         Page<DirectMessage> messages = null;
         Long pivotMessageId = getConversationBetweenUsers.getPivotMessageId();
         if (pivotMessageId != null) {
@@ -86,25 +104,7 @@ public class DirectMessageServiceImpl implements DirectMessageService {
             messages = directMessageRepository.findAllByChatId(getConversationBetweenUsers.getChatId(), pageable);
         }
         Map<Long, UserPreviewDto> memo = new HashMap<>();
-        return messages.stream().map(dm -> {
-            MessageDto messageDto = MessageDto.fromDirectMessage(dm);
-            Long senderId = dm.getSender().getId();
-            if(!memo.containsKey(senderId)) {
-                memo.put(senderId, UserPreviewDto.fromOrgMember(orgMemberService.getOrgMemberByUserIdAndOrgId(senderId, orgId)));
-            }
-            messageDto.setSender(memo.get(senderId));
-            if (dm.getContainsMedia()) {
-                DirectMessageMediaFile directMessageMediaFile = directMessageMediaFileRepository.findByDirectMessage(dm);
-                if (directMessageMediaFile != null) {
-                    MediaFileDto directMessageMediaFileDto = MediaFileDto.fromDirectMessageMediaFile(directMessageMediaFile);
-                    String key = directMessageMediaFile.getMediaId() + "." + directMessageMediaFile.getExtension();
-                    directMessageMediaFileDto.setMediaUrl(s3Service.generatePresignedUrl(key));
-                    messageDto.setMedia(directMessageMediaFileDto);
-                }
-            }
-            messageDto.setReactions(directMessageReactionService.getReactionsCountForMessage(dm));
-            return messageDto;
-        }).sorted(Comparator.comparing(MessageDto::getCreatedAt)).toList();
+        return messages.stream().map(dm -> toMessageDto(dm, orgId, memo)).sorted(Comparator.comparing(MessageDto::getCreatedAt)).toList();
     }
 
     /**
@@ -213,7 +213,7 @@ public class DirectMessageServiceImpl implements DirectMessageService {
      * @param chatMessageDto
      */
     @Override
-    public void save(ChatMessageDto chatMessageDto) {
+    public MessageDto save(ChatMessageDto chatMessageDto) {
 
         Long orgId = chatMessageDto.getOrgId();
         Org org = orgService.getOrgById(orgId);
@@ -242,7 +242,8 @@ public class DirectMessageServiceImpl implements DirectMessageService {
         directMessage.setContainsMedia(false);
         directMessage.setReadReceipt(ReadReceipt.SENT);
         directMessage.setMessage(chatMessageDto.getMessage());
-        directMessageRepository.save(directMessage);
+        directMessage = directMessageRepository.save(directMessage);
+        return toMessageDto(directMessage, orgId, new HashMap<>());
     }
 
     /**

@@ -9,7 +9,7 @@ const subscribe = {
 
         return {
             'events': (arrayOfEvents) => {
-                arrayOfEvents.forEach(({event, callback}) => {
+                arrayOfEvents.forEach(({ event, callback }) => {
                     stompClient.subscribe(event, (msg) => {
                         const payload = JSON.parse(msg.body);
                         callback(payload);
@@ -21,11 +21,11 @@ const subscribe = {
 }
 
 const useWebSocket = ({ onPrivateMessage, onGroupMessage, onError, onMessageDelivery, userId }) => {
-    
+
     const stompClientRef = useRef(null);
-    
+
     useEffect(() => {
-        
+
         const stompClient = new Client({
             webSocketFactory: () => new SockJS(`${utils.serverDomain}/ws`),
             reconnectDelay: 5000,
