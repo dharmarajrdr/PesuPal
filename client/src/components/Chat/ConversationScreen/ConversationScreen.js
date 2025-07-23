@@ -38,21 +38,17 @@ const ConversationScreen = ({ activeTabName }) => {
   const { sendMessage } = useWebSocket({
     userId: myProfile.id,
     onPrivateMessage: (msg) => {
-      setMessages((prev) => [...prev, {
-        "id": 101,
-        "createdAt": new Date().toISOString(),
-        "sender": msg.senderId,
-        "receiver": msg.receiverId,
-        "message": msg.message,
-        "deleted": false,
-        "readReceipt": "READ",
-        "reactions": {},
-        "directMessageMediaFiles": []
-      }]);
+      setMessages((prev) => [...prev, msg]);
     },
     onGroupMessage: (msg) => {
-      // setChatLog((prev) => [...prev, msg]);
+      setMessages((prev) => [...prev, msg]);
     },
+    onError: (error) => {
+      dispatch(showPopup({ message: error, type: 'error' }));
+    },
+    onMessageDelivery: (msg) => {
+      setMessages((prev) => [...prev, msg]);
+    }
   });
 
   const readAllMessages = ({ chatId }) => {
@@ -68,27 +64,23 @@ const ConversationScreen = ({ activeTabName }) => {
 
   const clickSendMessageHandler = ({ message }) => {
 
+    console.log({ myProfile });
+
     const payload = {
       orgId: sessionStorage.getItem('org-id'),
       chatId: 'room123',
+      "createdAt": new Date(),
+      sender: myProfile,
       senderId: myProfile.id,
       receiverId: userId,
       message,
       isGroupMessage: false,
+      readReceipt: "SENT",
+      reactions: {},
+      directMessageMediaFiles: []
     };
 
     sendMessage('/app/chat.sendMessage', payload);
-    setMessages((prev) => [...prev, {
-      "id": 101,
-      "createdAt": new Date().toISOString(),
-      "sender": myProfile,
-      "receiver": userId,
-      "message": message,
-      "deleted": false,
-      "readReceipt": "SENT",
-      "reactions": {},
-      "directMessageMediaFiles": []
-    }]);
   };
 
   const getChatPreview = (chatId) => {

@@ -3,7 +3,7 @@ import SockJS from 'sockjs-client';
 import { Client } from '@stomp/stompjs';
 import utils from './utils';
 
-const useWebSocket = ({ onPrivateMessage, onGroupMessage, userId }) => {
+const useWebSocket = ({ onPrivateMessage, onGroupMessage, onError, onMessageDelivery, userId }) => {
     const stompClientRef = useRef(null);
     useEffect(() => {
         const stompClient = new Client({
@@ -16,6 +16,16 @@ const useWebSocket = ({ onPrivateMessage, onGroupMessage, userId }) => {
                 stompClient.subscribe(`/topic/user.${userId}`, (msg) => {
                     const payload = JSON.parse(msg.body);
                     onPrivateMessage(payload);
+                });
+
+                stompClient.subscribe(`/queue/errors.${userId}`, (error) => {
+                    const { message } = JSON.parse(error.body);
+                    onError(message);
+                });
+
+                stompClient.subscribe(`/topic/message-delivery.${userId}`, (msg) => {
+                    const payload = JSON.parse(msg.body);
+                    onMessageDelivery(payload);
                 });
 
                 // Add group subscription if needed

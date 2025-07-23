@@ -65,7 +65,7 @@ const ChatMessageItem = ({ msg }) => {
 
     const myProfile = useSelector(state => state.myProfile);
 
-    const isCurrentUser = sender.id == myProfile?.id;
+    const isCurrentUser = sender?.id == myProfile?.id;
 
     return myProfile ? (
         <div className='row w100 FRCS'>
