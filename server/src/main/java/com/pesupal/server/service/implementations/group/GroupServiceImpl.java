@@ -212,6 +212,7 @@ public class GroupServiceImpl implements GroupService {
         chatPreviewDto.setActive(group.isActive());
         chatPreviewDto.setDisplayName(group.getName());
         chatPreviewDto.setDisplayPicture(group.getDisplayPicture());
+        chatPreviewDto.setParticipantsCount(group.getMembers().size());
         Optional<GroupChatPinned> pinnedGroupChat = groupchatPinnedService.getPinnedGroupByPinnedByAndGroup(orgMember.getUser(), group);
         if (pinnedGroupChat.isPresent()) {
             chatPreviewDto.setPinnedId(pinnedGroupChat.get().getId());

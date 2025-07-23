@@ -18,4 +18,6 @@ public class ChatPreviewDto {
     private Long userId;
 
     private boolean active;
+
+    private Integer participantsCount;
 }
