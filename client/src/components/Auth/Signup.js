@@ -6,10 +6,13 @@ import { hasCookie } from './utils'
 import { apiRequest } from '../../http_request'
 import { UsePopupFromSession } from '../../UsePopupFromSession'
 import Popup from '../Popup'
+import { clearMyProfile } from '../../store/reducers/MyProfileSlice'
+import { useDispatch } from 'react-redux'
 
 const Signup = () => {
 
     const navigate = useNavigate();
+    const dispatch = useDispatch();
 
     const [email, setEmail] = useState("dharmaraj.171215@gmail.com");
     const [password, setPassword] = useState("123456789");
@@ -45,6 +48,8 @@ const Signup = () => {
     useEffect(() => {
         if (hasCookie()) {
             navigate('/feeds');
+        } else {
+            dispatch(clearMyProfile());
         }
     }, []);
 

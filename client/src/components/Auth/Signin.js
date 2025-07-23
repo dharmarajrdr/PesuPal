@@ -4,10 +4,14 @@ import ChatGifComponent from './ChatGifComponent'
 import './auth.css'
 import { hasCookie } from './utils'
 import { apiRequest } from '../../http_request'
+import { clearMyProfile } from '../../store/reducers/MyProfileSlice'
+import { useDispatch } from 'react-redux'
 
 const Signin = () => {
 
     const navigate = useNavigate();
+    const dispatch = useDispatch();
+
     const [email, setEmail] = useState("dharmaraj.171215@gmail.com");
     const [password, setPassword] = useState("123456789");
     const [error, setError] = useState("");
@@ -40,6 +44,8 @@ const Signin = () => {
     useEffect(() => {
         if (hasCookie()) {
             navigate('/feeds');
+        } else {
+            dispatch(clearMyProfile());
         }
     }, []);
 
