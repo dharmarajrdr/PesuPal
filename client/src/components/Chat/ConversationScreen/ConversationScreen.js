@@ -35,7 +35,7 @@ const ConversationScreen = ({ activeTabName }) => {
   const myProfile = useSelector(state => state.myProfile) || {};
   const { displayName, userId, active } = currentChatPreview || {};
 
-  const { sendMessage } = useWebSocket({
+  const { DirectMessage, GroupMessage } = useWebSocket({
     userId: myProfile.id,
     onPrivateMessage: (msg) => {
       setMessages((prev) => [...prev, msg]);
@@ -56,15 +56,13 @@ const ConversationScreen = ({ activeTabName }) => {
     const { readAllMessagesApi } = activeChatTab || {};
 
     apiRequest(`${readAllMessagesApi}/${chatId}/read_all`, "PUT").then(() => {
-      // TODO: Inform the receiver that messages have been read via WebSocket
+      
     }).catch(({ message }) => {
       dispatch(showPopup({ message, type: 'error' }));
     });
   }
 
   const clickSendMessageHandler = ({ message }) => {
-
-    console.log({ myProfile });
 
     const payload = {
       orgId: sessionStorage.getItem('org-id'),
@@ -80,7 +78,11 @@ const ConversationScreen = ({ activeTabName }) => {
       directMessageMediaFiles: []
     };
 
-    sendMessage('/app/chat.sendMessage', payload);
+    if (activeChatTab.name === 'directMessage') {
+      DirectMessage.send(payload);
+    } else if (activeChatTab.name === 'groupMessage') {
+      GroupMessage.send(payload);
+    }
   };
 
   const getChatPreview = (chatId) => {
