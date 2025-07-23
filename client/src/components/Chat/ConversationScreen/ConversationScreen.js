@@ -14,7 +14,7 @@ import ChatInputUserArchived from './ChatInputUserArchived';
 import { setActiveChatTab } from '../../../store/reducers/ActiveChatTabSlice';
 import { showPopup } from '../../../store/reducers/PopupSlice';
 import { setShowChatHeaderOptionsModal } from '../../../store/reducers/ShowChatHeaderOptionsModalSlice';
-import { moveRecentChatToTop, updateRecentChat } from '../../../store/reducers/RecentChatsSlice';
+import { moveRecentChatToTop, updateOrAddRecentChat } from '../../../store/reducers/RecentChatsSlice';
 import utils from '../../../utils';
 
 const ConversationScreen = ({ activeTabName }) => {
@@ -40,28 +40,38 @@ const ConversationScreen = ({ activeTabName }) => {
 	const { DirectMessage, GroupMessage } = useWebSocket({
 		userId: myProfile.id,
 		onPrivateMessage: (msg) => {
-			const { chatMode, message } = msg || {};
+
+			const { chatMode, message, sender } = msg || {};
 
 			if (chatMode !== activeChatTab.chatMode) {
 				return; // If the message is not in the current chat mode, ignore it
 			}
 
 			if (activeChatTab.name == 'directMessage') {
+
 				const isChatOpen = chatId == msg.chatId;
+
 				if (isChatOpen) {
 					setMessages((prev) => [...prev, msg]);
 				}
+
 				const recentMessage = {
-					createdAt: utils.convertTime(new Date(), 12),
-					media: false,
-					message,
-					// sender: "Me",	// Send by them, so no need to set sender
-					readReceipt: "SENT"
+					chatId: msg.chatId,
+					name: sender.displayName,
+					image: sender.displayPicture,
+					recentMessage: {
+						sender: sender.id,
+						message: msg.message,
+						media: false,
+						createdAt: utils.convertTime(msg.createdAt, 12)
+					}
 				};
+
 				if (!isChatOpen) {  // If the chat is not open, then show the number of unread messages
 					Object.assign(recentMessage, { number_of_unread_messages: 1 });
 				}
-				dispatch(updateRecentChat({ chatId: msg.chatId, recentMessage }));
+
+				dispatch(updateOrAddRecentChat({ chatId: msg.chatId, recentMessage }));
 				dispatch(moveRecentChatToTop(msg.chatId));
 			} else if (activeChatTab.name == 'groupMessage') {
 

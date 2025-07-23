@@ -27,9 +27,31 @@ const RecentChatsSlice = createSlice({
         'updateRecentChat': (state, action) => {
             const chatIndex = state.findIndex(({ chatId }) => chatId == action.payload.chatId);
             if (chatIndex !== -1) {
-                const updatedRecentMessage = Object.assign({}, state[chatIndex].recentMessage, action.payload.recentMessage);
-                action.payload.recentMessage = updatedRecentMessage;
-                state[chatIndex] = { ...state[chatIndex], ...action.payload };
+                const updatedChat = {
+                    ...state[chatIndex],
+                    ...action.payload,
+                    recentMessage: {
+                        ...state[chatIndex].recentMessage,
+                        ...action.payload.recentMessage
+                    }
+                };
+                state[chatIndex] = updatedChat;
+            }
+        },
+        'updateOrAddRecentChat': (state, action) => {
+            const chatIndex = state.findIndex(({ chatId }) => chatId == action.payload.chatId);
+            if (chatIndex !== -1) {
+                const updatedChat = {
+                    ...state[chatIndex],
+                    ...action.payload,
+                    recentMessage: {
+                        ...state[chatIndex].recentMessage,
+                        ...action.payload.recentMessage,
+                    },
+                };
+                state[chatIndex] = updatedChat;
+            } else {
+                state.push(action.payload);
             }
         },
         'clearRecentChats': (state) => {
@@ -38,5 +60,5 @@ const RecentChatsSlice = createSlice({
     }
 });
 
-export const { setRecentChats, addRecentChat, removeRecentChat, moveRecentChatToTop, updateRecentChat, clearRecentChats } = RecentChatsSlice.actions;
+export const { setRecentChats, addRecentChat, removeRecentChat, moveRecentChatToTop, updateRecentChat, updateOrAddRecentChat, clearRecentChats } = RecentChatsSlice.actions;
 export default RecentChatsSlice.reducer;
