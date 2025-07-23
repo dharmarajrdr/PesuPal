@@ -37,6 +37,7 @@ const ConversationScreen = ({ activeTabName }) => {
   const [pivotMessageId, setPivotMessageId] = useState(null);
 
   const currentChatPreview = useSelector(state => state.currentChatPreviewSlice);
+  const activeChatTab = useSelector(state => state.activeChatTab);
   const currentUser = currentChatPreview.currentUser || {};
   const otherUser = currentChatPreview.otherUser || {};
 

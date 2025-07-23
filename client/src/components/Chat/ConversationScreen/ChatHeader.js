@@ -52,7 +52,6 @@ const ChatHeader = () => {
                     });
                 } else {
                     apiRequest(`/api/v1/pinned-direct-messages/pin`, 'POST', { 'pinnedUserId': otherUserId, 'orderIndex': 1 }).then(({ data }) => {
-                        console.log(data);
                         dispatch(addPinnedDirectMessage(data));
                         dispatch(setShowChatHeaderOptionsModal(false));
                         dispatch(setCurrentChatPreview({ ...currentChatPreview, pinnedId: data.id }));

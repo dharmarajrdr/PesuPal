@@ -22,7 +22,6 @@ const ActiveChatTabSlice = createSlice({
             if (!details[chatType]) {
                 throw new Error(`Invalid chat type: ${chatType}`);
             }
-            console.log(`Setting active chat tab to: ${chatType}`);
             return details[chatType];
         }
     }
