@@ -20,6 +20,7 @@ import PostReducer from './store/reducers/PostSlice';
 import ActiveRecentChatSlice from './store/reducers/ActiveRecentChatSlice';
 import RecentChatsSlice from './store/reducers/RecentChatsSlice';
 import ChatIdSlice from './store/reducers/ChatIdSlice';
+import MyProfileSlice from './store/reducers/MyProfileSlice';
 import ActiveChatTabSlice from './store/reducers/ActiveChatTabSlice';
 import ShowChatHeaderOptionsModalSlice from './store/reducers/ShowChatHeaderOptionsModalSlice';
 import CurrentChatPreviewSlice from './store/reducers/CurrentChatPreviewSlice';
@@ -36,6 +37,7 @@ const store = configureStore({
         VerticalLoader: VerticalLoaderReducer,
         posts: PostReducer,
         chatId: ChatIdSlice,
+        myProfile: MyProfileSlice,
         activeChatTab: ActiveChatTabSlice,
         activeRecentChat: ActiveRecentChatSlice,
         pinnedDirectMessage: PinnedDirectMessageSlice,
@@ -52,31 +54,17 @@ function App() {
 
     const isAuthPage = ['/signin', '/signup'].includes(location.pathname);
 
-    const [orgId, setOrgId] = useState(sessionStorage.getItem('org-id'));
-    const [profile, setProfile] = useState({ 'id': 8, 'title': 'Me', 'route': '/profile', 'icon': 'fa-regular fa-user', 'isActive': false });
-
     useEffect(() => {
         if (!hasCookie() && !isAuthPage) {
             navigate('/signin');
         }
     }, [location.pathname, navigate]);
 
-    useEffect(() => {
-        if (!isAuthPage) {
-            apiRequest("/api/v1/people/display-picture", "GET").then(({ data }) => {
-                const updatedProfile = { ...profile, image: data, icon: null };
-                setProfile(updatedProfile);
-            }).catch(({ message }) => {
-                console.error("Error fetching profile image:", message);
-            });
-        }
-    }, [orgId]);
-
     return (
         <Provider store={store}>
             <div className="App FRCS">
                 {/* ✅ Only render LeftNavigation if not on /signin or /signup */}
-                {!isAuthPage && <LeftNavigation profile={profile} />}
+                {!isAuthPage && <LeftNavigation />}
                 <VerticalLoader />
 
                 <Routes>
