@@ -18,7 +18,7 @@ public class MessageDto {
 
     private LocalDateTime createdAt;
 
-    private Long sender;
+    private UserPreviewDto sender;
 
     private String message;
 
@@ -34,7 +34,6 @@ public class MessageDto {
 
         MessageDto responseDto = new MessageDto();
         responseDto.setId(directMessage.getId());
-        responseDto.setSender(directMessage.getSender().getId());
         if (!directMessage.isDeleted()) {
             responseDto.setMessage(directMessage.getMessage()); // Only set message if not deleted
         }
@@ -48,7 +47,6 @@ public class MessageDto {
 
         MessageDto responseDto = new MessageDto();
         responseDto.setId(groupChatMessage.getId());
-        responseDto.setSender(groupChatMessage.getSender().getId());
         if (!groupChatMessage.isDeleted()) {
             responseDto.setMessage(groupChatMessage.getMessage()); // Only set message if not deleted
         }

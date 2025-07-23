@@ -4,6 +4,7 @@ import com.pesupal.server.dto.request.GetGroupConversationDto;
 import com.pesupal.server.dto.request.group.CreateGroupMessageDto;
 import com.pesupal.server.dto.response.MediaFileDto;
 import com.pesupal.server.dto.response.MessageDto;
+import com.pesupal.server.dto.response.UserPreviewDto;
 import com.pesupal.server.dto.response.group.GroupMessageDto;
 import com.pesupal.server.enums.Role;
 import com.pesupal.server.exceptions.ActionProhibitedException;
@@ -28,7 +29,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @AllArgsConstructor
@@ -192,19 +195,25 @@ public class GroupChatMessageServiceImpl implements GroupChatMessageService {
         } else {
             messages = groupChatMessageRepository.findAllByGroupId(getGroupConversationDto.getGroupId(), pageable);
         }
+        Map<Long, UserPreviewDto> memo = new HashMap<>();
         return messages.stream().map(gm -> {
-            MessageDto directMessageResponseDto = MessageDto.fromGroupMessage(gm);
+            MessageDto messageDto = MessageDto.fromGroupMessage(gm);
+            Long senderId = gm.getSender().getId();
+            if(!memo.containsKey(senderId)) {
+                memo.put(senderId, UserPreviewDto.fromOrgMember(orgMemberService.getOrgMemberByUserIdAndOrgId(senderId, orgId)));
+            }
+            messageDto.setSender(memo.get(senderId));
             if (gm.isContainsMedia()) {
                 GroupMessageMediaFile groupMessageMediaFile = groupMessageMediaFileRepository.findByGroupChatMessage(gm);
                 if (groupMessageMediaFile != null) {
                     MediaFileDto mediaFileDto = MediaFileDto.fromGroupMessageMediaFile(groupMessageMediaFile);
                     String key = groupMessageMediaFile.getMediaId() + "." + groupMessageMediaFile.getExtension();
                     mediaFileDto.setMediaUrl(s3Service.generatePresignedUrl(key));
-                    directMessageResponseDto.setMedia(mediaFileDto);
+                    messageDto.setMedia(mediaFileDto);
                 }
             }
-            directMessageResponseDto.setReactions(groupChatReactionService.getReactionsCountForMessage(gm));
-            return directMessageResponseDto;
+            messageDto.setReactions(groupChatReactionService.getReactionsCountForMessage(gm));
+            return messageDto;
         }).sorted(Comparator.comparing(MessageDto::getCreatedAt)).toList();
     }
 }
