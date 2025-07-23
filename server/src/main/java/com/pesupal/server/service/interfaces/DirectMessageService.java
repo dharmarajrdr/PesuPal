@@ -1,7 +1,7 @@
 package com.pesupal.server.service.interfaces;
 
 import com.pesupal.server.dto.request.GetConversationBetweenUsers;
-import com.pesupal.server.dto.response.DirectMessagePreviewDto;
+import com.pesupal.server.dto.response.ChatPreviewDto;
 import com.pesupal.server.dto.response.MessageDto;
 import com.pesupal.server.dto.response.RecentChatPagedDto;
 import com.pesupal.server.model.chat.DirectMessage;
@@ -11,7 +11,7 @@ import java.util.List;
 
 public interface DirectMessageService extends ChatService {
 
-    List<MessageDto> getDirectMessagesBetweenUsers(GetConversationBetweenUsers getConversationBetweenUsers);
+    List<MessageDto> getDirectMessagesBetweenUsers(GetConversationBetweenUsers getConversationBetweenUsers, Long userId, Long orgId);
 
     void markAllMessagesAsRead(String chatId, Long userId);
 
@@ -21,5 +21,5 @@ public interface DirectMessageService extends ChatService {
 
     RecentChatPagedDto getRecentChatsPaged(Long userId, Long orgId, Pageable pageable);
 
-    DirectMessagePreviewDto getDirectMessagePreviewByChatId(String chatId, Long userId, Long orgId);
+    ChatPreviewDto getDirectMessagePreviewByChatId(String chatId, Long userId, Long orgId);
 }
