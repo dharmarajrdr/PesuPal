@@ -1,5 +1,5 @@
 .chat-messages {
-    padding: 10px;
+    padding: 10px 0px;
     height: calc(100vh - 60px - 60px);
     overflow-y: auto;
     overflow-x: hidden;
@@ -14,6 +14,15 @@
     font-size: 12px;
     margin: 10px 0px;
     color: gray;
+}
+
+.chat-messages .row {
+    padding: 5px 15px;
+}
+
+.chat-messages .row:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+    border-radius: 5px;
 }
 
 .chat-messages .row.sent {
@@ -38,9 +47,7 @@
 }
 
 .chat-messages .row .message {
-    margin-bottom: 10px;
     width: 100%;
-    overflow: hidden;
 }
 
 .chat-messages .row .message.sent {
@@ -95,7 +102,7 @@
     font-size: 14px;
     font-weight: 500;
     font-family: 'Poppins', sans-serif;
-    padding: 0px 5px 5px 5px;
+    padding: 0px 5px 2px 5px;
     color: var(--primary-color);
     user-select: none;
     cursor: default;
@@ -121,26 +128,47 @@
     word-break: normal;
 }
 
-.actions {
+.message-actions {
+    width: fit-content;
     margin-top: 4px;
     display: flex;
-    gap: 8px;
+    padding: 2px;
+    position: absolute;
+    top: -25px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    box-shadow: 0 2px 5px var(--box-shadow-color);
+    border-radius: 5px;
     display: none;
 }
 
-.delete-icon {
-    color: red;
-    cursor: pointer;
+.row:hover .message-actions {
+    display: flex;
 }
 
-.reactions {
-    display: flex;
-    gap: 6px;
+.message-actions i {
+    font-size: 13px;
+    margin: 0px 2px;
+    padding: 3px 5px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.message-actions i:hover {
+    background-color: #eee;
+}
+
+.message-actions.sent {
+    left: -100px;
+}
+
+.message-actions.received {
+    right: -100px;
 }
 
 .reaction-icon {
     cursor: pointer;
-    color: orange;
+    color: var(--badge-color);
 }
 
 .message-meta {
@@ -148,6 +176,33 @@
     color: #666;
     text-align: right;
     padding: 0 8px 4px;
+}
+
+.message-reacted p {
+    padding: 1px 5px;
+    cursor: default;
+    border-right: 1px solid #ddd;
+}
+
+.message-reacted p:last-child {
+    border-right: none;
+}
+
+.message-reacted p i {
+    font-size: 10px;
+    margin-right: 2px;
+}
+
+.message-reacted p span {
+    color: var(--primary-color);
+}
+
+.message.sent .message-reacted p {
+    border-color: #aaa;
+}
+
+.message.sent .message-reacted p span {
+    color: #eee;
 }
 
 .chat-messages .row .message.sent .message-meta .delivery-status,
