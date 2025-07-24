@@ -1,6 +1,7 @@
 package com.pesupal.server.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.pesupal.server.enums.ChatMode;
 import com.pesupal.server.enums.Reaction;
 import com.pesupal.server.enums.ReadReceipt;
 import com.pesupal.server.model.chat.DirectMessage;
@@ -20,6 +21,8 @@ public class MessageDto {
 
     private UserPreviewDto sender;
 
+    private String chatId;
+
     private String message;
 
     private Boolean deleted;
@@ -30,6 +33,8 @@ public class MessageDto {
 
     private MediaFileDto media;
 
+    private ChatMode chatMode;
+
     public static MessageDto fromDirectMessage(DirectMessage directMessage) {
 
         MessageDto responseDto = new MessageDto();
@@ -38,8 +43,10 @@ public class MessageDto {
             responseDto.setMessage(directMessage.getMessage()); // Only set message if not deleted
         }
         responseDto.setCreatedAt(directMessage.getCreatedAt());
+        responseDto.setChatId(directMessage.getChatId());
         responseDto.setDeleted(directMessage.isDeleted());
         responseDto.setReadReceipt(directMessage.getReadReceipt());
+        responseDto.setChatMode(ChatMode.DIRECT_MESSAGE);
         return responseDto;
     }
 
@@ -51,7 +58,9 @@ public class MessageDto {
             responseDto.setMessage(groupChatMessage.getMessage()); // Only set message if not deleted
         }
         responseDto.setCreatedAt(groupChatMessage.getCreatedAt());
+        responseDto.setChatId(Long.toString(groupChatMessage.getGroup().getId()));
         responseDto.setDeleted(groupChatMessage.isDeleted());
+        responseDto.setChatMode(ChatMode.GROUP_MESSAGE);
         return responseDto;
     }
 }

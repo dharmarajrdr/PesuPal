@@ -7,7 +7,7 @@ import ErrorMessage from '../../ErrorMessage'
 import { useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { setActiveRecentChat } from '../../../store/reducers/ActiveRecentChatSlice'
-import { setRecentChats } from '../../../store/reducers/RecentChatsSlice'
+import { setRecentChats, updateRecentChat } from '../../../store/reducers/RecentChatsSlice'
 
 const NoChatsFound = () => {
 
@@ -48,20 +48,24 @@ const RecentChats = () => {
     const openChatHandler = (chat) => {
         navigate(`${activeChatTab.route}/${chat.chatId}`);
         dispatch(setActiveRecentChat(chat));
-    }
+        const recentMessage = {
+            'number_of_unread_messages': 0
+        };
+        dispatch(updateRecentChat({ 'chatId': chat.chatId, recentMessage }));  // Reset unread messages count
+}
 
-    return activeChatTab ? (
-        <div id='RecentChats' className='FCCS w100 pT5'>
-            {
-                loading ? <Loader /> :
-                    error ? <ErrorMessage message={error} /> :
-                        recentChats?.length ?
-                            recentChats.map((recentChat, index) =>
-                                <RecentChat key={index} recentChat={recentChat} openChatHandler={openChatHandler} />
-                            ) : <NoChatsFound />
-            }
-        </div>
-    ) : null;
+return activeChatTab ? (
+    <div id='RecentChats' className='FCCS w100 pT5'>
+        {
+            loading ? <Loader /> :
+                error ? <ErrorMessage message={error} /> :
+                    recentChats?.length ?
+                        recentChats.map((recentChat, index) =>
+                            <RecentChat key={index} recentChat={recentChat} openChatHandler={openChatHandler} />
+                        ) : <NoChatsFound />
+        }
+    </div>
+) : null;
 }
 
 export default RecentChats

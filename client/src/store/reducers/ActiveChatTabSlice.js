@@ -3,6 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const details = {
     'directMessage': {
         'name': 'directMessage',
+        'chatMode': 'DIRECT_MESSAGE',
         'route': '/chat/messages',
         'recentChatsApi': '/api/v1/direct-messages/recent',
         'chatPreviewApi': '/api/v1/direct-messages/preview',
@@ -12,6 +13,7 @@ const details = {
     },
     'groupMessage': {
         'name': 'groupMessage',
+        'chatMode': 'GROUP_MESSAGE',
         'route': '/chat/groups',
         'recentChatsApi': '/api/v1/group/recent',
         'chatPreviewApi': '/api/v1/group/preview',

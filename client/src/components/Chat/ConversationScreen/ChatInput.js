@@ -15,6 +15,22 @@ const ChatInput = ({ clickSendMessageHandler }) => {
     const handleSend = () => {
         if (message.trim()) {
             clickSendMessageHandler({ message });
+            /*{
+                "id": 174,
+                "createdAt": "2025-07-23T23:23:40.653724",
+                "sender": {
+                    "id": 1,
+                    "displayName": "Dharmaraj",
+                    "displayPicture": "https://avatars.githubusercontent.com/u/66894285?v=4",
+                    "archived": false
+                },
+                "chatId": "1_2_1",
+                "message": "678",
+                "deleted": false,
+                "readReceipt": "SENT",
+                "reactions": {},
+                "chatMode": "DIRECT_MESSAGE"
+            }*/
             const recentMessage = {
                 createdAt: utils.convertTime(new Date(), 12),
                 media: false,
@@ -22,7 +38,7 @@ const ChatInput = ({ clickSendMessageHandler }) => {
                 readReceipt: "SENT",
                 sender: "Me"
             };
-            dispatch(updateRecentChat({ chatId, recentMessage }));
+            dispatch(updateRecentChat({ chatId, recentMessage }));  // issue here. fix this
             dispatch(moveRecentChatToTop(chatId));
             setMessage("");
             // fileInputRef?.current?.value = '';

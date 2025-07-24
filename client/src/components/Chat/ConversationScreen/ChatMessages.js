@@ -9,6 +9,7 @@ const ChatMessages = ({ messages, chatId, retrievingChat, clickSendMessageHandle
     const formatDate = (iso) => new Date(iso).toDateString();
 
     let lastDate = null;
+    let previousMessageSenderId = null;
 
     const chatContainerRef = useRef(null);
 
@@ -32,10 +33,14 @@ const ChatMessages = ({ messages, chatId, retrievingChat, clickSendMessageHandle
                 const showDate = newDate !== lastDate;
                 lastDate = newDate;
 
+                // compare the msg.sender.id of current and previous message
+                const isSameSender = previousMessageSenderId === msg.sender.id;
+                previousMessageSenderId = msg.sender.id;
+
                 return (
                     <div key={msg.id} className='w100'>
                         {showDate && <div className="date-label">{newDate}</div>}
-                        <ChatMessageItem msg={msg} />
+                        <ChatMessageItem msg={msg} isSameSender={isSameSender} />
                     </div>
                 );
             }) : <StartNewConversation clickSendMessageHandler={clickSendMessageHandler} />}

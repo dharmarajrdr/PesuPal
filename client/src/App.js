@@ -1,5 +1,5 @@
 import './App.css';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { hasCookie } from './components/Auth/utils';
 import Signup from './components/Auth/Signup';
@@ -10,45 +10,14 @@ import ChatLayout from './components/Chat/ChatLayout';
 import PeopleLayout from './components/People/PeopleLayout';
 import TeamLayout from './components/Team/TeamLayout';
 import TrackerLayout from './components/Tracker/TrackerLayout';
-import { configureStore } from '@reduxjs/toolkit';
-import { combineReducers } from 'redux';
 import { Provider } from 'react-redux';
-import { VerticalLoaderReducer } from './store/reducers/VerticalLoader';
-import PinnedDirectMessageSlice from './store/reducers/PinnedDirectMessageSlice';
-import { NavigationReducers } from './store/reducers/Navigation';
-import PostReducer from './store/reducers/PostSlice';
-import ActiveRecentChatSlice from './store/reducers/ActiveRecentChatSlice';
-import RecentChatsSlice from './store/reducers/RecentChatsSlice';
-import ChatIdSlice from './store/reducers/ChatIdSlice';
-import MyProfileSlice from './store/reducers/MyProfileSlice';
-import PopupSlice from './store/reducers/PopupSlice';
-import ActiveChatTabSlice from './store/reducers/ActiveChatTabSlice';
-import ShowChatHeaderOptionsModalSlice from './store/reducers/ShowChatHeaderOptionsModalSlice';
-import CurrentChatPreviewSlice from './store/reducers/CurrentChatPreviewSlice';
 import PageNotFound from './components/Auth/PageNotFound';
 import SettingsLayout from './components/Settings/SettingsLayout';
 import MoreFeaturesLayout from './components/More/MoreFeaturesLayout';
 import VerticalLoader from './components/VerticalLoader';
 import CommonContainer from './components/CommonContainer';
 import utils from './utils';
-
-const store = configureStore({
-    reducer: combineReducers({
-        Navigation: NavigationReducers,
-        recentChats: RecentChatsSlice,
-        VerticalLoader: VerticalLoaderReducer,
-        posts: PostReducer,
-        popup: PopupSlice,
-        chatId: ChatIdSlice,
-        myProfile: MyProfileSlice,
-        activeChatTab: ActiveChatTabSlice,
-        activeRecentChat: ActiveRecentChatSlice,
-        pinnedDirectMessage: PinnedDirectMessageSlice,
-        showChatHeaderOptionsModalSlice: ShowChatHeaderOptionsModalSlice,
-        currentChatPreviewSlice: CurrentChatPreviewSlice
-    }),
-    devTools: true
-});
+import store from './store';
 
 function App() {
 

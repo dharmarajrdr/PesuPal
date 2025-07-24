@@ -75,6 +75,13 @@
   justify-content: space-between;
 }
 
+.FCSE {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: flex-start;
+}
+
 .FCSC {
   display: flex;
   flex-direction: column;
