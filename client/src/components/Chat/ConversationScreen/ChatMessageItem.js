@@ -3,6 +3,7 @@ import Message from './Message';
 import MessageActions from './MessageActions';
 import MessageMeta from './MessageMeta';
 import { useSelector } from 'react-redux';
+import UserAvatar from '../../User/UserAvatar';
 
 const extensionTagMapper = {
     "img": ["jpeg", "jpg", "png", "gif", "avif"],
@@ -59,25 +60,44 @@ const MediaDisplayer = ({ media }) => {
     </div>
 }
 
-const ChatMessageItem = ({ msg }) => {
+const SenderName = ({ displayName, sent_or_received, is_super_admin }) => {
+    return <p className={`sender-name ${sent_or_received}`}>
+        {displayName}
+        {is_super_admin && <i title='Super Admin' className='fa fa-user-shield mL5 fs12 super-admin-icon' />}
+    </p>
+}
 
-    const { sender, deleted, createdAt, readReceipt, message, media } = msg;
+const ChatMessageItem = ({ msg, isSameSender }) => {
+
+    const { sender, deleted, createdAt, readReceipt, message, media, chatMode } = msg;
+    const { id: senderId, displayName, displayPicture, is_super_admin } = sender || {};
+
+    const showUserMeta = chatMode == 'GROUP_MESSAGE';
 
     const myProfile = useSelector(state => state.myProfile);
 
-    const isCurrentUser = sender?.id == myProfile?.id;
+    const isCurrentUser = senderId == myProfile?.id;
+
+    const sent_or_received = isCurrentUser ? 'sent' : 'received';
 
     return myProfile ? (
-        <div className='row w100 FRCS'>
-            <div className={`message ${isCurrentUser ? 'sent' : 'received'}`}>
-                {deleted ? <MessageDeleted /> : <>
-                    <MediaDisplayer media={media} />
-                    <div className="message-content">
-                        <Message html={message} />
-                        <MessageActions />
-                    </div>
-                    <MessageMeta createdAt={createdAt} readReceipt={readReceipt} isCurrentUser={isCurrentUser} />
-                </>}
+        <div className={`row w100 FRSS ${sent_or_received}`}>
+            {showUserMeta && (
+                isSameSender ? <div className="user-avatar-placeholder img_40_40 mL5" /> :
+                    <UserAvatar displayName={displayName} displayPicture={displayPicture} />
+            )}
+            <div className={`message-wrapper FCSE ${sent_or_received}`}>
+                {showUserMeta && !isSameSender && <SenderName displayName={displayName} sent_or_received={sent_or_received} is_super_admin={is_super_admin} />}
+                <div className={`message ${sent_or_received}`}>
+                    {deleted ? <MessageDeleted /> : <>
+                        <MediaDisplayer media={media} />
+                        <div className="message-content">
+                            <Message html={message} />
+                            <MessageActions />
+                        </div>
+                        <MessageMeta createdAt={createdAt} readReceipt={readReceipt} isCurrentUser={isCurrentUser} />
+                    </>}
+                </div>
             </div>
         </div>
     ) : null;
