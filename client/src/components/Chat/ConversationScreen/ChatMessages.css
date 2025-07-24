@@ -102,7 +102,7 @@
     font-size: 14px;
     font-weight: 500;
     font-family: 'Poppins', sans-serif;
-    padding: 0px 5px 5px 5px;
+    padding: 0px 5px 2px 5px;
     color: var(--primary-color);
     user-select: none;
     cursor: default;
@@ -176,6 +176,33 @@
     color: #666;
     text-align: right;
     padding: 0 8px 4px;
+}
+
+.message-reacted p {
+    padding: 1px 5px;
+    cursor: default;
+    border-right: 1px solid #ddd;
+}
+
+.message-reacted p:last-child {
+    border-right: none;
+}
+
+.message-reacted p i {
+    font-size: 10px;
+    margin-right: 2px;
+}
+
+.message-reacted p span {
+    color: var(--primary-color);
+}
+
+.message.sent .message-reacted p {
+    border-color: #aaa;
+}
+
+.message.sent .message-reacted p span {
+    color: #eee;
 }
 
 .chat-messages .row .message.sent .message-meta .delivery-status,
