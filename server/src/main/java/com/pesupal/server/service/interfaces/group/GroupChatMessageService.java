@@ -5,10 +5,11 @@ import com.pesupal.server.dto.request.group.CreateGroupMessageDto;
 import com.pesupal.server.dto.response.MessageDto;
 import com.pesupal.server.dto.response.group.GroupMessageDto;
 import com.pesupal.server.model.group.GroupChatMessage;
+import com.pesupal.server.service.interfaces.ChatService;
 
 import java.util.List;
 
-public interface GroupChatMessageService {
+public interface GroupChatMessageService extends ChatService {
 
     GroupMessageDto postMessageInGroup(CreateGroupMessageDto createGroupMessageDto, Long userId, Long orgId);
 
