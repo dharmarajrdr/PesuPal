@@ -85,6 +85,9 @@ const ConversationScreen = ({ activeTabName }) => {
 		},
 		onMessageDelivery: (msg) => {
 			setMessages((prev) => [...prev, msg]);
+		},
+		onTyping: () => {
+			
 		}
 	});
 

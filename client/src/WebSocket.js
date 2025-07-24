@@ -20,7 +20,7 @@ const subscribe = {
     }
 }
 
-const useWebSocket = ({ onPrivateMessage, onGroupMessage, onError, onMessageDelivery, userId }) => {
+const useWebSocket = ({ onPrivateMessage, onGroupMessage, onError, onMessageDelivery, onTyping, userId }) => {
 
     const stompClientRef = useRef(null);
 
@@ -37,7 +37,8 @@ const useWebSocket = ({ onPrivateMessage, onGroupMessage, onError, onMessageDeli
                     { event: `/topic/direct-message.${userId}`, callback: onPrivateMessage },
                     { event: `/topic/group-message.${userId}`, callback: onGroupMessage },
                     { event: `/queue/errors.${userId}`, callback: onError },
-                    { event: `/topic/message-delivery.${userId}`, callback: onMessageDelivery }
+                    { event: `/topic/message-delivery.${userId}`, callback: onMessageDelivery },
+                    { event: `/topic/typing.${userId}`, callback: onTyping }
                 ]);
 
             },
@@ -61,14 +62,31 @@ const useWebSocket = ({ onPrivateMessage, onGroupMessage, onError, onMessageDeli
                     body: JSON.stringify(message),
                 });
             }
+        },
+        typing: (message) => {
+            if (stompClientRef.current?.connected) {
+                stompClientRef.current.publish({
+                    destination: `/app/chat.direct-message.typing`,
+                    body: JSON.stringify(message),
+                });
+            }
         }
     }
 
     const GroupMessage = {
+        
         send: (message) => {
             if (stompClientRef.current?.connected) {
                 stompClientRef.current.publish({
                     destination: `/app/chat.group-message`,
+                    body: JSON.stringify(message),
+                });
+            }
+        },
+        typing: (message) => {
+            if (stompClientRef.current?.connected) {
+                stompClientRef.current.publish({
+                    destination: `/app/chat.group-message.typing`,
                     body: JSON.stringify(message),
                 });
             }

@@ -1,5 +1,5 @@
 .chat-messages {
-    padding: 10px;
+    padding: 10px 0px;
     height: calc(100vh - 60px - 60px);
     overflow-y: auto;
     overflow-x: hidden;
@@ -14,6 +14,15 @@
     font-size: 12px;
     margin: 10px 0px;
     color: gray;
+}
+
+.chat-messages .row {
+    padding: 5px 15px;
+}
+
+.chat-messages .row:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+    border-radius: 5px;
 }
 
 .chat-messages .row.sent {
@@ -38,7 +47,6 @@
 }
 
 .chat-messages .row .message {
-    margin-bottom: 10px;
     width: 100%;
     overflow: hidden;
 }
