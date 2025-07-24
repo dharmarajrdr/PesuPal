@@ -1,5 +1,6 @@
 package com.pesupal.server.service.implementations.group;
 
+import com.pesupal.server.dto.request.ChatMessageDto;
 import com.pesupal.server.dto.request.GetGroupConversationDto;
 import com.pesupal.server.dto.request.group.CreateGroupMessageDto;
 import com.pesupal.server.dto.response.MediaFileDto;
@@ -23,26 +24,29 @@ import com.pesupal.server.service.interfaces.group.GroupChatMessageService;
 import com.pesupal.server.service.interfaces.group.GroupChatReactionService;
 import com.pesupal.server.strategies.media_storage.S3Service;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 
 @Service
 @AllArgsConstructor
+@Qualifier("groupChatMessageService")
 public class GroupChatMessageServiceImpl implements GroupChatMessageService {
 
     private final S3Service s3Service;
     private final OrgMemberService orgMemberService;
     private final GroupChatMemberService groupChatMemberService;
     private final GroupChatReactionService groupChatReactionService;
+    private final GroupChatMemberRepository groupChatMemberRepository;
     private final GroupChatMessageRepository groupChatMessageRepository;
     private final GroupChatConfigurationService groupChatConfigurationService;
     private final GroupMessageMediaFileRepository groupMessageMediaFileRepository;
-    private final GroupChatMemberRepository groupChatMemberRepository;
 
     /**
      * Posts a message in a group chat.
@@ -238,5 +242,27 @@ public class GroupChatMessageServiceImpl implements GroupChatMessageService {
         }
 
         groupChatMemberRepository.save(groupChatMember);
+    }
+
+    /**
+     * Saves a chat message.
+     *
+     * @param chatMessageDto
+     * @return
+     */
+    @Override
+    public MessageDto save(ChatMessageDto chatMessageDto) {
+        return null;
+    }
+
+    /**
+     * Broadcasts a message to all subscribers of the topic.
+     *
+     * @param messageDto
+     * @param messagingTemplate
+     */
+    @Override
+    public void broadcastMessage(MessageDto messageDto, SimpMessagingTemplate messagingTemplate) {
+
     }
 }
