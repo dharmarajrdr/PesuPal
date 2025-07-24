@@ -93,7 +93,7 @@ const ChatMessageItem = ({ msg, isSameSender }) => {
                         <MediaDisplayer media={media} />
                         <div className="message-content">
                             <Message html={message} />
-                            <MessageActions />
+                            <MessageActions isCurrentUser={isCurrentUser} />
                         </div>
                         <MessageMeta createdAt={createdAt} readReceipt={readReceipt} isCurrentUser={isCurrentUser} />
                     </>}

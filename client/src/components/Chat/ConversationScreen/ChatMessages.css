@@ -48,7 +48,6 @@
 
 .chat-messages .row .message {
     width: 100%;
-    overflow: hidden;
 }
 
 .chat-messages .row .message.sent {
@@ -129,26 +128,47 @@
     word-break: normal;
 }
 
-.actions {
+.message-actions {
+    width: fit-content;
     margin-top: 4px;
     display: flex;
-    gap: 8px;
+    padding: 2px;
+    position: absolute;
+    top: -25px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    box-shadow: 0 2px 5px var(--box-shadow-color);
+    border-radius: 5px;
     display: none;
 }
 
-.delete-icon {
-    color: red;
-    cursor: pointer;
+.row:hover .message-actions {
+    display: flex;
 }
 
-.reactions {
-    display: flex;
-    gap: 6px;
+.message-actions i {
+    font-size: 13px;
+    margin: 0px 2px;
+    padding: 3px 5px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.message-actions i:hover {
+    background-color: #eee;
+}
+
+.message-actions.sent {
+    left: -100px;
+}
+
+.message-actions.received {
+    right: -100px;
 }
 
 .reaction-icon {
     cursor: pointer;
-    color: orange;
+    color: var(--badge-color);
 }
 
 .message-meta {
