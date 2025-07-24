@@ -21,6 +21,8 @@ const ConversationScreen = ({ activeTabName }) => {
 
 	const { chatId } = useParams();
 
+	console.log(`ConversationScreen: chatId = ${chatId}`);
+
 	const dispatch = useDispatch();
 
 	dispatch(setActiveChatTab(activeTabName));
@@ -37,57 +39,77 @@ const ConversationScreen = ({ activeTabName }) => {
 	const myProfile = useSelector(state => state.myProfile) || {};
 	const { displayName, userId, active } = currentChatPreview || {};
 
+	const updateRecentChat = (msg) => {
+
+		console.log("Received message:", msg);
+
+		const { chatMode, message, sender } = msg || {};
+
+		if (chatMode !== activeChatTab.chatMode) {
+			return; // If the message is not in the current chat mode, ignore it
+		}
+
+		console.log("user is in current chat mode:", activeChatTab.chatMode);
+
+		const isChatOpen = chatId == msg.chatId;
+
+		console.log(`Current chatId = ${chatId}. Message chatId = ${msg.chatId}. Is chat open? ${isChatOpen}`);
+
+		const recentMessage = {
+			chatId: msg.chatId,
+			name: sender.displayName,
+			image: sender.displayPicture,
+			recentMessage: {
+				sender: sender.displayName,
+				message: message,
+				media: false,
+				createdAt: utils.convertTime(msg.createdAt, 12)
+			}
+		};
+
+		if (!isChatOpen) {  // If the chat is not open, then show the number of unread messages
+
+			console.log(`So, showing the number of unread messages for chatId: ${msg.chatId}`);
+
+			Object.assign(recentMessage, { number_of_unread_messages: 1 });
+		}
+
+		if (isChatOpen) {	// User is waiting for a response
+
+			console.log(`Since user is in the chat, rendering the message in the chat`);
+
+			setMessages((prev) => [...prev, msg]);
+		}
+
+		dispatch(updateOrAddRecentChat({ 'chatId': msg.chatId, recentMessage }));
+
+		console.log(`Updating recent chat for chatId: ${msg.chatId}`);
+
+		dispatch(moveRecentChatToTop(msg.chatId));
+
+		console.log(`Moved recent chat to top for chatId: ${msg.chatId}`);
+
+	}
+
 	const { DirectMessage, GroupMessage } = useWebSocket({
 		userId: myProfile.id,
 		onPrivateMessage: (msg) => {
 
-			const { chatMode, message, sender } = msg || {};
-
-			if (chatMode !== activeChatTab.chatMode) {
-				return; // If the message is not in the current chat mode, ignore it
-			}
-
-			if (activeChatTab.name == 'directMessage') {
-
-				const isChatOpen = chatId == msg.chatId;
-
-				if (isChatOpen) {
-					setMessages((prev) => [...prev, msg]);
-				}
-
-				const recentMessage = {
-					chatId: msg.chatId,
-					name: sender.displayName,
-					image: sender.displayPicture,
-					recentMessage: {
-						sender: sender.id,
-						message: msg.message,
-						media: false,
-						createdAt: utils.convertTime(msg.createdAt, 12)
-					}
-				};
-
-				if (!isChatOpen) {  // If the chat is not open, then show the number of unread messages
-					Object.assign(recentMessage, { number_of_unread_messages: 1 });
-				}
-
-				dispatch(updateOrAddRecentChat({ chatId: msg.chatId, recentMessage }));
-				dispatch(moveRecentChatToTop(msg.chatId));
-			} else if (activeChatTab.name == 'groupMessage') {
-
-			}
+			updateRecentChat(msg);
 		},
 		onGroupMessage: (msg) => {
-			setMessages((prev) => [...prev, msg]);
+
+			updateRecentChat(msg);
 		},
 		onError: (error) => {
 			dispatch(showPopup({ message: error, type: 'error' }));
 		},
 		onMessageDelivery: (msg) => {
-			setMessages((prev) => [...prev, msg]);
+
+			updateRecentChat(msg);
 		},
 		onTyping: () => {
-			
+
 		}
 	});
 
@@ -106,19 +128,12 @@ const ConversationScreen = ({ activeTabName }) => {
 
 		const payload = {
 			orgId: sessionStorage.getItem('org-id'),
-			chatId: 'room123',
-			"createdAt": new Date(),
-			sender: myProfile,
 			senderId: myProfile.id,
-			receiverId: userId,
-			message,
-			isGroupMessage: false,
-			readReceipt: "SENT",
-			reactions: {},
-			directMessageMediaFiles: []
+			message
 		};
 
 		if (activeChatTab.name === 'directMessage') {
+			Object.assign(payload, { chatId });
 			DirectMessage.send(payload);
 		} else if (activeChatTab.name === 'groupMessage') {
 			GroupMessage.send(payload);
