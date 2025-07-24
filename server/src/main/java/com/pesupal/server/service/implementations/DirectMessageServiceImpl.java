@@ -19,11 +19,13 @@ import com.pesupal.server.repository.DirectMessageMediaFileRepository;
 import com.pesupal.server.repository.DirectMessageRepository;
 import com.pesupal.server.service.interfaces.*;
 import com.pesupal.server.strategies.media_storage.S3Service;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -31,6 +33,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
+@Qualifier("directMessageService")
 public class DirectMessageServiceImpl implements DirectMessageService {
 
     private final S3Service s3Service;
@@ -220,12 +223,10 @@ public class DirectMessageServiceImpl implements DirectMessageService {
 
         Long senderId = chatMessageDto.getSenderId();
         User sender = userService.getUserById(senderId);
-        OrgMember senderOrgMember = orgMemberService.getOrgMemberByUserAndOrg(sender, org);
-        if (senderOrgMember.isArchived()) {
-            throw new PermissionDeniedException("You are no longer a member of this org.");
-        }
 
-        Long receiverId = chatMessageDto.getReceiverId();
+        Long[] parsedChatId = Chat.parseChatId(chatMessageDto.getChatId());
+
+        Long receiverId = parsedChatId[0].equals(senderId) ? parsedChatId[1] : parsedChatId[0];
         User receiver = userService.getUserById(receiverId);
         OrgMember receiverOrgMember = orgMemberService.getOrgMemberByUserAndOrg(receiver, org);
         if (receiverOrgMember.isArchived()) {
@@ -282,5 +283,18 @@ public class DirectMessageServiceImpl implements DirectMessageService {
             chatPreviewDto.setPinnedId(pinnedDirectMessage.get().getId());
         }
         return chatPreviewDto;
+    }
+
+    /**
+     * Broadcasts a message to the receiver and sender's topic.
+     *
+     * @param messageDto
+     * @param messagingTemplate
+     */
+    @Override
+    public void broadcastMessage(MessageDto messageDto, SimpMessagingTemplate messagingTemplate) {
+
+        messagingTemplate.convertAndSend("/topic/direct-message." + messageDto.getReceiverId(), messageDto);
+        messagingTemplate.convertAndSend("/topic/message-delivery." + messageDto.getSender().getId(), messageDto);
     }
 }
