@@ -90,10 +90,10 @@ const ChatMessageItem = ({ msg, isSameSender }) => {
                 {showUserMeta && !isSameSender && <SenderName displayName={displayName} sent_or_received={sent_or_received} is_super_admin={is_super_admin} />}
                 <div className={`message ${sent_or_received}`}>
                     {deleted ? <MessageDeleted /> : <>
+                        <MessageActions isCurrentUser={isCurrentUser} />
                         <MediaDisplayer media={media} />
                         <div className="message-content">
                             <Message html={message} />
-                            <MessageActions isCurrentUser={isCurrentUser} />
                         </div>
                         <MessageMeta createdAt={createdAt} readReceipt={readReceipt} isCurrentUser={isCurrentUser} reactions={reactions} />
                     </>}

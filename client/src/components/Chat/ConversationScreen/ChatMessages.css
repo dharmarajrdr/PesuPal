@@ -21,8 +21,16 @@
 }
 
 .chat-messages .row:hover {
-    background-color: rgba(0, 0, 0, 0.05);
+    background-color: rgba(0, 0, 0, 0.033);
     border-radius: 5px;
+}
+
+.chat-messages .row:hover .message.sent {
+    background-color: var(--primary-color-active);
+}
+
+.chat-messages .row:hover .message.received {
+    background-color: var(--pure-white-hover)
 }
 
 .chat-messages .row.sent {
@@ -48,6 +56,7 @@
 
 .chat-messages .row .message {
     width: 100%;
+    position: relative;
 }
 
 .chat-messages .row .message.sent {
@@ -163,11 +172,11 @@
 }
 
 .message-actions.sent {
-    left: -100px;
+    left: -80px;
 }
 
 .message-actions.received {
-    right: -100px;
+    right: -80px;
 }
 
 .reaction-icon {
