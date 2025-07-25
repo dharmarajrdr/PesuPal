@@ -4,6 +4,7 @@ import com.pesupal.server.config.StaticConfig;
 import com.pesupal.server.helpers.IdGenerator;
 import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.PrePersist;
 import lombok.Data;
 
 @Data
@@ -16,10 +17,12 @@ public abstract class PublicAccessModel extends CreationTimeAuditable {
     @Column(unique = true, updatable = false, nullable = false)
     private String publicId;
 
-    private void generatePublicId() {
+    @PrePersist
+    public void generatePublicId() {
 
         if (this.publicId == null) {
             this.publicId = IdGenerator.generateRandomId(StaticConfig.PUBLIC_KEY_LENGTH);
         }
+        setCreationTime();
     }
 }

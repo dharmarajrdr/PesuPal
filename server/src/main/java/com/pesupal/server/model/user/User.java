@@ -2,7 +2,7 @@ package com.pesupal.server.model.user;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.pesupal.server.enums.Role;
-import com.pesupal.server.model.CreationTimeAuditable;
+import com.pesupal.server.model.PublicAccessModel;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @Entity(name = "users")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class User extends CreationTimeAuditable {
+public class User extends PublicAccessModel {
 
     @Column(unique = true, nullable = false)
     private String email;
