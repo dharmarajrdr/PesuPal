@@ -19,6 +19,7 @@ import com.pesupal.server.repository.DirectMessageMediaFileRepository;
 import com.pesupal.server.repository.DirectMessageRepository;
 import com.pesupal.server.service.interfaces.*;
 import com.pesupal.server.strategies.media_storage.S3Service;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
@@ -43,17 +44,19 @@ public class DirectMessageServiceImpl implements DirectMessageService {
     private final DirectMessageRepository directMessageRepository;
     private final PinnedDirectMessageService pinnedDirectMessageService;
     private final DirectMessageReactionService directMessageReactionService;
+    private final DirectMessageMediaFileService directMessageMediaFileService;
     private final DirectMessageMediaFileRepository directMessageMediaFileRepository;
 
-    public DirectMessageServiceImpl(DirectMessageRepository directMessageRepository, @Lazy DirectMessageReactionService directMessageReactionService, UserService userService, OrgService orgService, OrgMemberService orgMemberService, PinnedDirectMessageService pinnedDirectMessageService, DirectMessageMediaFileRepository directMessageMediaFileRepository, S3Service s3Service) {
-        this.directMessageRepository = directMessageRepository;
+    public DirectMessageServiceImpl(DirectMessageRepository directMessageRepository, @Lazy DirectMessageReactionService directMessageReactionService, UserService userService, OrgService orgService, OrgMemberService orgMemberService, PinnedDirectMessageService pinnedDirectMessageService, DirectMessageMediaFileRepository directMessageMediaFileRepository, S3Service s3Service, DirectMessageMediaFileService directMessageMediaFileService) {
+        this.s3Service = s3Service;
         this.orgService = orgService;
         this.userService = userService;
         this.orgMemberService = orgMemberService;
+        this.directMessageRepository = directMessageRepository;
         this.pinnedDirectMessageService = pinnedDirectMessageService;
         this.directMessageReactionService = directMessageReactionService;
+        this.directMessageMediaFileService = directMessageMediaFileService;
         this.directMessageMediaFileRepository = directMessageMediaFileRepository;
-        this.s3Service = s3Service;
     }
 
     /**
@@ -216,6 +219,7 @@ public class DirectMessageServiceImpl implements DirectMessageService {
      * @param chatMessageDto
      */
     @Override
+    @Transactional
     public MessageDto save(ChatMessageDto chatMessageDto) {
 
         Long orgId = chatMessageDto.getOrgId();
@@ -233,6 +237,8 @@ public class DirectMessageServiceImpl implements DirectMessageService {
             throw new ActionProhibitedException("User " + receiverOrgMember.getDisplayName() + " is no longer a member of this org.");
         }
 
+        boolean containsMedia = chatMessageDto.getMedia() != null;
+
         String chatId = Chat.getChatId(senderId, receiverId, orgId);
         DirectMessage directMessage = new DirectMessage();
         directMessage.setSender(sender);
@@ -240,10 +246,15 @@ public class DirectMessageServiceImpl implements DirectMessageService {
         directMessage.setOrg(org);
         directMessage.setChatId(chatId);
         directMessage.setDeleted(false);
-        directMessage.setContainsMedia(false);
+        directMessage.setContainsMedia(containsMedia);
         directMessage.setReadReceipt(ReadReceipt.SENT);
         directMessage.setMessage(chatMessageDto.getMessage());
         directMessage = directMessageRepository.save(directMessage);
+        if (containsMedia) { // Store media file if present
+            DirectMessageMediaFile directMessageMediaFile = DirectMessageMediaFile.fromMediaUploadDto(chatMessageDto.getMedia());
+            directMessageMediaFile.setDirectMessage(directMessage);
+            directMessageMediaFileService.save(directMessageMediaFile);
+        }
         return toMessageDto(directMessage, orgId, new HashMap<>());
     }
 
