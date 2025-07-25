@@ -33,6 +33,7 @@ public class OrgMemberServiceImpl implements OrgMemberService {
 
     private final OrgService orgService;
     private final UserService userService;
+    private final AuthService authService;
     private final DepartmentService departmentService;
     private final DesignationService designationService;
     private final OrgMemberRepository orgMemberRepository;
@@ -346,5 +347,27 @@ public class OrgMemberServiceImpl implements OrgMemberService {
     public UserPreviewDto getUserPreview(Long userId, Long orgId) {
 
         return UserPreviewDto.fromOrgMember(getOrgMemberByUserIdAndOrgId(userId, orgId));
+    }
+
+    /**
+     * Generates a token with organization member ID.
+     *
+     * @param publicUserId
+     * @param publicOrgId
+     * @return
+     */
+    @Override
+    public String generateTokenWithOrgMemberId(String publicUserId, String publicOrgId) {
+
+        OrgMember orgMember = orgMemberRepository.findByUser_PublicIdAndOrg_PublicId(publicUserId, publicOrgId).orElseThrow(() -> new PermissionDeniedException("You do not have permission to access this organization."));
+
+        if (orgMember.isArchived()) {
+            throw new PermissionDeniedException("You are no longer part of this organization.");
+        }
+        if (!orgMember.getOrg().isActive()) {
+            throw new ActionProhibitedException("Subscription for this organization is not active.");
+        }
+
+        return authService.generateTokenWithOrgContext(orgMember.getUser().getEmail(), orgMember.getPublicId());
     }
 }

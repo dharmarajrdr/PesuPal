@@ -39,4 +39,6 @@ public interface OrgMemberService {
     String getOrgMemberImageByUserIdAndOrgId(Long userId, Long currentOrgId);
 
     UserPreviewDto getUserPreview(Long userId, Long orgId);
+
+    String generateTokenWithOrgMemberId(String publicUserId, String publicOrgId);
 }
