@@ -26,13 +26,13 @@ public class JwtUtil {
     public String generateToken(CustomUserDetails userDetails) {
         JwtBuilder builder = Jwts.builder()
                 .subject(userDetails.getUsername())
-                .claim("user-id", userDetails.getUserPublicId())
+                .claim("userId", userDetails.getUserPublicId())
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + JWT_EXPIRATION_IN_MILLISECONDS))
                 .signWith(secretKey, Jwts.SIG.HS256);
 
         if (userDetails.getOrgMemberPublicId() != null) {
-            builder.claim("org-member-id", userDetails.getOrgMemberPublicId());
+            builder.claim("orgMemberId", userDetails.getOrgMemberPublicId());
         }
 
         return builder.compact();
@@ -56,10 +56,13 @@ public class JwtUtil {
         return email.equals(userDetails.getUsername());
     }
 
+    public JwtParser withJwtParser() {
+        return Jwts.parser().verifyWith(secretKey).build();
+    }
+
     public Claims extractAllClaims(String token) {
         try {
-            JwtParser jwtParser = Jwts.parser().verifyWith(secretKey).build();
-            return jwtParser.parseSignedClaims(token).getPayload();
+            return withJwtParser().parseSignedClaims(token).getPayload();
         } catch (Exception e) {
             throw new PermissionDeniedException("Invalid or expired token.");
         }
