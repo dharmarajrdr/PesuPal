@@ -1,5 +1,7 @@
 package com.pesupal.server.config;
 
+import com.pesupal.server.helpers.InputValidator;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,7 +21,7 @@ public final class RequestContext {
     // Get any value with type safety
     @SuppressWarnings("unchecked")
     public static <T> T get(String key, Class<T> clazz) {
-        Object value = context.get().get(key);
+        Object value = InputValidator.headerRequired(context.get().get(key), key);
         return clazz.isInstance(value) ? (T) value : null;
     }
 
