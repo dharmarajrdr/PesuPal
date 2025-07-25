@@ -44,8 +44,8 @@ public class AuthServiceImpl implements AuthService {
      * @return
      */
     @Override
-    public String generateTokenWithOrgContext(String email, Long orgMemberId) {
-        
+    public String generateTokenWithOrgContext(String email, String orgMemberId) {
+
         CustomUserDetails userDetails = (CustomUserDetails) userDetailsService.loadUserByUsername(email);
 
         Map<String, Object> additionalClaims = new HashMap<>();

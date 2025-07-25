@@ -6,5 +6,5 @@ public interface AuthService {
 
     String login(UserLoginDto userLoginDto);
 
-    String generateTokenWithOrgContext(String email, Long orgMemberId);
+    String generateTokenWithOrgContext(String email, String orgMemberId);
 }
