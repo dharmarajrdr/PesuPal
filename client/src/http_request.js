@@ -3,12 +3,10 @@ import utils from "./utils";
 export async function apiRequest(endpoint, method = 'GET', data = null, customHeaders = {}) {
 
     const token = sessionStorage.getItem('token') || utils.parseCookie().get('token');
-    const orgId = sessionStorage.getItem('org-id'); // Optional: get orgId from session
 
     const headers = {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
-        ...(orgId && { 'X-Org-Id': orgId }),
         ...customHeaders,
     };
 
