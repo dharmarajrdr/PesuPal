@@ -4,6 +4,7 @@ import com.pesupal.server.config.RequestContext;
 import com.pesupal.server.exceptions.MandatoryDataMissingException;
 import com.pesupal.server.security.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -15,6 +16,11 @@ public class CurrentValueRetriever {
     protected Long getCurrentUserId() {
 
         return securityUtil.getCurrentUserId();
+    }
+
+    protected UserDetails getCurrentUserDetails() {
+
+        return securityUtil.getCurrentUserDetails();
     }
 
     protected Long getCurrentOrgId() {
