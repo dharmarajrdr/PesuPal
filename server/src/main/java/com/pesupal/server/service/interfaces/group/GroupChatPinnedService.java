@@ -15,6 +15,8 @@ public interface GroupChatPinnedService {
 
     List<PinnedChatDto> getAllPinnedGroupChatMessages(Long currentUserId, Long currentOrgId);
 
+    boolean isChatPinned(Long pinnedById, Long pinnedUserId, Long orgId);
+
     PinnedChatDto pinGroupChatMessage(CreatePinGroupChatMessageDto createPinGroupChatMessageDto, Long currentUserId, Long currentOrgId);
 
     void unpinGroupChatMessage(Long id, Long currentUserId, Long currentOrgId);

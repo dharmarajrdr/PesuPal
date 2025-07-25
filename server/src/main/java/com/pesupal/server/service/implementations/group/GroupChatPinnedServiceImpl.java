@@ -2,26 +2,33 @@ package com.pesupal.server.service.implementations.group;
 
 import com.pesupal.server.dto.request.PinnedChatDto;
 import com.pesupal.server.dto.request.group.CreatePinGroupChatMessageDto;
+import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.model.group.Group;
 import com.pesupal.server.model.group.GroupChatPinned;
-import com.pesupal.server.model.org.Org;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.model.user.User;
 import com.pesupal.server.repository.GroupChatPinnedRepository;
 import com.pesupal.server.service.interfaces.OrgMemberService;
 import com.pesupal.server.service.interfaces.group.GroupChatPinnedService;
-import lombok.AllArgsConstructor;
+import com.pesupal.server.service.interfaces.group.GroupService;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
-@AllArgsConstructor
 public class GroupChatPinnedServiceImpl implements GroupChatPinnedService {
 
-    private final GroupChatPinnedRepository groupChatPinnedRepository;
+    private final GroupService groupService;
     private final OrgMemberService orgMemberService;
+    private final GroupChatPinnedRepository groupChatPinnedRepository;
+
+    public GroupChatPinnedServiceImpl(@Lazy GroupService groupService, OrgMemberService orgMemberService, GroupChatPinnedRepository groupChatPinnedRepository) {
+        this.groupService = groupService;
+        this.orgMemberService = orgMemberService;
+        this.groupChatPinnedRepository = groupChatPinnedRepository;
+    }
 
     /**
      * Retrieves a pinned group by the ID of the user who pinned it, the group ID, and the organization ID.
@@ -46,11 +53,22 @@ public class GroupChatPinnedServiceImpl implements GroupChatPinnedService {
     @Override
     public List<PinnedChatDto> getAllPinnedGroupChatMessages(Long userId, Long orgId) {
 
-        OrgMember orgMember = orgMemberService.getOrgMemberByUserIdAndOrgId(userId, orgId);
-        Org org = orgMember.getOrg();
         return groupChatPinnedRepository.findAllByPinnedByIdAndGroup_Org_IdOrderByOrderIndexAsc(userId, orgId).stream().map(groupChatPinned -> {
             return PinnedChatDto.fromUserAndOrgMemberAndPinnedGroupChatMessage(groupChatPinned);
         }).toList();
+    }
+
+    /**
+     * Checks if a chat is pinned for a specific user.
+     *
+     * @param pinnedById
+     * @param groupId
+     * @return
+     */
+    @Override
+    public boolean isChatPinned(Long pinnedById, Long groupId, Long orgId) {
+
+        return groupChatPinnedRepository.existsByPinnedByIdAndGroupId(pinnedById, groupId);
     }
 
     /**
@@ -64,7 +82,21 @@ public class GroupChatPinnedServiceImpl implements GroupChatPinnedService {
     @Override
     public PinnedChatDto pinGroupChatMessage(CreatePinGroupChatMessageDto createPinGroupChatMessageDto, Long userId, Long orgId) {
 
-        return null;
+        OrgMember orgMember = orgMemberService.getOrgMemberByUserIdAndOrgId(userId, orgId);
+
+        boolean alreadyPinned = isChatPinned(userId, createPinGroupChatMessageDto.getPinnedGroupId(), orgId);
+        if (alreadyPinned) {
+            throw new ActionProhibitedException("This group is already pinned.");
+        }
+
+        Group group = groupService.getGroupById(createPinGroupChatMessageDto.getPinnedGroupId());
+
+        GroupChatPinned groupChatPinned = new GroupChatPinned();
+        groupChatPinned.setPinnedBy(orgMember.getUser());
+        groupChatPinned.setGroup(group);
+        groupChatPinned.setOrderIndex(createPinGroupChatMessageDto.getOrderIndex());
+        groupChatPinnedRepository.save(groupChatPinned);
+        return PinnedChatDto.fromUserAndOrgMemberAndPinnedGroupChatMessage(groupChatPinned);
     }
 
     /**

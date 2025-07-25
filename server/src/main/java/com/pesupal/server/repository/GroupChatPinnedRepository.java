@@ -15,4 +15,6 @@ public interface GroupChatPinnedRepository extends JpaRepository<GroupChatPinned
     Optional<GroupChatPinned> findByPinnedByAndGroup(User pinnedBy, Group group);
 
     List<GroupChatPinned> findAllByPinnedByIdAndGroup_Org_IdOrderByOrderIndexAsc(Long userId, Long orgId);
+
+    boolean existsByPinnedByIdAndGroupId(Long pinnedById, Long groupId);
 }
