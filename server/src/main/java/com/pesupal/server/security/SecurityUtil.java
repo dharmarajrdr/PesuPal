@@ -54,14 +54,12 @@ public class SecurityUtil {
      *
      * @return
      */
-    public UserDetails getCurrentUserDetails() {
+    public CustomUserDetails getCurrentUserDetails() {
 
         Object principal = getCurrentPrincipal();
 
         if (principal instanceof CustomUserDetails) {
             return (CustomUserDetails) principal;
-        } else if (principal instanceof UserDetails) {
-            return (UserDetails) principal;
         }
 
         throw new PermissionDeniedException("Unable to retrieve user details from authentication principal.");

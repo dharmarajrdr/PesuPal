@@ -2,9 +2,9 @@ package com.pesupal.server.helpers;
 
 import com.pesupal.server.config.RequestContext;
 import com.pesupal.server.exceptions.MandatoryDataMissingException;
+import com.pesupal.server.security.CustomUserDetails;
 import com.pesupal.server.security.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -13,14 +13,23 @@ public class CurrentValueRetriever {
     @Autowired
     private SecurityUtil securityUtil;
 
+    /**
+     * @return
+     * @deprecated
+     */
     protected Long getCurrentUserId() {
 
         return securityUtil.getCurrentUserId();
     }
 
-    protected UserDetails getCurrentUserDetails() {
+    protected CustomUserDetails getCurrentUserDetails() {
 
         return securityUtil.getCurrentUserDetails();
+    }
+
+    protected String getCurrentOrgMemberPublicId() {
+
+        return getCurrentUserDetails().getOrgMemberPublicId();
     }
 
     protected Long getCurrentOrgId() {
