@@ -30,7 +30,7 @@ public class CustomUserDetailsServiceImpl implements CustomUserDetailsService {
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 
         User user = userService.getUserByEmail(email);
-        return new CustomUserDetails(user.getEmail(), user.getPassword(), user.getId().toString(), null, Collections.singleton(new SimpleGrantedAuthority(Role.USER.name())));
+        return new CustomUserDetails(user.getEmail(), user.getPassword(), user.getPublicId(), null, Collections.singleton(new SimpleGrantedAuthority(Role.USER.name())));
     }
 
 }
