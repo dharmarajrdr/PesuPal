@@ -41,7 +41,7 @@ public class S3Service implements MediaService {
 
         String extension = Objects.requireNonNull(file.getOriginalFilename()).substring(file.getOriginalFilename().lastIndexOf('.'));
         UUID fileName = UUID.randomUUID();
-        String fileNameWithExtension = randomUUID + extension;
+        String fileNameWithExtension = fileName + extension;
         Long size = file.getSize();
 
         s3Client.putObject(
