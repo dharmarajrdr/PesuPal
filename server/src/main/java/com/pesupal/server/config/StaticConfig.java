@@ -10,7 +10,7 @@ public class StaticConfig {
 
     public static final int FREE_TRIAL_DAYS = 5;
 
-    public static final int JWT_EXPIRATION_IN_HOURS = 5;
+    public static final int JWT_EXPIRATION_IN_HOURS = 24;
 
     public static final String MEDIA_PATH = "/Users/dharma-13910/Videos/";
 
