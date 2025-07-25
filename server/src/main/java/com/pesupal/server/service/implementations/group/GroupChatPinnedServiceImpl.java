@@ -3,10 +3,13 @@ package com.pesupal.server.service.implementations.group;
 import com.pesupal.server.dto.request.PinnedChatDto;
 import com.pesupal.server.dto.request.group.CreatePinGroupChatMessageDto;
 import com.pesupal.server.exceptions.ActionProhibitedException;
+import com.pesupal.server.exceptions.DataNotFoundException;
+import com.pesupal.server.exceptions.PermissionDeniedException;
 import com.pesupal.server.model.group.Group;
 import com.pesupal.server.model.group.GroupChatPinned;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.model.user.User;
+import com.pesupal.server.repository.GroupChatMemberRepository;
 import com.pesupal.server.repository.GroupChatPinnedRepository;
 import com.pesupal.server.service.interfaces.OrgMemberService;
 import com.pesupal.server.service.interfaces.group.GroupChatPinnedService;
@@ -23,11 +26,13 @@ public class GroupChatPinnedServiceImpl implements GroupChatPinnedService {
     private final GroupService groupService;
     private final OrgMemberService orgMemberService;
     private final GroupChatPinnedRepository groupChatPinnedRepository;
+    private final GroupChatMemberRepository groupChatMemberRepository;
 
-    public GroupChatPinnedServiceImpl(@Lazy GroupService groupService, OrgMemberService orgMemberService, GroupChatPinnedRepository groupChatPinnedRepository) {
+    public GroupChatPinnedServiceImpl(@Lazy GroupService groupService, OrgMemberService orgMemberService, GroupChatPinnedRepository groupChatPinnedRepository, GroupChatMemberRepository groupChatMemberRepository) {
         this.groupService = groupService;
         this.orgMemberService = orgMemberService;
         this.groupChatPinnedRepository = groupChatPinnedRepository;
+        this.groupChatMemberRepository = groupChatMemberRepository;
     }
 
     /**
@@ -103,11 +108,17 @@ public class GroupChatPinnedServiceImpl implements GroupChatPinnedService {
      * Unpins a group chat message by its ID for the current user and organization.
      *
      * @param id
-     * @param currentUserId
-     * @param currentOrgId
+     * @param userId
+     * @param orgId
      */
     @Override
-    public void unpinGroupChatMessage(Long id, Long currentUserId, Long currentOrgId) {
+    public void unpinGroupChatMessage(Long id, Long userId, Long orgId) {
 
+        GroupChatPinned groupChatPinned = groupChatPinnedRepository.findById(id).orElseThrow(() -> new DataNotFoundException("Pinned group chat message with ID " + id + " not found."));
+        if (!groupChatPinned.getPinnedBy().getId().equals(userId)) {
+            throw new PermissionDeniedException("You do not have permission to unpin this group chat message.");
+        }
+
+        groupChatPinnedRepository.delete(groupChatPinned);
     }
 }
