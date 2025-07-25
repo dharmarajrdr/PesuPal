@@ -8,6 +8,8 @@ import com.pesupal.server.model.org.Org;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.time.LocalDateTime;
+
 @Data
 @Entity
 public class OrgMember extends CreationTimeAuditable {
