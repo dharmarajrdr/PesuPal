@@ -1,6 +1,7 @@
 package com.pesupal.server.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.pesupal.server.dto.response.MediaUploadDto;
 import lombok.Data;
 import lombok.ToString;
 
@@ -16,4 +17,6 @@ public class ChatMessageDto {
     private String chatId;
 
     private String message;
+
+    private MediaUploadDto media;
 }
