@@ -41,6 +41,18 @@ public class OrgMemberServiceImpl implements OrgMemberService {
     private final OrgSubscriptionHistoryService orgSubscriptionHistoryService;
 
     /**
+     * Retrieves an organization member by their public ID.
+     *
+     * @param publicId
+     * @return
+     */
+    @Override
+    public OrgMember getOrgMemberByPublicId(String publicId) {
+
+        return orgMemberRepository.findByPublicId(publicId).orElseThrow(() -> new DataNotFoundException("User not found."));
+    }
+
+    /**
      * Retrieves an organization member by user and organization.
      *
      * @param user

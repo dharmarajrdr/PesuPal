@@ -12,6 +12,8 @@ import java.util.List;
 
 public interface OrgMemberService {
 
+    OrgMember getOrgMemberByPublicId(String publicId);
+
     OrgMember getOrgMemberByUserAndOrg(User user, Org org);
 
     OrgMember getOrgMemberByUserIdAndOrgId(Long userId, Long orgId);
