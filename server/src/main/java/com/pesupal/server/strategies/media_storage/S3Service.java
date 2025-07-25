@@ -40,11 +40,12 @@ public class S3Service implements MediaService {
     public MediaUploadDto uploadFile(MultipartFile file) throws Exception {
 
         String extension = Objects.requireNonNull(file.getOriginalFilename()).substring(file.getOriginalFilename().lastIndexOf('.'));
-        String fileName = UUID.randomUUID() + extension;
+        UUID fileName = UUID.randomUUID();
+        String fileNameWithExtension = randomUUID + extension;
         Long size = file.getSize();
 
         s3Client.putObject(
-                PutObjectRequest.builder().bucket(bucketName).key(fileName).build(),
+                PutObjectRequest.builder().bucket(bucketName).key(fileNameWithExtension).build(),
                 RequestBody.fromBytes(file.getBytes())
         );
 
