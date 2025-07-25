@@ -12,7 +12,11 @@ public class ChatMessageDto {
 
     private Long orgId;
 
+    // Not trusted
     private Long senderId;
+
+    // Using token, the message will be stored in the database
+    private String token;
 
     private String chatId;
 
