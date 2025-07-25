@@ -8,6 +8,7 @@ import com.pesupal.server.dto.response.UserBasicInfoDto;
 import com.pesupal.server.dto.response.UserPreviewDto;
 import com.pesupal.server.helpers.OrgSubscriptionManager;
 import com.pesupal.server.model.user.OrgMember;
+import com.pesupal.server.security.CustomUserDetails;
 import com.pesupal.server.service.interfaces.OrgMemberService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -73,10 +74,10 @@ public class OrgMemberController extends OrgSubscriptionManager {
     @GetMapping("/token")
     public ResponseEntity<ApiResponseDto> generateTokenWithOrgMemberId() {
 
-        String publicUserId = RequestContext.get("X-USER-ID", String.class);
+        CustomUserDetails customUserDetails = getCurrentUserDetails();
         String publicOrgId = RequestContext.get("X-ORG-ID", String.class);
 
-        String token = orgMemberService.generateTokenWithOrgMemberId(publicUserId, publicOrgId);
+        String token = orgMemberService.generateTokenWithOrgMemberId(customUserDetails.getUserPublicId(), publicOrgId);
         return ResponseEntity.ok().body(new ApiResponseDto("Token generated successfully", token));
     }
 }
