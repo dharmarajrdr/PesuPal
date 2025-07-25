@@ -53,4 +53,6 @@ public class OrgMember extends CreationTimeAuditable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore
     private User addedBy;
+
+    private LocalDateTime lastLoggedIn;
 }
