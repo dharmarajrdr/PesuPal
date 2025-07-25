@@ -73,8 +73,8 @@ public class OrgMemberController extends OrgSubscriptionManager {
     @GetMapping("/token")
     public ResponseEntity<ApiResponseDto> generateTokenWithOrgMemberId() {
 
-        String publicUserId = RequestContext.get("X-User-Id", String.class);
-        String publicOrgId = RequestContext.get("X-Org-Id", String.class);
+        String publicUserId = RequestContext.get("X-USER-ID", String.class);
+        String publicOrgId = RequestContext.get("X-ORG-ID", String.class);
 
         String token = orgMemberService.generateTokenWithOrgMemberId(publicUserId, publicOrgId);
         return ResponseEntity.ok().body(new ApiResponseDto("Token generated successfully", token));
