@@ -1,5 +1,6 @@
 package com.pesupal.server.controller;
 
+import com.pesupal.server.config.RequestContext;
 import com.pesupal.server.dto.request.AddOrgMemberDto;
 import com.pesupal.server.dto.response.ApiResponseDto;
 import com.pesupal.server.dto.response.OrgDetailDto;
@@ -67,5 +68,15 @@ public class OrgMemberController extends OrgSubscriptionManager {
 
         UserPreviewDto userPreviewDto = orgMemberService.getUserPreview(getCurrentUserId(), getCurrentOrgId());
         return ResponseEntity.ok().body(new ApiResponseDto("Profile fetched successfully", userPreviewDto));
+    }
+
+    @GetMapping("/token")
+    public ResponseEntity<ApiResponseDto> generateTokenWithOrgMemberId() {
+
+        String publicUserId = RequestContext.get("X-User-Id", String.class);
+        String publicOrgId = RequestContext.get("X-Org-Id", String.class);
+
+        String token = orgMemberService.generateTokenWithOrgMemberId(publicUserId, publicOrgId);
+        return ResponseEntity.ok().body(new ApiResponseDto("Token generated successfully", token));
     }
 }
