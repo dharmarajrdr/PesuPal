@@ -3,7 +3,7 @@ package com.pesupal.server.model.recruit;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.pesupal.server.enums.JobOpeningStatus;
 import com.pesupal.server.enums.JobType;
-import com.pesupal.server.model.CreationTimeAuditable;
+import com.pesupal.server.model.PublicAccessModel;
 import com.pesupal.server.model.org.Org;
 import com.pesupal.server.model.user.User;
 import jakarta.persistence.*;
@@ -15,7 +15,7 @@ import java.util.List;
 
 @Data
 @Entity
-public class JobOpening extends CreationTimeAuditable {
+public class JobOpening extends PublicAccessModel {
 
     @ManyToOne
     private Org org;
