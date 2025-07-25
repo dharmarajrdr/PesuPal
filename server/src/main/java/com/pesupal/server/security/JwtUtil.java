@@ -1,6 +1,7 @@
 package com.pesupal.server.security;
 
 import com.pesupal.server.config.StaticConfig;
+import com.pesupal.server.exceptions.PermissionDeniedException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
@@ -57,8 +58,12 @@ public class JwtUtil {
      */
     public String extractEmail(String token) {
 
-        JwtParser jwtParser = Jwts.parser().verifyWith(secretKey).build();
-        Claims claims = jwtParser.parseSignedClaims(token).getPayload();
-        return claims.getSubject(); // Subject is the email in this case
+        try {
+            JwtParser jwtParser = Jwts.parser().verifyWith(secretKey).build();
+            Claims claims = jwtParser.parseSignedClaims(token).getPayload();
+            return claims.getSubject(); // Subject is the email in this case
+        } catch (Exception e) {
+            throw new PermissionDeniedException("Invalid or expired token");
+        }
     }
 }

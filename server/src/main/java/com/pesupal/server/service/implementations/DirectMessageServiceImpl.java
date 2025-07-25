@@ -8,6 +8,7 @@ import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.exceptions.PermissionDeniedException;
 import com.pesupal.server.helpers.Chat;
+import com.pesupal.server.helpers.InputValidator;
 import com.pesupal.server.helpers.TimeFormatterUtil;
 import com.pesupal.server.model.chat.DirectMessage;
 import com.pesupal.server.model.chat.DirectMessageMediaFile;
@@ -17,6 +18,7 @@ import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.model.user.User;
 import com.pesupal.server.repository.DirectMessageMediaFileRepository;
 import com.pesupal.server.repository.DirectMessageRepository;
+import com.pesupal.server.security.JwtUtil;
 import com.pesupal.server.service.interfaces.*;
 import com.pesupal.server.strategies.media_storage.S3Service;
 import jakarta.transaction.Transactional;
@@ -37,6 +39,7 @@ import java.util.*;
 @Qualifier("directMessageService")
 public class DirectMessageServiceImpl implements DirectMessageService {
 
+    private final JwtUtil jwtUtil;
     private final S3Service s3Service;
     private final OrgService orgService;
     private final UserService userService;
@@ -47,7 +50,8 @@ public class DirectMessageServiceImpl implements DirectMessageService {
     private final DirectMessageMediaFileService directMessageMediaFileService;
     private final DirectMessageMediaFileRepository directMessageMediaFileRepository;
 
-    public DirectMessageServiceImpl(DirectMessageRepository directMessageRepository, @Lazy DirectMessageReactionService directMessageReactionService, UserService userService, OrgService orgService, OrgMemberService orgMemberService, PinnedDirectMessageService pinnedDirectMessageService, DirectMessageMediaFileRepository directMessageMediaFileRepository, S3Service s3Service, DirectMessageMediaFileService directMessageMediaFileService) {
+    public DirectMessageServiceImpl(DirectMessageRepository directMessageRepository, @Lazy DirectMessageReactionService directMessageReactionService, UserService userService, OrgService orgService, OrgMemberService orgMemberService, PinnedDirectMessageService pinnedDirectMessageService, DirectMessageMediaFileRepository directMessageMediaFileRepository, S3Service s3Service, DirectMessageMediaFileService directMessageMediaFileService, JwtUtil jwtUtil) {
+        this.jwtUtil = jwtUtil;
         this.s3Service = s3Service;
         this.orgService = orgService;
         this.userService = userService;
@@ -225,8 +229,11 @@ public class DirectMessageServiceImpl implements DirectMessageService {
         Long orgId = chatMessageDto.getOrgId();
         Org org = orgService.getOrgById(orgId);
 
-        Long senderId = chatMessageDto.getSenderId();
-        User sender = userService.getUserById(senderId);
+        String token = (String) InputValidator.notNull(chatMessageDto.getToken(), "token");
+
+        String email = jwtUtil.extractEmail(token);
+        User sender = userService.getUserByEmail(email);
+        Long senderId = sender.getId();
 
         Long[] parsedChatId = Chat.parseChatId(chatMessageDto.getChatId());
 
