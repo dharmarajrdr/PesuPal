@@ -12,6 +12,8 @@ public class StaticConfig {
 
     public static final int JWT_EXPIRATION_IN_HOURS = 24;
 
+    public static final int PUBLIC_KEY_LENGTH = 12;
+
     public static final String MEDIA_PATH = "/Users/dharma-13910/Videos/";
 
     public static final int MAXIMUM_RECENTLY_ACCESSED_FILES = 25;
