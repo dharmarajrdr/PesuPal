@@ -24,9 +24,9 @@ const UserAvatar = ({ displayPicture, displayName, setShowProfile }) => {
 
     return (imageError || !displayPicture) ? (
         displayName ? (
-            <div className="user-avatar-placeholder-first-character" style={{ backgroundColor: getAvatarColor(displayName) }}>
+            <p className="user-avatar-placeholder-first-character img_40_40" style={{ backgroundColor: getAvatarColor(displayName) }}>
                 {displayName.charAt(0).toUpperCase()}
-            </div>
+            </p>
         ) : (
             <i className="fa fa-user-circle user-avatar-placeholder" aria-hidden="true" />
         )
