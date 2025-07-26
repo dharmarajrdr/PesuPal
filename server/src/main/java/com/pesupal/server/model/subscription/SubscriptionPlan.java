@@ -4,7 +4,7 @@ import com.pesupal.server.dto.request.PaymentDto;
 import com.pesupal.server.enums.Currency;
 import com.pesupal.server.enums.Interval;
 import com.pesupal.server.exceptions.ActionProhibitedException;
-import com.pesupal.server.model.PublicAccessModel;
+import com.pesupal.server.model.CreationTimeAuditable;
 import com.pesupal.server.model.payment.Transaction;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -14,7 +14,7 @@ import lombok.Data;
 
 @Data
 @Entity
-public class SubscriptionPlan extends PublicAccessModel {
+public class SubscriptionPlan extends CreationTimeAuditable {
 
     @Column(unique = true, nullable = false)
     private String code;
