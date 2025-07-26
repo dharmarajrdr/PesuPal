@@ -43,7 +43,7 @@ const Signin = () => {
 
     useEffect(() => {
         if (hasCookie()) {
-            navigate('/feeds');
+            navigate('/');
         } else {
             dispatch(clearMyProfile());
         }
