@@ -25,8 +25,6 @@ const AuthModal = () => {
                 throw new Error('Session expired');
             } else if (orgMemberId == null) {
                 navigate('/');
-            } else if (userId != null && orgMemberId != null) {
-                navigate('/feeds');
             }
         }).catch(({ message }) => {
             sessionStorage.removeItem('token');

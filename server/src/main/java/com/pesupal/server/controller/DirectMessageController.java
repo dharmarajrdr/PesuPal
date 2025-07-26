@@ -36,7 +36,7 @@ public class DirectMessageController extends CurrentValueRetriever {
     public ResponseEntity<ApiResponseDto> getRecentChats(@RequestParam Integer page, @RequestParam Integer size) {
 
         Pageable pageable = Pageable.ofSize(size).withPage(page);
-        RecentChatPagedDto recentChats = directMessageService.getRecentChatsPaged(getCurrentUserId(), getCurrentOrgId(), pageable);
+        RecentChatPagedDto recentChats = directMessageService.getRecentChatsPaged(getCurrentOrgMember(), pageable);
         return ResponseEntity.ok(new ApiResponseDto("Recent chats retrieved successfully", recentChats.getChats(), recentChats.getPageable()));
     }
 

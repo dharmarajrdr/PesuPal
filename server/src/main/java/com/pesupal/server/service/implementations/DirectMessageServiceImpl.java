@@ -166,16 +166,19 @@ public class DirectMessageServiceImpl implements DirectMessageService {
     /**
      * Retrieves recent chats for a user in a specific organization.
      *
-     * @param orgId
-     * @param userId
+     * @param orgMember
+     * @param pageable
      * @return
      */
     @Override
-    public RecentChatPagedDto getRecentChatsPaged(Long userId, Long orgId, Pageable pageable) {
+    public RecentChatPagedDto getRecentChatsPaged(OrgMember orgMember, Pageable pageable) {
 
         int page = pageable.getPageNumber();
         int size = pageable.getPageSize();
         int offset = page * size;
+
+        Long userId = orgMember.getUser().getId();
+        Long orgId = orgMember.getOrg().getId();
 
         User user = userService.getUserById(userId);
         Org org = orgService.getOrgById(orgId);
