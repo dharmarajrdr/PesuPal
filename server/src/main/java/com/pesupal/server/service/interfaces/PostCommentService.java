@@ -8,11 +8,11 @@ import java.util.List;
 
 public interface PostCommentService {
 
-    PostCommentDto createPostComment(CreatePostCommentDto createPostCommentDto, Long userId, Long orgId);
+    PostCommentDto createPostComment(CreatePostCommentDto createPostCommentDto);
 
-    void deletePostComment(Long commentId, Long currentUserId, Long currentOrgId);
+    void deletePostComment(Long commentId);
 
-    List<PostCommentDto> getPostComments(Long postId, Long userId, Long orgId);
+    List<PostCommentDto> getPostComments(String postId);
 
-    PostComment getPostCommentById(Long commentId, Long userId, Long orgId);
+    PostComment getPostCommentById(Long commentId);
 }
