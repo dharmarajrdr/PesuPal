@@ -18,8 +18,6 @@ public interface OrgMemberService {
 
     OrgMember getOrgMemberByUserIdAndOrgId(Long userId, Long orgId);
 
-    UserBasicInfoDto getOrgMemberBasicInfoByUserIdAndOrgId(Long userId, Long orgId);
-
     Boolean existsByUserAndOrg(User user, Org org);
 
     List<UserBasicInfoDto> getAllMembers(Long departmentId, Long currentUserId, Long currentOrgId);
@@ -43,4 +41,6 @@ public interface OrgMemberService {
     UserPreviewDto getUserPreview(OrgMember orgMember);
 
     String generateTokenWithOrgMemberId(String publicUserId, String publicOrgId);
+
+    UserBasicInfoDto getUserBasicInfoByOrgMemberPublicId(String orgMemberPublicId);
 }

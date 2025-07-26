@@ -32,12 +32,10 @@ public class OrgMemberController extends OrgSubscriptionManager {
         return ResponseEntity.ok(new ApiResponseDto("Member added to organization successfully.", orgMember));
     }
 
-    @GetMapping("/{userId}")
-    public ResponseEntity<ApiResponseDto> getOrgMemberByUserAndOrg(@PathVariable Long userId) {
+    @GetMapping("/{orgMemberPublicId}")
+    public ResponseEntity<ApiResponseDto> getOrgMemberByUserAndOrg(@PathVariable String orgMemberPublicId) {
 
-        // checkOrgSubscription();
-
-        UserBasicInfoDto userBasicInfoDto = orgMemberService.getOrgMemberBasicInfoByUserIdAndOrgId(userId, getCurrentOrgId());
+        UserBasicInfoDto userBasicInfoDto = orgMemberService.getUserBasicInfoByOrgMemberPublicId(orgMemberPublicId);
         return ResponseEntity.ok(new ApiResponseDto("Organization member retrieved successfully.", userBasicInfoDto));
     }
 

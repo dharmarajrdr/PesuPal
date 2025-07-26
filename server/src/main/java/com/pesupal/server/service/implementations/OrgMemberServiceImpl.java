@@ -20,7 +20,6 @@ import com.pesupal.server.model.user.Designation;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.model.user.User;
 import com.pesupal.server.repository.OrgMemberRepository;
-import com.pesupal.server.security.JwtUtil;
 import com.pesupal.server.service.interfaces.*;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -32,7 +31,6 @@ import java.util.List;
 @AllArgsConstructor
 public class OrgMemberServiceImpl implements OrgMemberService {
 
-    private final JwtUtil jwtUtil;
     private final OrgService orgService;
     private final UserService userService;
     private final AuthService authService;
@@ -82,20 +80,6 @@ public class OrgMemberServiceImpl implements OrgMemberService {
         OrgMember orgMember = getOrgMemberByUserAndOrg(user, org);
 //      orgMember.getUser().setPassword(null);
         return orgMember;
-    }
-
-    /**
-     * Retrieves basic information of an organization member by user ID and org ID.
-     *
-     * @param userId
-     * @param orgId
-     * @return
-     */
-    @Override
-    public UserBasicInfoDto getOrgMemberBasicInfoByUserIdAndOrgId(Long userId, Long orgId) {
-
-        OrgMember orgMember = getOrgMemberByUserIdAndOrgId(userId, orgId);
-        return UserBasicInfoDto.fromOrgMember(orgMember);
     }
 
     /**
@@ -382,6 +366,19 @@ public class OrgMemberServiceImpl implements OrgMemberService {
         }
 
         return authService.generateTokenWithOrgContext(orgMember.getUser().getEmail(), orgMember.getPublicId());
+    }
+
+    /**
+     * Retrieves basic user information by organization member public ID.
+     *
+     * @param orgMemberPublicId
+     * @return
+     */
+    @Override
+    public UserBasicInfoDto getUserBasicInfoByOrgMemberPublicId(String orgMemberPublicId) {
+
+        OrgMember orgMember = getOrgMemberByPublicId(orgMemberPublicId);
+        return UserBasicInfoDto.fromOrgMember(orgMember);
     }
 
 }
