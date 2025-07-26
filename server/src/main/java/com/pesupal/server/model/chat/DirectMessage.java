@@ -3,7 +3,7 @@ package com.pesupal.server.model.chat;
 import com.pesupal.server.enums.ReadReceipt;
 import com.pesupal.server.model.CreationTimeAuditable;
 import com.pesupal.server.model.org.Org;
-import com.pesupal.server.model.user.User;
+import com.pesupal.server.model.user.OrgMember;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -18,12 +18,13 @@ public class DirectMessage extends CreationTimeAuditable {
     private Org org;
 
     @ManyToOne
-    private User sender;
+    private OrgMember sender;
 
     @ManyToOne
-    private User receiver;
+    private OrgMember receiver;
 
-    private String chatId;
+    @ManyToOne
+    private DirectMessageChat directMessageChat;
 
     private String message;
 
