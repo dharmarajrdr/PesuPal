@@ -21,9 +21,6 @@ import com.pesupal.server.model.org.Org;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.repository.GroupChatMemberRepository;
 import com.pesupal.server.repository.GroupRepository;
-import com.pesupal.server.service.interfaces.OrgMemberService;
-import com.pesupal.server.service.interfaces.OrgService;
-import com.pesupal.server.service.interfaces.UserService;
 import com.pesupal.server.service.interfaces.group.GroupChatConfigurationService;
 import com.pesupal.server.service.interfaces.group.GroupChatMemberService;
 import com.pesupal.server.service.interfaces.group.GroupChatPinnedService;
@@ -42,13 +39,10 @@ import java.util.Optional;
 @AllArgsConstructor
 public class GroupServiceImpl extends CurrentValueRetriever implements GroupService {
 
-    private final OrgService orgService;
-    private final UserService userService;
     private final GroupRepository groupRepository;
-    private final OrgMemberService orgMemberService;
     private final GroupChatMemberService groupChatMemberService;
-    private final GroupChatMemberRepository groupChatMemberRepository;
     private final GroupChatPinnedService groupchatPinnedService;
+    private final GroupChatMemberRepository groupChatMemberRepository;
     private final GroupChatConfigurationService groupChatConfigurationService;
 
     /**

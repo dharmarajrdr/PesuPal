@@ -21,21 +21,21 @@ public class GroupChatPinnedController extends CurrentValueRetriever {
     @GetMapping("")
     public ResponseEntity<ApiResponseDto> getAllPinnedGroupMessages() {
 
-        List<PinnedChatDto> pinnedGroupChatMessageDtos = groupChatPinnedService.getAllPinnedGroupChatMessages(getCurrentUserId(), getCurrentOrgId());
+        List<PinnedChatDto> pinnedGroupChatMessageDtos = groupChatPinnedService.getAllPinnedGroupChatMessages();
         return ResponseEntity.ok().body(new ApiResponseDto("Pinned direct messages retrieved successfully", pinnedGroupChatMessageDtos));
     }
 
     @PostMapping("/pin")
     public ResponseEntity<ApiResponseDto> pinGroupChatMessage(@RequestBody CreatePinGroupChatMessageDto createPinGroupChatMessageDto) {
 
-        PinnedChatDto pinnedGroupChatMessageDto = groupChatPinnedService.pinGroupChatMessage(createPinGroupChatMessageDto, getCurrentUserId(), getCurrentOrgId());
+        PinnedChatDto pinnedGroupChatMessageDto = groupChatPinnedService.pinGroupChatMessage(createPinGroupChatMessageDto);
         return ResponseEntity.ok().body(new ApiResponseDto("Direct message pinned successfully", pinnedGroupChatMessageDto));
     }
 
     @DeleteMapping("/pin/{id}")
     public ResponseEntity<ApiResponseDto> unpinGroupChatMessage(@PathVariable Long id) {
 
-        groupChatPinnedService.unpinGroupChatMessage(id, getCurrentUserId(), getCurrentOrgId());
+        groupChatPinnedService.unpinGroupChatMessage(id);
         return ResponseEntity.ok().body(new ApiResponseDto("Direct message unpinned successfully", null));
     }
 }
