@@ -37,7 +37,7 @@ public class PollVoterServiceImpl extends CurrentValueRetriever implements PollV
 
         OrgMember orgMember = getCurrentOrgMember();
         Long orgId = orgMember.getOrg().getId();
-        Long userId = orgMember.getUser().getId();
+        Long userId = orgMember.getId();
 
         Poll poll = pollService.getPollById(createPollVoterDto.getPollId());
         if (!poll.getId().equals(createPollVoterDto.getPollId())) {

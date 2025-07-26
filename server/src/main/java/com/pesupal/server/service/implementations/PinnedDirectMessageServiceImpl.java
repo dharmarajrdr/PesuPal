@@ -108,7 +108,7 @@ public class PinnedDirectMessageServiceImpl extends CurrentValueRetriever implem
     public void unpinDirectMessage(Long id, OrgMember orgMember) {
 
         PinnedDirectMessage pinnedDirectMessage = getPinnedDirectMessageById(id);
-        Long userId = orgMember.getUser().getId();
+        Long userId = orgMember.getId();
         if (!pinnedDirectMessage.getPinnedBy().getId().equals(userId)) {
             throw new PermissionDeniedException("You do not have permission to unpin this direct message.");
         }
