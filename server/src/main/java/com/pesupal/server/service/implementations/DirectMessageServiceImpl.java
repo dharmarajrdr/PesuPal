@@ -11,6 +11,7 @@ import com.pesupal.server.helpers.Chat;
 import com.pesupal.server.helpers.InputValidator;
 import com.pesupal.server.helpers.TimeFormatterUtil;
 import com.pesupal.server.model.chat.DirectMessage;
+import com.pesupal.server.model.chat.DirectMessageChat;
 import com.pesupal.server.model.chat.DirectMessageMediaFile;
 import com.pesupal.server.model.chat.PinnedDirectMessage;
 import com.pesupal.server.model.org.Org;
@@ -21,6 +22,7 @@ import com.pesupal.server.repository.DirectMessageRepository;
 import com.pesupal.server.security.JwtUtil;
 import com.pesupal.server.service.interfaces.*;
 import com.pesupal.server.strategies.media_storage.S3Service;
+import io.jsonwebtoken.Claims;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Lazy;
@@ -49,8 +51,9 @@ public class DirectMessageServiceImpl implements DirectMessageService {
     private final DirectMessageReactionService directMessageReactionService;
     private final DirectMessageMediaFileService directMessageMediaFileService;
     private final DirectMessageMediaFileRepository directMessageMediaFileRepository;
+    private final DirectMessageChatService directMessageChatService;
 
-    public DirectMessageServiceImpl(DirectMessageRepository directMessageRepository, @Lazy DirectMessageReactionService directMessageReactionService, UserService userService, OrgService orgService, OrgMemberService orgMemberService, PinnedDirectMessageService pinnedDirectMessageService, DirectMessageMediaFileRepository directMessageMediaFileRepository, S3Service s3Service, DirectMessageMediaFileService directMessageMediaFileService, JwtUtil jwtUtil) {
+    public DirectMessageServiceImpl(DirectMessageRepository directMessageRepository, @Lazy DirectMessageReactionService directMessageReactionService, UserService userService, OrgService orgService, OrgMemberService orgMemberService, PinnedDirectMessageService pinnedDirectMessageService, DirectMessageMediaFileRepository directMessageMediaFileRepository, S3Service s3Service, DirectMessageMediaFileService directMessageMediaFileService, JwtUtil jwtUtil, DirectMessageChatService directMessageChatService) {
         this.jwtUtil = jwtUtil;
         this.s3Service = s3Service;
         this.orgService = orgService;
@@ -61,6 +64,7 @@ public class DirectMessageServiceImpl implements DirectMessageService {
         this.directMessageReactionService = directMessageReactionService;
         this.directMessageMediaFileService = directMessageMediaFileService;
         this.directMessageMediaFileRepository = directMessageMediaFileRepository;
+        this.directMessageChatService = directMessageChatService;
     }
 
     /**
@@ -234,27 +238,21 @@ public class DirectMessageServiceImpl implements DirectMessageService {
 
         String token = (String) InputValidator.notNull(chatMessageDto.getToken(), "token");
 
-        String email = jwtUtil.extractEmail(token);
-        User sender = userService.getUserByEmail(email);
-        Long senderId = sender.getId();
+        Claims claims = jwtUtil.extractAllClaims(token);
+        String senderOrgMemberId = claims.get("orgMemberId").toString();
 
-        Long[] parsedChatId = Chat.parseChatId(chatMessageDto.getChatId());
+        DirectMessageChat directMessageChat = directMessageChatService.getDirectMessageByPublicId(chatMessageDto.getChatId());
 
-        Long receiverId = parsedChatId[0].equals(senderId) ? parsedChatId[1] : parsedChatId[0];
-        User receiver = userService.getUserById(receiverId);
-        OrgMember receiverOrgMember = orgMemberService.getOrgMemberByUserAndOrg(receiver, org);
-        if (receiverOrgMember.isArchived()) {
-            throw new ActionProhibitedException("User " + receiverOrgMember.getDisplayName() + " is no longer a member of this org.");
-        }
+        OrgMember sender = orgMemberService.getOrgMemberByPublicId(senderOrgMemberId);
+        OrgMember receiver = getReceiver(directMessageChat, sender);
 
         boolean containsMedia = chatMessageDto.getMedia() != null;
 
-        String chatId = Chat.getChatId(senderId, receiverId, orgId);
         DirectMessage directMessage = new DirectMessage();
         directMessage.setSender(sender);
         directMessage.setReceiver(receiver);
         directMessage.setOrg(org);
-        directMessage.setChatId(chatId);
+        directMessage.setDirectMessageChat(directMessageChat);
         directMessage.setDeleted(false);
         directMessage.setContainsMedia(containsMedia);
         directMessage.setReadReceipt(ReadReceipt.SENT);
@@ -266,6 +264,24 @@ public class DirectMessageServiceImpl implements DirectMessageService {
             directMessageMediaFileService.save(directMessageMediaFile);
         }
         return toMessageDto(directMessage, orgId, new HashMap<>());
+    }
+
+    private OrgMember getReceiver(DirectMessageChat directMessageChat, OrgMember sender) {
+
+        OrgMember user1 = directMessageChat.getUser1();
+        OrgMember user2 = directMessageChat.getUser2();
+
+        OrgMember receiver = null;
+        if (user1.getId().equals(sender.getId())) {
+            receiver = user2;
+        } else if (user2.getId().equals(sender.getId())) {
+            receiver = user1;
+        }
+
+        if (receiver.isArchived()) {
+            throw new ActionProhibitedException("User " + receiver.getDisplayName() + " is no longer a member of this org.");
+        }
+        return receiver;
     }
 
     /**
