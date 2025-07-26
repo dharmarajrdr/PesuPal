@@ -66,7 +66,7 @@ public class PostCommentServiceImpl extends CurrentValueRetriever implements Pos
     public void deletePostComment(Long commentId) {
 
         OrgMember orgMember = getCurrentOrgMember();
-        Long userId = orgMember.getUser().getId();
+        Long userId = orgMember.getId();
 
         PostComment postComment = postCommentRepository.findById(commentId).orElseThrow(() -> new DataNotFoundException("Comment with ID " + commentId + " not found."));
 
@@ -92,7 +92,7 @@ public class PostCommentServiceImpl extends CurrentValueRetriever implements Pos
 
         OrgMember orgMember = getCurrentOrgMember();
         Long orgId = orgMember.getOrg().getId();
-        Long userId = orgMember.getUser().getId();
+        Long userId = orgMember.getId();
 
         Post post = postService.getPostByPublicId(postId);
         if (!post.getStatus().equals(PostStatus.PUBLISHED)) {
