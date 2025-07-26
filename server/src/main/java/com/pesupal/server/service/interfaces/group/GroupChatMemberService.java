@@ -14,7 +14,7 @@ public interface GroupChatMemberService {
 
     GroupChatMember getGroupMemberByGroupIdAndUserId(Long groupId, Long userId);
 
-    boolean isUserMemberOfGroup(Long groupId, Long userId);
+    boolean isUserMemberOfGroup(String groupPublicId, Long orgMemberPublicId);
 
     GroupDto joinGroup(Long groupId, Long currentUserId, Long currentOrgId);
 

@@ -1,12 +1,14 @@
 package com.pesupal.server.repository;
 
 import com.pesupal.server.model.group.Group;
+import com.pesupal.server.model.org.Org;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface GroupRepository extends JpaRepository<Group, Long> {
@@ -64,4 +66,5 @@ public interface GroupRepository extends JpaRepository<Group, Long> {
     List<Object[]> findRecentGroupChatsPaged(@Param("userId") Long userId, @Param("orgId") Long orgId, @Param("limit") int limit, @Param("offset") int offset);
 
 
+    Optional<Group> findByPublicIdAndOrg(String groupPublicId, Org org);
 }

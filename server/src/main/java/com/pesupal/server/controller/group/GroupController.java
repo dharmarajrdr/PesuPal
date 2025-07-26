@@ -37,14 +37,14 @@ public class GroupController extends CurrentValueRetriever {
     public ResponseEntity<ApiResponseDto> getAllGroups(@RequestParam Integer page, @RequestParam Integer size) {
 
         Pageable pageable = Pageable.ofSize(size).withPage(page);
-        RecentChatPagedDto recentChatPagedDto = groupService.getAllGroups(getCurrentUserId(), getCurrentOrgId(), pageable);
+        RecentChatPagedDto recentChatPagedDto = groupService.getAllGroups(pageable);
         return ResponseEntity.ok().body(new ApiResponseDto("Groups retrieved successfully", recentChatPagedDto.getChats(), recentChatPagedDto.getPageable()));
     }
 
-    @GetMapping("/preview/{groupId}")
-    public ResponseEntity<ApiResponseDto> getgroupChatPreview(@PathVariable Long groupId) {
+    @GetMapping("/preview/{groupPublicId}")
+    public ResponseEntity<ApiResponseDto> getGroupChatPreview(@PathVariable String groupPublicId) {
 
-        ChatPreviewDto chatPreviewDto = groupService.getGroupChatPreviewByChatId(groupId, getCurrentUserId(), getCurrentOrgId());
+        ChatPreviewDto chatPreviewDto = groupService.getGroupChatPreviewByChatId(groupPublicId);
         return ResponseEntity.ok(new ApiResponseDto("Group chat preview retrieved successfully", chatPreviewDto));
     }
 }

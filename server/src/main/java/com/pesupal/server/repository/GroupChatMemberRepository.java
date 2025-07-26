@@ -15,4 +15,6 @@ public interface GroupChatMemberRepository extends JpaRepository<GroupChatMember
     boolean existsByGroupIdAndUserId(Long groupId, Long userId);
 
     Optional<GroupChatMember> findByGroup_PublicIdAndUser(String groupPublicId, User user);
+
+    boolean existsByGroup_PublicIdAndUser_Id(String groupPublicId, Long orgMemberPublicId);
 }

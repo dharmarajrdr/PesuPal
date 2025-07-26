@@ -83,7 +83,7 @@ public class GroupChatMemberServiceImpl implements GroupChatMemberService {
         GroupChatMember groupChatMember = new GroupChatMember();
         groupChatMember.setRole(Role.USER);
         groupChatMember.setActive(true);
-        groupChatMember.setUser(orgMember.getUser());
+        groupChatMember.setUser(orgMember);
         groupChatMember.setGroup(group);
         // groupChatMember.setLastReadMessage(latestMessage);
         groupChatMemberRepository.save(groupChatMember);
@@ -122,7 +122,7 @@ public class GroupChatMemberServiceImpl implements GroupChatMemberService {
 
         GroupChatMember newGroupMember = new GroupChatMember();
         newGroupMember.setGroup(group);
-        newGroupMember.setUser(orgMember.getUser());
+        newGroupMember.setUser(orgMember);
         newGroupMember.setRole(Role.USER);
         newGroupMember.setActive(true);
         groupChatMemberRepository.save(newGroupMember);
@@ -180,14 +180,14 @@ public class GroupChatMemberServiceImpl implements GroupChatMemberService {
     /**
      * Checks if a user is a member of a group.
      *
-     * @param groupId
-     * @param userId
+     * @param groupPublicId
+     * @param orgMemberPublicId
      * @return
      */
     @Override
-    public boolean isUserMemberOfGroup(Long groupId, Long userId) {
+    public boolean isUserMemberOfGroup(String groupPublicId, Long orgMemberPublicId) {
 
-        return groupChatMemberRepository.existsByGroupIdAndUserId(groupId, userId);
+        return groupChatMemberRepository.existsByGroup_PublicIdAndUser_Id(groupPublicId, orgMemberPublicId);
     }
 
 }

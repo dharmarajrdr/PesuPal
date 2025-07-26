@@ -15,7 +15,7 @@ public interface GroupService {
 
     void deleteGroup(String groupPublicId);
 
-    RecentChatPagedDto getAllGroups(Long userId, Long orgId, Pageable pageable);
+    RecentChatPagedDto getAllGroups(Pageable pageable);
 
-    ChatPreviewDto getGroupChatPreviewByChatId(Long groupId, Long userId, Long orgId);
+    ChatPreviewDto getGroupChatPreviewByChatId(String groupPublicId);
 }

@@ -19,7 +19,6 @@ import com.pesupal.server.model.group.GroupChatMember;
 import com.pesupal.server.model.group.GroupChatPinned;
 import com.pesupal.server.model.org.Org;
 import com.pesupal.server.model.user.OrgMember;
-import com.pesupal.server.model.user.User;
 import com.pesupal.server.repository.GroupChatMemberRepository;
 import com.pesupal.server.repository.GroupRepository;
 import com.pesupal.server.service.interfaces.OrgMemberService;
@@ -101,6 +100,17 @@ public class GroupServiceImpl extends CurrentValueRetriever implements GroupServ
     }
 
     /**
+     * Retrieves a group by its public ID.
+     *
+     * @param groupPublicId
+     * @return
+     */
+    public Group getGroupByPublicIdAndOrg(String groupPublicId, Org org) {
+
+        return groupRepository.findByPublicIdAndOrg(groupPublicId, org).orElseThrow(() -> new DataNotFoundException("Group with public ID " + groupPublicId + " not found."));
+    }
+
+    /**
      * Deletes a group based on the provided group ID, user ID, and organization ID.
      *
      * @param groupPublicId
@@ -136,21 +146,19 @@ public class GroupServiceImpl extends CurrentValueRetriever implements GroupServ
     /**
      * Retrieves all groups for a user in a specific organization.
      *
-     * @param userId
-     * @param orgId
+     * @param pageable
      * @return
      */
     @Override
-    public RecentChatPagedDto getAllGroups(Long userId, Long orgId, Pageable pageable) {
+    public RecentChatPagedDto getAllGroups(Pageable pageable) {
 
         int page = pageable.getPageNumber();
         int size = pageable.getPageSize();
         int offset = page * size;
 
-        User user = userService.getUserById(userId);
-        Org org = orgService.getOrgById(orgId);
-
-        orgMemberService.validateUserIsOrgMember(user, org);
+        OrgMember orgMember = getCurrentOrgMember();
+        Long userId = orgMember.getUser().getId();
+        Long orgId = orgMember.getOrg().getId();
 
         List<Object[]> rows = groupRepository.findRecentGroupChatsPaged(userId, orgId, size, offset);
 
@@ -189,22 +197,17 @@ public class GroupServiceImpl extends CurrentValueRetriever implements GroupServ
     /**
      * Retrieves a group chat by its ID, user ID, and organization ID.
      *
-     * @param groupId
-     * @param userId
-     * @param orgId
+     * @param groupPublicId
      * @return
      */
     @Override
-    public ChatPreviewDto getGroupChatPreviewByChatId(Long groupId, Long userId, Long orgId) {
+    public ChatPreviewDto getGroupChatPreviewByChatId(String groupPublicId) {
 
-        Group group = getGroupById(groupId);
-        if (!group.getOrg().getId().equals(orgId)) {
-            throw new DataNotFoundException("Group with ID " + groupId + " does not exist");
-        }
+        OrgMember orgMember = getCurrentOrgMember();
+        Long userId = orgMember.getUser().getId();
+        Group group = getGroupByPublicIdAndOrg(groupPublicId, orgMember.getOrg());
 
-        OrgMember orgMember = orgMemberService.getOrgMemberByUserIdAndOrgId(userId, orgId);
-
-        if (!groupChatMemberService.isUserMemberOfGroup(groupId, userId)) {
+        if (!groupChatMemberService.isUserMemberOfGroup(groupPublicId, userId)) {
             throw new PermissionDeniedException("You are not a member of this group.");
         }
 
