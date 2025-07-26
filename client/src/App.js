@@ -17,6 +17,7 @@ import MoreFeaturesLayout from './components/More/MoreFeaturesLayout';
 import VerticalLoader from './components/VerticalLoader';
 import CommonContainer from './components/CommonContainer';
 import store from './store';
+import HomePageLayout from './components/Home/HomePageLayout';
 
 function App() {
 
@@ -41,6 +42,7 @@ function App() {
                 <VerticalLoader />
 
                 <Routes>
+                    <Route path="/" element={<HomePageLayout />} />
                     <Route path="/feeds/*" element={<FeedsLayout />} />
                     <Route path="/chat/*" element={<ChatLayout />} />
                     <Route path="/people/*" element={<PeopleLayout />} />
