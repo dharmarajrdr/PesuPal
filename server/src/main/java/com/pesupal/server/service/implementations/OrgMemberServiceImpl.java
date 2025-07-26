@@ -20,6 +20,7 @@ import com.pesupal.server.model.user.Designation;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.model.user.User;
 import com.pesupal.server.repository.OrgMemberRepository;
+import com.pesupal.server.security.JwtUtil;
 import com.pesupal.server.service.interfaces.*;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -31,6 +32,7 @@ import java.util.List;
 @AllArgsConstructor
 public class OrgMemberServiceImpl implements OrgMemberService {
 
+    private final JwtUtil jwtUtil;
     private final OrgService orgService;
     private final UserService userService;
     private final AuthService authService;
@@ -381,4 +383,5 @@ public class OrgMemberServiceImpl implements OrgMemberService {
 
         return authService.generateTokenWithOrgContext(orgMember.getUser().getEmail(), orgMember.getPublicId());
     }
+
 }
