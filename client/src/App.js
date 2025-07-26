@@ -25,6 +25,7 @@ function App() {
     const navigate = useNavigate();
 
     const isAuthPage = ['/signin', '/signup'].includes(location.pathname);
+    const homePage = ['/'].includes(location.pathname);
 
     useEffect(() => {
         if (!hasCookie() && !isAuthPage) {
@@ -37,8 +38,8 @@ function App() {
             <div className="App FRCS">
 
                 <CommonContainer />
-                {/* ✅ Only render LeftNavigation if not on /signin or /signup */}
-                {!isAuthPage && <LeftNavigation />}
+                {/* ✅ Only render LeftNavigation if not on /signin or /signup or / */}
+                {!isAuthPage && !homePage && <LeftNavigation />}
                 <VerticalLoader />
 
                 <Routes>
