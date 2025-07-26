@@ -7,5 +7,5 @@ public interface OrgService {
 
     public Org getOrgById(Long orgId);
 
-    public Org createOrg(CreateOrgDto createOrgDto, Long userId);
+    public Org createOrg(CreateOrgDto createOrgDto, String userPublicId);
 }
