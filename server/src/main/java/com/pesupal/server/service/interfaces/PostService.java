@@ -17,7 +17,7 @@ public interface PostService {
 
     PostDto getPostByIdAndOrgId(Long postId);
 
-    PostsListDto getPostByUserId(Long postOwnerId, int page, int size, SortOrder sortOrder);
+    PostsListDto getPostByUserId(String postOwnerId, int page, int size, SortOrder sortOrder);
 
     void archivePost(Long postId);
 

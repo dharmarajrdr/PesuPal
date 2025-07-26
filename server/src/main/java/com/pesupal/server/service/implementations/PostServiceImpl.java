@@ -151,19 +151,19 @@ public class PostServiceImpl extends CurrentValueRetriever implements PostServic
      * @return
      */
     @Override
-    public PostsListDto getPostByUserId(Long postOwnerId, int page, int size, SortOrder sortOrder) {
+    public PostsListDto getPostByUserId(String creatorId, int page, int size, SortOrder sortOrder) {
 
         OrgMember orgMember = getCurrentOrgMember();
         Long orgId = orgMember.getOrg().getId();
 
-        orgMemberService.validateUserIsOrgMember(postOwnerId, orgId);
+        OrgMember creator = orgMemberService.getOrgMemberByPublicId(creatorId);
 
         Sort sort = Sort.by(sortOrder == SortOrder.ASC ? Sort.Direction.ASC : Sort.Direction.DESC, "createdAt");
         Pageable pageable = PageRequest.of(page, size + 1, sort);
-        Page<Post> postPage = postRepository.findAllByOrgIdAndUserIdAndStatus(orgId, postOwnerId, pageable, PostStatus.PUBLISHED);
-        OrgMember postOwnerOrgMember = orgMemberService.getOrgMemberByUserIdAndOrgId(postOwnerId, orgId);
+        Page<Post> postPage = postRepository.findAllByOrgIdAndCreator_PublicIdAndStatus(orgId, creatorId, pageable, PostStatus.PUBLISHED);
+
         List<PostDto> postDtos = new ArrayList<>(postPage.getContent().stream().map(post -> {
-            PostDto postDto = getPostDtoFromPostAndOrgMember(post, postOwnerOrgMember);
+            PostDto postDto = getPostDtoFromPostAndOrgMember(post, creator);
             postDto.setCreator(post.getCreator().getId().equals(orgMember.getId()));
             postDto.setLiked(isLiked(post.getLikes(), orgMember.getUser()));
             return postDto;

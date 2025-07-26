@@ -33,7 +33,7 @@ public class PostController {
     }
 
     @GetMapping("/user/{userId}")
-    public ResponseEntity<ApiResponseDto> getPostsByUserId(@PathVariable(name = "userId") Long postOwnerId,
+    public ResponseEntity<ApiResponseDto> getPostsByUserId(@PathVariable(name = "userId") String postOwnerId,
                                                            @RequestParam(defaultValue = "0") int page,
                                                            @RequestParam(defaultValue = "10") int size,
                                                            @RequestParam(name = "sort_order", defaultValue = "DESC") String sortOrder) {
