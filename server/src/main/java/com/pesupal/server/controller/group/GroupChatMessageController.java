@@ -23,36 +23,36 @@ public class GroupChatMessageController extends CurrentValueRetriever {
     @PostMapping("")
     public ResponseEntity<ApiResponseDto> postMessageInGroup(@RequestBody CreateGroupMessageDto createGroupMessageDto) {
 
-        GroupMessageDto groupMessageDto = groupChatMessageService.postMessageInGroup(createGroupMessageDto, getCurrentUserId(), getCurrentOrgId());
+        GroupMessageDto groupMessageDto = groupChatMessageService.postMessageInGroup(createGroupMessageDto);
         return ResponseEntity.ok().body(new ApiResponseDto("Group message posted successfully", groupMessageDto));
     }
 
     @DeleteMapping("/{messageId}")
     public ResponseEntity<ApiResponseDto> deleteGroupMessage(@PathVariable Long messageId) {
 
-        groupChatMessageService.deleteGroupMessage(messageId, getCurrentUserId(), getCurrentOrgId());
+        groupChatMessageService.deleteGroupMessage(messageId);
         return ResponseEntity.ok().body(new ApiResponseDto("Group message deleted successfully"));
     }
 
     @DeleteMapping("/clear/{groupId}")
     public ResponseEntity<ApiResponseDto> clearGroupChatMessages(@PathVariable Long groupId) {
 
-        groupChatMessageService.clearGroupChatMessages(groupId, getCurrentUserId(), getCurrentOrgId());
+        groupChatMessageService.clearGroupChatMessages(groupId);
         return ResponseEntity.ok().body(new ApiResponseDto("Group chat messages cleared successfully"));
     }
 
     @GetMapping("/{groupId}")
-    public ResponseEntity<ApiResponseDto> getGroupChatMessages(@PathVariable Long groupId, @RequestParam Integer page, @RequestParam Integer size, @RequestParam(name = "pivot_message_id", required = false) Long pivotMessageId) {
+    public ResponseEntity<ApiResponseDto> getGroupChatMessages(@PathVariable String groupPublicId, @RequestParam Integer page, @RequestParam Integer size, @RequestParam(name = "pivot_message_id", required = false) Long pivotMessageId) {
 
-        GetGroupConversationDto getGroupConversationDto = new GetGroupConversationDto(groupId, pivotMessageId, page, size);
-        List<MessageDto> messageDtos = groupChatMessageService.getGroupChatMessages(getGroupConversationDto, getCurrentUserId(), getCurrentOrgId());
+        GetGroupConversationDto getGroupConversationDto = new GetGroupConversationDto(groupPublicId, pivotMessageId, page, size);
+        List<MessageDto> messageDtos = groupChatMessageService.getGroupChatMessages(getGroupConversationDto);
         return ResponseEntity.ok().body(new ApiResponseDto("Group chat messages retrieved successfully", messageDtos));
     }
 
     @PutMapping("/{groupId}/read_all")
     public ResponseEntity<ApiResponseDto> markAllGroupMessagesAsRead(@PathVariable Long groupId) {
 
-        groupChatMessageService.markAllGroupMessagesAsRead(groupId, getCurrentUserId(), getCurrentOrgId());
+        groupChatMessageService.markAllGroupMessagesAsRead(groupId);
         return ResponseEntity.ok().body(new ApiResponseDto("All group messages marked as read successfully"));
     }
 }

@@ -11,15 +11,15 @@ import java.util.List;
 
 public interface GroupChatMessageService extends ChatService {
 
-    GroupMessageDto postMessageInGroup(CreateGroupMessageDto createGroupMessageDto, Long userId, Long orgId);
+    GroupMessageDto postMessageInGroup(CreateGroupMessageDto createGroupMessageDto);
 
     GroupChatMessage getGroupChatMessageById(Long messageId);
 
-    void deleteGroupMessage(Long messageId, Long userId, Long orgId);
+    void deleteGroupMessage(Long messageId);
 
-    void clearGroupChatMessages(Long groupId, Long userId, Long orgId);
+    void clearGroupChatMessages(Long groupId);
 
-    List<MessageDto> getGroupChatMessages(GetGroupConversationDto getGroupConversationDto, Long userId, Long orgId);
+    List<MessageDto> getGroupChatMessages(GetGroupConversationDto getGroupConversationDto);
 
-    void markAllGroupMessagesAsRead(Long groupId, Long currentUserId, Long currentOrgId);
+    void markAllGroupMessagesAsRead(Long groupId);
 }

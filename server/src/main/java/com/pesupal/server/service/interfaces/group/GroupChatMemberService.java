@@ -16,11 +16,11 @@ public interface GroupChatMemberService {
 
     boolean isUserMemberOfGroup(String groupPublicId, Long orgMemberPublicId);
 
-    GroupDto joinGroup(Long groupId, Long currentUserId, Long currentOrgId);
+    GroupDto joinGroup(Long groupId);
 
-    UserPreviewDto addMemberToGroup(AddGroupMemberDto addGroupMemberDto, Long userId, Long orgId);
+    UserPreviewDto addMemberToGroup(AddGroupMemberDto addGroupMemberDto);
 
-    Map<Role, List<UserPreviewDto>> getGroupMembers(Long groupId, Long userId, Long orgId);
+    Map<Role, List<UserPreviewDto>> getGroupMembers(Long groupId);
 
     GroupChatMember getGroupMemberByGroupPublicIdAndOrgMember(String groupPublicId, OrgMember orgMember);
 }

@@ -21,7 +21,7 @@ public class GroupChatConfigurationController extends CurrentValueRetriever {
     @PatchMapping("")
     public ResponseEntity<ApiResponseDto> updateGroupChatConfiguration(@RequestBody UpdateGroupChatConfigurationDto updateGroupChatConfigurationDto) {
 
-        groupChatConfigurationService.updateGroupChatConfiguration(updateGroupChatConfigurationDto, getCurrentUserId(), getCurrentOrgId());
+        groupChatConfigurationService.updateGroupChatConfiguration(updateGroupChatConfigurationDto);
         return ResponseEntity.ok().body(new ApiResponseDto("Group chat configuration updated successfully"));
     }
 }

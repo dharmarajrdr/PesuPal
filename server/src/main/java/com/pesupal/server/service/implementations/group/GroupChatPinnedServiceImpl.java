@@ -10,9 +10,7 @@ import com.pesupal.server.model.group.Group;
 import com.pesupal.server.model.group.GroupChatPinned;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.model.user.User;
-import com.pesupal.server.repository.GroupChatMemberRepository;
 import com.pesupal.server.repository.GroupChatPinnedRepository;
-import com.pesupal.server.service.interfaces.OrgMemberService;
 import com.pesupal.server.service.interfaces.group.GroupChatPinnedService;
 import com.pesupal.server.service.interfaces.group.GroupService;
 import org.springframework.context.annotation.Lazy;
@@ -25,15 +23,11 @@ import java.util.Optional;
 public class GroupChatPinnedServiceImpl extends CurrentValueRetriever implements GroupChatPinnedService {
 
     private final GroupService groupService;
-    private final OrgMemberService orgMemberService;
     private final GroupChatPinnedRepository groupChatPinnedRepository;
-    private final GroupChatMemberRepository groupChatMemberRepository;
 
-    public GroupChatPinnedServiceImpl(@Lazy GroupService groupService, OrgMemberService orgMemberService, GroupChatPinnedRepository groupChatPinnedRepository, GroupChatMemberRepository groupChatMemberRepository) {
+    public GroupChatPinnedServiceImpl(@Lazy GroupService groupService, GroupChatPinnedRepository groupChatPinnedRepository) {
         this.groupService = groupService;
-        this.orgMemberService = orgMemberService;
         this.groupChatPinnedRepository = groupChatPinnedRepository;
-        this.groupChatMemberRepository = groupChatMemberRepository;
     }
 
     /**

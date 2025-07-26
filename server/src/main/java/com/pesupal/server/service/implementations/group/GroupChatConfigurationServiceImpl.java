@@ -82,7 +82,7 @@ public class GroupChatConfigurationServiceImpl implements GroupChatConfiguration
      * @return
      */
     @Override
-    public void updateGroupChatConfiguration(UpdateGroupChatConfigurationDto updateGroupChatConfigurationDto, Long userId, Long orgId) {
+    public void updateGroupChatConfiguration(UpdateGroupChatConfigurationDto updateGroupChatConfigurationDto) {
 
         Long groupId = updateGroupChatConfigurationDto.getGroupId();
         Role role = updateGroupChatConfigurationDto.getRole();

@@ -24,21 +24,21 @@ public class GroupChatMemberController extends CurrentValueRetriever {
     @PostMapping("/join/{groupId}")
     public ResponseEntity<ApiResponseDto> joinGroup(@PathVariable Long groupId) {
 
-        GroupDto groupDto = groupChatMemberService.joinGroup(groupId, getCurrentUserId(), getCurrentOrgId());
+        GroupDto groupDto = groupChatMemberService.joinGroup(groupId);
         return ResponseEntity.ok().body(new ApiResponseDto("Group joined successfully", groupDto));
     }
 
     @PostMapping("/add-member")
     public ResponseEntity<ApiResponseDto> addMemberToGroup(@RequestBody AddGroupMemberDto addGroupMemberDto) {
 
-        UserPreviewDto userPreviewDto = groupChatMemberService.addMemberToGroup(addGroupMemberDto, getCurrentUserId(), getCurrentOrgId());
+        UserPreviewDto userPreviewDto = groupChatMemberService.addMemberToGroup(addGroupMemberDto);
         return ResponseEntity.ok().body(new ApiResponseDto("Member added successfully", userPreviewDto));
     }
 
     @GetMapping("/members/{groupId}")
     public ResponseEntity<ApiResponseDto> getGroupMembers(@PathVariable Long groupId) {
 
-        Map<Role, List<UserPreviewDto>> roleListMap = groupChatMemberService.getGroupMembers(groupId, getCurrentUserId(), getCurrentOrgId());
+        Map<Role, List<UserPreviewDto>> roleListMap = groupChatMemberService.getGroupMembers(groupId);
         return ResponseEntity.ok().body(new ApiResponseDto("Group members retrieved successfully", roleListMap));
     }
 }

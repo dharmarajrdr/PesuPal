@@ -11,8 +11,8 @@ import com.pesupal.server.enums.Role;
 import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.exceptions.PermissionDeniedException;
+import com.pesupal.server.helpers.CurrentValueRetriever;
 import com.pesupal.server.model.group.*;
-import com.pesupal.server.model.org.Org;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.repository.GroupChatMemberRepository;
 import com.pesupal.server.repository.GroupChatMessageRepository;
@@ -37,7 +37,7 @@ import java.util.*;
 @Service
 @AllArgsConstructor
 @Qualifier("groupChatMessageService")
-public class GroupChatMessageServiceImpl implements GroupChatMessageService {
+public class GroupChatMessageServiceImpl extends CurrentValueRetriever implements GroupChatMessageService {
 
     private final S3Service s3Service;
     private final OrgMemberService orgMemberService;
@@ -52,14 +52,14 @@ public class GroupChatMessageServiceImpl implements GroupChatMessageService {
      * Posts a message in a group chat.
      *
      * @param createGroupMessageDto
-     * @param userId
-     * @param orgId
      * @return
      */
     @Override
-    public GroupMessageDto postMessageInGroup(CreateGroupMessageDto createGroupMessageDto, Long userId, Long orgId) {
+    public GroupMessageDto postMessageInGroup(CreateGroupMessageDto createGroupMessageDto) {
 
-        OrgMember orgMember = orgMemberService.getOrgMemberByUserIdAndOrgId(userId, orgId);
+        OrgMember orgMember = getCurrentOrgMember();
+        Long userId = orgMember.getUser().getId();
+        Long orgId = orgMember.getOrg().getId();
         GroupChatMember groupChatMember = groupChatMemberService.getGroupMemberByGroupIdAndUserId(createGroupMessageDto.getGroupId(), userId);
         Group group = groupChatMember.getGroup();
         if (!group.getOrg().getId().equals(orgId)) {
@@ -100,18 +100,14 @@ public class GroupChatMessageServiceImpl implements GroupChatMessageService {
      * Deletes a group message.
      *
      * @param messageId
-     * @param userId
-     * @param orgId
      */
     @Override
-    public void deleteGroupMessage(Long messageId, Long userId, Long orgId) {
+    public void deleteGroupMessage(Long messageId) {
 
+        OrgMember orgMember = getCurrentOrgMember();
         GroupChatMessage groupChatMessage = getGroupChatMessageById(messageId);
         Group group = groupChatMessage.getGroup();
-        Org org = group.getOrg();
-        if (!org.getId().equals(orgId)) {
-            throw new DataNotFoundException("Message not found in this organization.");
-        }
+        Long userId = orgMember.getUser().getId();
 
         GroupChatMember groupChatMember = groupChatMemberService.getGroupMemberByGroupIdAndUserId(group.getId(), userId);
         if (!groupChatMember.isActive()) {
@@ -142,11 +138,13 @@ public class GroupChatMessageServiceImpl implements GroupChatMessageService {
      * Clears all messages in a group chat.
      *
      * @param groupId
-     * @param userId
-     * @param orgId
      */
     @Override
-    public void clearGroupChatMessages(Long groupId, Long userId, Long orgId) {
+    public void clearGroupChatMessages(Long groupId) {
+
+        OrgMember orgMember = getCurrentOrgMember();
+        Long userId = orgMember.getUser().getId();
+        Long orgId = orgMember.getOrg().getId();
 
         GroupChatMember groupChatMember = groupChatMemberService.getGroupMemberByGroupIdAndUserId(groupId, userId);
         Group group = groupChatMember.getGroup();
@@ -180,30 +178,30 @@ public class GroupChatMessageServiceImpl implements GroupChatMessageService {
      * Retrieves messages from a group chat based on the provided criteria.
      *
      * @param getGroupConversationDto
-     * @param userId
-     * @param orgId
      * @return
      */
     @Override
-    public List<MessageDto> getGroupChatMessages(GetGroupConversationDto getGroupConversationDto, Long userId, Long orgId) {
+    public List<MessageDto> getGroupChatMessages(GetGroupConversationDto getGroupConversationDto) {
 
         Pageable pageable = PageRequest.of(
                 getGroupConversationDto.getPage(),
                 getGroupConversationDto.getSize(),
-                Sort.by("createdAt").descending());
+                Sort.by("createdAt").descending()
+        );
+        OrgMember orgMember = getCurrentOrgMember();
         Page<GroupChatMessage> messages = null;
         Long pivotMessageId = getGroupConversationDto.getPivotMessageId();
         if (pivotMessageId != null) {
-            messages = groupChatMessageRepository.findAllByGroupIdAndIdLessThan(getGroupConversationDto.getGroupId(), getGroupConversationDto.getPivotMessageId(), pageable);
+            messages = groupChatMessageRepository.findAllByGroupPublicIdAndIdLessThan(getGroupConversationDto.getGroupPublicId(), getGroupConversationDto.getPivotMessageId(), pageable);
         } else {
-            messages = groupChatMessageRepository.findAllByGroupId(getGroupConversationDto.getGroupId(), pageable);
+            messages = groupChatMessageRepository.findAllByGroupPublicId(getGroupConversationDto.getPivotMessageId(), pageable);
         }
         Map<Long, UserPreviewDto> memo = new HashMap<>();
         return messages.stream().map(gm -> {
             MessageDto messageDto = MessageDto.fromGroupMessage(gm);
             Long senderId = gm.getSender().getId();
             if (!memo.containsKey(senderId)) {
-                memo.put(senderId, UserPreviewDto.fromOrgMember(orgMemberService.getOrgMemberByUserIdAndOrgId(senderId, orgId)));
+                memo.put(senderId, UserPreviewDto.fromOrgMember(orgMemberService.getOrgMemberByUserIdAndOrgId(senderId, orgMember.getUser().getId())));
             }
             messageDto.setSender(memo.get(senderId));
             if (gm.isContainsMedia()) {
@@ -224,11 +222,12 @@ public class GroupChatMessageServiceImpl implements GroupChatMessageService {
      * Marks all messages in a group as read.
      *
      * @param groupId
-     * @param userId
-     * @param orgId
      */
     @Override
-    public void markAllGroupMessagesAsRead(Long groupId, Long userId, Long orgId) {
+    public void markAllGroupMessagesAsRead(Long groupId) {
+
+        OrgMember orgMember = getCurrentOrgMember();
+        Long userId = orgMember.getUser().getId();
 
         GroupChatMember groupChatMember = groupChatMemberService.getGroupMemberByGroupIdAndUserId(groupId, userId);
         if (!groupChatMember.isActive()) {

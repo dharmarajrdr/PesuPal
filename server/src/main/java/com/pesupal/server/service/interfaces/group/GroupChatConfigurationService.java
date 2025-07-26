@@ -11,5 +11,5 @@ public interface GroupChatConfigurationService {
 
     GroupChatConfiguration getConfigurationByGroupAndRole(Group group, Role role);
 
-    void updateGroupChatConfiguration(UpdateGroupChatConfigurationDto updateGroupChatConfigurationDto, Long userId, Long orgId);
+    void updateGroupChatConfiguration(UpdateGroupChatConfigurationDto updateGroupChatConfigurationDto);
 }

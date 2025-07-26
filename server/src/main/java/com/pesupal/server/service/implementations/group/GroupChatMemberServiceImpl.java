@@ -62,7 +62,7 @@ public class GroupChatMemberServiceImpl implements GroupChatMemberService {
      * @return
      */
     @Override
-    public GroupDto joinGroup(Long groupId, Long userId, Long orgId) {
+    public GroupDto joinGroup(Long groupId) {
 
         OrgMember orgMember = orgMemberService.getOrgMemberByUserIdAndOrgId(userId, orgId);
 
@@ -99,7 +99,7 @@ public class GroupChatMemberServiceImpl implements GroupChatMemberService {
      * @return
      */
     @Override
-    public UserPreviewDto addMemberToGroup(AddGroupMemberDto addGroupMemberDto, Long userId, Long orgId) {
+    public UserPreviewDto addMemberToGroup(AddGroupMemberDto addGroupMemberDto) {
 
         GroupChatMember groupChatMember = getGroupMemberByGroupIdAndUserId(addGroupMemberDto.getGroupId(), userId);
         Group group = groupChatMember.getGroup();
@@ -138,7 +138,7 @@ public class GroupChatMemberServiceImpl implements GroupChatMemberService {
      * @return
      */
     @Override
-    public Map<Role, List<UserPreviewDto>> getGroupMembers(Long groupId, Long userId, Long orgId) {
+    public Map<Role, List<UserPreviewDto>> getGroupMembers(Long groupId) {
 
         GroupChatMember groupChatMember = getGroupMemberByGroupIdAndUserId(groupId, userId);
         Group group = groupChatMember.getGroup();
