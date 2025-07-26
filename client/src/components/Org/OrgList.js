@@ -53,7 +53,7 @@ const OrgList = ({ toggleOrgList, closeOrgList }) => {
 
     const createOrgHandler = () => {
 
-        // create org modal
+        return navigate('/org/create');
     }
 
     return (
