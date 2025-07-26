@@ -17,7 +17,7 @@ public class DirectMessageReaction extends CreationTimeAuditable {
     private DirectMessage directMessage;
 
     @ManyToOne
-    private OrgMember user;
+    private OrgMember reactor;
 
     @Enumerated(EnumType.STRING)
     private Reaction reaction;

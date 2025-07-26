@@ -245,7 +245,7 @@ public class DirectMessageServiceImpl extends CurrentValueRetriever implements D
         DirectMessageChat directMessageChat = directMessageChatService.getDirectMessageByPublicId(chatMessageDto.getChatId());
 
         OrgMember sender = orgMemberService.getOrgMemberByPublicId(senderOrgMemberId);
-        OrgMember receiver = directMessageChat.getReceiver(sender);
+        OrgMember receiver = directMessageChat.getAnotherUser(sender);
 
         boolean containsMedia = chatMessageDto.getMedia() != null;
 
@@ -297,7 +297,7 @@ public class DirectMessageServiceImpl extends CurrentValueRetriever implements D
 
         DirectMessageChat directMessageChat = directMessageChatService.getDirectMessageByPublicId(chatId);
         OrgMember currentUser = getCurrentOrgMember();
-        OrgMember otherUser = directMessageChat.getReceiver(currentUser);
+        OrgMember otherUser = directMessageChat.getAnotherUser(currentUser);
 
         ChatPreviewDto chatPreviewDto = new ChatPreviewDto();
         chatPreviewDto.setUserId(otherUser.getPublicId());
@@ -305,7 +305,7 @@ public class DirectMessageServiceImpl extends CurrentValueRetriever implements D
         chatPreviewDto.setActive(!otherUser.isArchived());
         chatPreviewDto.setDisplayName(otherUser.getDisplayName());
         chatPreviewDto.setDisplayPicture(otherUser.getDisplayPicture());
-        Optional<PinnedDirectMessage> pinnedDirectMessage = pinnedDirectMessageService.getPinnedDirectMessageByPinnedByAndPinnedUser(currentUser, otherUser);
+        Optional<PinnedDirectMessage> pinnedDirectMessage = pinnedDirectMessageService.getPinnedDirectMessageByPinnedByAndDirectMessageChat(currentUser, directMessageChat);
         if (pinnedDirectMessage.isPresent()) {
             chatPreviewDto.setPinnedId(pinnedDirectMessage.get().getId());
         }

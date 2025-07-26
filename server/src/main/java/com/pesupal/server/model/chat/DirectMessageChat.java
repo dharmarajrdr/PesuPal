@@ -16,7 +16,7 @@ public class DirectMessageChat extends PublicAccessModel {
     @ManyToOne
     private OrgMember user2;
 
-    public OrgMember getReceiver(OrgMember sender) {
+    public OrgMember getAnotherUser(OrgMember sender) {
         if (user1.equals(sender)) {
             return user2;
         } else if (user2.equals(sender)) {
