@@ -16,13 +16,13 @@ import java.util.List;
 @Repository
 public interface DirectMessageRepository extends JpaRepository<DirectMessage, Long> {
 
-    Page<DirectMessage> findAllByChatId(String chatId, Pageable pageable);
+    Page<DirectMessage> findAllByDirectMessageChat(String directMessageChat, Pageable pageable);
 
-    Page<DirectMessage> findAllByChatIdAndIdLessThan(String chatId, Long pivotMessageId, Pageable pageable);
+    Page<DirectMessage> findAllByDirectMessageChatAndIdLessThan(String directMessageChat, Long pivotMessageId, Pageable pageable);
 
     @Modifying
     @Transactional
-    @Query("UPDATE DirectMessage dm SET dm.readReceipt = :readReceipt WHERE dm.chatId = :chatId AND dm.receiver.id = :receiverId AND dm.readReceipt <> :readReceipt")
+    @Query("UPDATE DirectMessage dm SET dm.readReceipt = :readReceipt WHERE dm.directMessageChat.publicId = :chatId AND dm.receiver.id = :receiverId AND dm.readReceipt <> :readReceipt")
     void markMessagesAsRead(@Param("chatId") String chatId, @Param("receiverId") Long receiverId, @Param("readReceipt") ReadReceipt readReceipt);
 
     @Query(value = """

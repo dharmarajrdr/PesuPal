@@ -47,11 +47,11 @@ public class DirectMessageServiceImpl implements DirectMessageService {
     private final UserService userService;
     private final OrgMemberService orgMemberService;
     private final DirectMessageRepository directMessageRepository;
+    private final DirectMessageChatService directMessageChatService;
     private final PinnedDirectMessageService pinnedDirectMessageService;
     private final DirectMessageReactionService directMessageReactionService;
     private final DirectMessageMediaFileService directMessageMediaFileService;
     private final DirectMessageMediaFileRepository directMessageMediaFileRepository;
-    private final DirectMessageChatService directMessageChatService;
 
     public DirectMessageServiceImpl(DirectMessageRepository directMessageRepository, @Lazy DirectMessageReactionService directMessageReactionService, UserService userService, OrgService orgService, OrgMemberService orgMemberService, PinnedDirectMessageService pinnedDirectMessageService, DirectMessageMediaFileRepository directMessageMediaFileRepository, S3Service s3Service, DirectMessageMediaFileService directMessageMediaFileService, JwtUtil jwtUtil, DirectMessageChatService directMessageChatService) {
         this.jwtUtil = jwtUtil;
@@ -113,9 +113,9 @@ public class DirectMessageServiceImpl implements DirectMessageService {
         Page<DirectMessage> messages = null;
         Long pivotMessageId = getConversationBetweenUsers.getPivotMessageId();
         if (pivotMessageId != null) {
-            messages = directMessageRepository.findAllByChatIdAndIdLessThan(getConversationBetweenUsers.getChatId(), getConversationBetweenUsers.getPivotMessageId(), pageable);
+            messages = directMessageRepository.findAllByDirectMessageChatAndIdLessThan(getConversationBetweenUsers.getChatId(), getConversationBetweenUsers.getPivotMessageId(), pageable);
         } else {
-            messages = directMessageRepository.findAllByChatId(getConversationBetweenUsers.getChatId(), pageable);
+            messages = directMessageRepository.findAllByDirectMessageChat(getConversationBetweenUsers.getChatId(), pageable);
         }
         Map<Long, UserPreviewDto> memo = new HashMap<>();
         return messages.stream().map(dm -> toMessageDto(dm, orgId, memo)).sorted(Comparator.comparing(MessageDto::getCreatedAt)).toList();
