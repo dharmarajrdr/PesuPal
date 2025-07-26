@@ -3,6 +3,7 @@ package com.pesupal.server.controller;
 import com.pesupal.server.dto.response.ApiResponseDto;
 import com.pesupal.server.enums.ResponseStatus;
 import com.pesupal.server.exceptions.BaseException;
+import com.pesupal.server.exceptions.OrganizationNotSelectedException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.http.HttpStatus;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -45,6 +47,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponseDto> handleBadCredentialsException(BadCredentialsException ex) {
 
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponseDto("Invalid credentials: " + ex.getMessage(), ResponseStatus.FAILURE));
+    }
+
+    @ExceptionHandler(OrganizationNotSelectedException.class)
+    public ResponseEntity<ApiResponseDto> handleOrgNotSelected(OrganizationNotSelectedException ex) throws IOException {
+
+        return ResponseEntity.status(ex.getHttpStatus()).body(new ApiResponseDto(ex.getMessage(), Map.of("redirect", "/"), ResponseStatus.FAILURE));
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
