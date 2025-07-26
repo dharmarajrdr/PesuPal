@@ -62,9 +62,9 @@ const OrgList = ({ toggleOrgList, closeOrgList }) => {
                 {
                     loading ? <Loader /> :
                         error ? <ErrorMessage message={error} /> : <>
-                            {orgListDetails.length ?
-                                orgListDetails.map((org, index) => <OrgPreview org={org} currentOrgId={currentOrgId} setCurrentOrg={setCurrentOrg} key={index} toggleOrgList={toggleOrgList} />) :
-                                <NoOrgFound />
+                            {orgListDetails.length ? <div id='org-lists' className='w100 h100P FCCS'>
+                                {orgListDetails.map((org, index) => <OrgPreview org={org} currentOrgId={currentOrgId} setCurrentOrg={setCurrentOrg} key={index} toggleOrgList={toggleOrgList} />)}
+                            </div> : <NoOrgFound />
                             }
                             <button className='create-org-button w100 FRCC' onClick={createOrgHandler}>Create New Org</button>
                         </>
