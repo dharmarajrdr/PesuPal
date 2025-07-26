@@ -20,5 +20,5 @@ public interface PinnedDirectMessageService {
 
     boolean isChatPinned(Long pinnedById, Long pinnedUserId, Long orgId);
 
-    void unpinDirectMessage(Long id, Long userid, Long orgId);
+    void unpinDirectMessage(Long id, OrgMember orgMember);
 }

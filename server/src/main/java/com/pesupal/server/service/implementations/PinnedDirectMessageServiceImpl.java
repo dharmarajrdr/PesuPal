@@ -113,13 +113,13 @@ public class PinnedDirectMessageServiceImpl implements PinnedDirectMessageServic
      * Unpins a direct message for the current user in the current organization.
      *
      * @param id
-     * @param userId
-     * @param orgId
+     * @param orgMember
      */
     @Override
-    public void unpinDirectMessage(Long id, Long userId, Long orgId) {
+    public void unpinDirectMessage(Long id, OrgMember orgMember) {
 
         PinnedDirectMessage pinnedDirectMessage = getPinnedDirectMessageById(id);
+        Long userId = orgMember.getUser().getId();
         if (!pinnedDirectMessage.getPinnedBy().getId().equals(userId)) {
             throw new PermissionDeniedException("You do not have permission to unpin this direct message.");
         }
