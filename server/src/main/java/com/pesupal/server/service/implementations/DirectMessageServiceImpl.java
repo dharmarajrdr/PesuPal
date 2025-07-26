@@ -149,15 +149,14 @@ public class DirectMessageServiceImpl extends CurrentValueRetriever implements D
     /**
      * Deletes a specific message in a chat by its ID.
      *
-     * @param userId
      * @param messageId
      */
     @Override
-    public void deleteMessage(Long userId, Long messageId) {
+    public void deleteMessage(Long messageId) {
 
         DirectMessage directMessage = getDirectMessageById(messageId);
 
-        if (directMessage.getSender().getId() != userId) {
+        if (directMessage.getSender().getPublicId().equals(getCurrentUserPublicId())) {
             throw new PermissionDeniedException("You do not have permission to delete this message.");
         }
 
@@ -265,24 +264,6 @@ public class DirectMessageServiceImpl extends CurrentValueRetriever implements D
             directMessageMediaFileService.save(directMessageMediaFile);
         }
         return toMessageDto(directMessage, orgId, new HashMap<>());
-    }
-
-    public OrgMember getReceiver(DirectMessageChat directMessageChat, OrgMember sender) {
-
-        OrgMember user1 = directMessageChat.getUser1();
-        OrgMember user2 = directMessageChat.getUser2();
-
-        OrgMember receiver = null;
-        if (user1.getId().equals(sender.getId())) {
-            receiver = user2;
-        } else if (user2.getId().equals(sender.getId())) {
-            receiver = user1;
-        }
-
-        if (receiver.isArchived()) {
-            throw new ActionProhibitedException("User " + receiver.getDisplayName() + " is no longer a member of this org.");
-        }
-        return receiver;
     }
 
     /**

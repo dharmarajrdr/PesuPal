@@ -61,7 +61,7 @@ public class DirectMessageController extends CurrentValueRetriever {
     @DeleteMapping("/{messageId}")
     public ResponseEntity<ApiResponseDto> deleteMessage(@PathVariable Long messageId) {
 
-        directMessageService.deleteMessage(getCurrentUserId(), messageId);
+        directMessageService.deleteMessage(messageId);
         return ResponseEntity.ok(new ApiResponseDto("Message deleted successfully"));
     }
 

@@ -18,7 +18,7 @@ public interface DirectMessageService extends ChatService {
 
     DirectMessage getDirectMessageById(Long messageId);
 
-    void deleteMessage(Long userId, Long messageId);
+    void deleteMessage(Long messageId);
 
     RecentChatPagedDto getRecentChatsPaged(OrgMember orgMember, Pageable pageable);
 
