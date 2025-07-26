@@ -69,9 +69,9 @@ public class DirectMessageReactionServiceImpl extends CurrentValueRetriever impl
             throw new ActionProhibitedException("Cannot react to a deleted message.");
         }
 
-        DirectMessageReaction directMessageReaction = directMessageReactionRepository.findByDirectMessageAndOrgMember(directMessage, reactor).orElse(new DirectMessageReaction());
+        DirectMessageReaction directMessageReaction = directMessageReactionRepository.findByDirectMessageAndReactor(directMessage, reactor).orElse(new DirectMessageReaction());
         directMessageReaction.setDirectMessage(directMessage);
-        directMessageReaction.setUser(reactor);
+        directMessageReaction.setReactor(reactor);
         directMessageReaction.setReaction(reaction);
 
         directMessageReaction = directMessageReactionRepository.save(directMessageReaction);
@@ -91,7 +91,7 @@ public class DirectMessageReactionServiceImpl extends CurrentValueRetriever impl
 
         DirectMessageReaction directMessageReaction = getDirectMessageReactionById(reactionId);
 
-        if (!Objects.equals(directMessageReaction.getUser().getPublicId(), getCurrentOrgMemberPublicId())) {
+        if (!Objects.equals(directMessageReaction.getReactor().getPublicId(), getCurrentOrgMemberPublicId())) {
             throw new PermissionDeniedException("You do not have permission to remove this reaction.");
         }
 

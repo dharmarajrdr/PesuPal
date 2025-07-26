@@ -15,7 +15,7 @@ import java.util.Optional;
 @Repository
 public interface DirectMessageReactionRepository extends JpaRepository<DirectMessageReaction, Long> {
 
-    Optional<DirectMessageReaction> findByDirectMessageAndOrgMember(DirectMessage directMessage, OrgMember orgMember);
+    Optional<DirectMessageReaction> findByDirectMessageAndReactor(DirectMessage directMessage, OrgMember orgMember);
 
     List<DirectMessageReaction> findByDirectMessage(DirectMessage directMessage);
 
