@@ -1,5 +1,5 @@
 #RecentChats {
-  /* max-height: calc(100vh - 190px); */
+  max-height: calc(100vh - 110px);
 }
 
 .RecentChatContainer {

@@ -13,7 +13,7 @@ public interface DirectMessageReactionService {
 
     ReactMessageResponseDto reactToMessage(Long messageId, Reaction reaction);
 
-    void unreactToMessage(Long reactionId, Long userId);
+    void unreactToMessage(Long reactionId);
 
     Map<Reaction, Integer> getReactionsCountForMessage(DirectMessage directMessage);
 }

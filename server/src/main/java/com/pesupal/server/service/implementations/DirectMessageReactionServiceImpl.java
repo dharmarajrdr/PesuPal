@@ -14,8 +14,6 @@ import com.pesupal.server.projections.ReactionCountProjection;
 import com.pesupal.server.repository.DirectMessageReactionRepository;
 import com.pesupal.server.service.interfaces.DirectMessageReactionService;
 import com.pesupal.server.service.interfaces.DirectMessageService;
-import com.pesupal.server.service.interfaces.OrgMemberService;
-import com.pesupal.server.service.interfaces.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -28,8 +26,6 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class DirectMessageReactionServiceImpl extends CurrentValueRetriever implements DirectMessageReactionService {
 
-    private final UserService userService;
-    private final OrgMemberService orgMemberService;
     private final DirectMessageService directMessageService;
     private final DirectMessageReactionRepository directMessageReactionRepository;
 
@@ -91,11 +87,11 @@ public class DirectMessageReactionServiceImpl extends CurrentValueRetriever impl
      * @return void
      */
     @Override
-    public void unreactToMessage(Long reactionId, Long userId) {
+    public void unreactToMessage(Long reactionId) {
 
         DirectMessageReaction directMessageReaction = getDirectMessageReactionById(reactionId);
 
-        if (!Objects.equals(directMessageReaction.getUser().getId(), userId)) {
+        if (!Objects.equals(directMessageReaction.getUser().getPublicId(), getCurrentOrgMemberPublicId())) {
             throw new PermissionDeniedException("You do not have permission to remove this reaction.");
         }
 

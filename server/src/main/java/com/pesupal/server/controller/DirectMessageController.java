@@ -75,7 +75,7 @@ public class DirectMessageController extends CurrentValueRetriever {
     @DeleteMapping("/react/{reactionId}")
     public ResponseEntity<ApiResponseDto> unReactMessage(@PathVariable Long reactionId) {
 
-        directMessageReactionService.unreactToMessage(reactionId, getCurrentUserId());
+        directMessageReactionService.unreactToMessage(reactionId);
         return ResponseEntity.ok(new ApiResponseDto("Reaction removed successfully"));
     }
 
