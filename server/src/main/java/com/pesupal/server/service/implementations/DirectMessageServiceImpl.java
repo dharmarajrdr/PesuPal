@@ -244,7 +244,7 @@ public class DirectMessageServiceImpl implements DirectMessageService {
         DirectMessageChat directMessageChat = directMessageChatService.getDirectMessageByPublicId(chatMessageDto.getChatId());
 
         OrgMember sender = orgMemberService.getOrgMemberByPublicId(senderOrgMemberId);
-        OrgMember receiver = getReceiver(directMessageChat, sender);
+        OrgMember receiver = directMessageChat.getReceiver(sender);
 
         boolean containsMedia = chatMessageDto.getMedia() != null;
 
@@ -266,7 +266,7 @@ public class DirectMessageServiceImpl implements DirectMessageService {
         return toMessageDto(directMessage, orgId, new HashMap<>());
     }
 
-    private OrgMember getReceiver(DirectMessageChat directMessageChat, OrgMember sender) {
+    public OrgMember getReceiver(DirectMessageChat directMessageChat, OrgMember sender) {
 
         OrgMember user1 = directMessageChat.getUser1();
         OrgMember user2 = directMessageChat.getUser2();

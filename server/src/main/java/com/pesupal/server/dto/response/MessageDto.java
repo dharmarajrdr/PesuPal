@@ -4,8 +4,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.pesupal.server.enums.ChatMode;
 import com.pesupal.server.enums.Reaction;
 import com.pesupal.server.enums.ReadReceipt;
-import com.pesupal.server.helpers.Chat;
 import com.pesupal.server.model.chat.DirectMessage;
+import com.pesupal.server.model.chat.DirectMessageChat;
 import com.pesupal.server.model.group.GroupChatMessage;
 import lombok.Data;
 
@@ -26,7 +26,7 @@ public class MessageDto {
 
     private String chatId;
 
-    private Long receiverId;
+    private String receiverId;
 
     private String message;
 
@@ -49,13 +49,12 @@ public class MessageDto {
         }
         responseDto.setOrgId(directMessage.getOrg().getId());
         responseDto.setCreatedAt(directMessage.getCreatedAt());
-        responseDto.setChatId(directMessage.getChatId());
+        DirectMessageChat directMessageChat = directMessage.getDirectMessageChat();
+        responseDto.setChatId(directMessageChat.getPublicId());
         responseDto.setDeleted(directMessage.isDeleted());
         responseDto.setReadReceipt(directMessage.getReadReceipt());
         responseDto.setChatMode(ChatMode.DIRECT_MESSAGE);
-        Long[] parsedChatId = Chat.parseChatId(directMessage.getChatId());
-        Long receiverId = parsedChatId[0].equals(directMessage.getSender().getId()) ? parsedChatId[1] : parsedChatId[0];
-        responseDto.setReceiverId(receiverId);
+        responseDto.setReceiverId(directMessageChat.getReceiver(directMessage.getSender()).getPublicId());
         return responseDto;
     }
 
