@@ -11,6 +11,7 @@ import com.pesupal.server.enums.Visibility;
 import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.exceptions.PermissionDeniedException;
+import com.pesupal.server.helpers.CurrentValueRetriever;
 import com.pesupal.server.helpers.TimeFormatterUtil;
 import com.pesupal.server.model.group.Group;
 import com.pesupal.server.model.group.GroupChatConfiguration;
@@ -40,7 +41,7 @@ import java.util.Optional;
 
 @Service
 @AllArgsConstructor
-public class GroupServiceImpl implements GroupService {
+public class GroupServiceImpl extends CurrentValueRetriever implements GroupService {
 
     private final OrgService orgService;
     private final UserService userService;
@@ -61,7 +62,7 @@ public class GroupServiceImpl implements GroupService {
 
         GroupChatMember groupChatMember = new GroupChatMember();
         groupChatMember.setGroup(group);
-        groupChatMember.setUser(orgMember.getUser());
+        groupChatMember.setUser(orgMember);
         groupChatMember.setActive(true);
         groupChatMember.setRole(Role.SUPER_ADMIN);
         groupChatMemberRepository.save(groupChatMember);
@@ -71,15 +72,13 @@ public class GroupServiceImpl implements GroupService {
      * Creates a new group based on the provided CreateGroupDto.
      *
      * @param createGroupDto
-     * @param userId
-     * @param orgId
      * @return
      */
     @Override
     @Transactional
-    public GroupDto createGroup(CreateGroupDto createGroupDto, Long userId, Long orgId) {
+    public GroupDto createGroup(CreateGroupDto createGroupDto) {
 
-        OrgMember orgMember = orgMemberService.getOrgMemberByUserIdAndOrgId(userId, orgId);
+        OrgMember orgMember = getCurrentOrgMember();
         Group group = createGroupDto.toGroup();
         group.setOwner(orgMember.getUser());
         group.setOrg(orgMember.getOrg());
@@ -104,17 +103,19 @@ public class GroupServiceImpl implements GroupService {
     /**
      * Deletes a group based on the provided group ID, user ID, and organization ID.
      *
-     * @param groupId
-     * @param userId
-     * @param orgId
+     * @param groupPublicId
      */
     @Override
-    public void deleteGroup(Long groupId, Long userId, Long orgId) {
+    public void deleteGroup(String groupPublicId) {
 
-        GroupChatMember groupChatMember = groupChatMemberService.getGroupMemberByGroupIdAndUserId(groupId, userId);
-        Group group = getGroupById(groupId);
+        OrgMember orgMember = getCurrentOrgMember();
+
+        Long orgId = orgMember.getOrg().getId();
+
+        GroupChatMember groupChatMember = groupChatMemberService.getGroupMemberByGroupPublicIdAndOrgMember(groupPublicId, orgMember);
+        Group group = groupChatMember.getGroup();
         if (!group.getOrg().getId().equals(orgId)) {
-            throw new DataNotFoundException("Group with ID " + groupId + " does not exist.");
+            throw new DataNotFoundException("Group with ID " + groupPublicId + " does not exist.");
         }
 
         Role role = groupChatMember.getRole();

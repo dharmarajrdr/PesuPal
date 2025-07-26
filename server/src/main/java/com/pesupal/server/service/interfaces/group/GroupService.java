@@ -9,11 +9,11 @@ import org.springframework.data.domain.Pageable;
 
 public interface GroupService {
 
-    GroupDto createGroup(CreateGroupDto createGroupDto, Long userId, Long orgId);
+    GroupDto createGroup(CreateGroupDto createGroupDto);
 
     Group getGroupById(Long groupId);
 
-    void deleteGroup(Long groupId, Long userId, Long orgId);
+    void deleteGroup(String groupPublicId);
 
     RecentChatPagedDto getAllGroups(Long userId, Long orgId, Pageable pageable);
 

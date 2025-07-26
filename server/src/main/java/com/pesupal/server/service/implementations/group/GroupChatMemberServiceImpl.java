@@ -165,6 +165,19 @@ public class GroupChatMemberServiceImpl implements GroupChatMemberService {
     }
 
     /**
+     * Retrieves a group member by group public ID and organization member.
+     *
+     * @param groupPublicId
+     * @param orgMember
+     * @return
+     */
+    @Override
+    public GroupChatMember getGroupMemberByGroupPublicIdAndOrgMember(String groupPublicId, OrgMember orgMember) {
+
+        return groupChatMemberRepository.findByGroup_PublicIdAndUser(groupPublicId, orgMember.getUser()).orElseThrow(() -> new DataNotFoundException("Group member not found for group ID " + groupPublicId + " and user ID " + orgMember.getUser().getId()));
+    }
+
+    /**
      * Checks if a user is a member of a group.
      *
      * @param groupId

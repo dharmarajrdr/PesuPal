@@ -22,14 +22,14 @@ public class GroupController extends CurrentValueRetriever {
     @PostMapping("/create")
     public ResponseEntity<ApiResponseDto> createGroupMessage(@RequestBody CreateGroupDto createGroupDto) {
 
-        GroupDto groupDto = groupService.createGroup(createGroupDto, getCurrentUserId(), getCurrentOrgId());
+        GroupDto groupDto = groupService.createGroup(createGroupDto);
         return ResponseEntity.ok().body(new ApiResponseDto("Group message created successfully", groupDto));
     }
 
     @DeleteMapping("/{groupId}")
-    public ResponseEntity<ApiResponseDto> deleteGroup(@PathVariable Long groupId) {
+    public ResponseEntity<ApiResponseDto> deleteGroup(@PathVariable String groupPublicId) {
 
-        groupService.deleteGroup(groupId, getCurrentUserId(), getCurrentOrgId());
+        groupService.deleteGroup(groupPublicId);
         return ResponseEntity.ok().body(new ApiResponseDto("Group deleted successfully"));
     }
 
