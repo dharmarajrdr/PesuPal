@@ -43,7 +43,7 @@ public class PostReplyServiceImpl implements PostReplyService {
 
         User replier = userService.getUserById(userId);
         OrgMember orgMember = orgMemberService.getOrgMemberByUserIdAndOrgId(userId, orgId);
-        PostComment postComment = postCommentService.getPostCommentById(createReplyCommentDto.getCommentId(), userId, orgId);
+        PostComment postComment = postCommentService.getPostCommentById(createReplyCommentDto.getCommentId());
 
         PostReply postReply = createReplyCommentDto.toPostReply();
         postReply.setPostComment(postComment);
@@ -62,7 +62,7 @@ public class PostReplyServiceImpl implements PostReplyService {
     @Override
     public List<ReplyCommentDto> getRepliesForComment(Long commentId, Long userId, Long orgId) {
 
-        PostComment postComment = postCommentService.getPostCommentById(commentId, userId, orgId);
+        PostComment postComment = postCommentService.getPostCommentById(commentId);
 
         Map<Long, OrgMember> memo = new HashMap<>();
 

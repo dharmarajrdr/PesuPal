@@ -19,4 +19,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     boolean existsByIdAndOrgId(Long postId, Long orgId);
 
     int countAllByUserIdAndOrgId(Long userId, Long orgId);
+
+    Optional<Post> findByPublicId(String publicId);
 }
