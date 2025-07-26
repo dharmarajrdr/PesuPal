@@ -18,9 +18,11 @@ const CreateOrgModal = () => {
         setDisplayName('');
         setUniqueName('');
         setDisplayPicture('');
+        navigate("/");
     };
 
     const handleSubmit = () => {
+
         if (!displayName.trim() || !uniqueName.trim()) {
             alert("Display name and unique name are required.");
             return;
@@ -39,7 +41,6 @@ const CreateOrgModal = () => {
             navigate(`/`);
         }).catch(({ message }) => {
             dispatch(showPopup({ message, type: 'error' }));
-            closeCreateOrgModal();
         });
     };
 

@@ -2,6 +2,7 @@ package com.pesupal.server.service.implementations;
 
 import com.pesupal.server.dto.request.CreateOrgDto;
 import com.pesupal.server.exceptions.DataNotFoundException;
+import com.pesupal.server.exceptions.DuplicateDataReceivedException;
 import com.pesupal.server.model.org.Org;
 import com.pesupal.server.model.user.User;
 import com.pesupal.server.repository.OrgRepository;
@@ -54,6 +55,10 @@ public class OrgServiceImpl implements OrgService {
         User owner = userService.getUserByPublicId(userPublicId);
 
         userOnboardingService.hasDoneOnboardingVerification(owner);
+
+        if (orgRepository.existsByUniqueName(createOrgDto.getUniqueName())) {
+            throw new DuplicateDataReceivedException("Name '" + createOrgDto.getUniqueName() + "' is already taken. Please choose a different name.");
+        }
 
         Org org = createOrgDto.toOrg();
         org.setOwner(owner);

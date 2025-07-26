@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface OrgRepository extends JpaRepository<Org, Long> {
+    boolean existsByUniqueName(String uniqueName);
 }
