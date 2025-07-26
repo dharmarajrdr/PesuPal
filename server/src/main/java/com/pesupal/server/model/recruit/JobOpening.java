@@ -5,7 +5,7 @@ import com.pesupal.server.enums.JobOpeningStatus;
 import com.pesupal.server.enums.JobType;
 import com.pesupal.server.model.PublicAccessModel;
 import com.pesupal.server.model.org.Org;
-import com.pesupal.server.model.user.User;
+import com.pesupal.server.model.user.OrgMember;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -36,7 +36,7 @@ public class JobOpening extends PublicAccessModel {
 
     @ManyToOne
     @JsonIgnore
-    private User hiringManager;
+    private OrgMember hiringManager;
 
     @Enumerated(EnumType.STRING)
     private JobOpeningStatus status;

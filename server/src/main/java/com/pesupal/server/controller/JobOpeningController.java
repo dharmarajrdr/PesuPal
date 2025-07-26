@@ -5,7 +5,6 @@ import com.pesupal.server.dto.request.JobOpeningFilterDto;
 import com.pesupal.server.dto.response.ApiResponseDto;
 import com.pesupal.server.dto.response.JobOpeningDto;
 import com.pesupal.server.enums.JobOpeningStatus;
-import com.pesupal.server.helpers.CurrentValueRetriever;
 import com.pesupal.server.service.interfaces.JobOpeningService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -16,14 +15,14 @@ import java.util.List;
 @RestController
 @AllArgsConstructor
 @RequestMapping("/api/v1/job-opening")
-public class JobOpeningController extends CurrentValueRetriever {
+public class JobOpeningController {
 
     private final JobOpeningService jobOpeningService;
 
     @PostMapping("/create")
     public ResponseEntity<ApiResponseDto> createJobOpening(@RequestBody CreateJobOpeningDto createJobOpeningDto) {
 
-        JobOpeningDto jobOpening = jobOpeningService.createJobOpening(createJobOpeningDto, getCurrentUserId(), getCurrentOrgId());
+        JobOpeningDto jobOpening = jobOpeningService.createJobOpening(createJobOpeningDto);
         return ResponseEntity.ok(new ApiResponseDto("Job opening created successfully", jobOpening));
     }
 
@@ -40,7 +39,7 @@ public class JobOpeningController extends CurrentValueRetriever {
     ) {
 
         JobOpeningFilterDto jobOpeningFilterDto = new JobOpeningFilterDto(openingStatus);
-        List<JobOpeningDto> jobOpenings = jobOpeningService.getAllJobOpeningsByOrgId(getCurrentUserId(), getCurrentOrgId(), jobOpeningFilterDto);
+        List<JobOpeningDto> jobOpenings = jobOpeningService.getAllJobOpeningsByOrgId(jobOpeningFilterDto);
         return ResponseEntity.ok(new ApiResponseDto("Job openings retrieved successfully", jobOpenings));
     }
 }

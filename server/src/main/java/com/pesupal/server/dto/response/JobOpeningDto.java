@@ -5,7 +5,6 @@ import com.pesupal.server.enums.JobOpeningStatus;
 import com.pesupal.server.enums.JobType;
 import com.pesupal.server.model.recruit.JobOpening;
 import com.pesupal.server.model.recruit.JobOpeningCriteria;
-import com.pesupal.server.model.user.OrgMember;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -35,7 +34,7 @@ public class JobOpeningDto {
 
     private UserBasicInfoDto createdBy;
 
-    public static JobOpeningDto fromJobOpening(JobOpening jobOpening, OrgMember hiringManager) {
+    public static JobOpeningDto fromJobOpening(JobOpening jobOpening) {
 
         JobOpeningDto jobOpeningDto = new JobOpeningDto();
         jobOpeningDto.setTitle(jobOpening.getTitle());
@@ -46,9 +45,7 @@ public class JobOpeningDto {
         jobOpeningDto.setStatus(jobOpening.getStatus());
         jobOpeningDto.setJobType(jobOpening.getJobType());
         jobOpeningDto.setCriteria(jobOpening.getCriteria());
-        if (hiringManager != null) {
-            jobOpeningDto.setCreatedBy(UserBasicInfoDto.fromOrgMember(hiringManager));
-        }
+        jobOpeningDto.setCreatedBy(UserBasicInfoDto.fromOrgMember(jobOpening.getHiringManager()));
         jobOpeningDto.setCandidatesCount(jobOpening.getCandidates() != null ? jobOpening.getCandidates().size() : 0);
         return jobOpeningDto;
     }
