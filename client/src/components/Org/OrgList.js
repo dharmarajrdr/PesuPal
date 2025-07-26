@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react'
 import OrgPreview from './OrgPreview'
 import './OrgList.css'
+import { useDispatch } from "react-redux";
 import ErrorMessage from '../ErrorMessage';
 import { apiRequest } from '../../http_request';
 import Loader from '../Loader';
 import { useNavigate } from "react-router-dom";
+import { showPopup } from '../../store/reducers/PopupSlice';
 
 const NoOrgFound = () => {
 
@@ -25,21 +27,24 @@ const OrgList = ({ toggleOrgList, closeOrgList }) => {
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
+    const dispatch = useDispatch();
 
-    const setCurrentOrg = (org) => {
+    const setCurrentOrg = ({ publicId, displayName }) => {
 
-        sessionStorage.setItem("org-id", org.id);
-        if (window.location.pathname === "/feeds") {
-            window.location.reload(); // Already in /feeds → just reload
-        } else {
-            navigate("/feeds"); // Else, navigate
-        }
-        sessionStorage.setItem("popup-message", `Switched to org '${org.displayName}'.`);
-        sessionStorage.setItem("popup-type", "success");
-        closeOrgList(); // Close the org list modal after setting the current org
+        apiRequest(`/api/v1/people/token`, 'GET', null, {
+            'X-Org-Id': publicId
+        }).then(({ data }) => {
+            sessionStorage.setItem('token', data);
+            if (window.location.pathname === "/feeds") {
+                window.location.reload(); // Already in /feeds → just reload
+            } else {
+                navigate("/feeds"); // Else, navigate
+            }
+            dispatch(showPopup({ message: `Switched to '${displayName}' org.`, type: 'success' }));
+        }).catch(({ message }) => {
+            dispatch(showPopup({ message, type: 'error' }));
+        });
     };
-
-    const currentOrgId = sessionStorage.getItem('org-id');
 
     useEffect(() => {
         apiRequest('/api/v1/people/orgs', 'GET').then(({ data }) => {
@@ -63,7 +68,7 @@ const OrgList = ({ toggleOrgList, closeOrgList }) => {
                     loading ? <Loader /> :
                         error ? <ErrorMessage message={error} /> : <>
                             {orgListDetails.length ? <div id='org-lists' className='w100 h100P FCCS'>
-                                {orgListDetails.map((org, index) => <OrgPreview org={org} currentOrgId={currentOrgId} setCurrentOrg={setCurrentOrg} key={index} toggleOrgList={toggleOrgList} />)}
+                                {orgListDetails.map((org, index) => <OrgPreview org={org} setCurrentOrg={setCurrentOrg} key={index} toggleOrgList={toggleOrgList} />)}
                             </div> : <NoOrgFound />
                             }
                             <button className='create-org-button w100 FRCC' onClick={createOrgHandler}>Create New Org</button>
