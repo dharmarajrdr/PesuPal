@@ -51,7 +51,7 @@ public class CandidateServiceImpl implements CandidateService {
      * @return
      */
     @Override
-    public CandidateDto createCandidate(CreateCandidateDto createCandidateDto, Long userId, Long orgId) {
+    public CandidateDto createCandidate(CreateCandidateDto createCandidateDto) {
 
         Long candidateId = createCandidateDto.getUserId();
 
@@ -118,7 +118,7 @@ public class CandidateServiceImpl implements CandidateService {
      * @return
      */
     @Override
-    public List<CandidateDto> getAllCandidatesAppliedForJobOpening(Long jobOpeningId, Long userId, Long orgId) {
+    public List<CandidateDto> getAllCandidatesAppliedForJobOpening(Long jobOpeningId) {
         return List.of();
     }
 
@@ -131,7 +131,7 @@ public class CandidateServiceImpl implements CandidateService {
      * @return
      */
     @Override
-    public CandidateDto createReferral(CreateReferralDto createReferralDto, Long userId, Long orgId) {
+    public CandidateDto createReferral(CreateReferralDto createReferralDto) {
         return null;
     }
 
@@ -144,7 +144,7 @@ public class CandidateServiceImpl implements CandidateService {
      * @param orgId
      */
     @Override
-    public void updateCandidateStatus(Long candidateId, JobApplicationStatus status, Long userId, Long orgId) {
+    public void updateCandidateStatus(Long candidateId, JobApplicationStatus status) {
 
         OrgMember orgMember = orgMemberService.getOrgMemberByUserIdAndOrgId(userId, orgId);
         if (!StaticConfig.HUMAN_RESOURCE_ROLES.contains(orgMember.getDesignation().getName())) {

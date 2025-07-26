@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface JobOpeningService {
 
-    JobOpeningDto createJobOpening(CreateJobOpeningDto createJobOpeningDto, Long userId, Long orgId);
+    JobOpeningDto createJobOpening(CreateJobOpeningDto createJobOpeningDto);
 
     JobOpening getJobOpeningById(Long jobOpeningId);
 

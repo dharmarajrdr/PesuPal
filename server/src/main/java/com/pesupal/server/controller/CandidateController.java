@@ -22,7 +22,7 @@ public class CandidateController extends CurrentValueRetriever {
     @PostMapping("/create")
     public ResponseEntity<ApiResponseDto> createCandidate(@RequestBody CreateCandidateDto createCandidateDto) {
 
-        CandidateDto candidateDto = candidateService.createCandidate(createCandidateDto, getCurrentUserId(), getCurrentOrgId());
+        CandidateDto candidateDto = candidateService.createCandidate(createCandidateDto);
         return ResponseEntity.ok(new ApiResponseDto("Candidate created successfully", candidateDto));
     }
 

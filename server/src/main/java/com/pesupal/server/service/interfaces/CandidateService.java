@@ -12,11 +12,11 @@ public interface CandidateService {
 
     Candidate getCandidateById(Long candidateId);
 
-    CandidateDto createCandidate(CreateCandidateDto createCandidateDto, Long userId, Long orgId);
+    CandidateDto createCandidate(CreateCandidateDto createCandidateDto);
 
-    List<CandidateDto> getAllCandidatesAppliedForJobOpening(Long jobOpeningId, Long userId, Long orgId);
+    List<CandidateDto> getAllCandidatesAppliedForJobOpening(Long jobOpeningId);
 
-    CandidateDto createReferral(CreateReferralDto createReferralDto, Long userId, Long orgId);
+    CandidateDto createReferral(CreateReferralDto createReferralDto);
 
-    void updateCandidateStatus(Long candidateId, JobApplicationStatus status, Long userId, Long orgId);
+    void updateCandidateStatus(Long candidateId, JobApplicationStatus status);
 }

@@ -54,7 +54,7 @@ public class FileServiceImpl implements FileService {
      */
     @Override
     @Transactional
-    public FileDto createFile(CreateFileDto createFileDto, Long userId, Long orgId) throws Exception {
+    public FileDto createFile(CreateFileDto createFileDto) throws Exception {
 
         OrgMember orgMember = orgMemberService.getOrgMemberByUserIdAndOrgId(userId, orgId);
 

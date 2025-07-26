@@ -37,7 +37,7 @@ public class PostCommentServiceImpl implements PostCommentService {
      * @return PostCommentDto
      */
     @Override
-    public PostCommentDto createPostComment(CreatePostCommentDto createPostCommentDto, Long userId, Long orgId) {
+    public PostCommentDto createPostComment(CreatePostCommentDto createPostCommentDto) {
 
         Long postId = createPostCommentDto.getPostId();
         Post post = postService.getPostByIdAndOrgId(postId, orgId);
@@ -69,7 +69,7 @@ public class PostCommentServiceImpl implements PostCommentService {
      * @param orgId
      */
     @Override
-    public void deletePostComment(Long commentId, Long userId, Long orgId) {
+    public void deletePostComment(Long commentId) {
 
         PostComment postComment = postCommentRepository.findById(commentId).orElseThrow(() -> new DataNotFoundException("Comment with ID " + commentId + " not found."));
 
@@ -93,7 +93,7 @@ public class PostCommentServiceImpl implements PostCommentService {
      * @return
      */
     @Override
-    public List<PostCommentDto> getPostComments(Long postId, Long userId, Long orgId) {
+    public List<PostCommentDto> getPostComments(Long postId) {
 
         Post post = postService.getPostByIdAndOrgId(postId, orgId);
         if (!post.getStatus().equals(PostStatus.PUBLISHED)) {
@@ -125,7 +125,7 @@ public class PostCommentServiceImpl implements PostCommentService {
      * @return PostComment
      */
     @Override
-    public PostComment getPostCommentById(Long commentId, Long userId, Long orgId) {
+    public PostComment getPostCommentById(Long commentId) {
 
         return postCommentRepository.findById(commentId).orElseThrow(() -> new DataNotFoundException("Comment with ID " + commentId + " not found."));
     }

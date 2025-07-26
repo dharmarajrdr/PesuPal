@@ -8,23 +8,23 @@ import com.pesupal.server.model.post.Post;
 
 public interface PostService {
 
-    Post createPost(CreatePostDto createPostDto, Long userId, Long orgId);
+    Post createPost(CreatePostDto createPostDto);
 
     boolean isPostExistInOrg(Long postId, Long orgId);
 
     Post getPostByIdAndOrgId(Long postId, Long orgId);
 
-    PostDto getPostByIdAndOrgId(Long postId, Long userId, Long orgId);
+    PostDto getPostByIdAndOrgId(Long postId);
 
     PostsListDto getPostByUserId(Long userId, Long orgId, Long postOwnerId, int page, int size, SortOrder sortOrder);
 
-    void archivePost(Long postId, Long userId, Long orgId);
+    void archivePost(Long postId);
 
     int getUserPostCount(Long userId, Long orgId);
 
     PostsListDto getPostByTag(Long currentUserId, Long currentOrgId, String tag, int page, int size, SortOrder sortOrder);
 
-    Post updatePost(Long postId, CreatePostDto createPostDto, Long currentUserId, Long currentOrgId);
+    Post updatePost(Long postId, CreatePostDto createPostDto);
 
-    void deletePost(Long postId, Long userId, Long orgId);
+    void deletePost(Long postId);
 }

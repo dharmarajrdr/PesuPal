@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.pesupal.server.enums.ChatMode;
 import com.pesupal.server.enums.Reaction;
 import com.pesupal.server.enums.ReadReceipt;
-import com.pesupal.server.helpers.Chat;
 import com.pesupal.server.model.chat.DirectMessage;
 import com.pesupal.server.model.group.GroupChatMessage;
 import lombok.Data;

@@ -24,7 +24,7 @@ public class FileAccessStatController extends CurrentValueRetriever {
     @GetMapping("/file-access-stat/{fileId}")
     public ResponseEntity<ApiResponseDto> getFileAccessStats(@PathVariable Long fileId) {
 
-        List<FileAccessStatDto> fileAccessStatDto = fileAccessStatService.getFileAccessStats(fileId, getCurrentUserId(), getCurrentOrgId());
+        List<FileAccessStatDto> fileAccessStatDto = fileAccessStatService.getFileAccessStats(fileId);
         return ResponseEntity.ok(new ApiResponseDto("File access statistics retrieved successfully", fileAccessStatDto));
     }
 

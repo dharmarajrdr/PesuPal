@@ -28,7 +28,7 @@ public class OrgMemberController extends OrgSubscriptionManager {
     @PostMapping("/new_member")
     public ResponseEntity<ApiResponseDto> addMemberToOrg(@RequestBody AddOrgMemberDto addOrgMemberDto) {
 
-        OrgMember orgMember = orgMemberService.addMemberToOrg(addOrgMemberDto, getCurrentUserId(), getCurrentOrgId(), false);
+        OrgMember orgMember = orgMemberService.addMemberToOrg(addOrgMemberDto, false);
         return ResponseEntity.ok(new ApiResponseDto("Member added to organization successfully.", orgMember));
     }
 

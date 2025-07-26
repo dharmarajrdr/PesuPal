@@ -7,10 +7,10 @@ import java.util.List;
 
 public interface PostReplyService {
 
-    ReplyCommentDto createReplyComment(CreateReplyCommentDto createReplyCommentDto, Long userId, Long orgId);
+    ReplyCommentDto createReplyComment(CreateReplyCommentDto createReplyCommentDto);
 
-    List<ReplyCommentDto> getRepliesForComment(Long commentId, Long userId, Long orgId);
+    List<ReplyCommentDto> getRepliesForComment(Long commentId);
 
-    void deleteReply(Long replyId, Long userId, Long orgId);
+    void deleteReply(Long replyId);
 
 }

@@ -33,7 +33,7 @@ public class PinnedDirectMessageServiceImpl implements PinnedDirectMessageServic
     @Override
     public List<PinnedChatDto> getAllPinnedDirectMessages(OrgMember orgMember) {
 
-        Long userId = orgMember.getUser().getId();
+        Long userId = orgMember.getUser().getPublicId();
         Org org = orgMember.getOrg();
         Long orgId = org.getId();
         return pinnedDirectMessageRepository.findAllByPinnedByIdAndOrgIdOrderByOrderIndexAscPinnedUser_IdAsc(userId, orgId).stream().map(pinnedDirectMessage -> {
@@ -104,7 +104,7 @@ public class PinnedDirectMessageServiceImpl implements PinnedDirectMessageServic
     @Override
     public boolean isChatPinned(Long pinnedUserId, OrgMember orgMember) {
 
-        Long pinnedById = orgMember.getUser().getId();
+        Long pinnedById = orgMember.getUser().getPublicId();
         Long orgId = orgMember.getOrg().getId();
         return pinnedDirectMessageRepository.existsByPinnedByIdAndPinnedUserIdAndOrgId(pinnedById, pinnedUserId, orgId);
     }
@@ -119,7 +119,7 @@ public class PinnedDirectMessageServiceImpl implements PinnedDirectMessageServic
     public void unpinDirectMessage(Long id, OrgMember orgMember) {
 
         PinnedDirectMessage pinnedDirectMessage = getPinnedDirectMessageById(id);
-        Long userId = orgMember.getUser().getId();
+        Long userId = orgMember.getUser().getPublicId();
         if (!pinnedDirectMessage.getPinnedBy().getId().equals(userId)) {
             throw new PermissionDeniedException("You do not have permission to unpin this direct message.");
         }

@@ -36,7 +36,7 @@ public class PollVoterServiceImpl implements PollVoterService {
      * @return
      */
     @Override
-    public PollDto createPollVoter(CreatePollVoterDto createPollVoterDto, Long userId, Long orgId) {
+    public PollDto createPollVoter(CreatePollVoterDto createPollVoterDto) {
 
         OrgMember orgMember = orgMemberService.getOrgMemberByUserIdAndOrgId(userId, orgId);
 

@@ -133,7 +133,7 @@ public class OrgSubscriptionHistoryServiceImpl implements OrgSubscriptionHistory
      * @return String
      */
     @Override
-    public String generatePaymentLink(PurchaseSubscriptionDto purchaseSubscriptionDto, Long userId, Long orgId) throws Exception {
+    public String generatePaymentLink(PurchaseSubscriptionDto purchaseSubscriptionDto) throws Exception {
 
         OrgMember orgMember = orgMemberService.getOrgMemberByUserIdAndOrgId(userId, orgId);
 

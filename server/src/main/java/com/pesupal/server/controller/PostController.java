@@ -22,14 +22,14 @@ public class PostController extends CurrentValueRetriever {
     @PostMapping("/create")
     public ResponseEntity<ApiResponseDto> createPost(@RequestBody CreatePostDto createPostDto) {
 
-        Post post = postService.createPost(createPostDto, getCurrentUserId(), getCurrentOrgId());
+        Post post = postService.createPost(createPostDto);
         return ResponseEntity.ok().body(new ApiResponseDto("Post created successfully", post));
     }
 
     @GetMapping("/{postId}")
     public ResponseEntity<ApiResponseDto> getPostById(@PathVariable Long postId) {
 
-        PostDto post = postService.getPostByIdAndOrgId(postId, getCurrentUserId(), getCurrentOrgId());
+        PostDto post = postService.getPostByIdAndOrgId(postId);
         return ResponseEntity.ok().body(new ApiResponseDto("Post retrieved successfully.", post));
     }
 
@@ -58,21 +58,21 @@ public class PostController extends CurrentValueRetriever {
     @PutMapping("/archive/{postId}")
     public ResponseEntity<ApiResponseDto> archivePost(@PathVariable Long postId) {
 
-        postService.archivePost(postId, getCurrentUserId(), getCurrentOrgId());
+        postService.archivePost(postId);
         return ResponseEntity.ok().body(new ApiResponseDto("Post archived successfully"));
     }
 
     @PatchMapping("/{postId}")
     public ResponseEntity<ApiResponseDto> updatePost(@PathVariable Long postId, @RequestBody CreatePostDto createPostDto) {
 
-        Post post = postService.updatePost(postId, createPostDto, getCurrentUserId(), getCurrentOrgId());
+        Post post = postService.updatePost(postId, createPostDto);
         return ResponseEntity.ok().body(new ApiResponseDto("Post updated successfully", post));
     }
 
     @DeleteMapping("/{postId}")
     public ResponseEntity<ApiResponseDto> deletePost(@PathVariable Long postId) {
 
-        postService.deletePost(postId, getCurrentUserId(), getCurrentOrgId());
+        postService.deletePost(postId);
         return ResponseEntity.ok().body(new ApiResponseDto("Post deleted successfully"));
     }
 }

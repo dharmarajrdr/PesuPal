@@ -17,5 +17,5 @@ public interface OrgSubscriptionHistoryService {
 
     OrgSubscriptionHistory addSubscription(Long orgId, String code, Transaction transaction);
 
-    String generatePaymentLink(PurchaseSubscriptionDto purchaseSubscriptionDto, Long currentUserId, Long currentOrgId) throws Exception;
+    String generatePaymentLink(PurchaseSubscriptionDto purchaseSubscriptionDto) throws Exception;
 }

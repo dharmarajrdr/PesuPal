@@ -3,7 +3,7 @@ package com.pesupal.server.model.group;
 import com.pesupal.server.enums.Visibility;
 import com.pesupal.server.model.PublicAccessModel;
 import com.pesupal.server.model.org.Org;
-import com.pesupal.server.model.user.User;
+import com.pesupal.server.model.user.OrgMember;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -24,7 +24,7 @@ public class Group extends PublicAccessModel {
     private String displayPicture;
 
     @ManyToOne
-    private User owner;
+    private OrgMember owner;
 
     @Enumerated(EnumType.STRING)
     private Visibility visibility;

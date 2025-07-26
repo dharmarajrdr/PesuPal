@@ -34,7 +34,7 @@ public class FileAccessStatServiceImpl implements FileAccessStatService {
      * @return
      */
     @Override
-    public List<FileAccessStatDto> getFileAccessStats(Long fileId, Long userId, Long orgId) {
+    public List<FileAccessStatDto> getFileAccessStats(Long fileId) {
 
         Map<Long, OrgMember> memo = new HashMap<>();
 

@@ -23,7 +23,7 @@ public class JobOpeningController extends CurrentValueRetriever {
     @PostMapping("/create")
     public ResponseEntity<ApiResponseDto> createJobOpening(@RequestBody CreateJobOpeningDto createJobOpeningDto) {
 
-        JobOpeningDto jobOpening = jobOpeningService.createJobOpening(createJobOpeningDto, getCurrentUserId(), getCurrentOrgId());
+        JobOpeningDto jobOpening = jobOpeningService.createJobOpening(createJobOpeningDto);
         return ResponseEntity.ok(new ApiResponseDto("Job opening created successfully", jobOpening));
     }
 

@@ -124,17 +124,16 @@ public class OrgMemberServiceImpl extends CurrentValueRetriever implements OrgMe
     /**
      * Retrieves all members of a department.
      *
-     * @param departmentId
-     * @param userId
-     * @param orgId
+     * @param departmentPublicId
      * @return List<UserBasicInfoDto>
      */
     @Override
-    public List<UserBasicInfoDto> getAllMembers(Long departmentId, Long userId, Long orgId) {
+    public List<UserBasicInfoDto> getAllMembers(String departmentPublicId) {
 
-        OrgMember orgMember = getOrgMemberByUserIdAndOrgId(userId, orgId);
-        Department department = departmentService.getDepartmentByIdAndOrg(departmentId, orgMember.getOrg());
-        return orgMemberRepository.findAllByOrgAndDepartmentOrderByDisplayName(orgMember.getOrg(), department).stream().map(UserBasicInfoDto::fromOrgMember).toList();
+        OrgMember orgMember = getCurrentOrgMember();
+        Org org = orgMember.getOrg();
+        Department department = departmentService.getDepartmentByPublicIdAndOrg(departmentPublicId, org);
+        return orgMemberRepository.findAllByOrgAndDepartmentOrderByDisplayName(org, department).stream().map(UserBasicInfoDto::fromOrgMember).toList();
     }
 
     /**
@@ -391,6 +390,17 @@ public class OrgMemberServiceImpl extends CurrentValueRetriever implements OrgMe
     public String getImageByOrgMemberPublicId(String orgMemberPublicId) {
 
         return getOrgMemberByPublicId(orgMemberPublicId).getDisplayPicture();
+    }
+
+    /**
+     * @param publicOrgMemberId
+     * @param publicOrgId
+     * @return
+     */
+    @Override
+    public OrgMember getOrgMemberByPublicIdAndOrgId(String publicOrgMemberId, Long publicOrgId) {
+
+        return orgMemberRepository.findByPublicIdAndOrg_PublicId(publicOrgMemberId, publicOrgId).orElseThrow(() -> new DataNotFoundException("Given member is not part of this org."));
     }
 
 }

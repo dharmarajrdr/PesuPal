@@ -4,9 +4,11 @@ import com.pesupal.server.dto.request.group.UpdateGroupChatConfigurationDto;
 import com.pesupal.server.enums.Role;
 import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.exceptions.PermissionDeniedException;
+import com.pesupal.server.helpers.CurrentValueRetriever;
 import com.pesupal.server.model.group.Group;
 import com.pesupal.server.model.group.GroupChatConfiguration;
 import com.pesupal.server.model.group.GroupChatMember;
+import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.repository.GroupChatConfigurationRepository;
 import com.pesupal.server.service.interfaces.group.GroupChatConfigurationService;
 import com.pesupal.server.service.interfaces.group.GroupChatMemberService;
@@ -14,7 +16,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 @Service
-public class GroupChatConfigurationServiceImpl implements GroupChatConfigurationService {
+public class GroupChatConfigurationServiceImpl extends CurrentValueRetriever implements GroupChatConfigurationService {
 
     private final GroupChatMemberService groupChatMemberService;
     private final GroupChatConfigurationRepository groupChatConfigurationRepository;
@@ -77,8 +79,6 @@ public class GroupChatConfigurationServiceImpl implements GroupChatConfiguration
      * Updates the group chat configuration for a specific group, role, user, and organization.
      *
      * @param updateGroupChatConfigurationDto
-     * @param userId
-     * @param orgId
      * @return
      */
     @Override
@@ -86,6 +86,10 @@ public class GroupChatConfigurationServiceImpl implements GroupChatConfiguration
 
         Long groupId = updateGroupChatConfigurationDto.getGroupId();
         Role role = updateGroupChatConfigurationDto.getRole();
+
+        OrgMember orgMember = getCurrentOrgMember();
+        Long orgId = orgMember.getOrg().getId();
+        Long userId = orgMember.getUser().getId();
 
         GroupChatMember groupChatMember = groupChatMemberService.getGroupMemberByGroupIdAndUserId(groupId, userId);
         Group group = groupChatMember.getGroup();

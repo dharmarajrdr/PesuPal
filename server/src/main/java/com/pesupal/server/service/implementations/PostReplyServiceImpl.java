@@ -39,7 +39,7 @@ public class PostReplyServiceImpl implements PostReplyService {
      * @return ReplyCommentDto
      */
     @Override
-    public ReplyCommentDto createReplyComment(CreateReplyCommentDto createReplyCommentDto, Long userId, Long orgId) {
+    public ReplyCommentDto createReplyComment(CreateReplyCommentDto createReplyCommentDto) {
 
         User replier = userService.getUserById(userId);
         OrgMember orgMember = orgMemberService.getOrgMemberByUserIdAndOrgId(userId, orgId);
@@ -60,7 +60,7 @@ public class PostReplyServiceImpl implements PostReplyService {
      * @return
      */
     @Override
-    public List<ReplyCommentDto> getRepliesForComment(Long commentId, Long userId, Long orgId) {
+    public List<ReplyCommentDto> getRepliesForComment(Long commentId) {
 
         PostComment postComment = postCommentService.getPostCommentById(commentId, userId, orgId);
 
@@ -85,7 +85,7 @@ public class PostReplyServiceImpl implements PostReplyService {
      * @param orgId
      */
     @Override
-    public void deleteReply(Long replyId, Long userId, Long orgId) {
+    public void deleteReply(Long replyId) {
 
         PostReply postReply = postReplyRepository.findById(replyId).orElseThrow(() -> new DataNotFoundException("Reply with ID " + replyId + " not found."));
 

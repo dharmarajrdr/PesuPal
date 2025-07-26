@@ -20,7 +20,7 @@ public class StarredFileController extends CurrentValueRetriever {
     @PostMapping("/file/{fileId}/favourite")
     public ResponseEntity<ApiResponseDto> addStarredFile(@PathVariable Long fileId) {
 
-        starredFileService.addStarredFile(fileId, getCurrentUserId(), getCurrentOrgId());
+        starredFileService.addStarredFile(fileId);
         return ResponseEntity.ok(new ApiResponseDto("File starred successfully"));
     }
 }

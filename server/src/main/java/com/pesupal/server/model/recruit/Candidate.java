@@ -3,6 +3,7 @@ package com.pesupal.server.model.recruit;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.pesupal.server.enums.JobApplicationStatus;
 import com.pesupal.server.model.PublicAccessModel;
+import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.model.user.User;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -30,7 +31,7 @@ public class Candidate extends PublicAccessModel {
 
     @ManyToOne
     @JsonIgnore
-    private User referredBy;
+    private OrgMember referredBy;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

@@ -11,17 +11,17 @@ import java.util.List;
 
 public interface FolderService {
 
-    FolderDto createFolder(CreateFolderDto createFolderDto, Long userId, Long orgId);
+    FolderDto createFolder(CreateFolderDto createFolderDto);
 
     Folder getFolderById(Long folderId);
 
     Folder getFolderByIdAndOrgId(Long folderId, Long orgId);
 
-    List<FileOrFolderDto> getAllFolders(Long folderId, Long userId, Long orgId);
+    List<FileOrFolderDto> getAllFolders(Long folderId);
 
-    List<FileOrFolderDto> getAllFolders(Workspace space, Long userId, Long orgId);
+    List<FileOrFolderDto> getAllFolders(Workspace space);
 
-    void deleteFolder(Long folderId, Long userId, Long orgId);
+    void deleteFolder(Long folderId);
 
     void updateFolderSizeRecursively(Folder folder, Long size, Arithmetic arithmetic);
 }

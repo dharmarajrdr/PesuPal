@@ -7,6 +7,7 @@ import com.pesupal.server.dto.response.JobOpeningDto;
 import com.pesupal.server.enums.JobOpeningStatus;
 import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.exceptions.PermissionDeniedException;
+import com.pesupal.server.helpers.CurrentValueRetriever;
 import com.pesupal.server.model.recruit.JobOpening;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.repository.JobOpeningRepository;
@@ -19,7 +20,7 @@ import java.util.List;
 
 @Service
 @AllArgsConstructor
-public class JobOpeningServiceImpl implements JobOpeningService {
+public class JobOpeningServiceImpl extends CurrentValueRetriever implements JobOpeningService {
 
     private final JobOpeningRepository jobOpeningRepository;
     private final OrgMemberService orgMemberService;
@@ -31,16 +32,16 @@ public class JobOpeningServiceImpl implements JobOpeningService {
      * @return JobOpeningDto
      */
     @Override
-    public JobOpeningDto createJobOpening(CreateJobOpeningDto createJobOpeningDto, Long userId, Long orgId) {
+    public JobOpeningDto createJobOpening(CreateJobOpeningDto createJobOpeningDto) {
 
-        OrgMember orgMember = orgMemberService.getOrgMemberByUserIdAndOrgId(userId, orgId);
+        OrgMember orgMember = getCurrentOrgMember();
 
         if (!StaticConfig.HUMAN_RESOURCE_ROLES.contains(orgMember.getDesignation().getName())) {
             throw new PermissionDeniedException("You do not have permission to create a job opening.");
         }
 
         JobOpening jobOpening = createJobOpeningDto.toJobOpening();
-        jobOpening.setHiringManager(orgMember.getUser());
+        jobOpening.setHiringManager(orgMember);
         jobOpening.setOrg(orgMember.getOrg());
         jobOpening.setStatus(JobOpeningStatus.OPEN);
         return JobOpeningDto.fromJobOpening(jobOpeningRepository.save(jobOpening), null);
@@ -84,7 +85,7 @@ public class JobOpeningServiceImpl implements JobOpeningService {
             throw new PermissionDeniedException("You do not have permission to view job openings.");
         }
         return jobOpeningRepository.findAllByOrgIdAndStatusOrderByCreatedAtDesc(orgId, status).stream().map(jobOpening -> {
-            OrgMember hiringManager = orgMemberService.getOrgMemberByUserAndOrg(jobOpening.getHiringManager(), jobOpening.getOrg());
+            OrgMember hiringManager = jobOpening.getHiringManager();
             return JobOpeningDto.fromJobOpening(jobOpening, hiringManager);
         }).toList();
     }

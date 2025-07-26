@@ -53,7 +53,7 @@ public class CandidateTimelineServiceImpl implements CandidateTimelineService {
      * @return
      */
     @Override
-    public List<CandidateTimelineDto> getTimelineByCandidateIdAndJobId(Long candidateId, Long userId, Long orgId) {
+    public List<CandidateTimelineDto> getTimelineByCandidateIdAndJobId(Long candidateId) {
 
         OrgMember orgMember = orgMemberService.getOrgMemberByUserIdAndOrgId(userId, orgId);
         if (!StaticConfig.HUMAN_RESOURCE_ROLES.contains(orgMember.getDesignation().getName())) {

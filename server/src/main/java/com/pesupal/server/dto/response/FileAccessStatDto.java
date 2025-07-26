@@ -17,7 +17,7 @@ public class FileAccessStatDto extends UserBasicInfoDto {
         fileAccessStatDto.setAccessedAt(fileAccessStat.getCreatedAt());
         fileAccessStatDto.setDisplayName(orgMember.getDisplayName());
         fileAccessStatDto.setDisplayPicture(orgMember.getDisplayPicture());
-        fileAccessStatDto.setUserId(orgMember.getUser().getId());
+        fileAccessStatDto.setUserId(orgMember.getUser().getPublicId());
         return fileAccessStatDto;
     }
 }

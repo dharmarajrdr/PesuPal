@@ -2,7 +2,7 @@ package com.pesupal.server.model.chat;
 
 import com.pesupal.server.model.BaseModel;
 import com.pesupal.server.model.org.Org;
-import com.pesupal.server.model.user.User;
+import com.pesupal.server.model.user.OrgMember;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
@@ -16,10 +16,10 @@ public class PinnedDirectMessage extends BaseModel {
     private Org org;
 
     @ManyToOne
-    private User pinnedBy;
+    private OrgMember pinnedBy;
 
     @ManyToOne
-    private User pinnedUser;
+    private OrgMember pinnedUser;
 
     @Column(nullable = false)
     private Integer orderIndex;

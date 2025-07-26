@@ -21,21 +21,21 @@ public class PostReplyController extends CurrentValueRetriever {
     @GetMapping("/comment/{commentId}/reply")
     public ResponseEntity<ApiResponseDto> getRepliesForComment(@PathVariable Long commentId) {
 
-        List<ReplyCommentDto> replyCommentDtos = postReplyService.getRepliesForComment(commentId, getCurrentUserId(), getCurrentOrgId());
+        List<ReplyCommentDto> replyCommentDtos = postReplyService.getRepliesForComment(commentId);
         return ResponseEntity.ok().body(new ApiResponseDto("Replies fetched successfully", replyCommentDtos));
     }
 
     @PostMapping("/reply")
     public ResponseEntity<ApiResponseDto> replyToComment(@RequestBody CreateReplyCommentDto createReplyCommentDto) {
 
-        ReplyCommentDto replyCommentDto = postReplyService.createReplyComment(createReplyCommentDto, getCurrentUserId(), getCurrentOrgId());
+        ReplyCommentDto replyCommentDto = postReplyService.createReplyComment(createReplyCommentDto);
         return ResponseEntity.ok().body(new ApiResponseDto("Reply created successfully", replyCommentDto));
     }
 
     @DeleteMapping("/reply/{replyId}")
     public ResponseEntity<ApiResponseDto> deleteReply(@PathVariable Long replyId) {
 
-        postReplyService.deleteReply(replyId, getCurrentUserId(), getCurrentOrgId());
+        postReplyService.deleteReply(replyId);
         return ResponseEntity.ok().body(new ApiResponseDto("Reply deleted successfully"));
     }
 

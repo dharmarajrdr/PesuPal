@@ -43,7 +43,7 @@ public class FolderServiceImpl implements FolderService {
      */
     @Override
     @Transactional
-    public FolderDto createFolder(CreateFolderDto createFolderDto, Long userId, Long orgId) {
+    public FolderDto createFolder(CreateFolderDto createFolderDto) {
 
         OrgMember orgMember = orgMemberService.getOrgMemberByUserIdAndOrgId(userId, orgId);
 
@@ -103,7 +103,7 @@ public class FolderServiceImpl implements FolderService {
      * @return List of FolderDto
      */
     @Override
-    public List<FileOrFolderDto> getAllFolders(Long folderId, Long userId, Long orgId) {
+    public List<FileOrFolderDto> getAllFolders(Long folderId) {
 
         Folder parentFolder = getFolderByIdAndOrgId(folderId, orgId);
         Workspace workspace = parentFolder.getSpace();
@@ -121,7 +121,7 @@ public class FolderServiceImpl implements FolderService {
      * @return List of FolderDto
      */
     @Override
-    public List<FileOrFolderDto> getAllFolders(Workspace space, Long userId, Long orgId) {
+    public List<FileOrFolderDto> getAllFolders(Workspace space) {
 
         WorkdriveSpace workdriveSpace = workspaceFactory.getFactory(space);
         OrgMember orgMember = orgMemberService.getOrgMemberByUserIdAndOrgId(userId, orgId);
@@ -136,12 +136,12 @@ public class FolderServiceImpl implements FolderService {
      * @param orgId
      */
     @Override
-    public void deleteFolder(Long folderId, Long userId, Long orgId) {
+    public void deleteFolder(Long folderId) {
 
         OrgMember orgMember = orgMemberService.getOrgMemberByUserIdAndOrgId(userId, orgId);
         Folder folder = getFolderById(folderId);
 
-        if (!folder.getOwner().getId().equals(orgMember.getUser().getId())) {
+        if (!folder.getOwner().getId().equals(orgMember.getUser().getPublicId())) {
             throw new ActionProhibitedException("You do not have permission to delete this folder.");
         }
 

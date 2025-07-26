@@ -2,7 +2,7 @@ package com.pesupal.server.model.group;
 
 import com.pesupal.server.enums.Reaction;
 import com.pesupal.server.model.CreationTimeAuditable;
-import com.pesupal.server.model.user.User;
+import com.pesupal.server.model.user.OrgMember;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -17,7 +17,7 @@ public class GroupChatReaction extends CreationTimeAuditable {
     private GroupChatMessage groupChatMessage;
 
     @ManyToOne
-    private User user;
+    private OrgMember reactedBy;
 
     @Enumerated(EnumType.STRING)
     private Reaction reaction;

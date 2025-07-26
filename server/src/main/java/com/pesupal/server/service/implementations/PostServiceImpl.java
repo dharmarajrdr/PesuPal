@@ -51,7 +51,7 @@ public class PostServiceImpl implements PostService {
      */
     @Override
     @Transactional
-    public Post createPost(CreatePostDto createPostDto, Long userId, Long orgId) {
+    public Post createPost(CreatePostDto createPostDto) {
 
         Org org = orgService.getOrgById(orgId);
         User user = userService.getUserById(userId);
@@ -101,7 +101,7 @@ public class PostServiceImpl implements PostService {
         postDto.setImpression(PostImpressionDto.builder().likes(post.getLikes().size()).comments(post.getComments().size()).build());
         postDto.setBookmarked(false);   // Feature not implemented yet
         if (post.isHasPoll()) {
-            postDto.setPoll(PollDto.fromPoll(pollService.getPollByPost(post), orgMember.getUser().getId()));
+            postDto.setPoll(PollDto.fromPoll(pollService.getPollByPost(post), orgMember.getUser().getPublicId()));
         }
         return postDto;
     }
@@ -141,7 +141,7 @@ public class PostServiceImpl implements PostService {
      * @return PostDto
      */
     @Override
-    public PostDto getPostByIdAndOrgId(Long postId, Long userId, Long orgId) {
+    public PostDto getPostByIdAndOrgId(Long postId) {
 
         OrgMember orgMember = orgMemberService.getOrgMemberByUserIdAndOrgId(userId, orgId);
         Post post = getPostByIdAndOrgId(postId, orgId);
@@ -194,7 +194,7 @@ public class PostServiceImpl implements PostService {
      * @param orgId
      */
     @Override
-    public void archivePost(Long postId, Long userId, Long orgId) {
+    public void archivePost(Long postId) {
 
         Post post = getPostByIdAndOrgId(postId, orgId);
         if (!Objects.equals(post.getUser().getId(), userId)) {
@@ -267,7 +267,7 @@ public class PostServiceImpl implements PostService {
      * @return
      */
     @Override
-    public Post updatePost(Long postId, CreatePostDto createPostDto, Long userId, Long orgId) {
+    public Post updatePost(Long postId, CreatePostDto createPostDto) {
 
         orgMemberService.validateUserIsOrgMember(userId, orgId);
 
@@ -284,7 +284,7 @@ public class PostServiceImpl implements PostService {
      * @param orgId
      */
     @Override
-    public void deletePost(Long postId, Long userId, Long orgId) {
+    public void deletePost(Long postId) {
 
         Post post = getPostByIdAndOrgId(postId, orgId);
         if (!post.getUser().getId().equals(userId)) {

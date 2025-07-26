@@ -23,28 +23,28 @@ public class FolderController extends CurrentValueRetriever {
     @PostMapping("/folder")
     public ResponseEntity<ApiResponseDto> createFolder(@RequestBody CreateFolderDto createFolderDto) {
 
-        FolderDto folderDto = folderService.createFolder(createFolderDto, getCurrentUserId(), getCurrentOrgId());
+        FolderDto folderDto = folderService.createFolder(createFolderDto);
         return ResponseEntity.ok().body(new ApiResponseDto("Folder created successfully", folderDto));
     }
 
     @GetMapping("/{space}/folders")
     public ResponseEntity<ApiResponseDto> getAllFoldersInRoot(@PathVariable Workspace space) {
 
-        List<FileOrFolderDto> folders = folderService.getAllFolders(space, getCurrentUserId(), getCurrentOrgId());
+        List<FileOrFolderDto> folders = folderService.getAllFolders(space);
         return ResponseEntity.ok().body(new ApiResponseDto("Folders retrieved successfully", folders));
     }
 
     @GetMapping("/folders/{folderId}")
     public ResponseEntity<ApiResponseDto> getAllFolders(@PathVariable Long folderId) {
 
-        List<FileOrFolderDto> folders = folderService.getAllFolders(folderId, getCurrentUserId(), getCurrentOrgId());
+        List<FileOrFolderDto> folders = folderService.getAllFolders(folderId);
         return ResponseEntity.ok().body(new ApiResponseDto("Folders retrieved successfully", folders));
     }
 
     @DeleteMapping("/folder/{folderId}")
     public ResponseEntity<ApiResponseDto> deleteFolder(@PathVariable Long folderId) {
 
-        folderService.deleteFolder(folderId, getCurrentUserId(), getCurrentOrgId());
+        folderService.deleteFolder(folderId);
         return ResponseEntity.ok().body(new ApiResponseDto("Folder deleted successfully"));
     }
 }

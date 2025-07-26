@@ -21,21 +21,21 @@ public class PostCommentController extends CurrentValueRetriever {
     @GetMapping("/{postId}/comment")
     public ResponseEntity<ApiResponseDto> getPostComments(@PathVariable Long postId) {
 
-        List<PostCommentDto> comments = postCommentService.getPostComments(postId, getCurrentUserId(), getCurrentOrgId());
+        List<PostCommentDto> comments = postCommentService.getPostComments(postId);
         return ResponseEntity.ok().body(new ApiResponseDto("Comments retrieved successfully.", comments));
     }
 
     @PostMapping("/comment")
     public ResponseEntity<ApiResponseDto> createPostComment(@RequestBody CreatePostCommentDto createPostCommentDto) {
 
-        PostCommentDto postCommentDto = postCommentService.createPostComment(createPostCommentDto, getCurrentUserId(), getCurrentOrgId());
+        PostCommentDto postCommentDto = postCommentService.createPostComment(createPostCommentDto);
         return ResponseEntity.ok().body(new ApiResponseDto("Comment created successfully.", postCommentDto));
     }
 
     @DeleteMapping("/comment/{commentId}")
     public ResponseEntity<ApiResponseDto> deletePostComment(@PathVariable Long commentId) {
 
-        postCommentService.deletePostComment(commentId, getCurrentUserId(), getCurrentOrgId());
+        postCommentService.deletePostComment(commentId);
         return ResponseEntity.ok().body(new ApiResponseDto("Comment deleted successfully."));
     }
 }

@@ -10,7 +10,7 @@ public interface StarredFileService {
 
     boolean existsByFileAndUser(File file, User user);
 
-    void addStarredFile(Long fileId, Long userId, Long orgId);
+    void addStarredFile(Long fileId);
 
     List<FileDto> getStarredFiles(Long userId, Long orgId);
 }

@@ -32,7 +32,7 @@ public class OrgSubscriptionHistoryController extends CurrentValueRetriever {
     @PostMapping("/payment-link")
     public ResponseEntity<ApiResponseDto> generatePaymentLink(@RequestBody PurchaseSubscriptionDto purchaseSubscriptionDto) throws Exception {
 
-        String paymentLink = orgSubscriptionHistoryService.generatePaymentLink(purchaseSubscriptionDto, getCurrentUserId(), getCurrentOrgId());
+        String paymentLink = orgSubscriptionHistoryService.generatePaymentLink(purchaseSubscriptionDto);
         return ResponseEntity.ok().body(new ApiResponseDto("Payment link generated successfully", paymentLink));
     }
 }

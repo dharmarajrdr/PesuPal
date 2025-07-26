@@ -7,7 +7,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public class GetGroupConversationDto {
 
-    private Long groupId;
+    private String groupPublicId;
 
     private Long pivotMessageId;
 

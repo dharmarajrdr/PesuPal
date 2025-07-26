@@ -1,7 +1,7 @@
 package com.pesupal.server.model.workdrive;
 
 import com.pesupal.server.model.CreationTimeAuditable;
-import com.pesupal.server.model.user.User;
+import com.pesupal.server.model.user.OrgMember;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
 import lombok.Data;
@@ -16,7 +16,7 @@ public class SecuredFolderPermission extends CreationTimeAuditable {
     private Folder folder;
 
     @ManyToOne
-    private User user;
+    private OrgMember user;
 
     private boolean readable;
 

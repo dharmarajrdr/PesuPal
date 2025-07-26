@@ -4,8 +4,6 @@ import com.pesupal.server.dto.request.AddReactionDto;
 import com.pesupal.server.dto.request.ChatMessageDto;
 import com.pesupal.server.dto.request.GetConversationBetweenUsers;
 import com.pesupal.server.dto.response.*;
-import com.pesupal.server.exceptions.PermissionDeniedException;
-import com.pesupal.server.helpers.Chat;
 import com.pesupal.server.helpers.CurrentValueRetriever;
 import com.pesupal.server.service.interfaces.DirectMessageReactionService;
 import com.pesupal.server.service.interfaces.DirectMessageService;
@@ -28,7 +26,7 @@ public class DirectMessageController extends CurrentValueRetriever {
     public ResponseEntity<ApiResponseDto> getDirectMessagesByUserId(@PathVariable String chatId, @RequestParam Integer page, @RequestParam Integer size, @RequestParam(name = "pivot_message_id", required = false) Long pivotMessageId) {
 
         GetConversationBetweenUsers getConversationBetweenUsers = new GetConversationBetweenUsers(chatId, pivotMessageId, page, size);
-        List<MessageDto> directMessageResponseDtos = directMessageService.getDirectMessagesBetweenUsers(getConversationBetweenUsers, getCurrentUserId(), getCurrentOrgId());
+        List<MessageDto> directMessageResponseDtos = directMessageService.getDirectMessagesBetweenUsers(getConversationBetweenUsers);
         return ResponseEntity.ok(new ApiResponseDto("Direct messages retrieved successfully", directMessageResponseDtos));
     }
 
@@ -51,9 +49,9 @@ public class DirectMessageController extends CurrentValueRetriever {
     public ResponseEntity<ApiResponseDto> markAllMessagesAsRead(@PathVariable String chatId) {
 
         Long userId = getCurrentUserId();
-        if (!Chat.isUserInChat(chatId, userId)) {
-            throw new PermissionDeniedException("You do not have permission to access this chat.");
-        }
+//        if (!Chat.isUserInChat(chatId, userId)) {
+//            throw new PermissionDeniedException("You do not have permission to access this chat.");
+//        }
         directMessageService.markAllMessagesAsRead(chatId, userId);
         return ResponseEntity.ok(new ApiResponseDto("All messages marked as read successfully"));
     }
@@ -68,7 +66,7 @@ public class DirectMessageController extends CurrentValueRetriever {
     @PostMapping("/{messageId}/react")
     public ResponseEntity<ApiResponseDto> reactToMessage(@PathVariable Long messageId, @RequestBody AddReactionDto addReactionDto) {
 
-        ReactMessageResponseDto reactMessageResponseDto = directMessageReactionService.reactToMessage(messageId, getCurrentUserId(), addReactionDto.getReaction());
+        ReactMessageResponseDto reactMessageResponseDto = directMessageReactionService.reactToMessage(messageId, addReactionDto.getReaction());
         return ResponseEntity.ok(new ApiResponseDto("Reaction added successfully", reactMessageResponseDto));
     }
 
@@ -82,7 +80,7 @@ public class DirectMessageController extends CurrentValueRetriever {
     @GetMapping("/preview/{chatId}")
     public ResponseEntity<ApiResponseDto> getDirectMessagePreview(@PathVariable String chatId) {
 
-        ChatPreviewDto directMessagePreviewDto = directMessageService.getDirectMessagePreviewByChatId(chatId, getCurrentUserId(), getCurrentOrgId());
+        ChatPreviewDto directMessagePreviewDto = directMessageService.getDirectMessagePreviewByChatId(chatId);
         return ResponseEntity.ok(new ApiResponseDto("Direct message preview retrieved successfully", directMessagePreviewDto));
     }
 }

@@ -34,7 +34,7 @@ public class PostLikeServiceImpl implements PostLikeService {
      * @param orgId
      */
     @Override
-    public void likePost(Long postId, Long userId, Long orgId) {
+    public void likePost(Long postId) {
 
         Post post = postService.getPostByIdAndOrgId(postId, orgId);
         User user = userService.getUserById(userId);
@@ -58,7 +58,7 @@ public class PostLikeServiceImpl implements PostLikeService {
      * @param orgId
      */
     @Override
-    public void unlikePost(Long postId, Long userId, Long orgId) {
+    public void unlikePost(Long postId) {
 
         Post post = postService.getPostByIdAndOrgId(postId, orgId);
         User user = userService.getUserById(userId);
@@ -78,7 +78,7 @@ public class PostLikeServiceImpl implements PostLikeService {
      * @return List<PostLikesDto>
      */
     @Override
-    public List<PostLikesDto> getPostLikes(Long postId, Long userId, Long orgId) {
+    public List<PostLikesDto> getPostLikes(Long postId) {
 
         return postLikeRepository.findByPostId(postId).stream().map(postLike -> {
             OrgMember likerOrgMember = orgMemberService.getOrgMemberByUserIdAndOrgId(postLike.getLiker().getId(), orgId);

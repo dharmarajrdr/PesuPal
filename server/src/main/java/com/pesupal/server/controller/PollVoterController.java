@@ -22,7 +22,7 @@ public class PollVoterController extends CurrentValueRetriever {
     @PostMapping("/vote")
     public ResponseEntity<ApiResponseDto> createPollVoter(@RequestBody CreatePollVoterDto createPollVoterDto) {
 
-        PollDto pollDto = pollVoterService.createPollVoter(createPollVoterDto, getCurrentUserId(), getCurrentOrgId());
+        PollDto pollDto = pollVoterService.createPollVoter(createPollVoterDto);
         return ResponseEntity.ok().body(new ApiResponseDto("Vote recorded successfully", pollDto));
     }
 }

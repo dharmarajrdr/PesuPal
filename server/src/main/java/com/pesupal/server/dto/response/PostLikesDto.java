@@ -13,7 +13,7 @@ public class PostLikesDto extends UserBasicInfoDto {
     public static PostLikesDto fromOrgMember(OrgMember orgMember) {
 
         PostLikesDto postLikesDto = new PostLikesDto();
-        postLikesDto.setUserId(orgMember.getUser().getId());
+        postLikesDto.setUserId(orgMember.getUser().getPublicId());
         postLikesDto.setDisplayName(orgMember.getDisplayName());
         postLikesDto.setDisplayPicture(orgMember.getDisplayPicture());
         return postLikesDto;

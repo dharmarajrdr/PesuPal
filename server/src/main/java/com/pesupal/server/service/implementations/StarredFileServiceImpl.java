@@ -44,7 +44,7 @@ public class StarredFileServiceImpl implements StarredFileService {
      * @param orgId
      */
     @Override
-    public void addStarredFile(Long fileId, Long userId, Long orgId) {
+    public void addStarredFile(Long fileId) {
 
         OrgMember orgMember = orgMemberService.getOrgMemberByUserIdAndOrgId(userId, orgId);
         User user = orgMember.getUser();

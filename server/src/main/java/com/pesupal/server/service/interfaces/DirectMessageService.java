@@ -12,7 +12,7 @@ import java.util.List;
 
 public interface DirectMessageService extends ChatService {
 
-    List<MessageDto> getDirectMessagesBetweenUsers(GetConversationBetweenUsers getConversationBetweenUsers, Long userId, Long orgId);
+    List<MessageDto> getDirectMessagesBetweenUsers(GetConversationBetweenUsers getConversationBetweenUsers);
 
     void markAllMessagesAsRead(String chatId, Long userId);
 
@@ -22,5 +22,5 @@ public interface DirectMessageService extends ChatService {
 
     RecentChatPagedDto getRecentChatsPaged(OrgMember orgMember, Pageable pageable);
 
-    ChatPreviewDto getDirectMessagePreviewByChatId(String chatId, Long userId, Long orgId);
+    ChatPreviewDto getDirectMessagePreviewByChatId(String chatId);
 }

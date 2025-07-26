@@ -18,7 +18,7 @@ public class PollController extends CurrentValueRetriever {
     @PatchMapping("/{pollId}")
     public ResponseEntity<ApiResponseDto> updatePoll(@PathVariable Long pollId, @RequestBody UpdatePollDto updatePollDto) {
 
-        pollService.updatePoll(pollId, updatePollDto, getCurrentUserId(), getCurrentOrgId());
+        pollService.updatePoll(pollId, updatePollDto);
         return ResponseEntity.ok().body(new ApiResponseDto("Poll updated successfully", null));
     }
 }

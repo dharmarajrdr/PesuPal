@@ -17,5 +17,5 @@ public interface PollService {
 
     Poll getPollById(Long pollId);
 
-    void updatePoll(Long pollId, UpdatePollDto updatePollDto, Long userId, Long orgId);
+    void updatePoll(Long pollId, UpdatePollDto updatePollDto);
 }

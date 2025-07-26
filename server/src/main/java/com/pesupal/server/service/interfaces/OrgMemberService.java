@@ -20,7 +20,7 @@ public interface OrgMemberService {
 
     Boolean existsByUserAndOrg(User user, Org org);
 
-    List<UserBasicInfoDto> getAllMembers(Long departmentId, Long currentUserId, Long currentOrgId);
+    List<UserBasicInfoDto> getAllMembers(String departmentPublicId);
 
     Boolean existsByUserIdAndOrgId(Long userId, Long orgId);
 
@@ -45,4 +45,6 @@ public interface OrgMemberService {
     UserBasicInfoDto getUserBasicInfoByOrgMemberPublicId(String orgMemberPublicId);
 
     String getImageByOrgMemberPublicId(String orgMemberPublicId);
+
+    OrgMember getOrgMemberByPublicIdAndOrgId(String publicOrgMemberId, Long publicOrgId);
 }

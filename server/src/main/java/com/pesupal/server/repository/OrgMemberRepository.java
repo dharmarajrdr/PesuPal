@@ -30,4 +30,6 @@ public interface OrgMemberRepository extends JpaRepository<OrgMember, Long> {
     Optional<OrgMember> findByUser_PublicIdAndOrg_PublicId(String publicUserId, String publicOrgId);
 
     Optional<OrgMember> findByPublicId(String publicId);
+
+    Optional<OrgMember> findByPublicIdAndOrg_PublicId(String publicOrgMemberId, Long publicOrgId);
 }

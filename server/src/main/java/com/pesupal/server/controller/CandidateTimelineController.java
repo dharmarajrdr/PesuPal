@@ -20,7 +20,7 @@ public class CandidateTimelineController extends CurrentValueRetriever {
     @GetMapping("/{candidateId}")
     public ResponseEntity<ApiResponseDto> getCandidateTimeline(@PathVariable Long candidateId) {
 
-        var timelineEvents = candidateTimelineService.getTimelineByCandidateIdAndJobId(candidateId, getCurrentUserId(), getCurrentOrgId());
+        var timelineEvents = candidateTimelineService.getTimelineByCandidateIdAndJobId(candidateId);
         return ResponseEntity.ok(new ApiResponseDto("Candidate timeline retrieved successfully", timelineEvents));
     }
 }

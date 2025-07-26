@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 public class UserPreviewDto {
 
-    private Long id;
+    private String id;
 
     private String displayName;
 
@@ -17,7 +17,7 @@ public class UserPreviewDto {
     public static UserPreviewDto fromOrgMember(OrgMember orgMember) {
 
         UserPreviewDto userPreviewDto = new UserPreviewDto();
-        userPreviewDto.setId(orgMember.getUser().getId());
+        userPreviewDto.setId(orgMember.getUser().getPublicId());
         userPreviewDto.setDisplayName(orgMember.getDisplayName());
         userPreviewDto.setDisplayPicture(orgMember.getDisplayPicture());
         userPreviewDto.setArchived(orgMember.isArchived());

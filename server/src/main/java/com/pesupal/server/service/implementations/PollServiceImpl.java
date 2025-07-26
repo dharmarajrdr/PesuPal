@@ -117,7 +117,7 @@ public class PollServiceImpl implements PollService {
      * @param orgId
      */
     @Override
-    public void updatePoll(Long pollId, UpdatePollDto updatePollDto, Long userId, Long orgId) {
+    public void updatePoll(Long pollId, UpdatePollDto updatePollDto) {
 
         orgMemberService.validateUserIsOrgMember(userId, orgId);
         Poll poll = getPollById(pollId);

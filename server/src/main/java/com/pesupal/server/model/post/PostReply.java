@@ -1,7 +1,7 @@
 package com.pesupal.server.model.post;
 
 import com.pesupal.server.model.CreationTimeAuditable;
-import com.pesupal.server.model.user.User;
+import com.pesupal.server.model.user.OrgMember;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
@@ -15,7 +15,7 @@ public class PostReply extends CreationTimeAuditable {
     private PostComment postComment;
 
     @ManyToOne
-    private User replier;
+    private OrgMember replier;
 
     @Column(nullable = false, length = 3000)
     private String message;
