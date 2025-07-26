@@ -181,7 +181,7 @@ public class DirectMessageServiceImpl extends CurrentValueRetriever implements D
         int size = pageable.getPageSize();
         int offset = page * size;
 
-        Long userId = orgMember.getUser().getId();
+        Long userId = orgMember.getId();
         Long orgId = orgMember.getOrg().getId();
 
         User user = userService.getUserById(userId);

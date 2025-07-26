@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.pesupal.server.enums.PostStatus;
 import com.pesupal.server.model.PublicAccessModel;
 import com.pesupal.server.model.org.Org;
-import com.pesupal.server.model.user.User;
+import com.pesupal.server.model.user.OrgMember;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -20,7 +20,7 @@ public class Post extends PublicAccessModel {
     private Org org;
 
     @ManyToOne
-    private User user;
+    private OrgMember creator;
 
     private String title;
 

@@ -1,6 +1,7 @@
 package com.pesupal.server.repository;
 
 import com.pesupal.server.enums.PostStatus;
+import com.pesupal.server.model.org.Org;
 import com.pesupal.server.model.post.Post;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,9 +17,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     Page<Post> findAllByOrgIdAndUserIdAndStatus(Long orgId, Long postOwnerId, Pageable pageable, PostStatus postStatus);
 
-    boolean existsByIdAndOrgId(Long postId, Long orgId);
-
-    int countAllByUserIdAndOrgId(Long userId, Long orgId);
-
     Optional<Post> findByPublicId(String publicId);
+
+    Optional<Post> findByIdAndOrg(Long postId, Org org);
 }
