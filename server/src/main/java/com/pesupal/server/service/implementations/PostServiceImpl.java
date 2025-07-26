@@ -107,19 +107,6 @@ public class PostServiceImpl implements PostService {
     }
 
     /**
-     * Checks if a post exists in the organization.
-     *
-     * @param postId
-     * @param orgId
-     * @return
-     */
-    @Override
-    public boolean isPostExistInOrg(Long postId, Long orgId) {
-
-        return postRepository.existsByIdAndOrgId(postId, orgId);
-    }
-
-    /**
      * Retrieves a post by its ID.
      *
      * @param postId
@@ -208,19 +195,6 @@ public class PostServiceImpl implements PostService {
     }
 
     /**
-     * Retrieves the count of posts made by a user in a specific organization.
-     *
-     * @param userId
-     * @param orgId
-     * @return
-     */
-    @Override
-    public int getUserPostCount(Long userId, Long orgId) {
-
-        return postRepository.countAllByUserIdAndOrgId(userId, orgId);
-    }
-
-    /**
      * Retrieves posts by a specific tag.
      *
      * @param userId
@@ -294,5 +268,17 @@ public class PostServiceImpl implements PostService {
             pollService.deleteByPost(post);
         }
         postRepository.delete(post);
+    }
+
+    /**
+     * Get the post by its public id
+     *
+     * @param postId
+     * @return
+     */
+    @Override
+    public Post getPostByPublicId(String postId) {
+
+        return postRepository.findByPublicId(postId).orElseThrow(() -> new DataNotFoundException("Post with id " + postId + " does not exist."));
     }
 }
