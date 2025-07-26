@@ -8,6 +8,7 @@ import com.pesupal.server.enums.Visibility;
 import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.exceptions.PermissionDeniedException;
+import com.pesupal.server.helpers.CurrentValueRetriever;
 import com.pesupal.server.model.group.Group;
 import com.pesupal.server.model.group.GroupChatConfiguration;
 import com.pesupal.server.model.group.GroupChatMember;
@@ -26,7 +27,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
-public class GroupChatMemberServiceImpl implements GroupChatMemberService {
+public class GroupChatMemberServiceImpl extends CurrentValueRetriever implements GroupChatMemberService {
 
     private final GroupService groupService;
     private final OrgMemberService orgMemberService;
@@ -50,28 +51,28 @@ public class GroupChatMemberServiceImpl implements GroupChatMemberService {
     @Override
     public GroupChatMember getGroupMemberByGroupIdAndUserId(Long groupId, Long userId) {
 
-        return groupChatMemberRepository.findByGroupIdAndUserId(groupId, userId).orElseThrow(() -> new DataNotFoundException("User with ID " + userId + " is not a member of group with ID " + groupId + "."));
+        return groupChatMemberRepository.findByGroupIdAndParticipantId(groupId, userId).orElseThrow(() -> new DataNotFoundException("User with ID " + userId + " is not a member of group with ID " + groupId + "."));
     }
 
     /**
      * Allows a user to join a group by group ID.
      *
      * @param groupId
-     * @param userId
-     * @param orgId
      * @return
      */
     @Override
-    public GroupDto joinGroup(Long groupId, Long userId, Long orgId) {
+    public GroupDto joinGroup(Long groupId) {
 
-        OrgMember orgMember = orgMemberService.getOrgMemberByUserIdAndOrgId(userId, orgId);
+        OrgMember orgMember = getCurrentOrgMember();
+        Long orgId = orgMember.getOrg().getId();
+        Long userId = orgMember.getId();
 
         Group group = groupService.getGroupById(groupId);
         if (!group.getOrg().getId().equals(orgId)) {
             throw new DataNotFoundException("Group with ID " + groupId + " does not belong to organization with ID " + orgId + ".");
         }
 
-        boolean alreadyMember = groupChatMemberRepository.existsByGroupIdAndUserId(groupId, userId);
+        boolean alreadyMember = groupChatMemberRepository.existsByGroupIdAndParticipantId(groupId, userId);
         if (alreadyMember) {
             throw new ActionProhibitedException("You are already a member of this group.");
         }
@@ -83,7 +84,7 @@ public class GroupChatMemberServiceImpl implements GroupChatMemberService {
         GroupChatMember groupChatMember = new GroupChatMember();
         groupChatMember.setRole(Role.USER);
         groupChatMember.setActive(true);
-        groupChatMember.setUser(orgMember.getUser());
+        groupChatMember.setParticipant(orgMember);
         groupChatMember.setGroup(group);
         // groupChatMember.setLastReadMessage(latestMessage);
         groupChatMemberRepository.save(groupChatMember);
@@ -94,12 +95,14 @@ public class GroupChatMemberServiceImpl implements GroupChatMemberService {
      * Adds a member to a group.
      *
      * @param addGroupMemberDto
-     * @param userId
-     * @param orgId
      * @return
      */
     @Override
-    public UserPreviewDto addMemberToGroup(AddGroupMemberDto addGroupMemberDto, Long userId, Long orgId) {
+    public UserPreviewDto addMemberToGroup(AddGroupMemberDto addGroupMemberDto) {
+
+        OrgMember currentUser = getCurrentOrgMember();
+        Long userId = currentUser.getId();
+        Long orgId = currentUser.getOrg().getId();
 
         GroupChatMember groupChatMember = getGroupMemberByGroupIdAndUserId(addGroupMemberDto.getGroupId(), userId);
         Group group = groupChatMember.getGroup();
@@ -113,32 +116,34 @@ public class GroupChatMemberServiceImpl implements GroupChatMemberService {
             throw new PermissionDeniedException("You do not have permission to add members to this group.");
         }
 
-        boolean isAlreadyMember = groupChatMemberRepository.existsByGroupIdAndUserId(addGroupMemberDto.getGroupId(), addGroupMemberDto.getUserId());
+        boolean isAlreadyMember = groupChatMemberRepository.existsByGroupIdAndParticipant_PublicId(addGroupMemberDto.getGroupId(), addGroupMemberDto.getUserId());
         if (isAlreadyMember) {
             throw new ActionProhibitedException("User is already a member of this group.");
         }
 
-        OrgMember orgMember = orgMemberService.getOrgMemberByUserIdAndOrgId(addGroupMemberDto.getUserId(), orgId);
+        OrgMember newMember = orgMemberService.getOrgMemberByPublicId(addGroupMemberDto.getUserId());
 
         GroupChatMember newGroupMember = new GroupChatMember();
         newGroupMember.setGroup(group);
-        newGroupMember.setUser(orgMember.getUser());
+        newGroupMember.setParticipant(newMember);
         newGroupMember.setRole(Role.USER);
         newGroupMember.setActive(true);
         groupChatMemberRepository.save(newGroupMember);
-        return UserPreviewDto.fromOrgMember(orgMember);
+        return UserPreviewDto.fromOrgMember(newMember);
     }
 
     /**
      * Retrieves the members of a group categorized by their roles.
      *
      * @param groupId
-     * @param userId
-     * @param orgId
      * @return
      */
     @Override
-    public Map<Role, List<UserPreviewDto>> getGroupMembers(Long groupId, Long userId, Long orgId) {
+    public Map<Role, List<UserPreviewDto>> getGroupMembers(Long groupId) {
+
+        OrgMember orgMember = getCurrentOrgMember();
+        Long userId = orgMember.getId();
+        Long orgId = orgMember.getOrg().getId();
 
         GroupChatMember groupChatMember = getGroupMemberByGroupIdAndUserId(groupId, userId);
         Group group = groupChatMember.getGroup();
@@ -155,7 +160,7 @@ public class GroupChatMemberServiceImpl implements GroupChatMemberService {
         return group.getMembers().stream().filter(GroupChatMember::isActive).collect(Collectors.groupingBy(
                 GroupChatMember::getRole,
                 Collectors.mapping(
-                        member -> UserPreviewDto.fromOrgMember(orgMemberService.getOrgMemberByUserIdAndOrgId(member.getUser().getId(), orgId)),
+                        member -> UserPreviewDto.fromOrgMember(orgMemberService.getOrgMemberByUserIdAndOrgId(member.getId(), orgId)),
                         Collectors.toList()
                 )
         )).entrySet().stream().collect(Collectors.toMap(
@@ -168,13 +173,13 @@ public class GroupChatMemberServiceImpl implements GroupChatMemberService {
      * Checks if a user is a member of a group.
      *
      * @param groupId
-     * @param userId
      * @return
      */
     @Override
-    public boolean isUserMemberOfGroup(Long groupId, Long userId) {
+    public boolean isUserMemberOfGroup(Long groupId) {
 
-        return groupChatMemberRepository.existsByGroupIdAndUserId(groupId, userId);
+        OrgMember orgMember = getCurrentOrgMember();
+        return groupChatMemberRepository.existsByGroupIdAndParticipantId(groupId, orgMember.getId());
     }
 
 }
