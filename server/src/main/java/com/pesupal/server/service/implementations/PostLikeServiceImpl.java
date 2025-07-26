@@ -3,6 +3,7 @@ package com.pesupal.server.service.implementations;
 import com.pesupal.server.dto.response.PostLikesDto;
 import com.pesupal.server.enums.PostStatus;
 import com.pesupal.server.exceptions.ActionProhibitedException;
+import com.pesupal.server.helpers.CurrentValueRetriever;
 import com.pesupal.server.model.post.Post;
 import com.pesupal.server.model.post.PostLike;
 import com.pesupal.server.model.user.OrgMember;
@@ -11,7 +12,6 @@ import com.pesupal.server.repository.PostLikeRepository;
 import com.pesupal.server.service.interfaces.OrgMemberService;
 import com.pesupal.server.service.interfaces.PostLikeService;
 import com.pesupal.server.service.interfaces.PostService;
-import com.pesupal.server.service.interfaces.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -19,10 +19,9 @@ import java.util.List;
 
 @Repository
 @AllArgsConstructor
-public class PostLikeServiceImpl implements PostLikeService {
+public class PostLikeServiceImpl extends CurrentValueRetriever implements PostLikeService {
 
     private final PostService postService;
-    private final UserService userService;
     private final PostLikeRepository postLikeRepository;
     private final OrgMemberService orgMemberService;
 
@@ -30,14 +29,13 @@ public class PostLikeServiceImpl implements PostLikeService {
      * Likes a post by the current user in the current organization.
      *
      * @param postId
-     * @param userId
-     * @param orgId
      */
     @Override
-    public void likePost(Long postId, Long userId, Long orgId) {
+    public void likePost(Long postId) {
 
-        Post post = postService.getPostByIdAndOrgId(postId, orgId);
-        User user = userService.getUserById(userId);
+        OrgMember orgMember = getCurrentOrgMember();
+        User user = orgMember.getUser();
+        Post post = postService.getPostByIdAndOrgId(postId, orgMember.getOrg().getId());
         if (!post.getStatus().equals(PostStatus.PUBLISHED)) {
             throw new ActionProhibitedException("The post that you are trying to like may be deleted or unpublished by the author.");
         }
@@ -46,7 +44,7 @@ public class PostLikeServiceImpl implements PostLikeService {
         }
         PostLike postLike = new PostLike();
         postLike.setPost(post);
-        postLike.setLiker(user);
+        postLike.setLiker(orgMember);
         postLikeRepository.save(postLike);
     }
 
@@ -54,14 +52,13 @@ public class PostLikeServiceImpl implements PostLikeService {
      * Unlikes a post by the current user in the current organization.
      *
      * @param postId
-     * @param userId
-     * @param orgId
      */
     @Override
-    public void unlikePost(Long postId, Long userId, Long orgId) {
+    public void unlikePost(Long postId) {
 
-        Post post = postService.getPostByIdAndOrgId(postId, orgId);
-        User user = userService.getUserById(userId);
+        OrgMember orgMember = getCurrentOrgMember();
+        Post post = postService.getPostByIdAndOrgId(postId, orgMember.getOrg().getId());
+        User user = orgMember.getUser();
         if (!post.getStatus().equals(PostStatus.PUBLISHED)) {
             throw new ActionProhibitedException("The post that you are trying to unlike may be deleted or unpublished by the author.");
         }
@@ -73,15 +70,14 @@ public class PostLikeServiceImpl implements PostLikeService {
      * Retrieves a list of likes for a post by the current user in the current organization.
      *
      * @param postId
-     * @param userId
-     * @param orgId
      * @return List<PostLikesDto>
      */
     @Override
-    public List<PostLikesDto> getPostLikes(Long postId, Long userId, Long orgId) {
+    public List<PostLikesDto> getPostLikes(Long postId) {
 
+        OrgMember orgMember = getCurrentOrgMember();
         return postLikeRepository.findByPostId(postId).stream().map(postLike -> {
-            OrgMember likerOrgMember = orgMemberService.getOrgMemberByUserIdAndOrgId(postLike.getLiker().getId(), orgId);
+            OrgMember likerOrgMember = orgMemberService.getOrgMemberByUserIdAndOrgId(postLike.getLiker().getId(), orgMember.getOrg().getId());
             PostLikesDto postLikesDto = PostLikesDto.fromOrgMember(likerOrgMember);
             postLikesDto.setCreatedAt(postLike.getCreatedAt());
             return postLikesDto;
