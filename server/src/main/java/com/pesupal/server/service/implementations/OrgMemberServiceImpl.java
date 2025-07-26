@@ -20,19 +20,16 @@ import com.pesupal.server.model.user.Designation;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.model.user.User;
 import com.pesupal.server.repository.OrgMemberRepository;
-import com.pesupal.server.security.JwtUtil;
 import com.pesupal.server.service.interfaces.*;
-import lombok.AllArgsConstructor;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
-@AllArgsConstructor
 public class OrgMemberServiceImpl implements OrgMemberService {
 
-    private final JwtUtil jwtUtil;
     private final OrgService orgService;
     private final UserService userService;
     private final AuthService authService;
@@ -41,6 +38,17 @@ public class OrgMemberServiceImpl implements OrgMemberService {
     private final OrgMemberRepository orgMemberRepository;
     private final OrgConfigurationService orgConfigurationService;
     private final OrgSubscriptionHistoryService orgSubscriptionHistoryService;
+
+    public OrgMemberServiceImpl(OrgService orgService, UserService userService, AuthService authService, @Lazy DepartmentService departmentService, DesignationService designationService, OrgMemberRepository orgMemberRepository, OrgConfigurationService orgConfigurationService, OrgSubscriptionHistoryService orgSubscriptionHistoryService) {
+        this.orgService = orgService;
+        this.userService = userService;
+        this.authService = authService;
+        this.departmentService = departmentService;
+        this.designationService = designationService;
+        this.orgMemberRepository = orgMemberRepository;
+        this.orgConfigurationService = orgConfigurationService;
+        this.orgSubscriptionHistoryService = orgSubscriptionHistoryService;
+    }
 
     /**
      * Retrieves an organization member by their public ID.
@@ -139,14 +147,11 @@ public class OrgMemberServiceImpl implements OrgMemberService {
      * Retrieves all members of a department.
      *
      * @param departmentId
-     * @param userId
-     * @param orgId
      * @return List<UserBasicInfoDto>
      */
     @Override
-    public List<UserBasicInfoDto> getAllMembers(Long departmentId, Long userId, Long orgId) {
+    public List<UserBasicInfoDto> getAllMembers(Long departmentId, OrgMember orgMember) {
 
-        OrgMember orgMember = getOrgMemberByUserIdAndOrgId(userId, orgId);
         Department department = departmentService.getDepartmentByIdAndOrg(departmentId, orgMember.getOrg());
         return orgMemberRepository.findAllByOrgAndDepartmentOrderByDisplayName(orgMember.getOrg(), department).stream().map(UserBasicInfoDto::fromOrgMember).toList();
     }
@@ -184,11 +189,10 @@ public class OrgMemberServiceImpl implements OrgMemberService {
         return designationService.createDesignation(createDesignationDto);
     }
 
-    private Department createDummyDepartmentForNewOrg(Org org, User user) {
+    private Department createDummyDepartmentForNewOrg() {
 
         CreateDepartmentDto createDepartmentDto = new CreateDepartmentDto();
-        createDepartmentDto.setHeadId(user.getId());
-        createDepartmentDto.setOrgId(org.getId());
+        createDepartmentDto.setHeadId(null);
         createDepartmentDto.setName("Executive Department");
         return departmentService.createDepartment(createDepartmentDto);
     }
@@ -208,9 +212,9 @@ public class OrgMemberServiceImpl implements OrgMemberService {
         addOrgMemberDto.setDisplayName("Org Owner");
         addOrgMemberDto.setRole(Role.ADMIN);
         addOrgMemberDto.setDesignationId(createDummyDesignationForNewOrg(org).getId()); // Assuming a default designation
-        addOrgMemberDto.setDepartmentId(createDummyDepartmentForNewOrg(org, user).getId()); // Assuming a default department
-        addOrgMemberDto.setManagerId(user.getId()); // Assuming the first member is their own manager
-        return addMemberToOrg(addOrgMemberDto, user.getId(), org.getId(), true);
+        addOrgMemberDto.setDepartmentId(createDummyDepartmentForNewOrg().getId()); // Assuming a default department
+        addOrgMemberDto.setManagerId(null); // Assuming the first member is their own manager
+        return addMemberToOrg(addOrgMemberDto, null, true);
     }
 
     /**
@@ -243,24 +247,19 @@ public class OrgMemberServiceImpl implements OrgMemberService {
      * Adds a member to an organization.
      *
      * @param addOrgMemberDto
-     * @param adminId
      * @return OrgMember
      */
     @Override
-    public OrgMember addMemberToOrg(AddOrgMemberDto addOrgMemberDto, Long adminId, Long orgId, boolean firstMember) {
+    public OrgMember addMemberToOrg(AddOrgMemberDto addOrgMemberDto, OrgMember currentUser, boolean firstMember) {
 
+        Org org = currentUser.getOrg();
         User user = userService.getUserById(addOrgMemberDto.getUserId());
-        Org org = orgService.getOrgById(orgId);
 
-        OrgMember orgAdmin = firstMember ? null : getOrgMemberByUserAndOrg(userService.getUserById(adminId), org);
+        OrgMember addedBy = firstMember ? null : currentUser;
 
-        if (orgAdmin != null) {
+        if (addedBy != null) {
 
-            if (orgAdmin.isArchived()) {
-                throw new ActionProhibitedException("You are not part of this org anymore.");
-            }
-
-            if (!hasPrivilegeToAddMember(org, orgAdmin.getRole())) {
+            if (!hasPrivilegeToAddMember(org, addedBy.getRole())) {
                 throw new PermissionDeniedException("You do not have permission to add members to this organization.");
             }
         }
@@ -269,12 +268,11 @@ public class OrgMemberServiceImpl implements OrgMemberService {
             throw new ActionProhibitedException("User is already a member of this organization.");
         }
 
-        User manager = userService.getUserById(addOrgMemberDto.getManagerId());
-        OrgMember orgMemberManager = firstMember ? null : getOrgMemberByUserAndOrg(manager, org);
+        OrgMember manager = firstMember ? null : getOrgMemberByPublicId(addOrgMemberDto.getManagerId());
 
         OrgMember newOrgMember = new OrgMember();
-        newOrgMember.setAddedBy(orgAdmin == null ? user : orgAdmin.getUser());
-        newOrgMember.setManager(orgMemberManager == null ? manager : orgMemberManager.getUser());
+        newOrgMember.setAddedBy(addedBy);
+        newOrgMember.setManager(manager);
         newOrgMember.setOrg(org);
         newOrgMember.setUser(user);
         newOrgMember.setUserName(addOrgMemberDto.getUserName());

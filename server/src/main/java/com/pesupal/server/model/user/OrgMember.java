@@ -44,7 +44,7 @@ public class OrgMember extends PublicAccessModel {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore
-    private User manager;
+    private OrgMember manager;
 
     private boolean archived;
 
@@ -54,7 +54,7 @@ public class OrgMember extends PublicAccessModel {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore
-    private User addedBy;
+    private OrgMember addedBy;
 
     private LocalDateTime lastLoggedIn;
 }
