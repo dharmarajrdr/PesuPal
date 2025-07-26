@@ -20,3 +20,20 @@
     transform: translate(-50%, -50%);
     border-radius: 5px;
 }
+
+.create-org-button {
+    background-color: var(--primary-color);
+    position: sticky;
+    bottom: 0;
+    z-index: 10;
+    padding: 10px;
+    cursor: pointer;
+    outline: none;
+    border: none;
+    color: var(--pure-white-hover);
+}
+
+.create-org-button:hover {
+    background-color: var(--primary-color-active);
+    color: var(--pure-white);
+}

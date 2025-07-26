@@ -6,6 +6,19 @@ import { apiRequest } from '../../http_request';
 import Loader from '../Loader';
 import { useNavigate } from "react-router-dom";
 
+const NoOrgFound = () => {
+
+    return (
+        <div className='FCCC w100 h100P' id='no-data-found'>
+            <p className='FRCC w100'>
+                <i className='fa fa-building mR5' />
+                Welcome to PesuPal!
+            </p>
+            <p className='w100 alignCenter'>Start creating a new org.</p>
+        </div>
+    )
+}
+
 const OrgList = ({ toggleOrgList, closeOrgList }) => {
 
     const [orgListDetails, setOrgListDetails] = useState([]);
@@ -38,15 +51,23 @@ const OrgList = ({ toggleOrgList, closeOrgList }) => {
         });
     }, []);
 
+    const createOrgHandler = () => {
+
+        // create org modal
+    }
+
     return (
         <div className='FCCS w100' id='org-list-modal' onClick={closeOrgList}>
             <div className='org-list-popup FCCS'>
                 {
                     loading ? <Loader /> :
-                        error ? <ErrorMessage message={error} /> :
-                            orgListDetails.length ?
+                        error ? <ErrorMessage message={error} /> : <>
+                            {orgListDetails.length ?
                                 orgListDetails.map((org, index) => <OrgPreview org={org} currentOrgId={currentOrgId} setCurrentOrg={setCurrentOrg} key={index} toggleOrgList={toggleOrgList} />) :
-                                <p className='no-orgs'>No organizations found</p>
+                                <NoOrgFound />
+                            }
+                            <button className='create-org-button w100 FRCC' onClick={createOrgHandler}>Create New Org</button>
+                        </>
                 }
             </div>
         </div>
