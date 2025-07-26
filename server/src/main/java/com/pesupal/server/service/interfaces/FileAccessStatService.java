@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface FileAccessStatService {
 
-    List<FileAccessStatDto> getFileAccessStats(Long fileId, Long userId, Long orgId);
+    List<FileAccessStatDto> getFileAccessStats(Long fileId);
 
-    List<FileDto> getRecentlyAccessedFiles(Long userId, Long orgId);
+    List<FileDto> getRecentlyAccessedFiles();
 }

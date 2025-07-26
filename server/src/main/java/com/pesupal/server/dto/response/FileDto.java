@@ -13,7 +13,7 @@ import java.util.UUID;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class FileDto extends FileOrFolderDto {
 
-    private Long id;
+    private String id;
 
     private String name;
 
@@ -29,17 +29,17 @@ public class FileDto extends FileOrFolderDto {
 
     private int accessCount;
 
-    public static FileDto fromFileAndOrgMember(File file, OrgMember orgMember) {
+    public static FileDto fromFileAndOrgMember(File file, OrgMember owner) {
 
         FileDto fileDto = fromFile(file);
-        fileDto.setOwner(UserBasicInfoDto.fromOrgMember(orgMember));
+        fileDto.setOwner(UserBasicInfoDto.fromOrgMember(owner));
         return fileDto;
     }
 
     public static FileDto fromFile(File file) {
 
         FileDto fileDto = new FileDto();
-        fileDto.setId(file.getId());
+        fileDto.setId(file.getPublicId());
         fileDto.setName(file.getName());
         fileDto.setCreatedAt(file.getCreatedAt());
         fileDto.setSize(file.getSize());
