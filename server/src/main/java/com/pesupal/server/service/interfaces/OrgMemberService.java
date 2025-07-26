@@ -26,7 +26,7 @@ public interface OrgMemberService {
 
     OrgMember joinOrgAsFirstMember(User user, Org org);
 
-    List<OrgDetailDto> listOfOrgUserPartOf(Long userId);
+    List<OrgDetailDto> listOfOrgUserPartOf();
 
     OrgMember addMemberToOrg(AddOrgMemberDto addOrgMemberDto, Long adminId, Long orgId, boolean firstMember);
 
@@ -34,13 +34,15 @@ public interface OrgMemberService {
 
     void validateUserIsOrgMember(Long userId, Long orgId);
 
-    List<UserBasicInfoDto> getAllOrgMembers(Long currentUserId, Long currentOrgId);
+    List<UserBasicInfoDto> getAllOrgMembers();
 
     String getOrgMemberImageByUserIdAndOrgId(Long userId, Long currentOrgId);
 
-    UserPreviewDto getUserPreview(OrgMember orgMember);
+    UserPreviewDto getCurrentOrgMemberPreview();
 
     String generateTokenWithOrgMemberId(String publicUserId, String publicOrgId);
 
     UserBasicInfoDto getUserBasicInfoByOrgMemberPublicId(String orgMemberPublicId);
+
+    String getImageByOrgMemberPublicId(String orgMemberPublicId);
 }

@@ -40,34 +40,34 @@ public class OrgMemberController extends OrgSubscriptionManager {
     }
 
     @GetMapping("/display-picture")
-    public ResponseEntity<ApiResponseDto> getOrgMemberImage(@RequestParam(required = false) Long userId) {
+    public ResponseEntity<ApiResponseDto> getOrgMemberImage(@RequestParam(name = "userId") String orgMemberPublicId) {
 
-        if (userId == null) {
-            userId = getCurrentUserId();
+        if (orgMemberPublicId == null) {
+            orgMemberPublicId = getCurrentOrgMemberPublicId();
         }
 
-        String imageUrl = orgMemberService.getOrgMemberImageByUserIdAndOrgId(userId, getCurrentOrgId());
+        String imageUrl = orgMemberService.getImageByOrgMemberPublicId(orgMemberPublicId);
         return ResponseEntity.ok(new ApiResponseDto("Organization member image retrieved successfully.", imageUrl));
     }
 
     @GetMapping("/orgs")
     public ResponseEntity<ApiResponseDto> getOrgList() {
 
-        List<OrgDetailDto> orgDetails = orgMemberService.listOfOrgUserPartOf(getCurrentUserId());
+        List<OrgDetailDto> orgDetails = orgMemberService.listOfOrgUserPartOf();
         return ResponseEntity.ok(new ApiResponseDto("List of orgs retrieved successfully.", orgDetails));
     }
 
     @GetMapping("")
     public ResponseEntity<ApiResponseDto> getAllOrgMembers() {
 
-        List<UserBasicInfoDto> orgMembers = orgMemberService.getAllOrgMembers(getCurrentUserId(), getCurrentOrgId());
+        List<UserBasicInfoDto> orgMembers = orgMemberService.getAllOrgMembers();
         return ResponseEntity.ok(new ApiResponseDto("List of organization members retrieved successfully.", orgMembers));
     }
 
     @GetMapping("/profile")
     public ResponseEntity<ApiResponseDto> getMyProfile() {
 
-        UserPreviewDto userPreviewDto = orgMemberService.getUserPreview(getCurrentOrgMember());
+        UserPreviewDto userPreviewDto = orgMemberService.getCurrentOrgMemberPreview();
         return ResponseEntity.ok().body(new ApiResponseDto("Profile fetched successfully", userPreviewDto));
     }
 

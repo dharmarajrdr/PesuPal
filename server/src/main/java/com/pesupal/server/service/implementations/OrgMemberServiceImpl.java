@@ -11,7 +11,7 @@ import com.pesupal.server.enums.Role;
 import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.exceptions.PermissionDeniedException;
-import com.pesupal.server.helpers.Chat;
+import com.pesupal.server.helpers.CurrentValueRetriever;
 import com.pesupal.server.model.department.Department;
 import com.pesupal.server.model.org.Org;
 import com.pesupal.server.model.org.OrgConfiguration;
@@ -20,6 +20,7 @@ import com.pesupal.server.model.user.Designation;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.model.user.User;
 import com.pesupal.server.repository.OrgMemberRepository;
+import com.pesupal.server.security.SecurityUtil;
 import com.pesupal.server.service.interfaces.*;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -29,7 +30,7 @@ import java.util.List;
 
 @Service
 @AllArgsConstructor
-public class OrgMemberServiceImpl implements OrgMemberService {
+public class OrgMemberServiceImpl extends CurrentValueRetriever implements OrgMemberService {
 
     private final OrgService orgService;
     private final UserService userService;
@@ -39,6 +40,7 @@ public class OrgMemberServiceImpl implements OrgMemberService {
     private final OrgMemberRepository orgMemberRepository;
     private final OrgConfigurationService orgConfigurationService;
     private final OrgSubscriptionHistoryService orgSubscriptionHistoryService;
+    private final SecurityUtil securityUtil;
 
     /**
      * Retrieves an organization member by their public ID.
@@ -200,14 +202,14 @@ public class OrgMemberServiceImpl implements OrgMemberService {
     /**
      * Lists all organizations that a user is part of.
      *
-     * @param userId
      * @return List<OrgDetailDto>
      */
     @Override
-    public List<OrgDetailDto> listOfOrgUserPartOf(Long userId) {
+    public List<OrgDetailDto> listOfOrgUserPartOf() {
 
+        String userPublicId = getCurrentUserPublicId();
         List<OrgDetailDto> orgDetailDtos = new ArrayList<>();
-        User user = userService.getUserById(userId);
+        User user = userService.getUserByPublicId(userPublicId);
         List<OrgMember> orgMembers = orgMemberRepository.findByUser(user);
         orgMembers.sort((o1, o2) -> o1.getOrg().getDisplayName().compareToIgnoreCase(o2.getOrg().getDisplayName()));
         for (OrgMember orgMember : orgMembers) {
@@ -305,18 +307,17 @@ public class OrgMemberServiceImpl implements OrgMemberService {
     /**
      * Retrieves all members of an organization.
      *
-     * @param userId
-     * @param orgId
      * @return
      */
     @Override
-    public List<UserBasicInfoDto> getAllOrgMembers(Long userId, Long orgId) {
+    public List<UserBasicInfoDto> getAllOrgMembers() {
 
-        validateUserIsOrgMember(userId, orgId);
+        OrgMember currentOrgMember = getCurrentOrgMember();
+        Long orgId = currentOrgMember.getOrg().getId();
 
         return orgMemberRepository.findAllByOrgIdOrderByDisplayNameAsc(orgId).stream().map(orgMember -> {
             UserBasicInfoDto userBasicInfoDto = UserBasicInfoDto.fromOrgMember(orgMember);
-            userBasicInfoDto.setChatId(Chat.getChatId(userId, orgMember.getUser().getId(), orgId));
+            userBasicInfoDto.setChatId(null);
             return userBasicInfoDto;
         }).toList();
     }
@@ -337,13 +338,12 @@ public class OrgMemberServiceImpl implements OrgMemberService {
     /**
      * Retrieve user's profile as preview
      *
-     * @param orgMember
      * @return
      */
     @Override
-    public UserPreviewDto getUserPreview(OrgMember orgMember) {
+    public UserPreviewDto getCurrentOrgMemberPreview() {
 
-        return UserPreviewDto.fromOrgMember(orgMember);
+        return UserPreviewDto.fromOrgMember(getCurrentOrgMember());
     }
 
     /**
@@ -379,6 +379,18 @@ public class OrgMemberServiceImpl implements OrgMemberService {
 
         OrgMember orgMember = getOrgMemberByPublicId(orgMemberPublicId);
         return UserBasicInfoDto.fromOrgMember(orgMember);
+    }
+
+    /**
+     * Retrieves the image URL of an organization member by their public ID.
+     *
+     * @param orgMemberPublicId
+     * @return
+     */
+    @Override
+    public String getImageByOrgMemberPublicId(String orgMemberPublicId) {
+
+        return getOrgMemberByPublicId(orgMemberPublicId).getDisplayPicture();
     }
 
 }
