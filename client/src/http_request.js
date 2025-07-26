@@ -41,6 +41,9 @@ export async function apiRequest(endpoint, method = 'GET', data = null, customHe
                 document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/';
                 // window.location.reload(); // Auto logout
                 window.location.href = '/signin'; // Redirect to signin
+            } else if (statusCode == 307) {  // Redirect to another page
+                console.log("Redirecting to:", result.data?.redirectUrl);
+                window.location.href = result.data?.redirectUrl || '/';
             }
             throw result;
         }
