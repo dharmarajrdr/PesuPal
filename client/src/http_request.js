@@ -37,12 +37,13 @@ export async function apiRequest(endpoint, method = 'GET', data = null, customHe
 
         if (!response.ok || result.status === 'FAILURE') {
             const { data } = result;
+            const noRedirectionRequired = ['/', '/org/create'];
             if (statusCode == 401) {
                 sessionStorage.removeItem('token');
                 document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/';
                 // window.location.reload(); // Auto logout
                 window.location.href = '/signin'; // Redirect to signin
-            } else if (statusCode == 307 && data?.redirect != window.location.pathname) {  // Redirect to another page
+            } else if (statusCode == 307 && !noRedirectionRequired.includes(window.location.pathname)) {  // Redirect to another page
                 window.location.pathname = data.redirect;
             }
             throw result;
