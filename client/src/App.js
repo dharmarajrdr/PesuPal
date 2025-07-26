@@ -19,6 +19,7 @@ import CommonContainer from './components/CommonContainer';
 import store from './store';
 import HomePageLayout from './components/Home/HomePageLayout';
 import CreateOrgModal from './components/Org/CreateOrgModal';
+import AuthModal from './components/Auth/AuthModal';
 
 function App() {
 
@@ -38,6 +39,7 @@ function App() {
         <Provider store={store}>
             <div className="App FRCS">
 
+                {!isAuthPage && <AuthModal />}
                 <CommonContainer />
                 {/* ✅ Only render LeftNavigation if not on /signin or /signup or / */}
                 {!isAuthPage && !inLobby && <LeftNavigation />}
