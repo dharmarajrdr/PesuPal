@@ -49,10 +49,10 @@ public class OrgServiceImpl implements OrgService {
      */
     @Override
     @Transactional
-    public Org createOrg(CreateOrgDto createOrgDto, Long userId) {
+    public Org createOrg(CreateOrgDto createOrgDto, String userPublicId) {
 
-        User owner = userService.getUserById(userId);
-        
+        User owner = userService.getUserByPublicId(userPublicId);
+
         userOnboardingService.hasDoneOnboardingVerification(owner);
 
         Org org = createOrgDto.toOrg();

@@ -2,15 +2,17 @@ package com.pesupal.server.model.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.pesupal.server.enums.Role;
-import com.pesupal.server.model.CreationTimeAuditable;
+import com.pesupal.server.model.PublicAccessModel;
 import com.pesupal.server.model.department.Department;
 import com.pesupal.server.model.org.Org;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.time.LocalDateTime;
+
 @Data
 @Entity
-public class OrgMember extends CreationTimeAuditable {
+public class OrgMember extends PublicAccessModel {
 
     @ManyToOne
     private Org org;

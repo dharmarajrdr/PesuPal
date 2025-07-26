@@ -15,4 +15,6 @@ public interface UserService {
     Optional<UserLoginCheckDto> getUserLoginCheckByEmail(String email);
 
     User getUserByEmail(String email);
+
+    User getUserByPublicId(String userPublicId);
 }

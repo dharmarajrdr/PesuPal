@@ -1,5 +1,6 @@
 package com.pesupal.server.controller;
 
+import com.pesupal.server.config.RequestContext;
 import com.pesupal.server.dto.request.AddOrgMemberDto;
 import com.pesupal.server.dto.response.ApiResponseDto;
 import com.pesupal.server.dto.response.OrgDetailDto;
@@ -7,12 +8,15 @@ import com.pesupal.server.dto.response.UserBasicInfoDto;
 import com.pesupal.server.dto.response.UserPreviewDto;
 import com.pesupal.server.helpers.OrgSubscriptionManager;
 import com.pesupal.server.model.user.OrgMember;
+import com.pesupal.server.security.CustomUserDetails;
 import com.pesupal.server.service.interfaces.OrgMemberService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @AllArgsConstructor
@@ -65,7 +69,27 @@ public class OrgMemberController extends OrgSubscriptionManager {
     @GetMapping("/profile")
     public ResponseEntity<ApiResponseDto> getMyProfile() {
 
-        UserPreviewDto userPreviewDto = orgMemberService.getUserPreview(getCurrentUserId(), getCurrentOrgId());
+        UserPreviewDto userPreviewDto = orgMemberService.getUserPreview(getCurrentOrgMember());
         return ResponseEntity.ok().body(new ApiResponseDto("Profile fetched successfully", userPreviewDto));
+    }
+
+    @GetMapping("/token")
+    public ResponseEntity<ApiResponseDto> generateTokenWithOrgMemberId() {
+
+        CustomUserDetails customUserDetails = getCurrentUserDetails();
+        String publicOrgId = RequestContext.get("X-ORG-ID", String.class);
+
+        String token = orgMemberService.generateTokenWithOrgMemberId(customUserDetails.getUserPublicId(), publicOrgId);
+        return ResponseEntity.ok().body(new ApiResponseDto("Token generated successfully", token));
+    }
+
+    @GetMapping("/who-am-i")
+    public ResponseEntity<ApiResponseDto> whoAmI() {
+
+        CustomUserDetails customUserDetails = getCurrentUserDetails();
+        Map<String, String> userDetail = new HashMap<>();
+        userDetail.put("userId", customUserDetails.getUserPublicId());
+        userDetail.put("orgMemberId", customUserDetails.getOrgMemberPublicId());
+        return ResponseEntity.ok().body(new ApiResponseDto("Token decoded successfully", userDetail));
     }
 }

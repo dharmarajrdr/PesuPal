@@ -2,7 +2,7 @@ package com.pesupal.server.model.org;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.pesupal.server.model.CreationTimeAuditable;
+import com.pesupal.server.model.PublicAccessModel;
 import com.pesupal.server.model.user.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -13,7 +13,7 @@ import lombok.Data;
 @Data
 @Entity
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Org extends CreationTimeAuditable {
+public class Org extends PublicAccessModel {
 
     @Column(nullable = false)
     private String displayName;

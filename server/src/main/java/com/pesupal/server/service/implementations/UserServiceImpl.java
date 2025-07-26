@@ -57,7 +57,7 @@ public class UserServiceImpl implements UserService {
         EmailNotificationRequestDto<SignupConfirmationTemplate> emailNotificationRequestDto = new EmailNotificationRequestDto<>();
         emailNotificationRequestDto.setRecipientEmail(user.getEmail());
         emailNotificationRequestDto.setTemplate(new SignupConfirmationTemplate(StaticConfig.SERVER_DOMAIN + "/api/v1/user/onboarding/email-verification/" + userOnboarding.getId()));
-        emailNotification.sendNotification(emailNotificationRequestDto);
+        // emailNotification.sendNotification(emailNotificationRequestDto);
     }
 
     /**
@@ -83,6 +83,16 @@ public class UserServiceImpl implements UserService {
     public User getUserByEmail(String email) {
 
         return userRepository.findByEmail(email).orElseThrow(() -> new DataNotFoundException("User with email '" + email + "' not found"));
+    }
+
+    /**
+     * @param userPublicId
+     * @return
+     */
+    @Override
+    public User getUserByPublicId(String userPublicId) {
+
+        return userRepository.findByPublicId(userPublicId).orElseThrow(() -> new DataNotFoundException("User with ID '" + userPublicId + "' not found"));
     }
 
 }

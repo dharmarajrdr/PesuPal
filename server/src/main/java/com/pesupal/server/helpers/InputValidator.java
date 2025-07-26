@@ -12,4 +12,13 @@ public class InputValidator {
         }
         return object;
     }
+
+    public static Object headerRequired(Object object, String name) {
+        if (object == null) {
+            throw new MandatoryDataMissingException(
+                    String.format("Mandatory data missing: %s header is required", name)
+            );
+        }
+        return object;
+    }
 }

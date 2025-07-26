@@ -16,8 +16,10 @@ import SettingsLayout from './components/Settings/SettingsLayout';
 import MoreFeaturesLayout from './components/More/MoreFeaturesLayout';
 import VerticalLoader from './components/VerticalLoader';
 import CommonContainer from './components/CommonContainer';
-import utils from './utils';
 import store from './store';
+import HomePageLayout from './components/Home/HomePageLayout';
+import CreateOrgModal from './components/Org/CreateOrgModal';
+import AuthModal from './components/Auth/AuthModal';
 
 function App() {
 
@@ -25,12 +27,11 @@ function App() {
     const navigate = useNavigate();
 
     const isAuthPage = ['/signin', '/signup'].includes(location.pathname);
+    const inLobby = ['/', '/org/create'].includes(location.pathname);
 
     useEffect(() => {
         if (!hasCookie() && !isAuthPage) {
             navigate('/signin');
-        } else if (utils.getCurrentOrgId() == null) {
-            navigate('/settings');
         }
     }, [location.pathname, navigate]);
 
@@ -38,12 +39,15 @@ function App() {
         <Provider store={store}>
             <div className="App FRCS">
 
+                {!isAuthPage && <AuthModal />}
                 <CommonContainer />
-                {/* ✅ Only render LeftNavigation if not on /signin or /signup */}
-                {!isAuthPage && <LeftNavigation />}
+                {/* ✅ Only render LeftNavigation if not on /signin or /signup or / */}
+                {!isAuthPage && !inLobby && <LeftNavigation />}
                 <VerticalLoader />
 
                 <Routes>
+                    <Route path="/" element={<HomePageLayout />} />
+                    <Route path='/org/create' element={<CreateOrgModal />} />
                     <Route path="/feeds/*" element={<FeedsLayout />} />
                     <Route path="/chat/*" element={<ChatLayout />} />
                     <Route path="/people/*" element={<PeopleLayout />} />

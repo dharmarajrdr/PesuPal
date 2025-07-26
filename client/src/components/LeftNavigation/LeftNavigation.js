@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import OrgList from '../Org/OrgList';
 import { setMyProfile } from '../../store/reducers/MyProfileSlice';
 import { apiRequest } from '../../http_request';
+import { showPopup } from '../../store/reducers/PopupSlice';
 
 const LeftNavigation = () => {
 
@@ -37,6 +38,7 @@ const LeftNavigation = () => {
             const updatedProfile = { ...profile, image: data.displayPicture, icon: null };
             setProfile(updatedProfile);
         }).catch(({ message }) => {
+            dispatch(showPopup({ message, type: 'error' }));
             console.error("Error fetching profile:", message);
         });
     }, [orgId]);

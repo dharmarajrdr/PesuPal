@@ -12,6 +12,8 @@ import java.util.List;
 
 public interface OrgMemberService {
 
+    OrgMember getOrgMemberByPublicId(String publicId);
+
     OrgMember getOrgMemberByUserAndOrg(User user, Org org);
 
     OrgMember getOrgMemberByUserIdAndOrgId(Long userId, Long orgId);
@@ -38,5 +40,7 @@ public interface OrgMemberService {
 
     String getOrgMemberImageByUserIdAndOrgId(Long userId, Long currentOrgId);
 
-    UserPreviewDto getUserPreview(Long userId, Long orgId);
+    UserPreviewDto getUserPreview(OrgMember orgMember);
+
+    String generateTokenWithOrgMemberId(String publicUserId, String publicOrgId);
 }

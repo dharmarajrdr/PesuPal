@@ -9,7 +9,7 @@ import lombok.Data;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class OrgDetailDto {
 
-    private Long id;
+    private String publicId;
 
     private String displayName;
 
@@ -26,7 +26,7 @@ public class OrgDetailDto {
     public static OrgDetailDto fromOrg(Org org) {
 
         OrgDetailDto dto = new OrgDetailDto();
-        dto.setId(org.getId());
+        dto.setPublicId(org.getPublicId());
         dto.setDisplayName(org.getDisplayName());
         dto.setUniqueName(org.getUniqueName());
         dto.setDisplayPicture(org.getDisplayPicture());

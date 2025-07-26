@@ -13,5 +13,5 @@ public interface UserOnboardingRepository extends JpaRepository<UserOnboarding, 
 
     boolean existsByUserId(Long id);
 
-    Optional<UserOnboarding> findByUserId(User user);
+    Optional<UserOnboarding> findByUser(User user);
 }

@@ -3,12 +3,10 @@ import utils from "./utils";
 export async function apiRequest(endpoint, method = 'GET', data = null, customHeaders = {}) {
 
     const token = sessionStorage.getItem('token') || utils.parseCookie().get('token');
-    const orgId = sessionStorage.getItem('org-id'); // Optional: get orgId from session
 
     const headers = {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
-        ...(orgId && { 'X-Org-Id': orgId }),
         ...customHeaders,
     };
 
@@ -38,11 +36,15 @@ export async function apiRequest(endpoint, method = 'GET', data = null, customHe
         Object.assign(result, { statusCode });
 
         if (!response.ok || result.status === 'FAILURE') {
+            const { data } = result;
+            const noRedirectionRequired = ['/', '/org/create'];
             if (statusCode == 401) {
                 sessionStorage.removeItem('token');
                 document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/';
                 // window.location.reload(); // Auto logout
                 window.location.href = '/signin'; // Redirect to signin
+            } else if (statusCode == 307 && !noRedirectionRequired.includes(window.location.pathname)) {  // Redirect to another page
+                window.location.pathname = data.redirect;
             }
             throw result;
         }

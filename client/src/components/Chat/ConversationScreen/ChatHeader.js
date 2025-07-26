@@ -54,7 +54,7 @@ const ChatHeader = () => {
             icon: `fa fa-thumbtack${pinnedId ? '-slash' : ''}`,
             onClick: () => {
                 if (pinnedId) {
-                    apiRequest(`/api/v1/pinned-direct-messages/pin/${pinnedId}`, 'DELETE').then(() => {
+                    apiRequest(`${activeChatTab.pinnedMessagesApi}/pin/${pinnedId}`, 'DELETE').then(() => {
                         dispatch(removePinnedDirectMessage(chatId));
                         dispatch(setShowChatHeaderOptionsModal(false));
                         dispatch(setCurrentChatPreview({ ...currentChatPreview, pinnedId: null }));
@@ -62,7 +62,13 @@ const ChatHeader = () => {
 
                     });
                 } else {
-                    apiRequest(`/api/v1/pinned-direct-messages/pin`, 'POST', { 'pinnedUserId': userId, 'orderIndex': 1 }).then(({ data }) => {
+                    const payload = {};
+                    if(activeChatTab.name == 'directMessage') {
+                        Object.assign(payload, { 'pinnedUserId': userId, 'orderIndex': 1 });
+                    } else if(activeChatTab.name == 'groupMessage') {
+                        Object.assign(payload, { 'pinnedGroupId': chatId, 'orderIndex': 1 });
+                    }
+                    apiRequest(`${activeChatTab.pinnedMessagesApi}/pin`, 'POST', payload).then(({ data }) => {
                         dispatch(addPinnedDirectMessage(data));
                         dispatch(setShowChatHeaderOptionsModal(false));
                         dispatch(setCurrentChatPreview({ ...currentChatPreview, pinnedId: data.id }));

@@ -26,6 +26,7 @@ const Signup = () => {
             setPassword("");
             setPhone("");
             dispatch(showPopup({ message: "Account created successfully!", type: "success" }));
+            navigate('/signin');
         }).catch(({ message }) => {
             setError(message || "An error occurred during login");
         });

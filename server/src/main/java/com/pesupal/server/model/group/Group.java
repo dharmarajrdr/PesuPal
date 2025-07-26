@@ -1,7 +1,7 @@
 package com.pesupal.server.model.group;
 
 import com.pesupal.server.enums.Visibility;
-import com.pesupal.server.model.CreationTimeAuditable;
+import com.pesupal.server.model.PublicAccessModel;
 import com.pesupal.server.model.org.Org;
 import com.pesupal.server.model.user.User;
 import jakarta.persistence.*;
@@ -11,7 +11,7 @@ import java.util.List;
 
 @Data
 @Entity(name = "groups")
-public class Group extends CreationTimeAuditable {
+public class Group extends PublicAccessModel {
 
     @ManyToOne
     private Org org;

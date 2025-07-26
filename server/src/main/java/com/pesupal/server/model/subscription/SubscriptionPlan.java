@@ -39,7 +39,7 @@ public class SubscriptionPlan extends CreationTimeAuditable {
 
     @Column(nullable = false)
     private Long numberOfDays;
-    
+
     private String badge;
 
     public PaymentDto toPaymentDto() {

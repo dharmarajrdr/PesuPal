@@ -1,7 +1,7 @@
 package com.pesupal.server.model.post;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.pesupal.server.model.CreationTimeAuditable;
+import com.pesupal.server.model.PublicAccessModel;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
@@ -17,7 +17,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class PostMedia extends CreationTimeAuditable {
+public class PostMedia extends PublicAccessModel {
 
     @ManyToOne
     @JsonIgnore

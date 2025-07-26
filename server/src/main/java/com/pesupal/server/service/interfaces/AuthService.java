@@ -5,4 +5,6 @@ import com.pesupal.server.dto.request.UserLoginDto;
 public interface AuthService {
 
     String login(UserLoginDto userLoginDto);
+
+    String generateTokenWithOrgContext(String email, String orgMemberId);
 }

@@ -2,7 +2,7 @@ package com.pesupal.server.model.post;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.pesupal.server.enums.PostStatus;
-import com.pesupal.server.model.CreationTimeAuditable;
+import com.pesupal.server.model.PublicAccessModel;
 import com.pesupal.server.model.org.Org;
 import com.pesupal.server.model.user.User;
 import jakarta.persistence.*;
@@ -13,7 +13,7 @@ import java.util.List;
 
 @Data
 @Entity
-public class Post extends CreationTimeAuditable {
+public class Post extends PublicAccessModel {
 
     @ManyToOne
     @JsonIgnore

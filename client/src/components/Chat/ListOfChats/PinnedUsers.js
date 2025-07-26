@@ -11,14 +11,16 @@ const PinnedUsers = () => {
     const [error, setError] = useState(null);
     const pinnedUsers = useSelector(state => state.pinnedDirectMessage.pinnedDirectMessages);
     const dispatch = useDispatch();
+    const { pinnedMessagesApi } = useSelector(state => state.activeChatTab);
 
     useEffect(() => {
-        apiRequest("/api/v1/pinned-direct-messages", "GET").then(({ data }) => {
+        if (!pinnedMessagesApi) return;
+        apiRequest(pinnedMessagesApi, "GET").then(({ data }) => {
             dispatch(setPinnedDirectMessages(data));
         }).catch(({ message }) => {
             setError(message);
         });
-    }, []);
+    }, [pinnedMessagesApi]);
 
     return (
         <div id='PinnedUsers' className='noScrollbar selectNone'>

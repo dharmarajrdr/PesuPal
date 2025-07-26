@@ -26,4 +26,8 @@ public interface OrgMemberRepository extends JpaRepository<OrgMember, Long> {
     List<OrgMember> findAllByOrgIdOrderByDisplayNameAsc(Long orgId);
 
     List<OrgMember> findAllByOrgAndDepartmentOrderByDisplayName(Org org, Department department);
+
+    Optional<OrgMember> findByUser_PublicIdAndOrg_PublicId(String publicUserId, String publicOrgId);
+
+    Optional<OrgMember> findByPublicId(String publicId);
 }

@@ -2,7 +2,7 @@ package com.pesupal.server.model.workdrive;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.pesupal.server.enums.Workspace;
-import com.pesupal.server.model.CreationTimeAuditable;
+import com.pesupal.server.model.PublicAccessModel;
 import com.pesupal.server.model.org.Org;
 import com.pesupal.server.model.user.User;
 import jakarta.persistence.*;
@@ -14,7 +14,7 @@ import java.util.List;
 @Data
 @Entity
 @ToString(onlyExplicitlyIncluded = true)
-public class Folder extends CreationTimeAuditable {
+public class Folder extends PublicAccessModel {
 
     @Column(nullable = false)
     private String name;

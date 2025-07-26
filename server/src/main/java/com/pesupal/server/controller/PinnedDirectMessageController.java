@@ -1,7 +1,7 @@
 package com.pesupal.server.controller;
 
 import com.pesupal.server.dto.request.CreatePinDirectMessageDto;
-import com.pesupal.server.dto.request.PinnedDirectMessageDto;
+import com.pesupal.server.dto.request.PinnedChatDto;
 import com.pesupal.server.dto.response.ApiResponseDto;
 import com.pesupal.server.helpers.CurrentValueRetriever;
 import com.pesupal.server.service.interfaces.PinnedDirectMessageService;
@@ -21,21 +21,21 @@ public class PinnedDirectMessageController extends CurrentValueRetriever {
     @GetMapping("")
     public ResponseEntity<ApiResponseDto> getAllPinnedDirectMessages() {
 
-        List<PinnedDirectMessageDto> pinnedDirectMessageDtos = pinnedDirectMessageService.getAllPinnedDirectMessages(getCurrentUserId(), getCurrentOrgId());
+        List<PinnedChatDto> pinnedDirectMessageDtos = pinnedDirectMessageService.getAllPinnedDirectMessages(getCurrentOrgMember());
         return ResponseEntity.ok().body(new ApiResponseDto("Pinned direct messages retrieved successfully", pinnedDirectMessageDtos));
     }
 
     @PostMapping("/pin")
     public ResponseEntity<ApiResponseDto> pinDirectMessage(@RequestBody CreatePinDirectMessageDto createPinDirectMessageDto) {
 
-        PinnedDirectMessageDto pinnedDirectMessageDto = pinnedDirectMessageService.pinDirectMessage(createPinDirectMessageDto, getCurrentUserId(), getCurrentOrgId());
+        PinnedChatDto pinnedDirectMessageDto = pinnedDirectMessageService.pinDirectMessage(createPinDirectMessageDto, getCurrentOrgMember());
         return ResponseEntity.ok().body(new ApiResponseDto("Direct message pinned successfully", pinnedDirectMessageDto));
     }
 
     @DeleteMapping("/pin/{id}")
     public ResponseEntity<ApiResponseDto> unpinDirectMessage(@PathVariable Long id) {
 
-        pinnedDirectMessageService.unpinDirectMessage(id, getCurrentUserId(), getCurrentOrgId());
+        pinnedDirectMessageService.unpinDirectMessage(id, getCurrentOrgMember());
         return ResponseEntity.ok().body(new ApiResponseDto("Direct message unpinned successfully", null));
     }
 }

@@ -20,6 +20,7 @@ import com.pesupal.server.model.user.Designation;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.model.user.User;
 import com.pesupal.server.repository.OrgMemberRepository;
+import com.pesupal.server.security.JwtUtil;
 import com.pesupal.server.service.interfaces.*;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -31,13 +32,27 @@ import java.util.List;
 @AllArgsConstructor
 public class OrgMemberServiceImpl implements OrgMemberService {
 
+    private final JwtUtil jwtUtil;
     private final OrgService orgService;
     private final UserService userService;
+    private final AuthService authService;
     private final DepartmentService departmentService;
     private final DesignationService designationService;
     private final OrgMemberRepository orgMemberRepository;
     private final OrgConfigurationService orgConfigurationService;
     private final OrgSubscriptionHistoryService orgSubscriptionHistoryService;
+
+    /**
+     * Retrieves an organization member by their public ID.
+     *
+     * @param publicId
+     * @return
+     */
+    @Override
+    public OrgMember getOrgMemberByPublicId(String publicId) {
+
+        return orgMemberRepository.findByPublicId(publicId).orElseThrow(() -> new DataNotFoundException("Either the user does not exist or is not a member of this organization."));
+    }
 
     /**
      * Retrieves an organization member by user and organization.
@@ -338,13 +353,35 @@ public class OrgMemberServiceImpl implements OrgMemberService {
     /**
      * Retrieve user's profile as preview
      *
-     * @param userId
-     * @param orgId
+     * @param orgMember
      * @return
      */
     @Override
-    public UserPreviewDto getUserPreview(Long userId, Long orgId) {
+    public UserPreviewDto getUserPreview(OrgMember orgMember) {
 
-        return UserPreviewDto.fromOrgMember(getOrgMemberByUserIdAndOrgId(userId, orgId));
+        return UserPreviewDto.fromOrgMember(orgMember);
     }
+
+    /**
+     * Generates a token with organization member ID.
+     *
+     * @param publicUserId
+     * @param publicOrgId
+     * @return
+     */
+    @Override
+    public String generateTokenWithOrgMemberId(String publicUserId, String publicOrgId) {
+
+        OrgMember orgMember = orgMemberRepository.findByUser_PublicIdAndOrg_PublicId(publicUserId, publicOrgId).orElseThrow(() -> new PermissionDeniedException("You do not have permission to access this organization."));
+
+        if (orgMember.isArchived()) {
+            throw new PermissionDeniedException("You are no longer part of this organization.");
+        }
+        if (!orgMember.getOrg().isActive()) {
+            throw new ActionProhibitedException("Subscription for this organization is not active.");
+        }
+
+        return authService.generateTokenWithOrgContext(orgMember.getUser().getEmail(), orgMember.getPublicId());
+    }
+
 }

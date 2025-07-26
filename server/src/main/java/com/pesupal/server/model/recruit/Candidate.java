@@ -2,7 +2,7 @@ package com.pesupal.server.model.recruit;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.pesupal.server.enums.JobApplicationStatus;
-import com.pesupal.server.model.CreationTimeAuditable;
+import com.pesupal.server.model.PublicAccessModel;
 import com.pesupal.server.model.user.User;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -12,7 +12,7 @@ import java.util.UUID;
 
 @Data
 @Entity
-public class Candidate extends CreationTimeAuditable {
+public class Candidate extends PublicAccessModel {
 
     @ManyToOne
     @JsonIgnore

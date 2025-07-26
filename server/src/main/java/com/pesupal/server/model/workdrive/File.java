@@ -1,7 +1,7 @@
 package com.pesupal.server.model.workdrive;
 
 import com.pesupal.server.enums.Security;
-import com.pesupal.server.model.CreationTimeAuditable;
+import com.pesupal.server.model.PublicAccessModel;
 import com.pesupal.server.model.user.User;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -11,7 +11,7 @@ import java.util.UUID;
 
 @Data
 @Entity
-public class File extends CreationTimeAuditable {
+public class File extends PublicAccessModel {
 
     @Column(nullable = false)
     private String name;

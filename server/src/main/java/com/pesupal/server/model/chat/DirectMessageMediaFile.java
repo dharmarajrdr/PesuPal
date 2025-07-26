@@ -3,7 +3,7 @@ package com.pesupal.server.model.chat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.pesupal.server.dto.response.MediaUploadDto;
-import com.pesupal.server.model.CreationTimeAuditable;
+import com.pesupal.server.model.PublicAccessModel;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToOne;
@@ -14,7 +14,7 @@ import java.util.UUID;
 @Data
 @Entity
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class DirectMessageMediaFile extends CreationTimeAuditable {
+public class DirectMessageMediaFile extends PublicAccessModel {
 
     @OneToOne
     @JsonIgnore

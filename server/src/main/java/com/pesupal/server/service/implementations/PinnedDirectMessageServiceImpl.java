@@ -1,7 +1,7 @@
 package com.pesupal.server.service.implementations;
 
 import com.pesupal.server.dto.request.CreatePinDirectMessageDto;
-import com.pesupal.server.dto.request.PinnedDirectMessageDto;
+import com.pesupal.server.dto.request.PinnedChatDto;
 import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.exceptions.PermissionDeniedException;
@@ -27,18 +27,18 @@ public class PinnedDirectMessageServiceImpl implements PinnedDirectMessageServic
     /**
      * Retrieves all pinned direct messages for the current user in the current organization.
      *
-     * @param userId
-     * @param orgId
+     * @param orgMember
      * @return
      */
     @Override
-    public List<PinnedDirectMessageDto> getAllPinnedDirectMessages(Long userId, Long orgId) {
+    public List<PinnedChatDto> getAllPinnedDirectMessages(OrgMember orgMember) {
 
-        OrgMember orgMember = orgMemberService.getOrgMemberByUserIdAndOrgId(userId, orgId);
+        Long userId = orgMember.getUser().getId();
         Org org = orgMember.getOrg();
+        Long orgId = org.getId();
         return pinnedDirectMessageRepository.findAllByPinnedByIdAndOrgIdOrderByOrderIndexAscPinnedUser_IdAsc(userId, orgId).stream().map(pinnedDirectMessage -> {
             OrgMember pinnedUser = orgMemberService.getOrgMemberByUserAndOrg(pinnedDirectMessage.getPinnedUser(), org);
-            return PinnedDirectMessageDto.fromUserAndOrgMemberAndPinnedDirectMessage(orgMember.getUser(), pinnedUser, pinnedDirectMessage);
+            return PinnedChatDto.fromUserAndOrgMemberAndPinnedDirectMessage(orgMember.getUser(), pinnedUser, pinnedDirectMessage);
         }).toList();
     }
 
@@ -72,14 +72,14 @@ public class PinnedDirectMessageServiceImpl implements PinnedDirectMessageServic
      * Pins a direct message for the current user in the current organization.
      *
      * @param createPinDirectMessageDto
-     * @param userId
-     * @param orgId
+     * @param orgMember
      * @return
      */
     @Override
-    public PinnedDirectMessageDto pinDirectMessage(CreatePinDirectMessageDto createPinDirectMessageDto, Long userId, Long orgId) {
+    public PinnedChatDto pinDirectMessage(CreatePinDirectMessageDto createPinDirectMessageDto, OrgMember orgMember) {
 
-        OrgMember orgMember = orgMemberService.getOrgMemberByUserIdAndOrgId(userId, orgId);
+        Long userId = orgMember.getUser().getId();
+        Long orgId = orgMember.getOrg().getId();
 
         boolean alreadyPinned = isChatPinned(userId, createPinDirectMessageDto.getPinnedUserId(), orgId);
         if (alreadyPinned) {
@@ -93,7 +93,7 @@ public class PinnedDirectMessageServiceImpl implements PinnedDirectMessageServic
         pinnedDirectMessage.setOrg(orgMember.getOrg());
         pinnedDirectMessage.setOrderIndex(createPinDirectMessageDto.getOrderIndex());
         pinnedDirectMessageRepository.save(pinnedDirectMessage);
-        return PinnedDirectMessageDto.fromUserAndOrgMemberAndPinnedDirectMessage(orgMember.getUser(), pinnedUser, pinnedDirectMessage);
+        return PinnedChatDto.fromUserAndOrgMemberAndPinnedDirectMessage(orgMember.getUser(), pinnedUser, pinnedDirectMessage);
     }
 
     /**
@@ -113,13 +113,13 @@ public class PinnedDirectMessageServiceImpl implements PinnedDirectMessageServic
      * Unpins a direct message for the current user in the current organization.
      *
      * @param id
-     * @param userId
-     * @param orgId
+     * @param orgMember
      */
     @Override
-    public void unpinDirectMessage(Long id, Long userId, Long orgId) {
+    public void unpinDirectMessage(Long id, OrgMember orgMember) {
 
         PinnedDirectMessage pinnedDirectMessage = getPinnedDirectMessageById(id);
+        Long userId = orgMember.getUser().getId();
         if (!pinnedDirectMessage.getPinnedBy().getId().equals(userId)) {
             throw new PermissionDeniedException("You do not have permission to unpin this direct message.");
         }
