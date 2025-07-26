@@ -9,6 +9,7 @@ import MyProfileSlice from './store/reducers/MyProfileSlice';
 import PopupSlice from './store/reducers/PopupSlice';
 import { configureStore } from '@reduxjs/toolkit';
 import { combineReducers } from 'redux';
+import CurrentOrgSlice from './store/reducers/CurrentOrgSlice';
 import LeftNavigationSlice from './store/reducers/LeftNavigationSlice';
 import ActiveChatTabSlice from './store/reducers/ActiveChatTabSlice';
 import ShowChatHeaderOptionsModalSlice from './store/reducers/ShowChatHeaderOptionsModalSlice';
@@ -23,6 +24,7 @@ const store = configureStore({
         popup: PopupSlice,
         chatId: ChatIdSlice,
         myProfile: MyProfileSlice,
+        currentOrg: CurrentOrgSlice, 
         activeChatTab: ActiveChatTabSlice,
         leftNavigation: LeftNavigationSlice,
         activeRecentChat: ActiveRecentChatSlice,
