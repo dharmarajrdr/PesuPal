@@ -10,9 +10,7 @@ public class CreateDepartmentDto {
 
     private String description;
 
-    private Long orgId;
-
-    private Long headId;
+    private String headId;
 
     public Department toDepartment() {
 

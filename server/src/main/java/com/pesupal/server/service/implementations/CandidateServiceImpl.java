@@ -17,13 +17,12 @@ import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.model.user.User;
 import com.pesupal.server.repository.CandidateRepository;
 import com.pesupal.server.service.interfaces.*;
-import lombok.AllArgsConstructor;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-@AllArgsConstructor
 public class CandidateServiceImpl implements CandidateService {
 
     private final UserService userService;
@@ -31,6 +30,14 @@ public class CandidateServiceImpl implements CandidateService {
     private final JobOpeningService jobOpeningService;
     private final CandidateRepository candidateRepository;
     private final CandidateTimelineService candidateTimelineService;
+
+    public CandidateServiceImpl(UserService userService, @Lazy OrgMemberService orgMemberService, @Lazy JobOpeningService jobOpeningService, CandidateRepository candidateRepository, @Lazy CandidateTimelineService candidateTimelineService) {
+        this.userService = userService;
+        this.orgMemberService = orgMemberService;
+        this.jobOpeningService = jobOpeningService;
+        this.candidateRepository = candidateRepository;
+        this.candidateTimelineService = candidateTimelineService;
+    }
 
     /**
      * Retrieves a candidate by their ID.
