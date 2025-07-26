@@ -49,6 +49,19 @@ public class GroupChatMemberServiceImpl extends CurrentValueRetriever implements
      * @return
      */
     @Override
+    public GroupChatMember getGroupMemberByGroupIdAndUserId(String groupId, Long userId) {
+
+        return groupChatMemberRepository.findByGroup_PublicIdAndParticipantId(groupId, userId).orElseThrow(() -> new DataNotFoundException("User with ID " + userId + " is not a member of group with ID " + groupId + "."));
+    }
+
+    /**
+     * Retrieves a group chat member by group ID, user ID, and organization ID.
+     *
+     * @param groupId
+     * @param userId
+     * @return
+     */
+    @Override
     public GroupChatMember getGroupMemberByGroupIdAndUserId(Long groupId, Long userId) {
 
         return groupChatMemberRepository.findByGroupIdAndParticipantId(groupId, userId).orElseThrow(() -> new DataNotFoundException("User with ID " + userId + " is not a member of group with ID " + groupId + "."));
@@ -61,7 +74,7 @@ public class GroupChatMemberServiceImpl extends CurrentValueRetriever implements
      * @return
      */
     @Override
-    public GroupDto joinGroup(Long groupId) {
+    public GroupDto joinGroup(String groupId) {
 
         OrgMember orgMember = getCurrentOrgMember();
         Long orgId = orgMember.getOrg().getId();
@@ -72,7 +85,7 @@ public class GroupChatMemberServiceImpl extends CurrentValueRetriever implements
             throw new DataNotFoundException("Group with ID " + groupId + " does not belong to organization with ID " + orgId + ".");
         }
 
-        boolean alreadyMember = groupChatMemberRepository.existsByGroupIdAndParticipantId(groupId, userId);
+        boolean alreadyMember = groupChatMemberRepository.existsByGroup_PublicIdAndParticipantId(groupId, userId);
         if (alreadyMember) {
             throw new ActionProhibitedException("You are already a member of this group.");
         }
@@ -139,7 +152,7 @@ public class GroupChatMemberServiceImpl extends CurrentValueRetriever implements
      * @return
      */
     @Override
-    public Map<Role, List<UserPreviewDto>> getGroupMembers(Long groupId) {
+    public Map<Role, List<UserPreviewDto>> getGroupMembers(String groupId) {
 
         OrgMember orgMember = getCurrentOrgMember();
         Long userId = orgMember.getId();
@@ -176,10 +189,10 @@ public class GroupChatMemberServiceImpl extends CurrentValueRetriever implements
      * @return
      */
     @Override
-    public boolean isUserMemberOfGroup(Long groupId) {
+    public boolean isUserMemberOfGroup(String groupId) {
 
         OrgMember orgMember = getCurrentOrgMember();
-        return groupChatMemberRepository.existsByGroupIdAndParticipantId(groupId, orgMember.getId());
+        return groupChatMemberRepository.existsByGroup_PublicIdAndParticipantId(groupId, orgMember.getId());
     }
 
 }

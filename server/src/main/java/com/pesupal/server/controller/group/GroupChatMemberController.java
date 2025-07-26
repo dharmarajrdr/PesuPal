@@ -21,7 +21,7 @@ public class GroupChatMemberController {
     private final GroupChatMemberService groupChatMemberService;
 
     @PostMapping("/join/{groupId}")
-    public ResponseEntity<ApiResponseDto> joinGroup(@PathVariable Long groupId) {
+    public ResponseEntity<ApiResponseDto> joinGroup(@PathVariable String groupId) {
 
         GroupDto groupDto = groupChatMemberService.joinGroup(groupId);
         return ResponseEntity.ok().body(new ApiResponseDto("Group joined successfully", groupDto));
@@ -35,7 +35,7 @@ public class GroupChatMemberController {
     }
 
     @GetMapping("/members/{groupId}")
-    public ResponseEntity<ApiResponseDto> getGroupMembers(@PathVariable Long groupId) {
+    public ResponseEntity<ApiResponseDto> getGroupMembers(@PathVariable String groupId) {
 
         Map<Role, List<UserPreviewDto>> roleListMap = groupChatMemberService.getGroupMembers(groupId);
         return ResponseEntity.ok().body(new ApiResponseDto("Group members retrieved successfully", roleListMap));

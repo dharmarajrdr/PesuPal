@@ -19,5 +19,7 @@ public interface GroupChatPinnedRepository extends JpaRepository<GroupChatPinned
 
     boolean existsByPinnedByIdAndGroupId(Long pinnedById, Long groupId);
 
+    boolean existsByPinnedByIdAndGroup_PublicId(Long pinnedById, String groupId);
+
     Optional<GroupChatPinned> findByGroup_PublicIdAndPinnedBy(String groupChatPublicId, OrgMember pinnedBy);
 }

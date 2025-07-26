@@ -70,9 +70,22 @@ public class GroupChatPinnedServiceImpl extends CurrentValueRetriever implements
      * @return
      */
     @Override
-    public boolean isChatPinned(Long pinnedById, Long groupId, Long orgId) {
+    public boolean isChatPinned(Long pinnedById, Long groupId) {
 
         return groupChatPinnedRepository.existsByPinnedByIdAndGroupId(pinnedById, groupId);
+    }
+
+    /**
+     * Checks if a chat is pinned for a specific user.
+     *
+     * @param pinnedById
+     * @param groupId
+     * @return
+     */
+    @Override
+    public boolean isChatPinned(Long pinnedById, String groupId) {
+
+        return groupChatPinnedRepository.existsByPinnedByIdAndGroup_PublicId(pinnedById, groupId);
     }
 
     /**
@@ -88,12 +101,12 @@ public class GroupChatPinnedServiceImpl extends CurrentValueRetriever implements
         Long userId = pinnedBy.getId();
         Long orgId = pinnedBy.getOrg().getId();
 
-        boolean alreadyPinned = isChatPinned(userId, createPinGroupChatMessageDto.getPinnedGroupId(), orgId);
+        boolean alreadyPinned = isChatPinned(userId, createPinGroupChatMessageDto.getGroupId());
         if (alreadyPinned) {
             throw new ActionProhibitedException("This group is already pinned.");
         }
 
-        Group group = groupService.getGroupById(createPinGroupChatMessageDto.getPinnedGroupId());
+        Group group = groupService.getGroupById(createPinGroupChatMessageDto.getGroupId());
 
         GroupChatPinned groupChatPinned = new GroupChatPinned();
         groupChatPinned.setPinnedBy(pinnedBy);

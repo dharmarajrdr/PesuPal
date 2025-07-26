@@ -11,13 +11,15 @@ import java.util.Map;
 
 public interface GroupChatMemberService {
 
+    GroupChatMember getGroupMemberByGroupIdAndUserId(String groupId, Long userId);
+
+    boolean isUserMemberOfGroup(String groupId);
+
     GroupChatMember getGroupMemberByGroupIdAndUserId(Long groupId, Long userId);
 
-    boolean isUserMemberOfGroup(Long groupId);
-
-    GroupDto joinGroup(Long groupId);
+    GroupDto joinGroup(String groupId);
 
     UserPreviewDto addMemberToGroup(AddGroupMemberDto addGroupMemberDto);
 
-    Map<Role, List<UserPreviewDto>> getGroupMembers(Long groupId);
+    Map<Role, List<UserPreviewDto>> getGroupMembers(String groupId);
 }

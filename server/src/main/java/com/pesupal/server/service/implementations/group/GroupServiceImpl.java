@@ -11,6 +11,7 @@ import com.pesupal.server.enums.Visibility;
 import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.exceptions.PermissionDeniedException;
+import com.pesupal.server.helpers.CurrentValueRetriever;
 import com.pesupal.server.helpers.TimeFormatterUtil;
 import com.pesupal.server.model.group.Group;
 import com.pesupal.server.model.group.GroupChatConfiguration;
@@ -22,7 +23,6 @@ import com.pesupal.server.model.user.User;
 import com.pesupal.server.repository.GroupChatMemberRepository;
 import com.pesupal.server.repository.GroupRepository;
 import com.pesupal.server.service.interfaces.OrgMemberService;
-import com.pesupal.server.service.interfaces.OrgService;
 import com.pesupal.server.service.interfaces.UserService;
 import com.pesupal.server.service.interfaces.group.GroupChatConfigurationService;
 import com.pesupal.server.service.interfaces.group.GroupChatMemberService;
@@ -40,9 +40,8 @@ import java.util.Optional;
 
 @Service
 @AllArgsConstructor
-public class GroupServiceImpl implements GroupService {
+public class GroupServiceImpl extends CurrentValueRetriever implements GroupService {
 
-    private final OrgService orgService;
     private final UserService userService;
     private final GroupRepository groupRepository;
     private final OrgMemberService orgMemberService;
@@ -71,51 +70,44 @@ public class GroupServiceImpl implements GroupService {
      * Creates a new group based on the provided CreateGroupDto.
      *
      * @param createGroupDto
-     * @param userId
-     * @param orgId
      * @return
      */
     @Override
     @Transactional
-    public GroupDto createGroup(CreateGroupDto createGroupDto, Long userId, Long orgId) {
+    public GroupDto createGroup(CreateGroupDto createGroupDto) {
 
-        OrgMember orgMember = orgMemberService.getOrgMemberByUserIdAndOrgId(userId, orgId);
+        OrgMember owner = getCurrentOrgMember();
         Group group = createGroupDto.toGroup();
-        group.setOwner(orgMember.getUser());
-        group.setOrg(orgMember.getOrg());
+        group.setOwner(owner);
         groupRepository.save(group);
         groupChatConfigurationService.initializeGroupChatConfiguration(group);
-        initializeGroupChatMember(group, orgMember);
-        return GroupDto.fromGroupAndOrgMember(group, orgMember);
+        initializeGroupChatMember(group, owner);
+        return GroupDto.fromGroupAndOrgMember(group, owner);
     }
 
     /**
-     * Retrieves a group by its ID and organization ID.
-     *
      * @param groupId
      * @return
      */
     @Override
-    public Group getGroupById(Long groupId) {
-
-        return groupRepository.findById(groupId).orElseThrow(() -> new DataNotFoundException("Group with ID " + groupId + " not found."));
+    public Group getGroupById(String groupId) {
+        return null;
     }
 
     /**
      * Deletes a group based on the provided group ID, user ID, and organization ID.
      *
      * @param groupId
-     * @param userId
-     * @param orgId
      */
     @Override
-    public void deleteGroup(Long groupId, Long userId, Long orgId) {
+    public void deleteGroup(String groupId) {
+
+        OrgMember orgMember = getCurrentOrgMember();
+        Long userId = orgMember.getId();
 
         GroupChatMember groupChatMember = groupChatMemberService.getGroupMemberByGroupIdAndUserId(groupId, userId);
         Group group = getGroupById(groupId);
-        if (!group.getOrg().getId().equals(orgId)) {
-            throw new DataNotFoundException("Group with ID " + groupId + " does not exist.");
-        }
+
 
         Role role = groupChatMember.getRole();
 
@@ -135,19 +127,21 @@ public class GroupServiceImpl implements GroupService {
     /**
      * Retrieves all groups for a user in a specific organization.
      *
-     * @param userId
-     * @param orgId
      * @return
      */
     @Override
-    public RecentChatPagedDto getAllGroups(Long userId, Long orgId, Pageable pageable) {
+    public RecentChatPagedDto getAllGroups(Pageable pageable) {
 
         int page = pageable.getPageNumber();
         int size = pageable.getPageSize();
         int offset = page * size;
 
+        OrgMember orgMember = getCurrentOrgMember();
+        Long userId = orgMember.getId();
+
         User user = userService.getUserById(userId);
-        Org org = orgService.getOrgById(orgId);
+        Org org = orgMember.getOrg();
+        Long orgId = org.getId();
 
         orgMemberService.validateUserIsOrgMember(user, org);
 
@@ -189,19 +183,18 @@ public class GroupServiceImpl implements GroupService {
      * Retrieves a group chat by its ID, user ID, and organization ID.
      *
      * @param groupId
-     * @param userId
-     * @param orgId
      * @return
      */
     @Override
-    public ChatPreviewDto getGroupChatPreviewByChatId(Long groupId, Long userId, Long orgId) {
+    public ChatPreviewDto getGroupChatPreviewByChatId(String groupId) {
 
+        OrgMember orgMember = getCurrentOrgMember();
+        Long orgId = orgMember.getOrg().getId();
+        Long userId = orgMember.getId();
         Group group = getGroupById(groupId);
         if (!group.getOrg().getId().equals(orgId)) {
             throw new DataNotFoundException("Group with ID " + groupId + " does not exist");
         }
-
-        OrgMember orgMember = orgMemberService.getOrgMemberByUserIdAndOrgId(userId, orgId);
 
         if (!groupChatMemberService.isUserMemberOfGroup(groupId)) {
             throw new PermissionDeniedException("You are not a member of this group.");
