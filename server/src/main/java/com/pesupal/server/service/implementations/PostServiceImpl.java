@@ -7,6 +7,7 @@ import com.pesupal.server.enums.SortOrder;
 import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.exceptions.PermissionDeniedException;
+import com.pesupal.server.helpers.CurrentValueRetriever;
 import com.pesupal.server.model.org.Org;
 import com.pesupal.server.model.post.Post;
 import com.pesupal.server.model.post.PostLike;
@@ -33,16 +34,14 @@ import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
-public class PostServiceImpl implements PostService {
+public class PostServiceImpl extends CurrentValueRetriever implements PostService {
 
     private final S3Service s3Service;
-    private final OrgService orgService;
     private final TagService tagService;
-    private final UserService userService;
-    private final PostRepository postRepository;
-    private final OrgMemberService orgMemberService;
-    private final PostTagService postTagService;
     private final PollService pollService;
+    private final PostRepository postRepository;
+    private final PostTagService postTagService;
+    private final OrgMemberService orgMemberService;
 
     /**
      * Creates a new post.
@@ -51,19 +50,15 @@ public class PostServiceImpl implements PostService {
      */
     @Override
     @Transactional
-    public Post createPost(CreatePostDto createPostDto, Long userId, Long orgId) {
+    public Post createPost(CreatePostDto createPostDto) {
 
-        Org org = orgService.getOrgById(orgId);
-        User user = userService.getUserById(userId);
+        OrgMember creator = getCurrentOrgMember();
 
-        orgMemberService.validateUserIsOrgMember(user, org);
-
-        pollService.validateNewPoll(createPostDto.getPoll());
         boolean hasPoll = createPostDto.getPoll() != null;
 
         Post post = createPostDto.toPost();
-        post.setOrg(org);
-        post.setUser(user);
+        post.setOrg(creator.getOrg());
+        post.setCreator(creator);
         post.setStatus(PostStatus.PUBLISHED);
         List<PostMedia> postMedia = createPostDto.getMediaIds().stream().map(mediaId -> PostMedia.builder().post(post).mediaId(mediaId.getId()).extension(mediaId.getExtension()).build()).collect(Collectors.toList());
         post.setMedia(!postMedia.isEmpty());
@@ -101,7 +96,7 @@ public class PostServiceImpl implements PostService {
         postDto.setImpression(PostImpressionDto.builder().likes(post.getLikes().size()).comments(post.getComments().size()).build());
         postDto.setBookmarked(false);   // Feature not implemented yet
         if (post.isHasPoll()) {
-            postDto.setPoll(PollDto.fromPoll(pollService.getPollByPost(post), orgMember.getUser().getId()));
+            postDto.setPoll(PollDto.fromPoll(pollService.getPollByPost(post), orgMember.getId()));
         }
         return postDto;
     }
@@ -123,16 +118,28 @@ public class PostServiceImpl implements PostService {
      * Retrieves a post by its ID.
      *
      * @param postId
-     * @param userId
-     * @param orgId
+     * @param org
+     * @return Post
+     */
+    @Override
+    public Post getPostByIdAndOrg(Long postId, Org org) {
+
+        return postRepository.findByIdAndOrg(postId, org).orElseThrow(() -> new DataNotFoundException("Post with ID " + postId + " does not exist."));
+    }
+
+    /**
+     * Retrieves a post by its ID.
+     *
+     * @param postId
      * @return PostDto
      */
     @Override
-    public PostDto getPostByIdAndOrgId(Long postId, Long userId, Long orgId) {
+    public PostDto getPostByIdAndOrgId(Long postId) {
 
-        OrgMember orgMember = orgMemberService.getOrgMemberByUserIdAndOrgId(userId, orgId);
+        OrgMember orgMember = getCurrentOrgMember();
+        Long orgId = orgMember.getOrg().getId();
         Post post = getPostByIdAndOrgId(postId, orgId);
-        OrgMember postOwner = orgMemberService.getOrgMemberByUserIdAndOrgId(post.getUser().getId(), orgId);
+        OrgMember postOwner = orgMemberService.getOrgMemberByUserIdAndOrgId(post.getCreator().getId(), orgId);
         PostDto postDto = getPostDtoFromPostAndOrgMember(post, postOwner);
         postDto.setLiked(isLiked(post.getLikes(), orgMember.getUser()));
         return postDto;
@@ -141,14 +148,13 @@ public class PostServiceImpl implements PostService {
     /**
      * Retrieves a list of posts by user ID and organization ID.
      *
-     * @param userId
-     * @param orgId
      * @return
      */
     @Override
-    public PostsListDto getPostByUserId(Long userId, Long orgId, Long postOwnerId, int page, int size, SortOrder sortOrder) {
+    public PostsListDto getPostByUserId(Long postOwnerId, int page, int size, SortOrder sortOrder) {
 
-        OrgMember orgMember = orgMemberService.getOrgMemberByUserIdAndOrgId(userId, orgId);
+        OrgMember orgMember = getCurrentOrgMember();
+        Long orgId = orgMember.getOrg().getId();
 
         orgMemberService.validateUserIsOrgMember(postOwnerId, orgId);
 
@@ -158,7 +164,7 @@ public class PostServiceImpl implements PostService {
         OrgMember postOwnerOrgMember = orgMemberService.getOrgMemberByUserIdAndOrgId(postOwnerId, orgId);
         List<PostDto> postDtos = new ArrayList<>(postPage.getContent().stream().map(post -> {
             PostDto postDto = getPostDtoFromPostAndOrgMember(post, postOwnerOrgMember);
-            postDto.setCreator(post.getUser().getId().equals(userId));
+            postDto.setCreator(post.getCreator().getId().equals(orgMember.getId()));
             postDto.setLiked(isLiked(post.getLikes(), orgMember.getUser()));
             return postDto;
         }).toList());
@@ -177,14 +183,13 @@ public class PostServiceImpl implements PostService {
      * Archives a post by its ID.
      *
      * @param postId
-     * @param userId
-     * @param orgId
      */
     @Override
-    public void archivePost(Long postId, Long userId, Long orgId) {
+    public void archivePost(Long postId) {
 
-        Post post = getPostByIdAndOrgId(postId, orgId);
-        if (!Objects.equals(post.getUser().getId(), userId)) {
+        OrgMember orgMember = getCurrentOrgMember();
+        Post post = getPostByIdAndOrgId(postId, orgMember.getOrg().getId());
+        if (!Objects.equals(post.getCreator().getId(), orgMember.getId())) {
             throw new PermissionDeniedException("You do not have permission to archive this post.");
         }
         if (post.getStatus().equals(PostStatus.ARCHIVED)) {
@@ -197,8 +202,6 @@ public class PostServiceImpl implements PostService {
     /**
      * Retrieves posts by a specific tag.
      *
-     * @param userId
-     * @param orgId
      * @param tag
      * @param page
      * @param size
@@ -206,17 +209,19 @@ public class PostServiceImpl implements PostService {
      * @return
      */
     @Override
-    public PostsListDto getPostByTag(Long userId, Long orgId, String tag, int page, int size, SortOrder sortOrder) {
+    public PostsListDto getPostByTag(String tag, int page, int size, SortOrder sortOrder) {
 
-        OrgMember orgMember = orgMemberService.getOrgMemberByUserIdAndOrgId(userId, orgId);
+        OrgMember orgMember = getCurrentOrgMember();
+        Long orgMemberId = orgMember.getId();
+        Long orgId = orgMember.getId();
 
         Pageable pageable = PageRequest.of(page, size + 1);
         Page<PostTag> postPage = postTagService.findAllByTagAndOrgId(tag, orgId, pageable);
         List<PostDto> postDtos = new ArrayList<>(postPage.getContent().stream().map(postTag -> {
             Post post = postTag.getPost();
-            OrgMember postOwnerOrgMember = orgMemberService.getOrgMemberByUserIdAndOrgId(post.getUser().getId(), orgId);
+            OrgMember postOwnerOrgMember = orgMemberService.getOrgMemberByUserIdAndOrgId(post.getCreator().getId(), orgId);
             PostDto postDto = getPostDtoFromPostAndOrgMember(post, postOwnerOrgMember);
-            postDto.setCreator(post.getUser().getId().equals(userId));
+            postDto.setCreator(post.getCreator().getId().equals(orgMemberId));
             postDto.setLiked(isLiked(post.getLikes(), orgMember.getUser()));
             return postDto;
         }).toList());
@@ -236,16 +241,14 @@ public class PostServiceImpl implements PostService {
      *
      * @param postId
      * @param createPostDto
-     * @param userId
-     * @param orgId
      * @return
      */
     @Override
-    public Post updatePost(Long postId, CreatePostDto createPostDto, Long userId, Long orgId) {
+    public Post updatePost(Long postId, CreatePostDto createPostDto) {
 
-        orgMemberService.validateUserIsOrgMember(userId, orgId);
+        OrgMember orgMember = getCurrentOrgMember();
 
-        Post post = getPostByIdAndOrgId(postId, orgId);
+        Post post = getPostByIdAndOrg(postId, orgMember.getOrg());
         createPostDto.applyToPost(post);
         return postRepository.save(post);
     }
@@ -254,14 +257,13 @@ public class PostServiceImpl implements PostService {
      * Deletes a post by its ID.
      *
      * @param postId
-     * @param userId
-     * @param orgId
      */
     @Override
-    public void deletePost(Long postId, Long userId, Long orgId) {
+    public void deletePost(Long postId) {
 
-        Post post = getPostByIdAndOrgId(postId, orgId);
-        if (!post.getUser().getId().equals(userId)) {
+        OrgMember orgMember = getCurrentOrgMember();
+        Post post = getPostByIdAndOrg(postId, orgMember.getOrg());
+        if (!post.getCreator().getId().equals(orgMember.getId())) {
             throw new PermissionDeniedException("You do not have permission to delete this post.");
         }
         if (post.isHasPoll()) {
