@@ -20,6 +20,8 @@ public class StaticConfig {
 
     public static final int MAX_FILE_SIZE_IN_MB = 5;
 
+    public static final String CLIENT_DOMAIN = "http://localhost:3000";
+
     public static final String SERVER_DOMAIN = "http://localhost:8080";
 
     public static final int MAXIMUM_OPTIONS_PER_POLL = 4;
