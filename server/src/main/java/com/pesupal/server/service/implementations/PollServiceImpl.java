@@ -59,6 +59,8 @@ public class PollServiceImpl extends CurrentValueRetriever implements PollServic
     @Override
     public Poll createPoll(CreatePollDto createPollDto, Post post) {
 
+        validateNewPoll(createPollDto);
+
         Poll poll = createPollDto.toPoll();
         poll.setPost(post);
         poll.setOptions(convertToPollOptions(createPollDto.getOptions(), poll));
