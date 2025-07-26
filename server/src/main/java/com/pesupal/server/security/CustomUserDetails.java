@@ -1,5 +1,6 @@
 package com.pesupal.server.security;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
@@ -8,6 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 
 @Getter
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @AllArgsConstructor
 public class CustomUserDetails implements UserDetails {
 
