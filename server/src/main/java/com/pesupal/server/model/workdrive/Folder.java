@@ -3,8 +3,7 @@ package com.pesupal.server.model.workdrive;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.pesupal.server.enums.Workspace;
 import com.pesupal.server.model.PublicAccessModel;
-import com.pesupal.server.model.org.Org;
-import com.pesupal.server.model.user.User;
+import com.pesupal.server.model.user.OrgMember;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.ToString;
@@ -20,10 +19,7 @@ public class Folder extends PublicAccessModel {
     private String name;
 
     @ManyToOne
-    private Org org;
-
-    @ManyToOne
-    private User owner;
+    private OrgMember createdBy;
 
     private Long size;
 
