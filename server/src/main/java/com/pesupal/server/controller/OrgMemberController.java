@@ -14,7 +14,9 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @AllArgsConstructor
@@ -79,5 +81,15 @@ public class OrgMemberController extends OrgSubscriptionManager {
 
         String token = orgMemberService.generateTokenWithOrgMemberId(customUserDetails.getUserPublicId(), publicOrgId);
         return ResponseEntity.ok().body(new ApiResponseDto("Token generated successfully", token));
+    }
+
+    @GetMapping("/who-am-i")
+    public ResponseEntity<ApiResponseDto> whoAmI() {
+
+        CustomUserDetails customUserDetails = getCurrentUserDetails();
+        Map<String, String> userDetail = new HashMap<>();
+        userDetail.put("userId", customUserDetails.getUserPublicId());
+        userDetail.put("orgMemberId", customUserDetails.getOrgMemberPublicId());
+        return ResponseEntity.ok().body(new ApiResponseDto("Token decoded successfully", userDetail));
     }
 }
