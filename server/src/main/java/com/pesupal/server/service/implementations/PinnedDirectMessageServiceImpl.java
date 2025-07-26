@@ -5,11 +5,12 @@ import com.pesupal.server.dto.request.PinnedChatDto;
 import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.exceptions.PermissionDeniedException;
+import com.pesupal.server.helpers.CurrentValueRetriever;
+import com.pesupal.server.model.chat.DirectMessageChat;
 import com.pesupal.server.model.chat.PinnedDirectMessage;
-import com.pesupal.server.model.org.Org;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.repository.PinnedDirectMessageRepository;
-import com.pesupal.server.service.interfaces.OrgMemberService;
+import com.pesupal.server.service.interfaces.DirectMessageChatService;
 import com.pesupal.server.service.interfaces.PinnedDirectMessageService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,41 +20,31 @@ import java.util.Optional;
 
 @Service
 @AllArgsConstructor
-public class PinnedDirectMessageServiceImpl implements PinnedDirectMessageService {
+public class PinnedDirectMessageServiceImpl extends CurrentValueRetriever implements PinnedDirectMessageService {
 
-    private final OrgMemberService orgMemberService;
+    private final DirectMessageChatService directMessageChatService;
     private final PinnedDirectMessageRepository pinnedDirectMessageRepository;
+
+    /**
+     * @param pinnedBy
+     * @return
+     */
+    @Override
+    public Optional<PinnedDirectMessage> getPinnedDirectMessageByPinnedByAndDirectMessageChat(OrgMember pinnedBy, DirectMessageChat chat) {
+
+        return pinnedDirectMessageRepository.findByPinnedByAndChat(pinnedBy, chat);
+    }
 
     /**
      * Retrieves all pinned direct messages for the current user in the current organization.
      *
-     * @param orgMember
      * @return
      */
     @Override
-    public List<PinnedChatDto> getAllPinnedDirectMessages(OrgMember orgMember) {
+    public List<PinnedChatDto> getAllPinnedDirectMessages() {
 
-        Long userId = orgMember.getUser().getId();
-        Org org = orgMember.getOrg();
-        Long orgId = org.getId();
-        return pinnedDirectMessageRepository.findAllByPinnedByIdAndOrgIdOrderByOrderIndexAscPinnedUser_IdAsc(userId, orgId).stream().map(pinnedDirectMessage -> {
-            OrgMember pinnedUser = orgMemberService.getOrgMemberByUserAndOrg(pinnedDirectMessage.getPinnedUser(), org);
-            return PinnedChatDto.fromUserAndOrgMemberAndPinnedDirectMessage(orgMember.getUser(), pinnedUser, pinnedDirectMessage);
-        }).toList();
-    }
-
-    /**
-     * Retrieves a pinned direct message by the pinnedById, pinnedUserId, and orgId.
-     *
-     * @param pinnedById
-     * @param pinnedUserId
-     * @param orgId
-     * @return
-     */
-    @Override
-    public Optional<PinnedDirectMessage> getPinnedDirectMessageByPinnedByIdAndPinnedUserIdAndOrgId(Long pinnedById, Long pinnedUserId, Long orgId) {
-
-        return pinnedDirectMessageRepository.findByPinnedByIdAndPinnedUserIdAndOrgId(pinnedById, pinnedUserId, orgId);
+        OrgMember orgMember = getCurrentOrgMember();
+        return pinnedDirectMessageRepository.findAllByPinnedByOrderByOrderIndexAsc(orgMember).stream().map(pinnedDirectMessage -> PinnedChatDto.fromPinnedDirectMessage(pinnedDirectMessage)).toList();
     }
 
     /**
@@ -72,41 +63,39 @@ public class PinnedDirectMessageServiceImpl implements PinnedDirectMessageServic
      * Pins a direct message for the current user in the current organization.
      *
      * @param createPinDirectMessageDto
-     * @param orgMember
      * @return
      */
     @Override
-    public PinnedChatDto pinDirectMessage(CreatePinDirectMessageDto createPinDirectMessageDto, OrgMember orgMember) {
+    public PinnedChatDto pinDirectMessage(CreatePinDirectMessageDto createPinDirectMessageDto) {
 
-        Long userId = orgMember.getUser().getId();
-        Long orgId = orgMember.getOrg().getId();
+        OrgMember orgMember = getCurrentOrgMember();
 
-        boolean alreadyPinned = isChatPinned(userId, createPinDirectMessageDto.getPinnedUserId(), orgId);
+        String chatId = createPinDirectMessageDto.getChatId();
+
+        boolean alreadyPinned = isChatPinned(orgMember, chatId);
         if (alreadyPinned) {
             throw new ActionProhibitedException("This direct message is already pinned.");
         }
 
-        OrgMember pinnedUser = orgMemberService.getOrgMemberByUserIdAndOrgId(createPinDirectMessageDto.getPinnedUserId(), orgId);
+        DirectMessageChat directMessageChat = directMessageChatService.getDirectMessageByPublicId(chatId);
+
         PinnedDirectMessage pinnedDirectMessage = new PinnedDirectMessage();
-        pinnedDirectMessage.setPinnedBy(orgMember.getUser());
-        pinnedDirectMessage.setPinnedUser(pinnedUser.getUser());
-        pinnedDirectMessage.setOrg(orgMember.getOrg());
+        pinnedDirectMessage.setPinnedBy(orgMember);
+        pinnedDirectMessage.setChat(directMessageChat);
         pinnedDirectMessage.setOrderIndex(createPinDirectMessageDto.getOrderIndex());
         pinnedDirectMessageRepository.save(pinnedDirectMessage);
-        return PinnedChatDto.fromUserAndOrgMemberAndPinnedDirectMessage(orgMember.getUser(), pinnedUser, pinnedDirectMessage);
+        return PinnedChatDto.fromPinnedDirectMessage(pinnedDirectMessage);
     }
 
     /**
      * Checks if a chat is pinned for a specific user.
      *
-     * @param pinnedById
-     * @param pinnedUserId
      * @return
      */
     @Override
-    public boolean isChatPinned(Long pinnedById, Long pinnedUserId, Long orgId) {
+    public boolean isChatPinned(OrgMember orgMember, String chatId) {
 
-        return pinnedDirectMessageRepository.existsByPinnedByIdAndPinnedUserIdAndOrgId(pinnedById, pinnedUserId, orgId);
+        return pinnedDirectMessageRepository.existsByPinnedByAndChat_PublicId(orgMember, chatId);
     }
 
     /**
