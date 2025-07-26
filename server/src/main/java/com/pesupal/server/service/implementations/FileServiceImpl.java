@@ -79,7 +79,7 @@ public class FileServiceImpl extends CurrentValueRetriever implements FileServic
     @Override
     public File getFileByIdAndOrgId(Long fileId, Long orgId) {
 
-        return fileRepository.findByIdAndFolder_OrgId(fileId, orgId).orElseThrow(() -> new DataNotFoundException("File with ID " + fileId + " not found."));
+        return fileRepository.findByIdAndCreator_OrgId(fileId, orgId).orElseThrow(() -> new DataNotFoundException("File with ID " + fileId + " not found."));
     }
 
 }
