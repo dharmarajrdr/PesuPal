@@ -65,31 +65,27 @@ public class DepartmentServiceImpl extends CurrentValueRetriever implements Depa
     /**
      * Retrieves all Departments in the organization.
      *
-     * @param userId
-     * @param orgId
      * @return List of Departments
      */
     @Override
-    public List<DepartmentDto> getAllDepartments(Long userId, Long orgId) {
+    public List<DepartmentDto> getAllDepartments() {
 
-        OrgMember orgMember = orgMemberService.getOrgMemberByUserIdAndOrgId(userId, orgId);
+        OrgMember orgMember = getCurrentOrgMember();
         return departmentRepository.findAllByOrgOrderByOrg_DisplayNameAsc(orgMember.getOrg()).stream().map(department -> {
             return DepartmentDto.fromDepartmentAndOrgMember(department, null);  // Assuming head is not needed here, otherwise fetch it
         }).toList();
     }
-    
+
     /**
      * Retrieves the Department of the current user in the organization.
      *
-     * @param userId
-     * @param orgId
      * @return
      */
     @Override
-    public DepartmentDto getUserDepartment(Long userId, Long orgId) {
+    public DepartmentDto getMyDepartment() {
 
-        OrgMember orgMember = orgMemberService.getOrgMemberByUserIdAndOrgId(userId, orgId);
-        return DepartmentDto.fromDepartmentAndOrgMember(orgMember.getDepartment(), orgMember);
+        OrgMember orgMember = getCurrentOrgMember();
+        return DepartmentDto.fromDepartment(orgMember.getDepartment());
     }
 
     /**

@@ -13,9 +13,9 @@ public interface DepartmentService {
 
     Department createDepartment(CreateDepartmentDto createDepartmentDto);
 
-    List<DepartmentDto> getAllDepartments(Long currentUserId, Long currentOrgId);
-    
-    DepartmentDto getUserDepartment(Long currentUserId, Long currentOrgId);
+    List<DepartmentDto> getAllDepartments();
+
+    DepartmentDto getMyDepartment();
 
     Department getDepartmentByPublicIdAndOrg(String departmentPublicId, Org org);
 

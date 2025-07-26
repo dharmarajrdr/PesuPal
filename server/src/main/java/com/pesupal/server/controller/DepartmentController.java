@@ -20,8 +20,8 @@ import java.util.List;
 @RequestMapping("/api/v1/department")
 public class DepartmentController extends CurrentValueRetriever {
 
-    private final DepartmentService departmentService;
     private final OrgMemberService orgMemberService;
+    private final DepartmentService departmentService;
 
     @GetMapping("/{departmentPublicId}/members")
     public ResponseEntity<ApiResponseDto> getAllMembers(@PathVariable String departmentPublicId) {
@@ -40,14 +40,14 @@ public class DepartmentController extends CurrentValueRetriever {
     @GetMapping("")
     public ResponseEntity<ApiResponseDto> getDepartment() {
 
-        DepartmentDto departmentDto = departmentService.getUserDepartment(getCurrentUserId(), getCurrentOrgId());
+        DepartmentDto departmentDto = departmentService.getMyDepartment();
         return ResponseEntity.ok().body(new ApiResponseDto("Department retrieved successfully", departmentDto));
     }
 
     @GetMapping("/all")
     public ResponseEntity<ApiResponseDto> getAllDepartments() {
 
-        List<DepartmentDto> departments = departmentService.getAllDepartments(getCurrentUserId(), getCurrentOrgId());
+        List<DepartmentDto> departments = departmentService.getAllDepartments();
         return ResponseEntity.ok().body(new ApiResponseDto("Departments retrieved successfully", departments));
     }
 }
