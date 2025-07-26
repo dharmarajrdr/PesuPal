@@ -22,5 +22,5 @@ public interface DirectMessageService extends ChatService {
 
     RecentChatPagedDto getRecentChatsPaged(OrgMember orgMember, Pageable pageable);
 
-    ChatPreviewDto getDirectMessagePreviewByChatId(String chatId, Long userId, Long orgId);
+    ChatPreviewDto getDirectMessagePreviewByChatId(String chatId);
 }

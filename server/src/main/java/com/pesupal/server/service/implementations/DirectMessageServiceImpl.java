@@ -8,6 +8,7 @@ import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.exceptions.PermissionDeniedException;
 import com.pesupal.server.helpers.Chat;
+import com.pesupal.server.helpers.CurrentValueRetriever;
 import com.pesupal.server.helpers.InputValidator;
 import com.pesupal.server.helpers.TimeFormatterUtil;
 import com.pesupal.server.model.chat.DirectMessage;
@@ -39,7 +40,7 @@ import java.util.*;
 
 @Service
 @Qualifier("directMessageService")
-public class DirectMessageServiceImpl implements DirectMessageService {
+public class DirectMessageServiceImpl extends CurrentValueRetriever implements DirectMessageService {
 
     private final JwtUtil jwtUtil;
     private final S3Service s3Service;
@@ -289,33 +290,22 @@ public class DirectMessageServiceImpl implements DirectMessageService {
      * organization.
      *
      * @param chatId
-     * @param userId
-     * @param orgId
      * @return
      */
     @Override
-    public ChatPreviewDto getDirectMessagePreviewByChatId(String chatId, Long userId, Long orgId) {
+    public ChatPreviewDto getDirectMessagePreviewByChatId(String chatId) {
 
-        if (!Chat.isUserInChat(chatId, userId)) {
-            throw new PermissionDeniedException("You do not have permission to access this chat.");
-        }
-
-        Long[] parsedChatId = Chat.parseChatId(chatId);
-        if (!orgId.equals(parsedChatId[2])) {
-            throw new PermissionDeniedException("Chat not found in the specified organization.");
-        }
-
-        Long otherUserId = parsedChatId[0].equals(userId) ? parsedChatId[1] : parsedChatId[0];
-
-        OrgMember otherUserOrgMember = orgMemberService.getOrgMemberByUserIdAndOrgId(otherUserId, orgId);
+        DirectMessageChat directMessageChat = directMessageChatService.getDirectMessageByPublicId(chatId);
+        OrgMember currentUser = getCurrentOrgMember();
+        OrgMember otherUser = directMessageChat.getReceiver(currentUser);
 
         ChatPreviewDto chatPreviewDto = new ChatPreviewDto();
-        chatPreviewDto.setUserId(otherUserId);
+        chatPreviewDto.setUserId(otherUser.getPublicId());
         chatPreviewDto.setChatId(chatId);
-        chatPreviewDto.setActive(!otherUserOrgMember.isArchived());
-        chatPreviewDto.setDisplayName(otherUserOrgMember.getDisplayName());
-        chatPreviewDto.setDisplayPicture(otherUserOrgMember.getDisplayPicture());
-        Optional<PinnedDirectMessage> pinnedDirectMessage = pinnedDirectMessageService.getPinnedDirectMessageByPinnedByIdAndPinnedUserIdAndOrgId(userId, otherUserId, orgId);
+        chatPreviewDto.setActive(!otherUser.isArchived());
+        chatPreviewDto.setDisplayName(otherUser.getDisplayName());
+        chatPreviewDto.setDisplayPicture(otherUser.getDisplayPicture());
+        Optional<PinnedDirectMessage> pinnedDirectMessage = pinnedDirectMessageService.getPinnedDirectMessageByPinnedByAndPinnedUser(currentUser, otherUser);
         if (pinnedDirectMessage.isPresent()) {
             chatPreviewDto.setPinnedId(pinnedDirectMessage.get().getId());
         }

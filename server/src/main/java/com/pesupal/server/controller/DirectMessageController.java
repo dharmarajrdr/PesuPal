@@ -82,7 +82,7 @@ public class DirectMessageController extends CurrentValueRetriever {
     @GetMapping("/preview/{chatId}")
     public ResponseEntity<ApiResponseDto> getDirectMessagePreview(@PathVariable String chatId) {
 
-        ChatPreviewDto directMessagePreviewDto = directMessageService.getDirectMessagePreviewByChatId(chatId, getCurrentUserId(), getCurrentOrgId());
+        ChatPreviewDto directMessagePreviewDto = directMessageService.getDirectMessagePreviewByChatId(chatId);
         return ResponseEntity.ok(new ApiResponseDto("Direct message preview retrieved successfully", directMessagePreviewDto));
     }
 }
