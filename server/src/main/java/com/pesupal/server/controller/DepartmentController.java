@@ -23,17 +23,17 @@ public class DepartmentController extends CurrentValueRetriever {
     private final DepartmentService departmentService;
     private final OrgMemberService orgMemberService;
 
-    @GetMapping("/{departmentId}/members")
-    public ResponseEntity<ApiResponseDto> getAllMembers(@PathVariable Long departmentId) {
+    @GetMapping("/{departmentPublicId}/members")
+    public ResponseEntity<ApiResponseDto> getAllMembers(@PathVariable String departmentPublicId) {
 
-        List<UserBasicInfoDto> members = orgMemberService.getAllMembers(departmentId, getCurrentUserId(), getCurrentOrgId());
+        List<UserBasicInfoDto> members = orgMemberService.getAllMembers(departmentPublicId);
         return ResponseEntity.ok().body(new ApiResponseDto("Members retrieved successfully", members));
     }
 
-    @GetMapping("/{departmentId}")
-    public ResponseEntity<ApiResponseDto> getDepartment(@PathVariable Long departmentId) {
+    @GetMapping("/{departmentPublicId}")
+    public ResponseEntity<ApiResponseDto> getDepartment(@PathVariable String departmentPublicId) {
 
-        DepartmentDto departmentDto = departmentService.getDepartmentByIdAndOrgId(departmentId, getCurrentUserId(), getCurrentOrgId());
+        DepartmentDto departmentDto = departmentService.getDepartmentByPublicId(departmentPublicId);
         return ResponseEntity.ok().body(new ApiResponseDto("Members retrieved successfully", departmentDto));
     }
 

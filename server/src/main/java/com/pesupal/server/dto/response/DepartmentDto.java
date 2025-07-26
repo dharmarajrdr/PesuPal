@@ -17,15 +17,19 @@ public class DepartmentDto {
 
     private UserBasicInfoDto head;
 
-    public static DepartmentDto fromDepartmentAndOrgMember(Department department, OrgMember head) {
+    public static DepartmentDto fromDepartment(Department department) {
 
         DepartmentDto dto = new DepartmentDto();
         dto.setId(department.getId());
         dto.setName(department.getName());
         dto.setDescription(department.getDescription());
-        if (head != null) {
-            dto.setHead(UserBasicInfoDto.fromOrgMember(head));
-        }
+        return dto;
+    }
+
+    public static DepartmentDto fromDepartmentAndOrgMember(Department department, OrgMember head) {
+
+        DepartmentDto dto = fromDepartment(department);
+        dto.setHead(UserBasicInfoDto.fromOrgMember(head));
         return dto;
     }
 }

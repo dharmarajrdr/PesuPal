@@ -3,10 +3,10 @@ package com.pesupal.server.service.implementations;
 import com.pesupal.server.dto.request.CreateDepartmentDto;
 import com.pesupal.server.dto.response.DepartmentDto;
 import com.pesupal.server.exceptions.DataNotFoundException;
+import com.pesupal.server.helpers.CurrentValueRetriever;
 import com.pesupal.server.model.department.Department;
 import com.pesupal.server.model.org.Org;
 import com.pesupal.server.model.user.OrgMember;
-import com.pesupal.server.model.user.User;
 import com.pesupal.server.repository.DepartmentRepository;
 import com.pesupal.server.service.interfaces.DepartmentService;
 import com.pesupal.server.service.interfaces.OrgMemberService;
@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class DepartmentServiceImpl implements DepartmentService {
+public class DepartmentServiceImpl extends CurrentValueRetriever implements DepartmentService {
 
     private final OrgService orgService;
     private final UserService userService;
@@ -53,8 +53,9 @@ public class DepartmentServiceImpl implements DepartmentService {
     @Override
     public Department createDepartment(CreateDepartmentDto createDepartmentDto) {
 
-        Org org = orgService.getOrgById(createDepartmentDto.getOrgId());
-        User departmentHead = userService.getUserById(createDepartmentDto.getHeadId());
+        OrgMember orgMember = getCurrentOrgMember();
+        Org org = orgMember.getOrg();
+        OrgMember departmentHead = orgMemberService.getOrgMemberByPublicIdAndOrgId(createDepartmentDto.getHeadId(), org.getId());
         Department department = createDepartmentDto.toDepartment();
         department.setHead(departmentHead);
         department.setOrg(org);
@@ -76,38 +77,7 @@ public class DepartmentServiceImpl implements DepartmentService {
             return DepartmentDto.fromDepartmentAndOrgMember(department, null);  // Assuming head is not needed here, otherwise fetch it
         }).toList();
     }
-
-    /**
-     * @param departmentId
-     * @param org
-     * @return
-     */
-    @Override
-    public Department getDepartmentByIdAndOrg(Long departmentId, Org org) {
-
-        return departmentRepository.findByIdAndOrg(departmentId, org).orElseThrow(() -> new DataNotFoundException("Department with ID " + departmentId + " not found"));
-    }
-
-    /**
-     * Retrieves a Department by its ID and organization ID.
-     *
-     * @param departmentId
-     * @param userId
-     * @param orgId
-     * @return
-     */
-    @Override
-    public DepartmentDto getDepartmentByIdAndOrgId(Long departmentId, Long userId, Long orgId) {
-
-        OrgMember orgMember = orgMemberService.getOrgMemberByUserIdAndOrgId(userId, orgId);
-        Department department = getDepartmentByIdAndOrg(departmentId, orgMember.getOrg());
-
-        return DepartmentDto.fromDepartmentAndOrgMember(
-                department,
-                orgMemberService.getOrgMemberByUserAndOrg(department.getHead(), orgMember.getOrg())
-        );
-    }
-
+    
     /**
      * Retrieves the Department of the current user in the organization.
      *
@@ -120,5 +90,33 @@ public class DepartmentServiceImpl implements DepartmentService {
 
         OrgMember orgMember = orgMemberService.getOrgMemberByUserIdAndOrgId(userId, orgId);
         return DepartmentDto.fromDepartmentAndOrgMember(orgMember.getDepartment(), orgMember);
+    }
+
+    /**
+     * Retrieves a Department by its public ID and organization.
+     *
+     * @param departmentPublicId
+     * @param org
+     * @return
+     */
+    @Override
+    public Department getDepartmentByPublicIdAndOrg(String departmentPublicId, Org org) {
+
+        return departmentRepository.findByPublicIdAndOrg(departmentPublicId, org).orElseThrow(() -> new DataNotFoundException("Department with ID " + departmentPublicId + " not found in organization."));
+    }
+
+    /**
+     * Retrieves a Department by its public ID.
+     *
+     * @param departmentPublicId
+     * @return
+     */
+    @Override
+    public DepartmentDto getDepartmentByPublicId(String departmentPublicId) {
+
+        OrgMember orgMember = getCurrentOrgMember();
+        Org org = orgMember.getOrg();
+        Department department = getDepartmentByPublicIdAndOrg(departmentPublicId, org);
+        return DepartmentDto.fromDepartmentAndOrgMember(department, department.getHead());
     }
 }

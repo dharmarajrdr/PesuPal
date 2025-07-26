@@ -14,10 +14,10 @@ public interface DepartmentService {
     Department createDepartment(CreateDepartmentDto createDepartmentDto);
 
     List<DepartmentDto> getAllDepartments(Long currentUserId, Long currentOrgId);
-
-    Department getDepartmentByIdAndOrg(Long departmentId, Org org);
-
-    DepartmentDto getDepartmentByIdAndOrgId(Long departmentId, Long currentUserId, Long currentOrgId);
-
+    
     DepartmentDto getUserDepartment(Long currentUserId, Long currentOrgId);
+
+    Department getDepartmentByPublicIdAndOrg(String departmentPublicId, Org org);
+
+    DepartmentDto getDepartmentByPublicId(String departmentPublicId);
 }

@@ -14,4 +14,6 @@ public interface DepartmentRepository extends JpaRepository<Department, Long> {
     List<Department> findAllByOrgOrderByOrg_DisplayNameAsc(Org org);
 
     Optional<Department> findByIdAndOrg(Long departmentId, Org org);
+
+    Optional<Department> findByPublicIdAndOrg(String departmentPublicId, Org org);
 }
