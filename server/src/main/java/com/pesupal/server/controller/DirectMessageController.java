@@ -68,7 +68,7 @@ public class DirectMessageController extends CurrentValueRetriever {
     @PostMapping("/{messageId}/react")
     public ResponseEntity<ApiResponseDto> reactToMessage(@PathVariable Long messageId, @RequestBody AddReactionDto addReactionDto) {
 
-        ReactMessageResponseDto reactMessageResponseDto = directMessageReactionService.reactToMessage(messageId, getCurrentUserId(), addReactionDto.getReaction());
+        ReactMessageResponseDto reactMessageResponseDto = directMessageReactionService.reactToMessage(messageId, addReactionDto.getReaction());
         return ResponseEntity.ok(new ApiResponseDto("Reaction added successfully", reactMessageResponseDto));
     }
 

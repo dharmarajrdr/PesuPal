@@ -2,7 +2,7 @@ package com.pesupal.server.model.chat;
 
 import com.pesupal.server.enums.Reaction;
 import com.pesupal.server.model.CreationTimeAuditable;
-import com.pesupal.server.model.user.User;
+import com.pesupal.server.model.user.OrgMember;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -17,7 +17,7 @@ public class DirectMessageReaction extends CreationTimeAuditable {
     private DirectMessage directMessage;
 
     @ManyToOne
-    private User user;
+    private OrgMember user;
 
     @Enumerated(EnumType.STRING)
     private Reaction reaction;

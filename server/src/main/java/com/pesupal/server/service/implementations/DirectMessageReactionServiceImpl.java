@@ -6,11 +6,10 @@ import com.pesupal.server.enums.Reaction;
 import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.exceptions.PermissionDeniedException;
+import com.pesupal.server.helpers.CurrentValueRetriever;
 import com.pesupal.server.model.chat.DirectMessage;
 import com.pesupal.server.model.chat.DirectMessageReaction;
-import com.pesupal.server.model.org.Org;
 import com.pesupal.server.model.user.OrgMember;
-import com.pesupal.server.model.user.User;
 import com.pesupal.server.projections.ReactionCountProjection;
 import com.pesupal.server.repository.DirectMessageReactionRepository;
 import com.pesupal.server.service.interfaces.DirectMessageReactionService;
@@ -27,7 +26,7 @@ import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
-public class DirectMessageReactionServiceImpl implements DirectMessageReactionService {
+public class DirectMessageReactionServiceImpl extends CurrentValueRetriever implements DirectMessageReactionService {
 
     private final UserService userService;
     private final OrgMemberService orgMemberService;
@@ -50,20 +49,23 @@ public class DirectMessageReactionServiceImpl implements DirectMessageReactionSe
      * Adds a reaction to a specific message.
      *
      * @param messageId
-     * @param userId
      * @param reaction
      * @return ReactMessageResponseDto
      */
     @Override
-    public ReactMessageResponseDto reactToMessage(Long messageId, Long userId, Reaction reaction) {
+    public ReactMessageResponseDto reactToMessage(Long messageId, Reaction reaction) {
 
         DirectMessage directMessage = directMessageService.getDirectMessageById(messageId);
 
-        if (Objects.equals(directMessage.getSender().getId(), userId)) {
+        OrgMember reactor = getCurrentOrgMember();
+
+        String orgMemberPublicId = reactor.getPublicId();
+
+        if (Objects.equals(directMessage.getSender().getPublicId(), orgMemberPublicId)) {
             throw new ActionProhibitedException("You cannot react to your own message.");
         }
 
-        if (!Objects.equals(directMessage.getReceiver().getId(), userId)) {
+        if (!Objects.equals(directMessage.getReceiver().getPublicId(), orgMemberPublicId)) {
             throw new PermissionDeniedException("You do not have permission to react to this message.");
         }
 
@@ -71,19 +73,14 @@ public class DirectMessageReactionServiceImpl implements DirectMessageReactionSe
             throw new ActionProhibitedException("Cannot react to a deleted message.");
         }
 
-        User reactor = userService.getUserById(userId);
-
-        DirectMessageReaction directMessageReaction = directMessageReactionRepository.findByDirectMessageAndUser(directMessage, reactor).orElse(new DirectMessageReaction());
+        DirectMessageReaction directMessageReaction = directMessageReactionRepository.findByDirectMessageAndOrgMember(directMessage, reactor).orElse(new DirectMessageReaction());
         directMessageReaction.setDirectMessage(directMessage);
         directMessageReaction.setUser(reactor);
         directMessageReaction.setReaction(reaction);
 
         directMessageReaction = directMessageReactionRepository.save(directMessageReaction);
 
-        Org org = directMessage.getOrg();
-        OrgMember orgMember = orgMemberService.getOrgMemberByUserAndOrg(reactor, org);
-
-        return new ReactMessageResponseDto(directMessageReaction.getId(), reaction, directMessageReaction.getCreatedAt(), UserBasicInfoDto.fromOrgMember(orgMember));
+        return new ReactMessageResponseDto(directMessageReaction.getId(), reaction, directMessageReaction.getCreatedAt(), UserBasicInfoDto.fromOrgMember(reactor));
 
     }
 
