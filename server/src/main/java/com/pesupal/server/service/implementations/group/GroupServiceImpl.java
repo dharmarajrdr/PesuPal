@@ -61,7 +61,7 @@ public class GroupServiceImpl implements GroupService {
 
         GroupChatMember groupChatMember = new GroupChatMember();
         groupChatMember.setGroup(group);
-        groupChatMember.setUser(orgMember.getUser());
+        groupChatMember.setParticipant(orgMember);
         groupChatMember.setActive(true);
         groupChatMember.setRole(Role.SUPER_ADMIN);
         groupChatMemberRepository.save(groupChatMember);
@@ -203,7 +203,7 @@ public class GroupServiceImpl implements GroupService {
 
         OrgMember orgMember = orgMemberService.getOrgMemberByUserIdAndOrgId(userId, orgId);
 
-        if (!groupChatMemberService.isUserMemberOfGroup(groupId, userId)) {
+        if (!groupChatMemberService.isUserMemberOfGroup(groupId)) {
             throw new PermissionDeniedException("You are not a member of this group.");
         }
 

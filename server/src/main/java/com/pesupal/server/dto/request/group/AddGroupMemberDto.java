@@ -7,5 +7,5 @@ public class AddGroupMemberDto {
 
     private Long groupId;
 
-    private Long userId;
+    private String userId;
 }
