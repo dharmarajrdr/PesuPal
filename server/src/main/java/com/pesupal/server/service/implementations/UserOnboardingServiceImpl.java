@@ -36,7 +36,7 @@ public class UserOnboardingServiceImpl implements UserOnboardingService {
      */
     private UserOnboarding getUserOnboardingByUser(User user) {
 
-        return userOnboardingRepository.findByUserId(user).orElseThrow(() -> new DataNotFoundException("User onboarding not found for user: " + user.getEmail()));
+        return userOnboardingRepository.findByUser(user).orElseThrow(() -> new DataNotFoundException("User onboarding not found for user: " + user.getEmail()));
     }
 
     /**
