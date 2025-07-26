@@ -18,6 +18,7 @@ import VerticalLoader from './components/VerticalLoader';
 import CommonContainer from './components/CommonContainer';
 import store from './store';
 import HomePageLayout from './components/Home/HomePageLayout';
+import CreateOrgModal from './components/Org/CreateOrgModal';
 
 function App() {
 
@@ -25,7 +26,7 @@ function App() {
     const navigate = useNavigate();
 
     const isAuthPage = ['/signin', '/signup'].includes(location.pathname);
-    const homePage = ['/'].includes(location.pathname);
+    const inLobby = ['/', '/org/create'].includes(location.pathname);
 
     useEffect(() => {
         if (!hasCookie() && !isAuthPage) {
@@ -39,11 +40,12 @@ function App() {
 
                 <CommonContainer />
                 {/* ✅ Only render LeftNavigation if not on /signin or /signup or / */}
-                {!isAuthPage && !homePage && <LeftNavigation />}
+                {!isAuthPage && !inLobby && <LeftNavigation />}
                 <VerticalLoader />
 
                 <Routes>
                     <Route path="/" element={<HomePageLayout />} />
+                    <Route path='/org/create' element={<CreateOrgModal />} />
                     <Route path="/feeds/*" element={<FeedsLayout />} />
                     <Route path="/chat/*" element={<ChatLayout />} />
                     <Route path="/people/*" element={<PeopleLayout />} />
