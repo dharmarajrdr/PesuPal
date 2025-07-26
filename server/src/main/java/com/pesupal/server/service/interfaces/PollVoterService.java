@@ -5,5 +5,5 @@ import com.pesupal.server.dto.response.PollDto;
 
 public interface PollVoterService {
 
-    PollDto createPollVoter(CreatePollVoterDto createPollVoterDto, Long currentUserId, Long currentOrgId);
+    PollDto createPollVoter(CreatePollVoterDto createPollVoterDto);
 }
