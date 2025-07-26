@@ -15,7 +15,7 @@ public class ChatPreviewDto {
 
     private String chatId;
 
-    private Long userId;
+    private String userId;
 
     private boolean active;
 

@@ -54,7 +54,7 @@ public class MessageDto {
         responseDto.setDeleted(directMessage.isDeleted());
         responseDto.setReadReceipt(directMessage.getReadReceipt());
         responseDto.setChatMode(ChatMode.DIRECT_MESSAGE);
-        responseDto.setReceiverId(directMessageChat.getReceiver(directMessage.getSender()).getPublicId());
+        responseDto.setReceiverId(directMessageChat.getAnotherUser(directMessage.getSender()).getPublicId());
         return responseDto;
     }
 
