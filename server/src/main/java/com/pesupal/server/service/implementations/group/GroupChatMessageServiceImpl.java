@@ -77,7 +77,7 @@ public class GroupChatMessageServiceImpl implements GroupChatMessageService {
         }
 
         GroupChatMessage groupChatMessage = createGroupMessageDto.toGroupChatMessage();
-        groupChatMessage.setSender(groupChatMember.getUser());
+        groupChatMessage.setSender(groupChatMember.getParticipant());
         groupChatMessage.setDeleted(false);
         groupChatMessage.setGroup(group);
         groupChatMessageRepository.save(groupChatMessage);
