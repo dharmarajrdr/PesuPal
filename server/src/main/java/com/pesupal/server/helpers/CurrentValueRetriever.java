@@ -28,6 +28,11 @@ public class CurrentValueRetriever {
         return securityUtil.getCurrentUserId();
     }
 
+    protected String getCurrentUserPublicId() {
+
+        return getCurrentUserDetails().getUserPublicId();
+    }
+
     protected CustomUserDetails getCurrentUserDetails() {
 
         return securityUtil.getCurrentUserDetails();
