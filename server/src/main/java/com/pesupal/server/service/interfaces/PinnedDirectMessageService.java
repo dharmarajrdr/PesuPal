@@ -18,7 +18,7 @@ public interface PinnedDirectMessageService {
 
     PinnedChatDto pinDirectMessage(CreatePinDirectMessageDto createPinDirectMessageDto, OrgMember orgMember);
 
-    boolean isChatPinned(Long pinnedById, Long pinnedUserId, Long orgId);
+    boolean isChatPinned(Long pinnedUserId, OrgMember orgMember);
 
     void unpinDirectMessage(Long id, OrgMember orgMember);
 }

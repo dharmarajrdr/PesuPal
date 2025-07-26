@@ -78,13 +78,12 @@ public class PinnedDirectMessageServiceImpl implements PinnedDirectMessageServic
     @Override
     public PinnedChatDto pinDirectMessage(CreatePinDirectMessageDto createPinDirectMessageDto, OrgMember orgMember) {
 
-        Long userId = orgMember.getUser().getId();
-        Long orgId = orgMember.getOrg().getId();
-
-        boolean alreadyPinned = isChatPinned(userId, createPinDirectMessageDto.getPinnedUserId(), orgId);
+        boolean alreadyPinned = isChatPinned(createPinDirectMessageDto.getPinnedUserId(), orgMember);
         if (alreadyPinned) {
             throw new ActionProhibitedException("This direct message is already pinned.");
         }
+
+        Long orgId = orgMember.getOrg().getId();
 
         OrgMember pinnedUser = orgMemberService.getOrgMemberByUserIdAndOrgId(createPinDirectMessageDto.getPinnedUserId(), orgId);
         PinnedDirectMessage pinnedDirectMessage = new PinnedDirectMessage();
@@ -99,13 +98,14 @@ public class PinnedDirectMessageServiceImpl implements PinnedDirectMessageServic
     /**
      * Checks if a chat is pinned for a specific user.
      *
-     * @param pinnedById
-     * @param pinnedUserId
+     * @param orgMember
      * @return
      */
     @Override
-    public boolean isChatPinned(Long pinnedById, Long pinnedUserId, Long orgId) {
+    public boolean isChatPinned(Long pinnedUserId, OrgMember orgMember) {
 
+        Long pinnedById = orgMember.getUser().getId();
+        Long orgId = orgMember.getOrg().getId();
         return pinnedDirectMessageRepository.existsByPinnedByIdAndPinnedUserIdAndOrgId(pinnedById, pinnedUserId, orgId);
     }
 
