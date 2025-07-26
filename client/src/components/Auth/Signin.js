@@ -6,33 +6,41 @@ import { hasCookie } from './utils'
 import { apiRequest } from '../../http_request'
 import { clearMyProfile } from '../../store/reducers/MyProfileSlice'
 import { useDispatch } from 'react-redux'
+import { showPopup } from '../../store/reducers/PopupSlice'
 
 const Signin = () => {
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
+    const [loggedIn, setLoggedIn] = useState(false);
     const [email, setEmail] = useState("dharmaraj.171215@gmail.com");
     const [password, setPassword] = useState("123456789");
     const [error, setError] = useState("");
     const [passwordVisible, setPasswordVisible] = useState(false);
 
+    const clearInputFields = () => {
+        setEmail("");
+        setPassword("");
+        setError("");
+    }
+
     const signinFormHandler = (e) => {
         e.preventDefault();
-        apiRequest("/auth/login", 'POST', {
-            email,
-            password
-        }).then(({ data }) => {
+        apiRequest("/auth/login", 'POST', { email, password }).then(({ data }) => {
             const { token } = data || {};
+            clearInputFields();
             if (token) {
                 sessionStorage.setItem('token', token);
                 document.cookie = `token=${token}; path=/;`;
-                sessionStorage.setItem('org-id', '1');
-                navigate('/feeds');
+                setLoggedIn(true);
+                dispatch(showPopup({ message: "Login successful!", type: 'success' }));
             } else {
-                console.error("Login failed: No token received");
+                throw new Error("Server did not return a token. Please try again.");
             }
         }).catch((error) => {
+            clearInputFields();
+            sessionStorage.removeItem('token');
             setError(error.message || "An error occurred during login");
         });
     }
@@ -42,12 +50,12 @@ const Signin = () => {
     }
 
     useEffect(() => {
-        if (hasCookie()) {
+        if (loggedIn && hasCookie()) {
             navigate('/');
         } else {
             dispatch(clearMyProfile());
         }
-    }, []);
+    }, [loggedIn]);
 
     return (
         <div className='auth_component w100 FRCC'>
