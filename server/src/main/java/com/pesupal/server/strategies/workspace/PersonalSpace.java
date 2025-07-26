@@ -47,7 +47,7 @@ public class PersonalSpace implements WorkdriveSpace {
 
         // 1. Retrieve all subfolders in the given folder in the personal space
 
-        List<FileOrFolderDto> filesAndFolders = folderRepository.findAllByOrgAndOwnerAndSpaceAndParentFolder(orgMember.getOrg(), orgMember.getUser(), Workspace.PERSONAL_SPACE, parentFolder)
+        List<FileOrFolderDto> filesAndFolders = folderRepository.findAllByCreatedByAndSpaceAndParentFolder(orgMember, Workspace.PERSONAL_SPACE, parentFolder)
                 .stream()
                 .map(folder -> {
                     FolderDto folderDto = FolderDto.fromFolderAndOrgMember(folder, orgMember);

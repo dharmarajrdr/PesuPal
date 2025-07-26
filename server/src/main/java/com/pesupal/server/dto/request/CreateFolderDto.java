@@ -14,7 +14,7 @@ public class CreateFolderDto {
 
     private Security security = Security.NONE;
 
-    private Long parentFolderId;
+    private String parentFolderId;
 
     public Folder toFolder() {
 

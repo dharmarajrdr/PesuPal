@@ -30,7 +30,7 @@ public abstract class WorkspaceSupportsPublicFolder {
         boolean isParentFolderSecured = parentPublicFolder != null && parentPublicFolder.getSecurity().equals(Security.SECURED);
         if (isParentFolderSecured) { // If the parent folder is secured
 
-            boolean isOwnerOfParentFolder = orgMember.getUser().getId().equals(parentFolder.getOwner().getId());
+            boolean isOwnerOfParentFolder = orgMember.getUser().getId().equals(parentFolder.getCreatedBy().getId());
             if (!isOwnerOfParentFolder) { // If the user is not the owner of the parent folder
 
                 PublicFolder publicFolder = parentPublicFolder.getFolder().getPublicFolder();
