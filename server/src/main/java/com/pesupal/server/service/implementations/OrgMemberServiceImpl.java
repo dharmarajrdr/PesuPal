@@ -49,7 +49,7 @@ public class OrgMemberServiceImpl implements OrgMemberService {
     @Override
     public OrgMember getOrgMemberByPublicId(String publicId) {
 
-        return orgMemberRepository.findByPublicId(publicId).orElseThrow(() -> new DataNotFoundException("User not found."));
+        return orgMemberRepository.findByPublicId(publicId).orElseThrow(() -> new DataNotFoundException("Either the user does not exist or is not a member of this organization."));
     }
 
     /**
@@ -351,14 +351,13 @@ public class OrgMemberServiceImpl implements OrgMemberService {
     /**
      * Retrieve user's profile as preview
      *
-     * @param userId
-     * @param orgId
+     * @param orgMember
      * @return
      */
     @Override
-    public UserPreviewDto getUserPreview(Long userId, Long orgId) {
+    public UserPreviewDto getUserPreview(OrgMember orgMember) {
 
-        return UserPreviewDto.fromOrgMember(getOrgMemberByUserIdAndOrgId(userId, orgId));
+        return UserPreviewDto.fromOrgMember(orgMember);
     }
 
     /**

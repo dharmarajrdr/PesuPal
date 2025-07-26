@@ -67,7 +67,7 @@ public class OrgMemberController extends OrgSubscriptionManager {
     @GetMapping("/profile")
     public ResponseEntity<ApiResponseDto> getMyProfile() {
 
-        UserPreviewDto userPreviewDto = orgMemberService.getUserPreview(getCurrentUserId(), getCurrentOrgId());
+        UserPreviewDto userPreviewDto = orgMemberService.getUserPreview(getCurrentOrgMember());
         return ResponseEntity.ok().body(new ApiResponseDto("Profile fetched successfully", userPreviewDto));
     }
 

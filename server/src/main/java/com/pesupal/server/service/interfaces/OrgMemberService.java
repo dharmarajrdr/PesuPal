@@ -40,7 +40,7 @@ public interface OrgMemberService {
 
     String getOrgMemberImageByUserIdAndOrgId(Long userId, Long currentOrgId);
 
-    UserPreviewDto getUserPreview(Long userId, Long orgId);
+    UserPreviewDto getUserPreview(OrgMember orgMember);
 
     String generateTokenWithOrgMemberId(String publicUserId, String publicOrgId);
 }

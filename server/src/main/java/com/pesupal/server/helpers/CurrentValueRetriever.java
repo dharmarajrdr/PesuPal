@@ -1,9 +1,12 @@
 package com.pesupal.server.helpers;
 
 import com.pesupal.server.config.RequestContext;
+import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.exceptions.MandatoryDataMissingException;
+import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.security.CustomUserDetails;
 import com.pesupal.server.security.SecurityUtil;
+import com.pesupal.server.service.interfaces.OrgMemberService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -12,6 +15,9 @@ public class CurrentValueRetriever {
 
     @Autowired
     private SecurityUtil securityUtil;
+
+    @Autowired
+    private OrgMemberService orgMemberService;
 
     /**
      * @return
@@ -30,6 +36,15 @@ public class CurrentValueRetriever {
     protected String getCurrentOrgMemberPublicId() {
 
         return getCurrentUserDetails().getOrgMemberPublicId();
+    }
+
+    protected OrgMember getCurrentOrgMember() {
+
+        String orgMemberPublicId = getCurrentOrgMemberPublicId();
+        if (orgMemberPublicId == null) {
+            throw new ActionProhibitedException("No org choosen yet.");
+        }
+        return orgMemberService.getOrgMemberByPublicId(orgMemberPublicId);
     }
 
     protected Long getCurrentOrgId() {
