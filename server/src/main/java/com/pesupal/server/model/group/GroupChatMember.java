@@ -2,7 +2,7 @@ package com.pesupal.server.model.group;
 
 import com.pesupal.server.enums.Role;
 import com.pesupal.server.model.CreationTimeAuditable;
-import com.pesupal.server.model.user.User;
+import com.pesupal.server.model.user.OrgMember;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -17,7 +17,7 @@ public class GroupChatMember extends CreationTimeAuditable {
     private Group group;
 
     @ManyToOne
-    private User user;
+    private OrgMember participant;
 
     @Enumerated(EnumType.STRING)
     private Role role;
