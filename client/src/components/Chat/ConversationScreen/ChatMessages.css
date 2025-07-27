@@ -155,7 +155,7 @@
     display: none;
 }
 
-.row:hover .message-actions {
+.row .message:hover .message-actions {
     display: flex;
 }
 
