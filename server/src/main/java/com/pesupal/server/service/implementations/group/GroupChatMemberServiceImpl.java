@@ -188,10 +188,13 @@ public class GroupChatMemberServiceImpl extends CurrentValueRetriever implements
      * @return
      */
     @Override
-    public boolean isUserMemberOfGroup(String groupId) {
+    public void checkUserPartOfGroup(String groupId) {
 
         OrgMember orgMember = getCurrentOrgMember();
-        return groupChatMemberRepository.existsByGroup_PublicIdAndParticipant_PublicId(groupId, orgMember.getPublicId());
+        GroupChatMember groupChatMember = getGroupMemberByGroupIdAndUserId(groupId, orgMember.getId());
+        if (!groupChatMember.isActive()) {
+            throw new PermissionDeniedException("You are no longer a member of this group.");
+        }
     }
 
 }

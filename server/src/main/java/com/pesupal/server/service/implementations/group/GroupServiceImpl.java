@@ -185,9 +185,7 @@ public class GroupServiceImpl extends CurrentValueRetriever implements GroupServ
             throw new DataNotFoundException("Group with ID " + groupId + " does not exist");
         }
 
-        if (!groupChatMemberService.isUserMemberOfGroup(groupId)) {
-            throw new PermissionDeniedException("You are not a member of this group.");
-        }
+        groupChatMemberService.checkUserPartOfGroup(groupId);
 
         ChatPreviewDto chatPreviewDto = new ChatPreviewDto();
         chatPreviewDto.setChatId(Long.toString(group.getId()));

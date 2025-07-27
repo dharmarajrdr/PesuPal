@@ -13,7 +13,7 @@ public interface GroupChatMemberService {
 
     GroupChatMember getGroupMemberByGroupIdAndUserId(String groupId, Long userId);
 
-    boolean isUserMemberOfGroup(String groupId);
+    void checkUserPartOfGroup(String groupId);
 
     GroupChatMember getGroupMemberByGroupIdAndUserId(Long groupId, Long userId);
 
