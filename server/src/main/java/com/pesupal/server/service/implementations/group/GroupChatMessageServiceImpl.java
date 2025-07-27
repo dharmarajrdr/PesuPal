@@ -288,6 +288,17 @@ public class GroupChatMessageServiceImpl extends CurrentValueRetriever implement
     }
 
     /**
+     * Get the active chat member of the given group to broadcast the message.
+     *
+     * @param groupId
+     * @return
+     */
+    protected List<GroupChatMember> getActiveMembersOfGroup(String groupId) {
+
+        return groupChatMemberRepository.findAllByGroup_PublicId(groupId);
+    }
+
+    /**
      * Broadcasts a message to all subscribers of the topic.
      *
      * @param messageDto
@@ -296,5 +307,10 @@ public class GroupChatMessageServiceImpl extends CurrentValueRetriever implement
     @Override
     public void broadcastMessage(MessageDto messageDto, SimpMessagingTemplate messagingTemplate) {
 
+        List<GroupChatMember> groupChatMembers = getActiveMembersOfGroup(messageDto.getChatId());
+        for (GroupChatMember groupChatMember : groupChatMembers) {
+            String userId = groupChatMember.getParticipant().getPublicId();
+            messagingTemplate.convertAndSend("/topic/group-message." + userId, messageDto);
+        }
     }
 }
