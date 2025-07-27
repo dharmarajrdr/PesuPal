@@ -11,7 +11,7 @@ public interface GroupService {
 
     GroupDto createGroup(CreateGroupDto createGroupDto);
 
-    Group getGroupById(String groupId);
+    Group getGroupByPublicId(String groupId);
 
     void deleteGroup(String groupId);
 

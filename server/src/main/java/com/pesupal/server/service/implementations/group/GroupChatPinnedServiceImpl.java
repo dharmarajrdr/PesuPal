@@ -8,7 +8,6 @@ import com.pesupal.server.helpers.CurrentValueRetriever;
 import com.pesupal.server.model.group.Group;
 import com.pesupal.server.model.group.GroupChatPinned;
 import com.pesupal.server.model.user.OrgMember;
-import com.pesupal.server.model.user.User;
 import com.pesupal.server.repository.GroupChatMemberRepository;
 import com.pesupal.server.repository.GroupChatPinnedRepository;
 import com.pesupal.server.service.interfaces.OrgMemberService;
@@ -43,7 +42,7 @@ public class GroupChatPinnedServiceImpl extends CurrentValueRetriever implements
      * @return
      */
     @Override
-    public Optional<GroupChatPinned> getPinnedGroupByPinnedByAndGroup(User pinnedBy, Group group) {
+    public Optional<GroupChatPinned> getPinnedGroupByPinnedByAndGroup(OrgMember pinnedBy, Group group) {
 
         return groupChatPinnedRepository.findByPinnedByAndGroup(pinnedBy, group);
     }
@@ -106,7 +105,7 @@ public class GroupChatPinnedServiceImpl extends CurrentValueRetriever implements
             throw new ActionProhibitedException("This group is already pinned.");
         }
 
-        Group group = groupService.getGroupById(createPinGroupChatMessageDto.getGroupId());
+        Group group = groupService.getGroupByPublicId(createPinGroupChatMessageDto.getGroupId());
 
         GroupChatPinned groupChatPinned = new GroupChatPinned();
         groupChatPinned.setPinnedBy(pinnedBy);

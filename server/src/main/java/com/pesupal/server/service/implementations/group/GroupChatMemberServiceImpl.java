@@ -78,14 +78,13 @@ public class GroupChatMemberServiceImpl extends CurrentValueRetriever implements
 
         OrgMember orgMember = getCurrentOrgMember();
         Long orgId = orgMember.getOrg().getId();
-        Long userId = orgMember.getId();
 
-        Group group = groupService.getGroupById(groupId);
+        Group group = groupService.getGroupByPublicId(groupId);
         if (!group.getOrg().getId().equals(orgId)) {
             throw new DataNotFoundException("Group with ID " + groupId + " does not belong to organization with ID " + orgId + ".");
         }
 
-        boolean alreadyMember = groupChatMemberRepository.existsByGroup_PublicIdAndParticipantId(groupId, userId);
+        boolean alreadyMember = groupChatMemberRepository.existsByGroup_PublicIdAndParticipant_PublicId(groupId, orgMember.getPublicId());
         if (alreadyMember) {
             throw new ActionProhibitedException("You are already a member of this group.");
         }
@@ -129,7 +128,7 @@ public class GroupChatMemberServiceImpl extends CurrentValueRetriever implements
             throw new PermissionDeniedException("You do not have permission to add members to this group.");
         }
 
-        boolean isAlreadyMember = groupChatMemberRepository.existsByGroupIdAndParticipant_PublicId(addGroupMemberDto.getGroupId(), addGroupMemberDto.getUserId());
+        boolean isAlreadyMember = groupChatMemberRepository.existsByGroup_PublicIdAndParticipant_PublicId(addGroupMemberDto.getGroupId(), addGroupMemberDto.getUserId());
         if (isAlreadyMember) {
             throw new ActionProhibitedException("User is already a member of this group.");
         }
@@ -180,19 +179,6 @@ public class GroupChatMemberServiceImpl extends CurrentValueRetriever implements
                 Map.Entry::getKey, e -> e.getValue().stream().sorted(Comparator.comparing(UserPreviewDto::getDisplayName, String.CASE_INSENSITIVE_ORDER)).collect(Collectors.toList())
         ));
 
-    }
-
-    /**
-     * Checks if a user is a member of a group.
-     *
-     * @param groupId
-     * @return
-     */
-    @Override
-    public boolean isUserMemberOfGroup(String groupId) {
-
-        OrgMember orgMember = getCurrentOrgMember();
-        return groupChatMemberRepository.existsByGroup_PublicIdAndParticipantId(groupId, orgMember.getId());
     }
 
 }

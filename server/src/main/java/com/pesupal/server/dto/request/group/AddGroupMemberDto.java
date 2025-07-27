@@ -5,7 +5,7 @@ import lombok.Data;
 @Data
 public class AddGroupMemberDto {
 
-    private Long groupId;
+    private String groupId;
 
     private String userId;
 }

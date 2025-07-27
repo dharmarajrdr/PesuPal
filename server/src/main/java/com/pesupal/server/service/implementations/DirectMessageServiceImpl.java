@@ -17,7 +17,7 @@ import com.pesupal.server.model.chat.PinnedDirectMessage;
 import com.pesupal.server.model.org.Org;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.model.user.User;
-import com.pesupal.server.projections.RecentChatsProjection;
+import com.pesupal.server.projections.RecentPrivateChatProjection;
 import com.pesupal.server.repository.DirectMessageMediaFileRepository;
 import com.pesupal.server.repository.DirectMessageRepository;
 import com.pesupal.server.security.JwtUtil;
@@ -209,7 +209,7 @@ public class DirectMessageServiceImpl extends CurrentValueRetriever implements D
 
         orgMemberService.validateUserIsOrgMember(user, org);
 
-        List<RecentChatsProjection> rows = directMessageRepository.findRecentChatsPaged(userId, orgId, size, offset);
+        List<RecentPrivateChatProjection> rows = directMessageRepository.findRecentChatsPaged(userId, orgId, size, offset);
 
         List<RecentChatDto> chats = rows.stream().map(projection -> {
             LastMessageDto lastMessage = new LastMessageDto();

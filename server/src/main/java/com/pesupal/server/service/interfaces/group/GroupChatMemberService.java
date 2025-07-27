@@ -13,8 +13,6 @@ public interface GroupChatMemberService {
 
     GroupChatMember getGroupMemberByGroupIdAndUserId(String groupId, Long userId);
 
-    boolean isUserMemberOfGroup(String groupId);
-
     GroupChatMember getGroupMemberByGroupIdAndUserId(Long groupId, Long userId);
 
     GroupDto joinGroup(String groupId);
