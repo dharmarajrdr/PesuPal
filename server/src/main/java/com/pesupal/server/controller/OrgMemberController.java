@@ -62,7 +62,7 @@ public class OrgMemberController extends OrgSubscriptionManager {
     @GetMapping("")
     public ResponseEntity<ApiResponseDto> getAllOrgMembers() {
 
-        List<UserBasicInfoDto> orgMembers = orgMemberService.getAllOrgMembers(getCurrentUserId(), getCurrentOrgId());
+        List<UserBasicInfoDto> orgMembers = orgMemberService.getAllOrgMembers(getCurrentOrgMember());
         return ResponseEntity.ok(new ApiResponseDto("List of organization members retrieved successfully.", orgMembers));
     }
 

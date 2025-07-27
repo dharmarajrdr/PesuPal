@@ -11,7 +11,7 @@ import com.pesupal.server.enums.Role;
 import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.exceptions.PermissionDeniedException;
-import com.pesupal.server.helpers.Chat;
+import com.pesupal.server.model.chat.DirectMessageChat;
 import com.pesupal.server.model.department.Department;
 import com.pesupal.server.model.org.Org;
 import com.pesupal.server.model.org.OrgConfiguration;
@@ -37,9 +37,10 @@ public class OrgMemberServiceImpl implements OrgMemberService {
     private final DesignationService designationService;
     private final OrgMemberRepository orgMemberRepository;
     private final OrgConfigurationService orgConfigurationService;
+    private final DirectMessageChatService directMessageChatService;
     private final OrgSubscriptionHistoryService orgSubscriptionHistoryService;
 
-    public OrgMemberServiceImpl(OrgService orgService, UserService userService, AuthService authService, @Lazy DepartmentService departmentService, DesignationService designationService, OrgMemberRepository orgMemberRepository, OrgConfigurationService orgConfigurationService, OrgSubscriptionHistoryService orgSubscriptionHistoryService) {
+    public OrgMemberServiceImpl(OrgService orgService, UserService userService, AuthService authService, @Lazy DepartmentService departmentService, DesignationService designationService, OrgMemberRepository orgMemberRepository, OrgConfigurationService orgConfigurationService, OrgSubscriptionHistoryService orgSubscriptionHistoryService, DirectMessageChatService directMessageChatService) {
         this.orgService = orgService;
         this.userService = userService;
         this.authService = authService;
@@ -48,6 +49,7 @@ public class OrgMemberServiceImpl implements OrgMemberService {
         this.orgMemberRepository = orgMemberRepository;
         this.orgConfigurationService = orgConfigurationService;
         this.orgSubscriptionHistoryService = orgSubscriptionHistoryService;
+        this.directMessageChatService = directMessageChatService;
     }
 
     /**
@@ -59,7 +61,7 @@ public class OrgMemberServiceImpl implements OrgMemberService {
     @Override
     public OrgMember getOrgMemberByPublicId(String publicId) {
 
-        return orgMemberRepository.findByPublicId(publicId).orElseThrow(() -> new DataNotFoundException("Either the user does not exist or is not a member of this organization."));
+        return orgMemberRepository.findByPublicId(publicId).orElseThrow(() -> new DataNotFoundException("User with ID " + publicId + " does not exist."));
     }
 
     /**
@@ -253,7 +255,7 @@ public class OrgMemberServiceImpl implements OrgMemberService {
     public OrgMember addMemberToOrg(AddOrgMemberDto addOrgMemberDto, OrgMember currentUser, boolean firstMember) {
 
         Org org = currentUser.getOrg();
-        User user = userService.getUserById(addOrgMemberDto.getUserId());
+        User userToAdd = userService.getUserById(addOrgMemberDto.getUserId());
 
         OrgMember addedBy = firstMember ? null : currentUser;
 
@@ -264,7 +266,7 @@ public class OrgMemberServiceImpl implements OrgMemberService {
             }
         }
 
-        if (existsByUserAndOrg(user, org)) {
+        if (existsByUserAndOrg(userToAdd, org)) {
             throw new ActionProhibitedException("User is already a member of this organization.");
         }
 
@@ -274,7 +276,7 @@ public class OrgMemberServiceImpl implements OrgMemberService {
         newOrgMember.setAddedBy(addedBy);
         newOrgMember.setManager(manager);
         newOrgMember.setOrg(org);
-        newOrgMember.setUser(user);
+        newOrgMember.setUser(userToAdd);
         newOrgMember.setUserName(addOrgMemberDto.getUserName());
         newOrgMember.setDisplayName(addOrgMemberDto.getDisplayName());
         newOrgMember.setDepartment(departmentService.getDepartmentById(addOrgMemberDto.getDepartmentId()));
@@ -319,18 +321,20 @@ public class OrgMemberServiceImpl implements OrgMemberService {
     /**
      * Retrieves all members of an organization.
      *
-     * @param userId
-     * @param orgId
+     * @param currentOrgMember
      * @return
      */
     @Override
-    public List<UserBasicInfoDto> getAllOrgMembers(Long userId, Long orgId) {
+    public List<UserBasicInfoDto> getAllOrgMembers(OrgMember currentOrgMember) {
 
-        validateUserIsOrgMember(userId, orgId);
+        Long orgId = currentOrgMember.getOrg().getId();
 
         return orgMemberRepository.findAllByOrgIdOrderByDisplayNameAsc(orgId).stream().map(orgMember -> {
             UserBasicInfoDto userBasicInfoDto = UserBasicInfoDto.fromOrgMember(orgMember);
-            userBasicInfoDto.setChatId(Chat.getChatId(userId, orgMember.getUser().getId(), orgId));
+            if (!orgMember.getId().equals(currentOrgMember.getId())) {
+                DirectMessageChat directMessageChat = directMessageChatService.getOrCreateDirectMessageChat(currentOrgMember, orgMember);
+                userBasicInfoDto.setChatId(directMessageChat.getPublicId());
+            }
             return userBasicInfoDto;
         }).toList();
     }
