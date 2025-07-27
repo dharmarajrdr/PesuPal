@@ -86,7 +86,7 @@ const ConversationScreen = ({ activeTabName }) => {
 			updateRecentChat(msg);
 		},
 		onGroupMessage: (msg) => {
-			
+
 			updateRecentChat(msg);
 		},
 		onError: ({ message }) => {
@@ -168,7 +168,7 @@ const ConversationScreen = ({ activeTabName }) => {
 
 		dispatch(setChatId(chatId));
 		if (!currentChatPreview) {
-			return getChatPreview(chatId);
+			return getChatPreview(chatId, readAllMessages);
 		}
 
 		dispatch(setShowChatHeaderOptionsModal(false));
