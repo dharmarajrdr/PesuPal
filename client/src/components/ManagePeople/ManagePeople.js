@@ -1,3 +1,5 @@
+import { useState } from 'react';
+import AddUserLayout from './AddUserLayout';
 import './ManagePeople.css';
 import ManagePeopleHeader from './ManagePeopleHeader';
 
@@ -27,9 +29,12 @@ const initialPeople = [
 
 const ManagePeople = () => {
 
+    const [showAddUserLayout, setShowAddUserLayout] = useState(false);
+
     return (
         <div className="manage-people-container h100">
-            <ManagePeopleHeader />
+            <ManagePeopleHeader setShowAddUserLayout={setShowAddUserLayout} />
+            {showAddUserLayout && <AddUserLayout setShowAddUserLayout={setShowAddUserLayout} />}
         </div>
     );
 };
