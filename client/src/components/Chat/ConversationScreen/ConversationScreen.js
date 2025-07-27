@@ -193,7 +193,7 @@ const ConversationScreen = ({ activeTabName }) => {
 		<div id='ConversationScreen' className='FCSB'>
 			{permissionDenied ? <PermissionDenied /> : <>
 				<ChatHeader />
-				<ChatMessages retrievingChat={retrievingChat} messages={messages} chatId={chatId} clickSendMessageHandler={clickSendMessageHandler} />
+				<ChatMessages active={active} retrievingChat={retrievingChat} messages={messages} chatId={chatId} clickSendMessageHandler={clickSendMessageHandler} />
 				{active ? <ChatInput clickSendMessageHandler={clickSendMessageHandler} /> : <ChatInputUserArchived displayName={displayName} />}
 			</>}
 		</div>
