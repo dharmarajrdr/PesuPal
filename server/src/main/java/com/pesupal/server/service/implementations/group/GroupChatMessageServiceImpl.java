@@ -9,6 +9,7 @@ import com.pesupal.server.enums.Role;
 import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.exceptions.PermissionDeniedException;
+import com.pesupal.server.helpers.CurrentValueRetriever;
 import com.pesupal.server.helpers.InputValidator;
 import com.pesupal.server.model.group.*;
 import com.pesupal.server.model.org.Org;
@@ -35,10 +36,11 @@ import java.util.*;
 @Service
 @AllArgsConstructor
 @Qualifier("groupChatMessageService")
-public class GroupChatMessageServiceImpl implements GroupChatMessageService {
+public class GroupChatMessageServiceImpl extends CurrentValueRetriever implements GroupChatMessageService {
 
     private final JwtUtil jwtUtil;
     private final S3Service s3Service;
+    private final GroupService groupService;
     private final OrgMemberService orgMemberService;
     private final GroupChatMemberService groupChatMemberService;
     private final GroupChatReactionService groupChatReactionService;
@@ -46,7 +48,6 @@ public class GroupChatMessageServiceImpl implements GroupChatMessageService {
     private final GroupChatMessageRepository groupChatMessageRepository;
     private final GroupChatConfigurationService groupChatConfigurationService;
     private final GroupMessageMediaFileRepository groupMessageMediaFileRepository;
-    private final GroupService groupService;
 
     /**
      * Retrieves a group chat message by its ID.
@@ -144,12 +145,13 @@ public class GroupChatMessageServiceImpl implements GroupChatMessageService {
      * Retrieves messages from a group chat based on the provided criteria.
      *
      * @param getGroupConversationDto
-     * @param userId
-     * @param orgId
      * @return
      */
     @Override
-    public List<MessageDto> getGroupChatMessages(GetGroupConversationDto getGroupConversationDto, Long userId, Long orgId) {
+    public List<MessageDto> getGroupChatMessages(GetGroupConversationDto getGroupConversationDto) {
+
+        OrgMember orgMember = getCurrentOrgMember();
+        Long orgId = orgMember.getOrg().getId();
 
         Pageable pageable = PageRequest.of(
                 getGroupConversationDto.getPage(),
@@ -158,9 +160,9 @@ public class GroupChatMessageServiceImpl implements GroupChatMessageService {
         Page<GroupChatMessage> messages = null;
         Long pivotMessageId = getGroupConversationDto.getPivotMessageId();
         if (pivotMessageId != null) {
-            messages = groupChatMessageRepository.findAllByGroupIdAndIdLessThan(getGroupConversationDto.getGroupId(), getGroupConversationDto.getPivotMessageId(), pageable);
+            messages = groupChatMessageRepository.findAllByGroup_PublicIdAndIdLessThan(getGroupConversationDto.getGroupId(), getGroupConversationDto.getPivotMessageId(), pageable);
         } else {
-            messages = groupChatMessageRepository.findAllByGroupId(getGroupConversationDto.getGroupId(), pageable);
+            messages = groupChatMessageRepository.findAllByGroup_PublicId(getGroupConversationDto.getGroupId(), pageable);
         }
         Map<Long, UserPreviewDto> memo = new HashMap<>();
         return messages.stream().map(gm -> {

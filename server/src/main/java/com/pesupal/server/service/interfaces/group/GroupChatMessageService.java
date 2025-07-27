@@ -15,7 +15,7 @@ public interface GroupChatMessageService extends ChatService {
 
     void clearGroupChatMessages(Long groupId, Long userId, Long orgId);
 
-    List<MessageDto> getGroupChatMessages(GetGroupConversationDto getGroupConversationDto, Long userId, Long orgId);
+    List<MessageDto> getGroupChatMessages(GetGroupConversationDto getGroupConversationDto);
 
     void markAllGroupMessagesAsRead(Long groupId, Long currentUserId, Long currentOrgId);
 }

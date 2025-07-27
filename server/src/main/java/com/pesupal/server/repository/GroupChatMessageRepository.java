@@ -14,9 +14,9 @@ public interface GroupChatMessageRepository extends JpaRepository<GroupChatMessa
 
     void deleteAllByGroup(Group group);
 
-    Page<GroupChatMessage> findAllByGroupIdAndIdLessThan(Long groupId, Long pivotMessageId, Pageable pageable);
+    Page<GroupChatMessage> findAllByGroup_PublicIdAndIdLessThan(String groupId, Long pivotMessageId, Pageable pageable);
 
-    Page<GroupChatMessage> findAllByGroupId(Long groupId, Pageable pageable);
+    Page<GroupChatMessage> findAllByGroup_PublicId(String groupId, Pageable pageable);
 
     Optional<GroupChatMessage> findFirstByGroupOrderByCreatedAtDesc(Group group);
 }

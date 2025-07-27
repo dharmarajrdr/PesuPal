@@ -33,10 +33,10 @@ public class GroupChatMessageController extends CurrentValueRetriever {
     }
 
     @GetMapping("/{groupId}")
-    public ResponseEntity<ApiResponseDto> getGroupChatMessages(@PathVariable Long groupId, @RequestParam Integer page, @RequestParam Integer size, @RequestParam(name = "pivot_message_id", required = false) Long pivotMessageId) {
+    public ResponseEntity<ApiResponseDto> getGroupChatMessages(@PathVariable String groupId, @RequestParam Integer page, @RequestParam Integer size, @RequestParam(name = "pivot_message_id", required = false) Long pivotMessageId) {
 
         GetGroupConversationDto getGroupConversationDto = new GetGroupConversationDto(groupId, pivotMessageId, page, size);
-        List<MessageDto> messageDtos = groupChatMessageService.getGroupChatMessages(getGroupConversationDto, getCurrentUserId(), getCurrentOrgId());
+        List<MessageDto> messageDtos = groupChatMessageService.getGroupChatMessages(getGroupConversationDto);
         return ResponseEntity.ok().body(new ApiResponseDto("Group chat messages retrieved successfully", messageDtos));
     }
 
