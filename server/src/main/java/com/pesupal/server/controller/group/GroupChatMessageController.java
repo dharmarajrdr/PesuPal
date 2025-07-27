@@ -41,9 +41,9 @@ public class GroupChatMessageController extends CurrentValueRetriever {
     }
 
     @PutMapping("/{groupId}/read-all")
-    public ResponseEntity<ApiResponseDto> markAllGroupMessagesAsRead(@PathVariable Long groupId) {
+    public ResponseEntity<ApiResponseDto> markAllGroupMessagesAsRead(@PathVariable String groupId) {
 
-        groupChatMessageService.markAllGroupMessagesAsRead(groupId, getCurrentUserId(), getCurrentOrgId());
+        groupChatMessageService.markAllGroupMessagesAsRead(groupId);
         return ResponseEntity.ok().body(new ApiResponseDto("All group messages marked as read successfully"));
     }
 }

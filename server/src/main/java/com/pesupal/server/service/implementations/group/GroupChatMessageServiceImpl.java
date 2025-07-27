@@ -190,11 +190,12 @@ public class GroupChatMessageServiceImpl extends CurrentValueRetriever implement
      * Marks all messages in a group as read.
      *
      * @param groupId
-     * @param userId
-     * @param orgId
      */
     @Override
-    public void markAllGroupMessagesAsRead(Long groupId, Long userId, Long orgId) {
+    public void markAllGroupMessagesAsRead(String groupId) {
+
+        OrgMember orgMember = getCurrentOrgMember();
+        Long userId = orgMember.getId();
 
         GroupChatMember groupChatMember = groupChatMemberService.getGroupMemberByGroupIdAndUserId(groupId, userId);
         if (!groupChatMember.isActive()) {
