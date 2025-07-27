@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react'
 import './ConversationScreen.css';
 import ChatHeader from './ChatHeader';
 import ChatMessages from './ChatMessages';
-import ChatInput from './ChatInput';
 import useWebSocket from '../../../WebSocket';
 import { useParams } from 'react-router-dom';
 import { apiRequest } from '../../../http_request';
@@ -10,12 +9,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import { clearCurrentChatPreview, setCurrentChatPreview } from '../../../store/reducers/CurrentChatPreviewSlice';
 import { setChatId } from '../../../store/reducers/ChatIdSlice';
 import PermissionDenied from '../../Auth/PermissionDenied';
-import ChatInputUserArchived from './ChatInputUserArchived';
 import { setActiveChatTab } from '../../../store/reducers/ActiveChatTabSlice';
 import { showPopup } from '../../../store/reducers/PopupSlice';
 import { setShowChatHeaderOptionsModal } from '../../../store/reducers/ShowChatHeaderOptionsModalSlice';
 import { moveRecentChatToTop, updateOrAddRecentChat } from '../../../store/reducers/RecentChatsSlice';
 import utils from '../../../utils';
+import ChatFooter from './ChatFooter';
 
 const ConversationScreen = ({ activeTabName }) => {
 
@@ -35,7 +34,7 @@ const ConversationScreen = ({ activeTabName }) => {
 	const currentChatPreview = useSelector(state => state.currentChatPreviewSlice);
 	const activeChatTab = useSelector(state => state.activeChatTab);
 	const myProfile = useSelector(state => state.myProfile) || {};
-	const { displayName, active } = currentChatPreview || {};
+	const { displayName, active, groupActive } = currentChatPreview || {};
 
 	const updateRecentChat = (msg) => {
 
@@ -45,11 +44,7 @@ const ConversationScreen = ({ activeTabName }) => {
 			return; // If the message is not in the current chat mode, ignore it
 		}
 
-		console.log("user is in current chat mode:", activeChatTab.chatMode);
-
 		const isChatOpen = chatId == msg.chatId;
-
-		console.log(`Current chatId = ${chatId}. Message chatId = ${msg.chatId}. Is chat open? ${isChatOpen}`);
 
 		const recentMessage = {
 			chatId: msg.chatId,
@@ -186,13 +181,17 @@ const ConversationScreen = ({ activeTabName }) => {
 
 	}, [chatId]);
 
+	const showStartNewConversation = active && (groupActive != false);
+
 	return (
 		<div id='ConversationScreen' className='FCSB'>
-			{permissionDenied ? <PermissionDenied /> : <>
-				<ChatHeader />
-				<ChatMessages active={active} retrievingChat={retrievingChat} messages={messages} chatId={chatId} clickSendMessageHandler={clickSendMessageHandler} />
-				{active ? <ChatInput clickSendMessageHandler={clickSendMessageHandler} /> : <ChatInputUserArchived displayName={displayName} />}
-			</>}
+			{permissionDenied ? <PermissionDenied />
+				: currentChatPreview ? <>
+					<ChatHeader />
+					<ChatMessages showStartNewConversation={showStartNewConversation} retrievingChat={retrievingChat} messages={messages} chatId={chatId} clickSendMessageHandler={clickSendMessageHandler} />
+					<ChatFooter active={active} groupActive={groupActive} currentTab={activeChatTab.name} displayName={displayName} clickSendMessageHandler={clickSendMessageHandler} />
+				</> : null
+			}
 		</div>
 	);
 }
