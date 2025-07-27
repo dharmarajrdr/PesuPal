@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 public class CreateGroupMessageDto {
 
-    private Long groupId;
+    private String groupId;
 
     private String message;
 
