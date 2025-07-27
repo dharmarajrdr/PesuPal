@@ -77,6 +77,7 @@ public class GroupServiceImpl extends CurrentValueRetriever implements GroupServ
         OrgMember owner = getCurrentOrgMember();
         Group group = createGroupDto.toGroup();
         group.setOwner(owner);
+        group.setOrg(owner.getOrg());
         groupRepository.save(group);
         groupChatConfigurationService.initializeGroupChatConfiguration(group);
         initializeGroupChatMember(group, owner);
