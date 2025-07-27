@@ -86,7 +86,7 @@ const ConversationScreen = ({ activeTabName }) => {
 			updateRecentChat(msg);
 		},
 		onGroupMessage: (msg) => {
-
+			
 			updateRecentChat(msg);
 		},
 		onError: ({ message }) => {
@@ -148,7 +148,7 @@ const ConversationScreen = ({ activeTabName }) => {
 					setPivotMessageId(data.at(-1)?.id);
 				}
 
-				successCallback({ chatId });	// read all messages
+				successCallback && successCallback({ chatId });	// read all messages
 
 			}).catch(({ message }) => {
 				console.error(message);
