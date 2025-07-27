@@ -31,7 +31,9 @@ public class ProfileServiceImpl extends CurrentValueRetriever implements Profile
         OrgMember orgMember = orgMemberService.getOrgMemberByPublicId(userId);
         UserBasicInfoDto userBasicInfoDto = UserBasicInfoDto.fromOrgMember(orgMember);
         DirectMessageChat directMessageChat = directMessageChatService.getOrCreateDirectMessageChat(currentOrgMember, orgMember);
-        userBasicInfoDto.setChatId(directMessageChat.getPublicId());
+        if(directMessageChat != null)  {
+            userBasicInfoDto.setChatId(directMessageChat.getPublicId());
+        }
         return userBasicInfoDto;
     }
 

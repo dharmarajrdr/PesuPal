@@ -27,8 +27,8 @@ const AuthModal = () => {
                 navigate('/');
             }
         }).catch(({ message }) => {
-            sessionStorage.removeItem('token');
-            navigate('/signin');
+            // sessionStorage.removeItem('token');
+            // navigate('/signin');
             dispatch(showPopup({ message, type: 'error' }));
         });
     }, []);

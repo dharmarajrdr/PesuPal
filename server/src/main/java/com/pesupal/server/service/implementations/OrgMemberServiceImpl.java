@@ -318,7 +318,9 @@ public class OrgMemberServiceImpl implements OrgMemberService {
         return orgMemberRepository.findAllByOrgIdOrderByDisplayNameAsc(orgId).stream().map(orgMember -> {
             UserBasicInfoDto userBasicInfoDto = UserBasicInfoDto.fromOrgMember(orgMember);
             DirectMessageChat directMessageChat = directMessageChatService.getOrCreateDirectMessageChat(currentOrgMember, orgMember);
-            userBasicInfoDto.setChatId(directMessageChat.getPublicId());
+            if(directMessageChat != null) {
+                userBasicInfoDto.setChatId(directMessageChat.getPublicId());
+            }
             return userBasicInfoDto;
         }).toList();
     }
