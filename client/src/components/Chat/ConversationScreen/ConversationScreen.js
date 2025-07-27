@@ -21,8 +21,6 @@ const ConversationScreen = ({ activeTabName }) => {
 
 	const { chatId } = useParams();
 
-	console.log(`ConversationScreen: chatId = ${chatId}`);
-
 	const dispatch = useDispatch();
 
 	dispatch(setActiveChatTab(activeTabName));
@@ -37,11 +35,9 @@ const ConversationScreen = ({ activeTabName }) => {
 	const currentChatPreview = useSelector(state => state.currentChatPreviewSlice);
 	const activeChatTab = useSelector(state => state.activeChatTab);
 	const myProfile = useSelector(state => state.myProfile) || {};
-	const { displayName, userId, active } = currentChatPreview || {};
+	const { displayName, active } = currentChatPreview || {};
 
 	const updateRecentChat = (msg) => {
-
-		console.log("Received message:", msg);
 
 		const { chatMode, message, sender } = msg || {};
 
@@ -57,8 +53,6 @@ const ConversationScreen = ({ activeTabName }) => {
 
 		const recentMessage = {
 			chatId: msg.chatId,
-			name: sender.displayName,
-			image: sender.displayPicture,
 			recentMessage: {
 				sender: sender.displayName,
 				message: message,
@@ -143,7 +137,7 @@ const ConversationScreen = ({ activeTabName }) => {
 		const isFirstLoad = true; // since chatId changed
 		const pivot = isFirstLoad ? null : pivotMessageId;
 
-		const { chatPreviewApi, retrieveConversationApi, readAllMessagesApi } = activeChatTab || {};
+		const { chatPreviewApi, retrieveConversationApi } = activeChatTab || {};
 
 		if (!chatPreviewApi) { return; }
 
@@ -178,6 +172,11 @@ const ConversationScreen = ({ activeTabName }) => {
 	};
 
 	useEffect(() => {
+
+		if (!currentChatPreview) {
+			getChatPreview(chatId);
+			return;
+		}
 
 		dispatch(setShowChatHeaderOptionsModal(false));
 		dispatch(clearCurrentChatPreview());
