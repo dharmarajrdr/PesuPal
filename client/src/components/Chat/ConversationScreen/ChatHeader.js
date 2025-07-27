@@ -64,7 +64,7 @@ const ChatHeader = () => {
                 } else {
                     const payload = {};
                     if(activeChatTab.name == 'directMessage') {
-                        Object.assign(payload, { 'pinnedUserId': userId, 'orderIndex': 1 });
+                        Object.assign(payload, { chatId, 'orderIndex': 1 });
                     } else if(activeChatTab.name == 'groupMessage') {
                         Object.assign(payload, { 'pinnedGroupId': chatId, 'orderIndex': 1 });
                     }
