@@ -173,14 +173,13 @@ const ConversationScreen = ({ activeTabName }) => {
 
 	useEffect(() => {
 
+		dispatch(setChatId(chatId));
 		if (!currentChatPreview) {
-			getChatPreview(chatId);
-			return;
+			return getChatPreview(chatId);
 		}
 
 		dispatch(setShowChatHeaderOptionsModal(false));
 		dispatch(clearCurrentChatPreview());
-		dispatch(setChatId(chatId));
 		setPivotMessageId(null); // reset state — this takes effect after render
 		setRetrievingChat(true);
 		getChatPreview(chatId);
