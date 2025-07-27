@@ -66,7 +66,7 @@ const ChatHeader = () => {
                     if(activeChatTab.name == 'directMessage') {
                         Object.assign(payload, { chatId, 'orderIndex': 1 });
                     } else if(activeChatTab.name == 'groupMessage') {
-                        Object.assign(payload, { 'pinnedGroupId': chatId, 'orderIndex': 1 });
+                        Object.assign(payload, { 'groupId': chatId, 'orderIndex': 1 });
                     }
                     apiRequest(`${activeChatTab.pinnedMessagesApi}/pin`, 'POST', payload).then(({ data }) => {
                         dispatch(addPinnedDirectMessage(data));

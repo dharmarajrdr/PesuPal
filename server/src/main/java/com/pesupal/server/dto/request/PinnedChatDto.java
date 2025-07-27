@@ -43,7 +43,7 @@ public class PinnedChatDto {
         Group group = groupChatPinned.getGroup();
         dto.setDisplayName(group.getName());
         dto.setDisplayPicture(group.getDisplayPicture());
-        dto.setChatId(group.getId().toString());
+        dto.setChatId(group.getPublicId());
         dto.setId(groupChatPinned.getId());
         return dto;
     }

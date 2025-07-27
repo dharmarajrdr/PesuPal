@@ -2,27 +2,26 @@ package com.pesupal.server.service.implementations.group;
 
 import com.pesupal.server.dto.request.ChatMessageDto;
 import com.pesupal.server.dto.request.GetGroupConversationDto;
-import com.pesupal.server.dto.request.group.CreateGroupMessageDto;
 import com.pesupal.server.dto.response.MediaFileDto;
 import com.pesupal.server.dto.response.MessageDto;
 import com.pesupal.server.dto.response.UserPreviewDto;
-import com.pesupal.server.dto.response.group.GroupMessageDto;
 import com.pesupal.server.enums.Role;
 import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.exceptions.PermissionDeniedException;
+import com.pesupal.server.helpers.CurrentValueRetriever;
+import com.pesupal.server.helpers.InputValidator;
 import com.pesupal.server.model.group.*;
 import com.pesupal.server.model.org.Org;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.repository.GroupChatMemberRepository;
 import com.pesupal.server.repository.GroupChatMessageRepository;
 import com.pesupal.server.repository.GroupMessageMediaFileRepository;
+import com.pesupal.server.security.JwtUtil;
 import com.pesupal.server.service.interfaces.OrgMemberService;
-import com.pesupal.server.service.interfaces.group.GroupChatConfigurationService;
-import com.pesupal.server.service.interfaces.group.GroupChatMemberService;
-import com.pesupal.server.service.interfaces.group.GroupChatMessageService;
-import com.pesupal.server.service.interfaces.group.GroupChatReactionService;
+import com.pesupal.server.service.interfaces.group.*;
 import com.pesupal.server.strategies.media_storage.S3Service;
+import io.jsonwebtoken.Claims;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
@@ -37,9 +36,11 @@ import java.util.*;
 @Service
 @AllArgsConstructor
 @Qualifier("groupChatMessageService")
-public class GroupChatMessageServiceImpl implements GroupChatMessageService {
+public class GroupChatMessageServiceImpl extends CurrentValueRetriever implements GroupChatMessageService {
 
+    private final JwtUtil jwtUtil;
     private final S3Service s3Service;
+    private final GroupService groupService;
     private final OrgMemberService orgMemberService;
     private final GroupChatMemberService groupChatMemberService;
     private final GroupChatReactionService groupChatReactionService;
@@ -47,42 +48,6 @@ public class GroupChatMessageServiceImpl implements GroupChatMessageService {
     private final GroupChatMessageRepository groupChatMessageRepository;
     private final GroupChatConfigurationService groupChatConfigurationService;
     private final GroupMessageMediaFileRepository groupMessageMediaFileRepository;
-
-    /**
-     * Posts a message in a group chat.
-     *
-     * @param createGroupMessageDto
-     * @param userId
-     * @param orgId
-     * @return
-     */
-    @Override
-    public GroupMessageDto postMessageInGroup(CreateGroupMessageDto createGroupMessageDto, Long userId, Long orgId) {
-
-        OrgMember orgMember = orgMemberService.getOrgMemberByUserIdAndOrgId(userId, orgId);
-        GroupChatMember groupChatMember = groupChatMemberService.getGroupMemberByGroupIdAndUserId(createGroupMessageDto.getGroupId(), userId);
-        Group group = groupChatMember.getGroup();
-        if (!group.getOrg().getId().equals(orgId)) {
-            throw new DataNotFoundException("Group not found with ID " + createGroupMessageDto.getGroupId() + ".");
-        }
-
-        if (!group.isActive()) {
-            throw new ActionProhibitedException("This group is no longer active.");
-        }
-
-        Role role = groupChatMember.getRole();
-        GroupChatConfiguration groupChatConfiguration = groupChatConfigurationService.getConfigurationByGroupAndRole(group, role);
-        if (!groupChatConfiguration.isPostMessage()) {
-            throw new PermissionDeniedException("You do not have permission to post messages in this group.");
-        }
-
-        GroupChatMessage groupChatMessage = createGroupMessageDto.toGroupChatMessage();
-        groupChatMessage.setSender(groupChatMember.getParticipant());
-        groupChatMessage.setDeleted(false);
-        groupChatMessage.setGroup(group);
-        groupChatMessageRepository.save(groupChatMessage);
-        return GroupMessageDto.fromGroupMessageAndOrgMember(groupChatMessage, orgMember);
-    }
 
     /**
      * Retrieves a group chat message by its ID.
@@ -180,12 +145,13 @@ public class GroupChatMessageServiceImpl implements GroupChatMessageService {
      * Retrieves messages from a group chat based on the provided criteria.
      *
      * @param getGroupConversationDto
-     * @param userId
-     * @param orgId
      * @return
      */
     @Override
-    public List<MessageDto> getGroupChatMessages(GetGroupConversationDto getGroupConversationDto, Long userId, Long orgId) {
+    public List<MessageDto> getGroupChatMessages(GetGroupConversationDto getGroupConversationDto) {
+
+        OrgMember orgMember = getCurrentOrgMember();
+        Long orgId = orgMember.getOrg().getId();
 
         Pageable pageable = PageRequest.of(
                 getGroupConversationDto.getPage(),
@@ -194,9 +160,9 @@ public class GroupChatMessageServiceImpl implements GroupChatMessageService {
         Page<GroupChatMessage> messages = null;
         Long pivotMessageId = getGroupConversationDto.getPivotMessageId();
         if (pivotMessageId != null) {
-            messages = groupChatMessageRepository.findAllByGroupIdAndIdLessThan(getGroupConversationDto.getGroupId(), getGroupConversationDto.getPivotMessageId(), pageable);
+            messages = groupChatMessageRepository.findAllByGroup_PublicIdAndIdLessThan(getGroupConversationDto.getGroupId(), getGroupConversationDto.getPivotMessageId(), pageable);
         } else {
-            messages = groupChatMessageRepository.findAllByGroupId(getGroupConversationDto.getGroupId(), pageable);
+            messages = groupChatMessageRepository.findAllByGroup_PublicId(getGroupConversationDto.getGroupId(), pageable);
         }
         Map<Long, UserPreviewDto> memo = new HashMap<>();
         return messages.stream().map(gm -> {
@@ -224,11 +190,12 @@ public class GroupChatMessageServiceImpl implements GroupChatMessageService {
      * Marks all messages in a group as read.
      *
      * @param groupId
-     * @param userId
-     * @param orgId
      */
     @Override
-    public void markAllGroupMessagesAsRead(Long groupId, Long userId, Long orgId) {
+    public void markAllGroupMessagesAsRead(String groupId) {
+
+        OrgMember orgMember = getCurrentOrgMember();
+        Long userId = orgMember.getId();
 
         GroupChatMember groupChatMember = groupChatMemberService.getGroupMemberByGroupIdAndUserId(groupId, userId);
         if (!groupChatMember.isActive()) {
@@ -245,6 +212,35 @@ public class GroupChatMessageServiceImpl implements GroupChatMessageService {
     }
 
     /**
+     * Converts a DirectMessage entity to a MessageDto.
+     *
+     * @param gm
+     * @param orgId
+     * @param memo
+     * @return
+     */
+    private MessageDto toMessageDto(GroupChatMessage gm, Long orgId, Map<Long, UserPreviewDto> memo) {
+
+        MessageDto messageDto = MessageDto.fromGroupMessage(gm);
+        Long senderId = gm.getSender().getId();
+        if (!memo.containsKey(senderId)) {
+            memo.put(senderId, UserPreviewDto.fromOrgMember(orgMemberService.getOrgMemberByUserIdAndOrgId(senderId, orgId)));
+        }
+        messageDto.setSender(memo.get(senderId));
+        if (gm.isContainsMedia()) {
+            GroupMessageMediaFile groupMessageMediaFile = groupMessageMediaFileRepository.findByGroupChatMessage(gm);
+            if (groupMessageMediaFile != null) {
+                MediaFileDto groupMessageMediaFileDto = MediaFileDto.fromGroupMessageMediaFile(groupMessageMediaFile);
+                String key = groupMessageMediaFile.getMediaId() + "." + groupMessageMediaFile.getExtension();
+                groupMessageMediaFileDto.setMediaUrl(s3Service.generatePresignedUrl(key));
+                messageDto.setMedia(groupMessageMediaFileDto);
+            }
+        }
+        messageDto.setReactions(groupChatReactionService.getReactionsCountForMessage(gm));
+        return messageDto;
+    }
+
+    /**
      * Saves a chat message.
      *
      * @param chatMessageDto
@@ -252,7 +248,55 @@ public class GroupChatMessageServiceImpl implements GroupChatMessageService {
      */
     @Override
     public MessageDto save(ChatMessageDto chatMessageDto) {
-        return null;
+
+        String token = (String) InputValidator.notNull(chatMessageDto.getToken(), "token");
+
+        Claims claims = jwtUtil.extractAllClaims(token);
+        String senderOrgMemberId = claims.get("orgMemberId").toString();
+
+        OrgMember sender = orgMemberService.getOrgMemberByPublicId(senderOrgMemberId);
+        Org org = sender.getOrg();
+
+        chatMessageDto.setSenderId(sender.getPublicId());
+
+        String groupId = chatMessageDto.getChatId();
+
+        GroupChatMember groupChatMember = groupChatMemberService.getGroupMemberByGroupIdAndUserId(groupId, sender.getId());
+        if (!groupChatMember.isActive()) {
+            throw new PermissionDeniedException("You are no longer part of this group.");
+        }
+
+        Group group = groupService.getGroupByPublicId(groupId);
+        if (!group.isActive()) {
+            throw new PermissionDeniedException("This group is no longer active.");
+        }
+
+        boolean containsMedia = chatMessageDto.getMedia() != null;
+
+        GroupChatMessage groupChatMessage = new GroupChatMessage();
+        groupChatMessage.setGroup(group);
+        groupChatMessage.setDeleted(false);
+        groupChatMessage.setSender(sender);
+        groupChatMessage.setMessage(chatMessageDto.getMessage());
+        groupChatMessage.setContainsMedia(containsMedia);
+        groupChatMessage = groupChatMessageRepository.save(groupChatMessage);
+        if (containsMedia) { // Store media file if present
+            GroupMessageMediaFile groupMessageMediaFile = GroupMessageMediaFile.fromMediaUploadDto(chatMessageDto.getMedia());
+            groupMessageMediaFile.setGroupChatMessage(groupChatMessage);
+            groupMessageMediaFileRepository.save(groupMessageMediaFile);
+        }
+        return toMessageDto(groupChatMessage, org.getId(), new HashMap<>());
+    }
+
+    /**
+     * Get the active chat member of the given group to broadcast the message.
+     *
+     * @param groupId
+     * @return
+     */
+    protected List<GroupChatMember> getActiveMembersOfGroup(String groupId) {
+
+        return groupChatMemberRepository.findAllByGroup_PublicId(groupId);
     }
 
     /**
@@ -264,5 +308,10 @@ public class GroupChatMessageServiceImpl implements GroupChatMessageService {
     @Override
     public void broadcastMessage(MessageDto messageDto, SimpMessagingTemplate messagingTemplate) {
 
+        List<GroupChatMember> groupChatMembers = getActiveMembersOfGroup(messageDto.getChatId());
+        for (GroupChatMember groupChatMember : groupChatMembers) {
+            String userId = groupChatMember.getParticipant().getPublicId();
+            messagingTemplate.convertAndSend("/topic/group-message." + userId, messageDto);
+        }
     }
 }

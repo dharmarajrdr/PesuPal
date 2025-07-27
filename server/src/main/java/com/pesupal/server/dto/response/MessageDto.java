@@ -67,7 +67,7 @@ public class MessageDto {
         }
 //        responseDto.setOrgId(groupChatMessage.getGroup().getOrg().getPublicId());
         responseDto.setCreatedAt(groupChatMessage.getCreatedAt());
-        responseDto.setChatId(Long.toString(groupChatMessage.getGroup().getId()));
+        responseDto.setChatId(groupChatMessage.getGroup().getPublicId());
         responseDto.setDeleted(groupChatMessage.isDeleted());
         responseDto.setChatMode(ChatMode.GROUP_MESSAGE);
         return responseDto;

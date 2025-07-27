@@ -21,5 +21,5 @@ public interface GroupChatPinnedService {
 
     PinnedChatDto pinGroupChatMessage(CreatePinGroupChatMessageDto createPinGroupChatMessageDto);
 
-    void unpinGroupChatMessage(String groupChatPublicId);
+    void unpinGroupChatMessage(Long groupChatPublicId);
 }

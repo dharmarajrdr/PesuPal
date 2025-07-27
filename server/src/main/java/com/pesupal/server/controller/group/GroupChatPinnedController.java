@@ -31,10 +31,10 @@ public class GroupChatPinnedController {
         return ResponseEntity.ok().body(new ApiResponseDto("Direct message pinned successfully", pinnedGroupChatMessageDto));
     }
 
-    @DeleteMapping("/pin/{groupChatPublicId}")
-    public ResponseEntity<ApiResponseDto> unpinGroupChatMessage(@PathVariable String groupChatPublicId) {
+    @DeleteMapping("/pin/{id}")
+    public ResponseEntity<ApiResponseDto> unpinGroupChatMessage(@PathVariable Long id) {
 
-        groupChatPinnedService.unpinGroupChatMessage(groupChatPublicId);
+        groupChatPinnedService.unpinGroupChatMessage(id);
         return ResponseEntity.ok().body(new ApiResponseDto("Direct message unpinned successfully", null));
     }
 }

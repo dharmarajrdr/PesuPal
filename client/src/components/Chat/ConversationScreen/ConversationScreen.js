@@ -15,6 +15,7 @@ import { setShowChatHeaderOptionsModal } from '../../../store/reducers/ShowChatH
 import { moveRecentChatToTop, updateOrAddRecentChat } from '../../../store/reducers/RecentChatsSlice';
 import utils from '../../../utils';
 import ChatFooter from './ChatFooter';
+import PageNotFound from '../../Auth/PageNotFound';
 
 const ConversationScreen = ({ activeTabName }) => {
 
@@ -27,6 +28,7 @@ const ConversationScreen = ({ activeTabName }) => {
 	const [page, setPage] = useState(0);
 	const [size, setSize] = useState(25);
 	const [permissionDenied, setPermissionDenied] = useState(false);
+	const [chatNotFound, setChatNotFound] = useState(false);
 	const [messages, setMessages] = useState([]);
 	const [retrievingChat, setRetrievingChat] = useState(true);
 	const [pivotMessageId, setPivotMessageId] = useState(null);
@@ -56,18 +58,17 @@ const ConversationScreen = ({ activeTabName }) => {
 			}
 		};
 
-		if (!isChatOpen) {  // If the chat is not open, then show the number of unread messages
-
-			console.log(`So, showing the number of unread messages for chatId: ${msg.chatId}`);
-
-			Object.assign(recentMessage, { number_of_unread_messages: 1 });
-		}
-
 		if (isChatOpen) {	// User is waiting for a response
 
 			console.log(`Since user is in the chat, rendering the message in the chat`);
 
 			setMessages((prev) => [...prev, msg]);
+
+		} else {	// If the chat is not open, then show the number of unread messages
+
+			console.log(`So, showing the number of unread messages for chatId: ${msg.chatId}`);
+
+			Object.assign(recentMessage, { number_of_unread_messages: 1 });
 		}
 
 		dispatch(updateOrAddRecentChat({ 'chatId': msg.chatId, recentMessage }));
@@ -90,8 +91,8 @@ const ConversationScreen = ({ activeTabName }) => {
 
 			updateRecentChat(msg);
 		},
-		onError: (error) => {
-			dispatch(showPopup({ message: error, type: 'error' }));
+		onError: ({ message }) => {
+			dispatch(showPopup({ message, type: 'error' }));
 		},
 		onMessageDelivery: (msg) => {
 
@@ -116,11 +117,10 @@ const ConversationScreen = ({ activeTabName }) => {
 	const clickSendMessageHandler = ({ message }) => {
 
 		const payload = {
-			message
+			message, chatId
 		};
 
 		if (activeChatTab.name === 'directMessage') {
-			Object.assign(payload, { chatId });
 			DirectMessage.send(payload);
 		} else if (activeChatTab.name === 'groupMessage') {
 			GroupMessage.send(payload);
@@ -139,6 +139,7 @@ const ConversationScreen = ({ activeTabName }) => {
 		apiRequest(`${chatPreviewApi}/${chatId}`, "GET").then(({ data }) => {
 
 			setPermissionDenied(false);
+			setChatNotFound(false);
 			dispatch(setCurrentChatPreview(data));
 
 			apiRequest(`${retrieveConversationApi}/${chatId}?page=${page}&size=${size}${pivot ? `&pivot_message_id=${pivot}` : ''}`, "GET").then(({ data }) => {
@@ -150,7 +151,7 @@ const ConversationScreen = ({ activeTabName }) => {
 					setPivotMessageId(data.at(-1)?.id);
 				}
 
-				successCallback({ chatId });	// read all messages
+				successCallback && successCallback({ chatId });	// read all messages
 
 			}).catch(({ message }) => {
 				console.error(message);
@@ -161,6 +162,8 @@ const ConversationScreen = ({ activeTabName }) => {
 			setRetrievingChat(false);
 			if (statusCode == 403) {
 				setPermissionDenied(true);
+			} else if (statusCode == 404) {
+				setChatNotFound(true);
 			}
 		});
 
@@ -170,7 +173,7 @@ const ConversationScreen = ({ activeTabName }) => {
 
 		dispatch(setChatId(chatId));
 		if (!currentChatPreview) {
-			return getChatPreview(chatId);
+			return getChatPreview(chatId, readAllMessages);
 		}
 
 		dispatch(setShowChatHeaderOptionsModal(false));
@@ -185,12 +188,15 @@ const ConversationScreen = ({ activeTabName }) => {
 
 	return (
 		<div id='ConversationScreen' className='FCSB'>
-			{permissionDenied ? <PermissionDenied />
-				: currentChatPreview ? <>
-					<ChatHeader />
-					<ChatMessages showStartNewConversation={showStartNewConversation} retrievingChat={retrievingChat} messages={messages} chatId={chatId} clickSendMessageHandler={clickSendMessageHandler} />
-					<ChatFooter active={active} groupActive={groupActive} currentTab={activeChatTab.name} displayName={displayName} clickSendMessageHandler={clickSendMessageHandler} />
-				</> : null
+			{
+				chatNotFound ? <PageNotFound /> :
+					permissionDenied ? <PermissionDenied />
+						: currentChatPreview ? <>
+							<ChatHeader />
+							<ChatMessages showStartNewConversation={showStartNewConversation} retrievingChat={retrievingChat} messages={messages} chatId={chatId} clickSendMessageHandler={clickSendMessageHandler} />
+							<ChatFooter active={active} groupActive={groupActive} currentTab={activeChatTab.name} displayName={displayName} clickSendMessageHandler={clickSendMessageHandler} />
+						</>
+							: null
 			}
 		</div>
 	);
