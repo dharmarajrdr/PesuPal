@@ -7,7 +7,6 @@ import com.pesupal.server.dto.response.RecentChatDto;
 import com.pesupal.server.dto.response.RecentChatPagedDto;
 import com.pesupal.server.dto.response.group.GroupDto;
 import com.pesupal.server.enums.Role;
-import com.pesupal.server.enums.Visibility;
 import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.exceptions.PermissionDeniedException;
@@ -20,6 +19,7 @@ import com.pesupal.server.model.group.GroupChatPinned;
 import com.pesupal.server.model.org.Org;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.model.user.User;
+import com.pesupal.server.projections.RecentGroupChatProjection;
 import com.pesupal.server.repository.GroupChatMemberRepository;
 import com.pesupal.server.repository.GroupRepository;
 import com.pesupal.server.service.interfaces.OrgMemberService;
@@ -33,8 +33,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -90,8 +88,9 @@ public class GroupServiceImpl extends CurrentValueRetriever implements GroupServ
      * @return
      */
     @Override
-    public Group getGroupById(String groupId) {
-        return null;
+    public Group getGroupByPublicId(String groupId) {
+
+        return groupRepository.findByPublicId(groupId).orElseThrow(() -> new DataNotFoundException("Group not found."));
     }
 
     /**
@@ -106,7 +105,7 @@ public class GroupServiceImpl extends CurrentValueRetriever implements GroupServ
         Long userId = orgMember.getId();
 
         GroupChatMember groupChatMember = groupChatMemberService.getGroupMemberByGroupIdAndUserId(groupId, userId);
-        Group group = getGroupById(groupId);
+        Group group = getGroupByPublicId(groupId);
 
 
         Role role = groupChatMember.getRole();
@@ -145,30 +144,20 @@ public class GroupServiceImpl extends CurrentValueRetriever implements GroupServ
 
         orgMemberService.validateUserIsOrgMember(user, org);
 
-        List<Object[]> rows = groupRepository.findRecentGroupChatsPaged(userId, orgId, size, offset);
+        List<RecentGroupChatProjection> rows = groupRepository.findRecentGroupChatsPaged(userId, orgId, size, offset);
 
-        List<RecentChatDto> chats = rows.stream().map(row -> {
-
-            Long groupId = (Long) row[0];
-            String groupName = (String) row[1];
-            String visibility = (String) row[2];
-            String displayPicture = (String) row[3];
-            String sender = (String) row[4];
-            String content = (String) row[5];
-            Boolean includedMedia = (Boolean) row[6];
-            LocalDateTime createdAt = ((Timestamp) row[7]).toLocalDateTime();
-
+        List<RecentChatDto> chats = rows.stream().map(proj -> {
             LastMessageDto lastMessage = new LastMessageDto();
-            lastMessage.setSender(sender);
-            lastMessage.setMessage(content);
-            lastMessage.setMedia(includedMedia);
-            lastMessage.setCreatedAt(TimeFormatterUtil.formatShort(createdAt));
+            lastMessage.setSender(proj.getSenderName());
+            lastMessage.setMessage(proj.getContent());
+            lastMessage.setMedia(proj.getIncludedMedia());
+            lastMessage.setCreatedAt(TimeFormatterUtil.formatShort(proj.getCreatedAt()));
 
             RecentChatDto dto = new RecentChatDto();
-            dto.setChatId(Long.toString(groupId));
-            dto.setName(groupName);
-            dto.setImage(displayPicture);
-            dto.setVisibility(Visibility.valueOf(visibility));
+            dto.setChatId(String.valueOf(proj.getGroupId()));
+            dto.setName(proj.getGroupName());
+            dto.setImage(proj.getSenderDisplayPicture());
+            dto.setStatus(proj.getGroupVisibility());
             dto.setRecentMessage(lastMessage);
 
             return dto;
@@ -191,7 +180,7 @@ public class GroupServiceImpl extends CurrentValueRetriever implements GroupServ
         OrgMember orgMember = getCurrentOrgMember();
         Long orgId = orgMember.getOrg().getId();
         Long userId = orgMember.getId();
-        Group group = getGroupById(groupId);
+        Group group = getGroupByPublicId(groupId);
         if (!group.getOrg().getId().equals(orgId)) {
             throw new DataNotFoundException("Group with ID " + groupId + " does not exist");
         }
@@ -206,7 +195,7 @@ public class GroupServiceImpl extends CurrentValueRetriever implements GroupServ
         chatPreviewDto.setDisplayName(group.getName());
         chatPreviewDto.setDisplayPicture(group.getDisplayPicture());
         chatPreviewDto.setParticipantsCount(group.getMembers().size());
-        Optional<GroupChatPinned> pinnedGroupChat = groupchatPinnedService.getPinnedGroupByPinnedByAndGroup(orgMember.getUser(), group);
+        Optional<GroupChatPinned> pinnedGroupChat = groupchatPinnedService.getPinnedGroupByPinnedByAndGroup(orgMember, group);
         if (pinnedGroupChat.isPresent()) {
             chatPreviewDto.setPinnedId(pinnedGroupChat.get().getId());
         }
