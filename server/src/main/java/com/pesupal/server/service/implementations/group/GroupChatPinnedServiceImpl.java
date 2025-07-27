@@ -8,9 +8,7 @@ import com.pesupal.server.helpers.CurrentValueRetriever;
 import com.pesupal.server.model.group.Group;
 import com.pesupal.server.model.group.GroupChatPinned;
 import com.pesupal.server.model.user.OrgMember;
-import com.pesupal.server.repository.GroupChatMemberRepository;
 import com.pesupal.server.repository.GroupChatPinnedRepository;
-import com.pesupal.server.service.interfaces.OrgMemberService;
 import com.pesupal.server.service.interfaces.group.GroupChatPinnedService;
 import com.pesupal.server.service.interfaces.group.GroupService;
 import org.springframework.context.annotation.Lazy;
@@ -23,15 +21,11 @@ import java.util.Optional;
 public class GroupChatPinnedServiceImpl extends CurrentValueRetriever implements GroupChatPinnedService {
 
     private final GroupService groupService;
-    private final OrgMemberService orgMemberService;
     private final GroupChatPinnedRepository groupChatPinnedRepository;
-    private final GroupChatMemberRepository groupChatMemberRepository;
 
-    public GroupChatPinnedServiceImpl(@Lazy GroupService groupService, OrgMemberService orgMemberService, GroupChatPinnedRepository groupChatPinnedRepository, GroupChatMemberRepository groupChatMemberRepository) {
+    public GroupChatPinnedServiceImpl(@Lazy GroupService groupService, GroupChatPinnedRepository groupChatPinnedRepository) {
         this.groupService = groupService;
-        this.orgMemberService = orgMemberService;
         this.groupChatPinnedRepository = groupChatPinnedRepository;
-        this.groupChatMemberRepository = groupChatMemberRepository;
     }
 
     /**
@@ -98,7 +92,6 @@ public class GroupChatPinnedServiceImpl extends CurrentValueRetriever implements
 
         OrgMember pinnedBy = getCurrentOrgMember();
         Long userId = pinnedBy.getId();
-        Long orgId = pinnedBy.getOrg().getId();
 
         boolean alreadyPinned = isChatPinned(userId, createPinGroupChatMessageDto.getGroupId());
         if (alreadyPinned) {
@@ -119,10 +112,10 @@ public class GroupChatPinnedServiceImpl extends CurrentValueRetriever implements
      * Unpins a group chat message by its ID for the current user and organization.
      */
     @Override
-    public void unpinGroupChatMessage(String groupChatPublicId) {
+    public void unpinGroupChatMessage(Long id) {
 
         OrgMember pinnedBy = getCurrentOrgMember();
-        GroupChatPinned groupChatPinned = groupChatPinnedRepository.findByGroup_PublicIdAndPinnedBy(groupChatPublicId, pinnedBy).orElseThrow(() -> new DataNotFoundException("You have not pinned this group yet."));
+        GroupChatPinned groupChatPinned = groupChatPinnedRepository.findByIdAndPinnedBy(id, pinnedBy).orElseThrow(() -> new DataNotFoundException("You have not pinned this group yet."));
         groupChatPinnedRepository.delete(groupChatPinned);
     }
 }
