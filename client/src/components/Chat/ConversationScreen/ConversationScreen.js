@@ -15,6 +15,7 @@ import { setShowChatHeaderOptionsModal } from '../../../store/reducers/ShowChatH
 import { moveRecentChatToTop, updateOrAddRecentChat } from '../../../store/reducers/RecentChatsSlice';
 import utils from '../../../utils';
 import ChatFooter from './ChatFooter';
+import PageNotFound from '../../Auth/PageNotFound';
 
 const ConversationScreen = ({ activeTabName }) => {
 
@@ -27,6 +28,7 @@ const ConversationScreen = ({ activeTabName }) => {
 	const [page, setPage] = useState(0);
 	const [size, setSize] = useState(25);
 	const [permissionDenied, setPermissionDenied] = useState(false);
+	const [chatNotFound, setChatNotFound] = useState(false);
 	const [messages, setMessages] = useState([]);
 	const [retrievingChat, setRetrievingChat] = useState(true);
 	const [pivotMessageId, setPivotMessageId] = useState(null);
@@ -137,6 +139,7 @@ const ConversationScreen = ({ activeTabName }) => {
 		apiRequest(`${chatPreviewApi}/${chatId}`, "GET").then(({ data }) => {
 
 			setPermissionDenied(false);
+			setChatNotFound(false);
 			dispatch(setCurrentChatPreview(data));
 
 			apiRequest(`${retrieveConversationApi}/${chatId}?page=${page}&size=${size}${pivot ? `&pivot_message_id=${pivot}` : ''}`, "GET").then(({ data }) => {
@@ -159,6 +162,8 @@ const ConversationScreen = ({ activeTabName }) => {
 			setRetrievingChat(false);
 			if (statusCode == 403) {
 				setPermissionDenied(true);
+			} else if (statusCode == 404) {
+				setChatNotFound(true);
 			}
 		});
 
@@ -183,12 +188,15 @@ const ConversationScreen = ({ activeTabName }) => {
 
 	return (
 		<div id='ConversationScreen' className='FCSB'>
-			{permissionDenied ? <PermissionDenied />
-				: currentChatPreview ? <>
-					<ChatHeader />
-					<ChatMessages showStartNewConversation={showStartNewConversation} retrievingChat={retrievingChat} messages={messages} chatId={chatId} clickSendMessageHandler={clickSendMessageHandler} />
-					<ChatFooter active={active} groupActive={groupActive} currentTab={activeChatTab.name} displayName={displayName} clickSendMessageHandler={clickSendMessageHandler} />
-				</> : null
+			{
+				chatNotFound ? <PageNotFound /> :
+					permissionDenied ? <PermissionDenied />
+						: currentChatPreview ? <>
+							<ChatHeader />
+							<ChatMessages showStartNewConversation={showStartNewConversation} retrievingChat={retrievingChat} messages={messages} chatId={chatId} clickSendMessageHandler={clickSendMessageHandler} />
+							<ChatFooter active={active} groupActive={groupActive} currentTab={activeChatTab.name} displayName={displayName} clickSendMessageHandler={clickSendMessageHandler} />
+						</>
+							: null
 			}
 		</div>
 	);
