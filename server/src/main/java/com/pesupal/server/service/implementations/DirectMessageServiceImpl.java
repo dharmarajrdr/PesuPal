@@ -118,6 +118,7 @@ public class DirectMessageServiceImpl extends CurrentValueRetriever implements D
     public List<MessageDto> getDirectMessagesBetweenUsers(GetConversationBetweenUsers getConversationBetweenUsers) {
 
         OrgMember orgMember = getCurrentOrgMember();
+        Long orgId = orgMember.getOrg().getId();
         DirectMessageChat directMessageChat = directMessageChatService.getDirectMessageByPublicId(getConversationBetweenUsers.getChatId());
         if (!isUserPatOfThisChat(directMessageChat, orgMember.getId())) {
             throw new PermissionDeniedException("You don't have permission to read this chat");
@@ -132,7 +133,7 @@ public class DirectMessageServiceImpl extends CurrentValueRetriever implements D
             messages = directMessageRepository.findAllByDirectMessageChatPublicId(getConversationBetweenUsers.getChatId(), pageable);
         }
         Map<Long, UserPreviewDto> memo = new HashMap<>();
-        return messages.stream().map(dm -> toMessageDto(dm, orgMember.getOrg().getId(), memo)).sorted(Comparator.comparing(MessageDto::getCreatedAt)).toList();
+        return messages.stream().map(dm -> toMessageDto(dm, orgId, memo)).sorted(Comparator.comparing(MessageDto::getCreatedAt)).toList();
     }
 
     /**
