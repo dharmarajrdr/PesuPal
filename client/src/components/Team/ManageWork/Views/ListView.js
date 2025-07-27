@@ -47,7 +47,7 @@ const ListviewBody = ({ header, data, setShowProfile }) => {
                     {header.map(({ title, type, width }, index) => {
                         const value = item[title.toLowerCase()];
                         if (type == 'object') {
-                            const { image, name } = value, icon_info = {};
+                            const { image, name } = value || {}, icon_info = {};
                             if (title == 'Tag') {
                                 Object.assign(icon_info, utils.getIconForTagWithColor(name) || {});
                             } else if (title == 'Priority') {

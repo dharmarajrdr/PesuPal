@@ -1,0 +1,39 @@
+.manage-people-container {
+    padding: 20px;
+    background: white;
+    overflow: scroll;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+#manage-people-header input {
+    width: 50%;
+}
+
+.header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.add-btn {
+    background: var(--primary-color);
+    color: white;
+    padding: 10px 16px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+}
+
+.search-input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: var(--overlay-bg-color);
+    transition-duration: 0.25s;
+}
