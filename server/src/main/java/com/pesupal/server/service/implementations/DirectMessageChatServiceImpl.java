@@ -44,6 +44,10 @@ public class DirectMessageChatServiceImpl implements DirectMessageChatService {
             throw new ActionProhibitedException("Action prohibited. Both of the users are not from same org.");
         }
 
+        if (user1.getId().equals(user2.getId())) {
+            return null;    // Same user, so no chat id
+        }
+
         Optional<DirectMessageChat> optionalDirectMessageChat = directMessageChatRepository.findByParticipants(user1.getPublicId(), user2.getPublicId());
         if (optionalDirectMessageChat.isPresent()) {
             return optionalDirectMessageChat.get();
