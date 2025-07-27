@@ -56,7 +56,7 @@ const Profile = ({ userId, setShowProfile }) => {
             setError("No user ID provided");
             return;
         }
-        apiRequest("/api/v1/people/" + userId, "GET").then(({ data }) => {
+        apiRequest("/api/v1/profile/" + userId, "GET").then(({ data }) => {
             setLoading(false);
             setProfile(data);
         }).catch(({ message }) => {
