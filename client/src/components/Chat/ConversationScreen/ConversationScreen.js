@@ -132,7 +132,7 @@ const ConversationScreen = ({ activeTabName }) => {
 		}
 	};
 
-	const getChatPreview = (chatId) => {
+	const getChatPreview = (chatId, successCallback) => {
 
 		const isFirstLoad = true; // since chatId changed
 		const pivot = isFirstLoad ? null : pivotMessageId;
@@ -155,18 +155,18 @@ const ConversationScreen = ({ activeTabName }) => {
 					setPivotMessageId(data.at(-1)?.id);
 				}
 
+				successCallback({ chatId });	// read all messages
+
 			}).catch(({ message }) => {
 				console.error(message);
 				setRetrievingChat(false);
 			});
 
 		}).catch(({ message, statusCode }) => {
-
 			setRetrievingChat(false);
-			if (statusCode === 403) {
+			if (statusCode == 403) {
 				setPermissionDenied(true);
 			}
-
 		});
 
 	};
@@ -182,12 +182,11 @@ const ConversationScreen = ({ activeTabName }) => {
 		dispatch(clearCurrentChatPreview());
 		setPivotMessageId(null); // reset state — this takes effect after render
 		setRetrievingChat(true);
-		getChatPreview(chatId);
-		readAllMessages({ chatId });
+		getChatPreview(chatId, readAllMessages);
 
 	}, [chatId]);
 
-	return currentChatPreview ? (
+	return (
 		<div id='ConversationScreen' className='FCSB'>
 			{permissionDenied ? <PermissionDenied /> : <>
 				<ChatHeader />
@@ -195,7 +194,7 @@ const ConversationScreen = ({ activeTabName }) => {
 				{active ? <ChatInput clickSendMessageHandler={clickSendMessageHandler} /> : <ChatInputUserArchived displayName={displayName} />}
 			</>}
 		</div>
-	) : null;
+	);
 }
 
 export default ConversationScreen

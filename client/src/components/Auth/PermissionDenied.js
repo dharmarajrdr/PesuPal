@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import './PageNotFound.css';
 
 const PermissionDenied = () => {
+
     const navigate = useNavigate();
 
     return (
