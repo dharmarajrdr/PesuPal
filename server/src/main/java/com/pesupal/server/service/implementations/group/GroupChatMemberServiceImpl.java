@@ -181,20 +181,4 @@ public class GroupChatMemberServiceImpl extends CurrentValueRetriever implements
 
     }
 
-    /**
-     * Checks if a user is a member of a group.
-     *
-     * @param groupId
-     * @return
-     */
-    @Override
-    public void checkUserPartOfGroup(String groupId) {
-
-        OrgMember orgMember = getCurrentOrgMember();
-        GroupChatMember groupChatMember = getGroupMemberByGroupIdAndUserId(groupId, orgMember.getId());
-        if (!groupChatMember.isActive()) {
-            throw new PermissionDeniedException("You are no longer a member of this group.");
-        }
-    }
-
 }
