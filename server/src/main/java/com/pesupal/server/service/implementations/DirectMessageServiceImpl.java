@@ -18,6 +18,7 @@ import com.pesupal.server.model.chat.PinnedDirectMessage;
 import com.pesupal.server.model.org.Org;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.model.user.User;
+import com.pesupal.server.projections.RecentChatsProjection;
 import com.pesupal.server.repository.DirectMessageMediaFileRepository;
 import com.pesupal.server.repository.DirectMessageRepository;
 import com.pesupal.server.security.JwtUtil;
@@ -34,8 +35,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
@@ -195,31 +194,21 @@ public class DirectMessageServiceImpl extends CurrentValueRetriever implements D
 
         orgMemberService.validateUserIsOrgMember(user, org);
 
-        List<Object[]> rows = directMessageRepository.findRecentChatsPaged(userId, orgId, size, offset);
+        List<RecentChatsProjection> rows = directMessageRepository.findRecentChatsPaged(userId, orgId, size, offset);
 
-        List<RecentChatDto> chats = rows.stream().map(row -> {
-            String displayPicture = (String) row[0];
-            String userName = (String) row[1];
-            String userStatus = (String) row[2];
-            String sender = String.valueOf(row[3]);
-            String content = (String) row[4];
-            Boolean includedMedia = (Boolean) row[5];
-            LocalDateTime createdAt = ((Timestamp) row[6]).toLocalDateTime();
-            ReadReceipt readReceipt = ReadReceipt.valueOf((String) row[7]);
-            String chatId = (String) row[8];
-
+        List<RecentChatDto> chats = rows.stream().map(projection -> {
             LastMessageDto lastMessage = new LastMessageDto();
-            lastMessage.setSender(sender);
-            lastMessage.setMessage(content);
-            lastMessage.setMedia(includedMedia);
-            lastMessage.setCreatedAt(TimeFormatterUtil.formatShort(createdAt));
-            lastMessage.setReadReceipt(readReceipt);
+            lastMessage.setSender(projection.getSenderName());
+            lastMessage.setMessage(projection.getContent());
+            lastMessage.setMedia(projection.getIncludedMedia());
+            lastMessage.setCreatedAt(TimeFormatterUtil.formatShort(projection.getCreatedAt()));
+            lastMessage.setReadReceipt(ReadReceipt.valueOf(projection.getReadReceipt()));
 
             RecentChatDto dto = new RecentChatDto();
-            dto.setChatId(chatId);
-            dto.setName(userName);
-            dto.setImage(displayPicture);
-            dto.setStatus(userStatus);
+            dto.setChatId(projection.getChatPublicId());
+            dto.setName(projection.getDisplayName());
+            dto.setImage(projection.getDisplayPicture());
+            dto.setStatus(projection.getUserStatus());
             dto.setRecentMessage(lastMessage);
 
             return dto;

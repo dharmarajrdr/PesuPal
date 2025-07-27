@@ -2,6 +2,7 @@ package com.pesupal.server.repository;
 
 import com.pesupal.server.enums.ReadReceipt;
 import com.pesupal.server.model.chat.DirectMessage;
+import com.pesupal.server.projections.RecentChatsProjection;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -26,7 +27,7 @@ public interface DirectMessageRepository extends JpaRepository<DirectMessage, Lo
     void markMessagesAsRead(@Param("chatId") String chatId, @Param("receiverId") Long receiverId, @Param("readReceipt") ReadReceipt readReceipt);
 
     @Query(value = """
-             SELECT
+            SELECT
                 om.display_picture AS displayPicture,
                 om.display_name AS displayName,
                 om.status AS userStatus,
@@ -40,35 +41,37 @@ public interface DirectMessageRepository extends JpaRepository<DirectMessage, Lo
                 dm.contains_media AS includedMedia,
                 dm.created_at AS createdAt,
                 dm.read_receipt AS readReceipt,
-                dm.chat_id AS chatId
+                dmc.public_id AS chatPublicId
             
             FROM direct_message dm
             
-            -- Identify the "other" participant in the chat
+            JOIN direct_message_chat dmc ON dmc.id = dm.direct_message_chat_id
+            
             JOIN org_member om ON om.user_id = CASE
                 WHEN dm.sender_id = :userId THEN dm.receiver_id
                 ELSE dm.sender_id
             END AND om.org_id = :orgId
             
-            -- Identify the "sender" name (used in CASE above)
             JOIN org_member sender_member ON sender_member.user_id = dm.sender_id AND sender_member.org_id = :orgId
             
-            -- Get only the latest message from each chat
             JOIN (
-                SELECT chat_id, MAX(created_at) AS latest
+                SELECT direct_message_chat_id, MAX(created_at) AS latest
                 FROM direct_message
                 WHERE org_id = :orgId
                   AND (sender_id = :userId OR receiver_id = :userId)
-                GROUP BY chat_id
-            ) latest_msg ON dm.chat_id = latest_msg.chat_id AND dm.created_at = latest_msg.latest
+                GROUP BY direct_message_chat_id
+            ) latest_msg ON dm.direct_message_chat_id = latest_msg.direct_message_chat_id AND dm.created_at = latest_msg.latest
             
             WHERE dm.org_id = :orgId
               AND (dm.sender_id = :userId OR dm.receiver_id = :userId)
             
             ORDER BY dm.created_at DESC
-            LIMIT :limit OFFSET :offset;
+            LIMIT :limit OFFSET :offset
             """, nativeQuery = true)
-    List<Object[]> findRecentChatsPaged(@Param("userId") Long userId, @Param("orgId") Long orgId, @Param("limit") int limit, @Param("offset") int offset);
+    List<RecentChatsProjection> findRecentChatsPaged(@Param("userId") Long userId,
+                                                     @Param("orgId") Long orgId,
+                                                     @Param("limit") int limit,
+                                                     @Param("offset") int offset);
 
 
     @Query(value = """
