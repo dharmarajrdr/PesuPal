@@ -56,18 +56,17 @@ const ConversationScreen = ({ activeTabName }) => {
 			}
 		};
 
-		if (!isChatOpen) {  // If the chat is not open, then show the number of unread messages
-
-			console.log(`So, showing the number of unread messages for chatId: ${msg.chatId}`);
-
-			Object.assign(recentMessage, { number_of_unread_messages: 1 });
-		}
-
 		if (isChatOpen) {	// User is waiting for a response
 
 			console.log(`Since user is in the chat, rendering the message in the chat`);
 
 			setMessages((prev) => [...prev, msg]);
+
+		} else {	// If the chat is not open, then show the number of unread messages
+
+			console.log(`So, showing the number of unread messages for chatId: ${msg.chatId}`);
+
+			Object.assign(recentMessage, { number_of_unread_messages: 1 });
 		}
 
 		dispatch(updateOrAddRecentChat({ 'chatId': msg.chatId, recentMessage }));
@@ -90,8 +89,8 @@ const ConversationScreen = ({ activeTabName }) => {
 
 			updateRecentChat(msg);
 		},
-		onError: (error) => {
-			dispatch(showPopup({ message: error, type: 'error' }));
+		onError: ({ message }) => {
+			dispatch(showPopup({ message, type: 'error' }));
 		},
 		onMessageDelivery: (msg) => {
 
@@ -116,11 +115,10 @@ const ConversationScreen = ({ activeTabName }) => {
 	const clickSendMessageHandler = ({ message }) => {
 
 		const payload = {
-			message
+			message, chatId
 		};
 
 		if (activeChatTab.name === 'directMessage') {
-			Object.assign(payload, { chatId });
 			DirectMessage.send(payload);
 		} else if (activeChatTab.name === 'groupMessage') {
 			GroupMessage.send(payload);
