@@ -239,8 +239,8 @@ public class DirectMessageServiceImpl extends CurrentValueRetriever implements D
     @Transactional
     public MessageDto save(ChatMessageDto chatMessageDto) {
 
-        Long orgId = chatMessageDto.getOrgId();
-        Org org = orgService.getOrgById(orgId);
+        String orgId = chatMessageDto.getOrgId();
+        Org org = orgService.getOrgByPublicId(orgId);
 
         String token = (String) InputValidator.notNull(chatMessageDto.getToken(), "token");
 
@@ -269,7 +269,7 @@ public class DirectMessageServiceImpl extends CurrentValueRetriever implements D
             directMessageMediaFile.setDirectMessage(directMessage);
             directMessageMediaFileService.save(directMessageMediaFile);
         }
-        return toMessageDto(directMessage, orgId, new HashMap<>());
+        return toMessageDto(directMessage, org.getId(), new HashMap<>());
     }
 
     /**

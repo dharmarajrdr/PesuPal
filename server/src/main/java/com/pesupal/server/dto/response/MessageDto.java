@@ -18,7 +18,7 @@ public class MessageDto {
 
     private Long id;
 
-    private Long orgId;
+    private String orgId;
 
     private LocalDateTime createdAt;
 
@@ -47,7 +47,7 @@ public class MessageDto {
         if (!directMessage.isDeleted()) {
             responseDto.setMessage(directMessage.getMessage()); // Only set message if not deleted
         }
-        responseDto.setOrgId(directMessage.getOrg().getId());
+        responseDto.setOrgId(directMessage.getOrg().getPublicId());
         responseDto.setCreatedAt(directMessage.getCreatedAt());
         DirectMessageChat directMessageChat = directMessage.getDirectMessageChat();
         responseDto.setChatId(directMessageChat.getPublicId());
@@ -65,7 +65,7 @@ public class MessageDto {
         if (!groupChatMessage.isDeleted()) {
             responseDto.setMessage(groupChatMessage.getMessage()); // Only set message if not deleted
         }
-        responseDto.setOrgId(groupChatMessage.getGroup().getOrg().getId());
+        responseDto.setOrgId(groupChatMessage.getGroup().getOrg().getPublicId());
         responseDto.setCreatedAt(groupChatMessage.getCreatedAt());
         responseDto.setChatId(Long.toString(groupChatMessage.getGroup().getId()));
         responseDto.setDeleted(groupChatMessage.isDeleted());
