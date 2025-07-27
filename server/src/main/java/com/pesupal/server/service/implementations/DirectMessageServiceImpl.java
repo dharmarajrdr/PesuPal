@@ -256,6 +256,8 @@ public class DirectMessageServiceImpl extends CurrentValueRetriever implements D
         OrgMember sender = orgMemberService.getOrgMemberByPublicId(senderOrgMemberId);
         OrgMember receiver = directMessageChat.getAnotherUser(sender);
 
+        chatMessageDto.setSenderId(sender.getPublicId());
+
         boolean containsMedia = chatMessageDto.getMedia() != null;
 
         DirectMessage directMessage = new DirectMessage();

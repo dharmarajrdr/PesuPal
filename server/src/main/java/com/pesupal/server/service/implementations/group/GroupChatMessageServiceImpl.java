@@ -254,6 +254,8 @@ public class GroupChatMessageServiceImpl implements GroupChatMessageService {
         OrgMember sender = orgMemberService.getOrgMemberByPublicId(senderOrgMemberId);
         Org org = sender.getOrg();
 
+        chatMessageDto.setSenderId(sender.getPublicId());
+
         String groupId = chatMessageDto.getChatId();
 
         GroupChatMember groupChatMember = groupChatMemberService.getGroupMemberByGroupIdAndUserId(groupId, sender.getId());
