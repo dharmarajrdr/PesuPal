@@ -14,7 +14,7 @@ public interface DirectMessageService extends ChatService {
 
     List<MessageDto> getDirectMessagesBetweenUsers(GetConversationBetweenUsers getConversationBetweenUsers, Long userId, Long orgId);
 
-    void markAllMessagesAsRead(String chatId, Long userId);
+    void markAllMessagesAsRead(String chatId);
 
     DirectMessage getDirectMessageById(Long messageId);
 

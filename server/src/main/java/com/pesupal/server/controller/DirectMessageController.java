@@ -4,8 +4,6 @@ import com.pesupal.server.dto.request.AddReactionDto;
 import com.pesupal.server.dto.request.ChatMessageDto;
 import com.pesupal.server.dto.request.GetConversationBetweenUsers;
 import com.pesupal.server.dto.response.*;
-import com.pesupal.server.exceptions.PermissionDeniedException;
-import com.pesupal.server.helpers.Chat;
 import com.pesupal.server.helpers.CurrentValueRetriever;
 import com.pesupal.server.service.interfaces.DirectMessageReactionService;
 import com.pesupal.server.service.interfaces.DirectMessageService;
@@ -47,14 +45,10 @@ public class DirectMessageController extends CurrentValueRetriever {
         return ResponseEntity.ok(new ApiResponseDto("Direct message sent successfully"));
     }
 
-    @PutMapping("/{chatId}/read_all")
+    @PutMapping("/{chatId}/read-all")
     public ResponseEntity<ApiResponseDto> markAllMessagesAsRead(@PathVariable String chatId) {
 
-        Long userId = getCurrentUserId();
-        if (!Chat.isUserInChat(chatId, userId)) {
-            throw new PermissionDeniedException("You do not have permission to access this chat.");
-        }
-        directMessageService.markAllMessagesAsRead(chatId, userId);
+        directMessageService.markAllMessagesAsRead(chatId);
         return ResponseEntity.ok(new ApiResponseDto("All messages marked as read successfully"));
     }
 

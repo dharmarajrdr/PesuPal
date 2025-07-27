@@ -126,10 +126,16 @@ public class DirectMessageServiceImpl extends CurrentValueRetriever implements D
      * Marks all messages in a chat as read for a specific user.
      *
      * @param chatId
-     * @param userId
      */
     @Override
-    public void markAllMessagesAsRead(String chatId, Long userId) {
+    public void markAllMessagesAsRead(String chatId) {
+
+        OrgMember orgMember = getCurrentOrgMember();
+        Long userId = orgMember.getId();
+        DirectMessageChat directMessageChat = directMessageChatService.getDirectMessageByPublicId(chatId);
+        if (!(directMessageChat.getUser1().getId().equals(userId) || directMessageChat.getUser2().getId().equals(userId))) {
+            throw new PermissionDeniedException("You don't have permission to read this chat");
+        }
 
         directMessageRepository.markMessagesAsRead(chatId, userId, ReadReceipt.READ);
     }

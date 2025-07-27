@@ -117,7 +117,7 @@ const ConversationScreen = ({ activeTabName }) => {
 
 		const { readAllMessagesApi } = activeChatTab || {};
 
-		apiRequest(`${readAllMessagesApi}/${chatId}/read_all`, "PUT").then(() => {
+		apiRequest(`${readAllMessagesApi}/${chatId}/read-all`, "PUT").then(() => {
 
 		}).catch(({ message }) => {
 			dispatch(showPopup({ message, type: 'error' }));
