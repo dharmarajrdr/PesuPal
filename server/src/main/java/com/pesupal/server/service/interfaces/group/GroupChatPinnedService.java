@@ -4,14 +4,14 @@ import com.pesupal.server.dto.request.PinnedChatDto;
 import com.pesupal.server.dto.request.group.CreatePinGroupChatMessageDto;
 import com.pesupal.server.model.group.Group;
 import com.pesupal.server.model.group.GroupChatPinned;
-import com.pesupal.server.model.user.User;
+import com.pesupal.server.model.user.OrgMember;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface GroupChatPinnedService {
 
-    Optional<GroupChatPinned> getPinnedGroupByPinnedByAndGroup(User pinnedBy, Group group);
+    Optional<GroupChatPinned> getPinnedGroupByPinnedByAndGroup(OrgMember pinnedBy, Group group);
 
     List<PinnedChatDto> getAllPinnedGroupChatMessages();
 
