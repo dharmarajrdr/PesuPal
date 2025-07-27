@@ -17,9 +17,9 @@ import java.util.List;
 @Repository
 public interface DirectMessageRepository extends JpaRepository<DirectMessage, Long> {
 
-    Page<DirectMessage> findAllByDirectMessageChat(String directMessageChat, Pageable pageable);
+    Page<DirectMessage> findAllByDirectMessageChatPublicId(String directMessageChat, Pageable pageable);
 
-    Page<DirectMessage> findAllByDirectMessageChatAndIdLessThan(String directMessageChat, Long pivotMessageId, Pageable pageable);
+    Page<DirectMessage> findAllByDirectMessageChatPublicIdAndIdLessThan(String directMessageChat, Long pivotMessageId, Pageable pageable);
 
     @Modifying
     @Transactional

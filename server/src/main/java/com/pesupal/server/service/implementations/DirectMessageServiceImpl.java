@@ -7,7 +7,6 @@ import com.pesupal.server.enums.ReadReceipt;
 import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.exceptions.PermissionDeniedException;
-import com.pesupal.server.helpers.Chat;
 import com.pesupal.server.helpers.CurrentValueRetriever;
 import com.pesupal.server.helpers.InputValidator;
 import com.pesupal.server.helpers.TimeFormatterUtil;
@@ -97,28 +96,43 @@ public class DirectMessageServiceImpl extends CurrentValueRetriever implements D
     }
 
     /**
+     * Check whether the user is part of this org
+     *
+     * @param directMessageChat
+     * @param userId
+     * @return
+     */
+    @Override
+    public boolean isUserPatOfThisChat(DirectMessageChat directMessageChat, Long userId) {
+
+        return (directMessageChat.getUser1().getId().equals(userId) || directMessageChat.getUser2().getId().equals(userId));
+    }
+
+    /**
      * Retrieves direct messages between two users by their IDs.
      *
      * @param getConversationBetweenUsers
      * @return List of MessageDto
      */
     @Override
-    public List<MessageDto> getDirectMessagesBetweenUsers(GetConversationBetweenUsers getConversationBetweenUsers, Long userId, Long orgId) {
+    public List<MessageDto> getDirectMessagesBetweenUsers(GetConversationBetweenUsers getConversationBetweenUsers) {
 
-        if (!Chat.isUserInChat(getConversationBetweenUsers.getChatId(), userId)) {
-            throw new PermissionDeniedException("You do not have permission to access this chat.");
+        OrgMember orgMember = getCurrentOrgMember();
+        DirectMessageChat directMessageChat = directMessageChatService.getDirectMessageByPublicId(getConversationBetweenUsers.getChatId());
+        if (!isUserPatOfThisChat(directMessageChat, orgMember.getId())) {
+            throw new PermissionDeniedException("You don't have permission to read this chat");
         }
 
         Pageable pageable = PageRequest.of(getConversationBetweenUsers.getPage(), getConversationBetweenUsers.getSize(), Sort.by("createdAt").descending());
         Page<DirectMessage> messages = null;
         Long pivotMessageId = getConversationBetweenUsers.getPivotMessageId();
         if (pivotMessageId != null) {
-            messages = directMessageRepository.findAllByDirectMessageChatAndIdLessThan(getConversationBetweenUsers.getChatId(), getConversationBetweenUsers.getPivotMessageId(), pageable);
+            messages = directMessageRepository.findAllByDirectMessageChatPublicIdAndIdLessThan(getConversationBetweenUsers.getChatId(), getConversationBetweenUsers.getPivotMessageId(), pageable);
         } else {
-            messages = directMessageRepository.findAllByDirectMessageChat(getConversationBetweenUsers.getChatId(), pageable);
+            messages = directMessageRepository.findAllByDirectMessageChatPublicId(getConversationBetweenUsers.getChatId(), pageable);
         }
         Map<Long, UserPreviewDto> memo = new HashMap<>();
-        return messages.stream().map(dm -> toMessageDto(dm, orgId, memo)).sorted(Comparator.comparing(MessageDto::getCreatedAt)).toList();
+        return messages.stream().map(dm -> toMessageDto(dm, orgMember.getOrg().getId(), memo)).sorted(Comparator.comparing(MessageDto::getCreatedAt)).toList();
     }
 
     /**
@@ -132,7 +146,7 @@ public class DirectMessageServiceImpl extends CurrentValueRetriever implements D
         OrgMember orgMember = getCurrentOrgMember();
         Long userId = orgMember.getId();
         DirectMessageChat directMessageChat = directMessageChatService.getDirectMessageByPublicId(chatId);
-        if (!(directMessageChat.getUser1().getId().equals(userId) || directMessageChat.getUser2().getId().equals(userId))) {
+        if (!isUserPatOfThisChat(directMessageChat, userId)) {
             throw new PermissionDeniedException("You don't have permission to read this chat");
         }
 
