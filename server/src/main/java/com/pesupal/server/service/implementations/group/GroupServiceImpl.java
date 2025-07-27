@@ -191,12 +191,12 @@ public class GroupServiceImpl extends CurrentValueRetriever implements GroupServ
         }
 
         ChatPreviewDto chatPreviewDto = new ChatPreviewDto();
-        chatPreviewDto.setChatId(Long.toString(group.getId()));
+        chatPreviewDto.setChatId(groupId);
         chatPreviewDto.setActive(groupChatMember.isActive());
         chatPreviewDto.setDisplayName(group.getName());
         chatPreviewDto.setGroupActive(group.isActive());
         chatPreviewDto.setDisplayPicture(group.getDisplayPicture());
-        chatPreviewDto.setParticipantsCount(group.getMembers().size());
+        chatPreviewDto.setParticipantsCount(group.getMembers().stream().filter(GroupChatMember::isActive).toList().size());
         Optional<GroupChatPinned> pinnedGroupChat = groupchatPinnedService.getPinnedGroupByPinnedByAndGroup(orgMember, group);
         if (pinnedGroupChat.isPresent()) {
             chatPreviewDto.setPinnedId(pinnedGroupChat.get().getId());
