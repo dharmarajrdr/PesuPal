@@ -239,13 +239,13 @@ public class DirectMessageServiceImpl extends CurrentValueRetriever implements D
     @Transactional
     public MessageDto save(ChatMessageDto chatMessageDto) {
 
-        String orgId = chatMessageDto.getOrgId();
-        Org org = orgService.getOrgByPublicId(orgId);
-
         String token = (String) InputValidator.notNull(chatMessageDto.getToken(), "token");
 
         Claims claims = jwtUtil.extractAllClaims(token);
         String senderOrgMemberId = claims.get("orgMemberId").toString();
+
+        OrgMember orgMember = orgMemberService.getOrgMemberByPublicId(senderOrgMemberId);
+        Org org = orgMember.getOrg();
 
         DirectMessageChat directMessageChat = directMessageChatService.getDirectMessageByPublicId(chatMessageDto.getChatId());
 

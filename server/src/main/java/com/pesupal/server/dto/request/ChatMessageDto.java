@@ -10,9 +10,7 @@ import lombok.ToString;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ChatMessageDto {
 
-    private String orgId;
-
-    // Not trusted
+    // Not for receiving data, just to broadcast
     private String senderId;
 
     // Using token, the message will be stored in the database
