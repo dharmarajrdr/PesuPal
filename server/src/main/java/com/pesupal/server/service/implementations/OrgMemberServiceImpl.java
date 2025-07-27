@@ -95,20 +95,6 @@ public class OrgMemberServiceImpl implements OrgMemberService {
     }
 
     /**
-     * Retrieves basic information of an organization member by user ID and org ID.
-     *
-     * @param userId
-     * @param orgId
-     * @return
-     */
-    @Override
-    public UserBasicInfoDto getOrgMemberBasicInfoByUserIdAndOrgId(Long userId, Long orgId) {
-
-        OrgMember orgMember = getOrgMemberByUserIdAndOrgId(userId, orgId);
-        return UserBasicInfoDto.fromOrgMember(orgMember);
-    }
-
-    /**
      * Checks if the role has the privilege to add a member to the organization.
      *
      * @param org
@@ -331,10 +317,8 @@ public class OrgMemberServiceImpl implements OrgMemberService {
 
         return orgMemberRepository.findAllByOrgIdOrderByDisplayNameAsc(orgId).stream().map(orgMember -> {
             UserBasicInfoDto userBasicInfoDto = UserBasicInfoDto.fromOrgMember(orgMember);
-            if (!orgMember.getId().equals(currentOrgMember.getId())) {
-                DirectMessageChat directMessageChat = directMessageChatService.getOrCreateDirectMessageChat(currentOrgMember, orgMember);
-                userBasicInfoDto.setChatId(directMessageChat.getPublicId());
-            }
+            DirectMessageChat directMessageChat = directMessageChatService.getOrCreateDirectMessageChat(currentOrgMember, orgMember);
+            userBasicInfoDto.setChatId(directMessageChat.getPublicId());
             return userBasicInfoDto;
         }).toList();
     }
