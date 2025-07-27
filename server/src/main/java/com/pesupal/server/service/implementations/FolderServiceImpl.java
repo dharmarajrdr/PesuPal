@@ -8,6 +8,7 @@ import com.pesupal.server.enums.Workspace;
 import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.factory.WorkspaceFactory;
+import com.pesupal.server.helpers.CurrentValueRetriever;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.model.workdrive.Folder;
 import com.pesupal.server.repository.FolderRepository;
@@ -21,7 +22,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class FolderServiceImpl implements FolderService {
+public class FolderServiceImpl extends CurrentValueRetriever implements FolderService {
 
     private final OrgMemberService orgMemberService;
     private final FolderRepository folderRepository;
@@ -37,26 +38,24 @@ public class FolderServiceImpl implements FolderService {
      * Creates a new folder in the specified workspace.
      *
      * @param createFolderDto
-     * @param userId
-     * @param orgId
      * @return FolderDto
      */
     @Override
     @Transactional
-    public FolderDto createFolder(CreateFolderDto createFolderDto, Long userId, Long orgId) {
+    public FolderDto createFolder(CreateFolderDto createFolderDto) {
 
-        OrgMember orgMember = orgMemberService.getOrgMemberByUserIdAndOrgId(userId, orgId);
+        OrgMember orgMember = getCurrentOrgMember();
+        Long orgId = orgMember.getOrg().getId();
 
-        if (folderRepository.existsByNameAndSpaceAndParentFolderId(createFolderDto.getName(), createFolderDto.getSpace(), createFolderDto.getParentFolderId())) {
+        if (folderRepository.existsByNameAndSpaceAndParentFolder_PublicId(createFolderDto.getName(), createFolderDto.getSpace(), createFolderDto.getParentFolderId())) {
             throw new ActionProhibitedException("A folder with the name '" + createFolderDto.getName() + "' already exists.");
         }
 
         Folder folder = createFolderDto.toFolder();
-        folder.setOrg(orgMember.getOrg());
         folder.setSize(0L); // Initial size of folder
-        folder.setOwner(orgMember.getUser());
+        folder.setCreatedBy(orgMember);
         if (createFolderDto.getParentFolderId() != null) {
-            Folder parentFolder = getFolderByIdAndOrgId(createFolderDto.getParentFolderId(), orgId);
+            Folder parentFolder = getFolderByPublicId(createFolderDto.getParentFolderId());
             if (parentFolder != null && !parentFolder.getSpace().equals(createFolderDto.getSpace())) {
                 throw new IllegalArgumentException("Folder '" + parentFolder.getName() + "' does not belong to " + createFolderDto.getSpace().getValue() + " space.");
             }
@@ -85,30 +84,27 @@ public class FolderServiceImpl implements FolderService {
      * Retrieves a folder by its ID and organization ID.
      *
      * @param folderId
-     * @param orgId
      * @return Folder
      */
     @Override
-    public Folder getFolderByIdAndOrgId(Long folderId, Long orgId) {
+    public Folder getFolderByPublicId(String folderId) {
 
-        return folderRepository.findByIdAndOrgId(folderId, orgId).orElseThrow(() -> new DataNotFoundException("Folder with ID " + folderId + " not found in this org."));
+        return folderRepository.findByPublicId(folderId).orElseThrow(() -> new DataNotFoundException("Folder with ID " + folderId + " not found in this org."));
     }
 
     /**
      * Retrieves all folders under a specific parent folder for a user in an organization.
      *
      * @param folderId
-     * @param userId
-     * @param orgId
      * @return List of FolderDto
      */
     @Override
-    public List<FileOrFolderDto> getAllFolders(Long folderId, Long userId, Long orgId) {
+    public List<FileOrFolderDto> getAllFolders(String folderId) {
 
-        Folder parentFolder = getFolderByIdAndOrgId(folderId, orgId);
+        OrgMember orgMember = getCurrentOrgMember();
+        Folder parentFolder = getFolderByPublicId(folderId);
         Workspace workspace = parentFolder.getSpace();
         WorkdriveSpace workdriveSpace = workspaceFactory.getFactory(workspace);
-        OrgMember orgMember = orgMemberService.getOrgMemberByUserIdAndOrgId(userId, orgId);
         return workdriveSpace.findAllFilesAndFoldersByOrgMemberAndFolder(orgMember, parentFolder);
     }
 
@@ -116,15 +112,13 @@ public class FolderServiceImpl implements FolderService {
      * Retrieves all folders in the specified workspace for a user.
      *
      * @param space
-     * @param userId
-     * @param orgId
      * @return List of FolderDto
      */
     @Override
-    public List<FileOrFolderDto> getAllFolders(Workspace space, Long userId, Long orgId) {
+    public List<FileOrFolderDto> getAllFolders(Workspace space) {
 
+        OrgMember orgMember = getCurrentOrgMember();
         WorkdriveSpace workdriveSpace = workspaceFactory.getFactory(space);
-        OrgMember orgMember = orgMemberService.getOrgMemberByUserIdAndOrgId(userId, orgId);
         return workdriveSpace.findAllFilesAndFoldersByOrgMemberAndFolder(orgMember, null);  // `null` indicates root folder
     }
 
@@ -132,16 +126,14 @@ public class FolderServiceImpl implements FolderService {
      * Retrieves a folder by its ID in the specified workspace for a user.
      *
      * @param folderId
-     * @param userId
-     * @param orgId
      */
     @Override
-    public void deleteFolder(Long folderId, Long userId, Long orgId) {
+    public void deleteFolder(Long folderId) {
 
-        OrgMember orgMember = orgMemberService.getOrgMemberByUserIdAndOrgId(userId, orgId);
+        OrgMember orgMember = getCurrentOrgMember();
         Folder folder = getFolderById(folderId);
 
-        if (!folder.getOwner().getId().equals(orgMember.getUser().getId())) {
+        if (!folder.getCreatedBy().getId().equals(orgMember.getId())) {
             throw new ActionProhibitedException("You do not have permission to delete this folder.");
         }
 

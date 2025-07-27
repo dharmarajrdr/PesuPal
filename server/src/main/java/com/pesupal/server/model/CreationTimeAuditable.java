@@ -1,6 +1,7 @@
 package com.pesupal.server.model;
 
 import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.PrePersist;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -11,6 +12,7 @@ public class CreationTimeAuditable extends BaseModel {
 
     private LocalDateTime createdAt;
 
+    @PrePersist
     protected void setCreationTime() {
         this.createdAt = LocalDateTime.now();
     }

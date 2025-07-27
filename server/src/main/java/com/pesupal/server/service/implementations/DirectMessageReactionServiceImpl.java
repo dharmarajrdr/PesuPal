@@ -6,17 +6,14 @@ import com.pesupal.server.enums.Reaction;
 import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.exceptions.PermissionDeniedException;
+import com.pesupal.server.helpers.CurrentValueRetriever;
 import com.pesupal.server.model.chat.DirectMessage;
 import com.pesupal.server.model.chat.DirectMessageReaction;
-import com.pesupal.server.model.org.Org;
 import com.pesupal.server.model.user.OrgMember;
-import com.pesupal.server.model.user.User;
 import com.pesupal.server.projections.ReactionCountProjection;
 import com.pesupal.server.repository.DirectMessageReactionRepository;
 import com.pesupal.server.service.interfaces.DirectMessageReactionService;
 import com.pesupal.server.service.interfaces.DirectMessageService;
-import com.pesupal.server.service.interfaces.OrgMemberService;
-import com.pesupal.server.service.interfaces.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -27,10 +24,8 @@ import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
-public class DirectMessageReactionServiceImpl implements DirectMessageReactionService {
+public class DirectMessageReactionServiceImpl extends CurrentValueRetriever implements DirectMessageReactionService {
 
-    private final UserService userService;
-    private final OrgMemberService orgMemberService;
     private final DirectMessageService directMessageService;
     private final DirectMessageReactionRepository directMessageReactionRepository;
 
@@ -50,20 +45,23 @@ public class DirectMessageReactionServiceImpl implements DirectMessageReactionSe
      * Adds a reaction to a specific message.
      *
      * @param messageId
-     * @param userId
      * @param reaction
      * @return ReactMessageResponseDto
      */
     @Override
-    public ReactMessageResponseDto reactToMessage(Long messageId, Long userId, Reaction reaction) {
+    public ReactMessageResponseDto reactToMessage(Long messageId, Reaction reaction) {
 
         DirectMessage directMessage = directMessageService.getDirectMessageById(messageId);
 
-        if (Objects.equals(directMessage.getSender().getId(), userId)) {
+        OrgMember reactor = getCurrentOrgMember();
+
+        String orgMemberPublicId = reactor.getPublicId();
+
+        if (Objects.equals(directMessage.getSender().getPublicId(), orgMemberPublicId)) {
             throw new ActionProhibitedException("You cannot react to your own message.");
         }
 
-        if (!Objects.equals(directMessage.getReceiver().getId(), userId)) {
+        if (!Objects.equals(directMessage.getReceiver().getPublicId(), orgMemberPublicId)) {
             throw new PermissionDeniedException("You do not have permission to react to this message.");
         }
 
@@ -71,19 +69,14 @@ public class DirectMessageReactionServiceImpl implements DirectMessageReactionSe
             throw new ActionProhibitedException("Cannot react to a deleted message.");
         }
 
-        User reactor = userService.getUserById(userId);
-
-        DirectMessageReaction directMessageReaction = directMessageReactionRepository.findByDirectMessageAndUser(directMessage, reactor).orElse(new DirectMessageReaction());
+        DirectMessageReaction directMessageReaction = directMessageReactionRepository.findByDirectMessageAndReactor(directMessage, reactor).orElse(new DirectMessageReaction());
         directMessageReaction.setDirectMessage(directMessage);
-        directMessageReaction.setUser(reactor);
+        directMessageReaction.setReactor(reactor);
         directMessageReaction.setReaction(reaction);
 
         directMessageReaction = directMessageReactionRepository.save(directMessageReaction);
 
-        Org org = directMessage.getOrg();
-        OrgMember orgMember = orgMemberService.getOrgMemberByUserAndOrg(reactor, org);
-
-        return new ReactMessageResponseDto(directMessageReaction.getId(), reaction, directMessageReaction.getCreatedAt(), UserBasicInfoDto.fromOrgMember(orgMember));
+        return new ReactMessageResponseDto(directMessageReaction.getId(), reaction, directMessageReaction.getCreatedAt(), UserBasicInfoDto.fromOrgMember(reactor));
 
     }
 
@@ -94,11 +87,11 @@ public class DirectMessageReactionServiceImpl implements DirectMessageReactionSe
      * @return void
      */
     @Override
-    public void unreactToMessage(Long reactionId, Long userId) {
+    public void unreactToMessage(Long reactionId) {
 
         DirectMessageReaction directMessageReaction = getDirectMessageReactionById(reactionId);
 
-        if (!Objects.equals(directMessageReaction.getUser().getId(), userId)) {
+        if (!Objects.equals(directMessageReaction.getReactor().getPublicId(), getCurrentOrgMemberPublicId())) {
             throw new PermissionDeniedException("You do not have permission to remove this reaction.");
         }
 

@@ -5,7 +5,9 @@ import com.pesupal.server.model.org.Org;
 
 public interface OrgService {
 
-    public Org getOrgById(Long orgId);
+    Org getOrgById(Long orgId);
 
-    public Org createOrg(CreateOrgDto createOrgDto, String userPublicId);
+    Org createOrg(CreateOrgDto createOrgDto, String userPublicId);
+
+    Org getOrgByPublicId(String orgId);
 }

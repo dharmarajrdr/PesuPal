@@ -18,11 +18,9 @@ public interface OrgMemberService {
 
     OrgMember getOrgMemberByUserIdAndOrgId(Long userId, Long orgId);
 
-    UserBasicInfoDto getOrgMemberBasicInfoByUserIdAndOrgId(Long userId, Long orgId);
-
     Boolean existsByUserAndOrg(User user, Org org);
 
-    List<UserBasicInfoDto> getAllMembers(Long departmentId, Long currentUserId, Long currentOrgId);
+    List<UserBasicInfoDto> getAllMembers(Long departmentId, OrgMember orgMember);
 
     Boolean existsByUserIdAndOrgId(Long userId, Long orgId);
 
@@ -30,13 +28,13 @@ public interface OrgMemberService {
 
     List<OrgDetailDto> listOfOrgUserPartOf(Long userId);
 
-    OrgMember addMemberToOrg(AddOrgMemberDto addOrgMemberDto, Long adminId, Long orgId, boolean firstMember);
+    OrgMember addMemberToOrg(AddOrgMemberDto addOrgMemberDto, OrgMember orgMember, boolean firstMember);
 
     void validateUserIsOrgMember(User user, Org org);
 
     void validateUserIsOrgMember(Long userId, Long orgId);
 
-    List<UserBasicInfoDto> getAllOrgMembers(Long currentUserId, Long currentOrgId);
+    List<UserBasicInfoDto> getAllOrgMembers(OrgMember orgMember);
 
     String getOrgMemberImageByUserIdAndOrgId(Long userId, Long currentOrgId);
 

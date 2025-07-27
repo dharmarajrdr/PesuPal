@@ -16,7 +16,7 @@ public class AddOrgMemberDto {
 
     Long departmentId;
 
-    Long managerId;
+    String managerId;
 
     Role role;
 }

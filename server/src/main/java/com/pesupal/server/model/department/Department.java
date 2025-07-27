@@ -3,7 +3,7 @@ package com.pesupal.server.model.department;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.pesupal.server.model.PublicAccessModel;
 import com.pesupal.server.model.org.Org;
-import com.pesupal.server.model.user.User;
+import com.pesupal.server.model.user.OrgMember;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -25,5 +25,5 @@ public class Department extends PublicAccessModel {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore
-    private User head;
+    private OrgMember head;
 }

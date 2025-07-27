@@ -26,28 +26,28 @@ public class DepartmentController extends CurrentValueRetriever {
     @GetMapping("/{departmentId}/members")
     public ResponseEntity<ApiResponseDto> getAllMembers(@PathVariable Long departmentId) {
 
-        List<UserBasicInfoDto> members = orgMemberService.getAllMembers(departmentId, getCurrentUserId(), getCurrentOrgId());
+        List<UserBasicInfoDto> members = orgMemberService.getAllMembers(departmentId, getCurrentOrgMember());
         return ResponseEntity.ok().body(new ApiResponseDto("Members retrieved successfully", members));
     }
 
     @GetMapping("/{departmentId}")
     public ResponseEntity<ApiResponseDto> getDepartment(@PathVariable Long departmentId) {
 
-        DepartmentDto departmentDto = departmentService.getDepartmentByIdAndOrgId(departmentId, getCurrentUserId(), getCurrentOrgId());
+        DepartmentDto departmentDto = departmentService.getDepartmentByIdAndOrgId(departmentId);
         return ResponseEntity.ok().body(new ApiResponseDto("Members retrieved successfully", departmentDto));
     }
 
     @GetMapping("")
     public ResponseEntity<ApiResponseDto> getDepartment() {
 
-        DepartmentDto departmentDto = departmentService.getUserDepartment(getCurrentUserId(), getCurrentOrgId());
+        DepartmentDto departmentDto = departmentService.getUserDepartment();
         return ResponseEntity.ok().body(new ApiResponseDto("Department retrieved successfully", departmentDto));
     }
 
     @GetMapping("/all")
     public ResponseEntity<ApiResponseDto> getAllDepartments() {
 
-        List<DepartmentDto> departments = departmentService.getAllDepartments(getCurrentUserId(), getCurrentOrgId());
+        List<DepartmentDto> departments = departmentService.getAllDepartments();
         return ResponseEntity.ok().body(new ApiResponseDto("Departments retrieved successfully", departments));
     }
 }

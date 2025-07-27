@@ -9,11 +9,11 @@ import java.util.List;
 
 public interface JobOpeningService {
 
-    JobOpeningDto createJobOpening(CreateJobOpeningDto createJobOpeningDto, Long userId, Long orgId);
+    JobOpeningDto createJobOpening(CreateJobOpeningDto createJobOpeningDto);
 
     JobOpening getJobOpeningById(Long jobOpeningId);
 
     JobOpeningDto getJobOpeningDtoById(Long jobOpeningId);
 
-    List<JobOpeningDto> getAllJobOpeningsByOrgId(Long userId, Long orgId, JobOpeningFilterDto jobOpeningFilterDto);
+    List<JobOpeningDto> getAllJobOpeningsByOrgId(JobOpeningFilterDto jobOpeningFilterDto);
 }

@@ -4,15 +4,14 @@ import com.pesupal.server.dto.request.CreateReplyCommentDto;
 import com.pesupal.server.dto.response.ReplyCommentDto;
 import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.exceptions.PermissionDeniedException;
+import com.pesupal.server.helpers.CurrentValueRetriever;
 import com.pesupal.server.model.post.PostComment;
 import com.pesupal.server.model.post.PostReply;
 import com.pesupal.server.model.user.OrgMember;
-import com.pesupal.server.model.user.User;
 import com.pesupal.server.repository.PostReplyRepository;
 import com.pesupal.server.service.interfaces.OrgMemberService;
 import com.pesupal.server.service.interfaces.PostCommentService;
 import com.pesupal.server.service.interfaces.PostReplyService;
-import com.pesupal.server.service.interfaces.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -23,9 +22,8 @@ import java.util.Objects;
 
 @Service
 @AllArgsConstructor
-public class PostReplyServiceImpl implements PostReplyService {
+public class PostReplyServiceImpl extends CurrentValueRetriever implements PostReplyService {
 
-    private final UserService userService;
     private final OrgMemberService orgMemberService;
     private final PostCommentService postCommentService;
     private final PostReplyRepository postReplyRepository;
@@ -34,20 +32,17 @@ public class PostReplyServiceImpl implements PostReplyService {
      * Creates a reply to a post comment.
      *
      * @param createReplyCommentDto
-     * @param userId
-     * @param orgId
      * @return ReplyCommentDto
      */
     @Override
-    public ReplyCommentDto createReplyComment(CreateReplyCommentDto createReplyCommentDto, Long userId, Long orgId) {
+    public ReplyCommentDto createReplyComment(CreateReplyCommentDto createReplyCommentDto) {
 
-        User replier = userService.getUserById(userId);
-        OrgMember orgMember = orgMemberService.getOrgMemberByUserIdAndOrgId(userId, orgId);
-        PostComment postComment = postCommentService.getPostCommentById(createReplyCommentDto.getCommentId(), userId, orgId);
+        OrgMember orgMember = getCurrentOrgMember();
+        PostComment postComment = postCommentService.getPostCommentById(createReplyCommentDto.getCommentId());
 
         PostReply postReply = createReplyCommentDto.toPostReply();
         postReply.setPostComment(postComment);
-        postReply.setReplier(replier);
+        postReply.setReplier(orgMember);
         return ReplyCommentDto.fromPostReplyAndOrgMember(postReplyRepository.save(postReply), orgMember);
     }
 
@@ -55,14 +50,14 @@ public class PostReplyServiceImpl implements PostReplyService {
      * Retrieves replies for a specific comment.
      *
      * @param commentId
-     * @param userId
-     * @param orgId
      * @return
      */
     @Override
-    public List<ReplyCommentDto> getRepliesForComment(Long commentId, Long userId, Long orgId) {
+    public List<ReplyCommentDto> getRepliesForComment(Long commentId) {
 
-        PostComment postComment = postCommentService.getPostCommentById(commentId, userId, orgId);
+        OrgMember orgMember = getCurrentOrgMember();
+        Long orgId = orgMember.getOrg().getId();
+        PostComment postComment = postCommentService.getPostCommentById(commentId);
 
         Map<Long, OrgMember> memo = new HashMap<>();
 
@@ -81,15 +76,15 @@ public class PostReplyServiceImpl implements PostReplyService {
      * Deletes a reply to a post comment.
      *
      * @param replyId
-     * @param userId
-     * @param orgId
      */
     @Override
-    public void deleteReply(Long replyId, Long userId, Long orgId) {
+    public void deleteReply(Long replyId) {
+
+        OrgMember orgMember = getCurrentOrgMember();
 
         PostReply postReply = postReplyRepository.findById(replyId).orElseThrow(() -> new DataNotFoundException("Reply with ID " + replyId + " not found."));
 
-        if (!Objects.equals(postReply.getReplier().getId(), userId)) {
+        if (!Objects.equals(postReply.getReplier().getId(), orgMember.getId())) {
             throw new PermissionDeniedException("You do not have permission to delete this reply.");
         }
 

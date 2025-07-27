@@ -49,7 +49,7 @@ public class GroupChatMessageController extends CurrentValueRetriever {
         return ResponseEntity.ok().body(new ApiResponseDto("Group chat messages retrieved successfully", messageDtos));
     }
 
-    @PutMapping("/{groupId}/read_all")
+    @PutMapping("/{groupId}/read-all")
     public ResponseEntity<ApiResponseDto> markAllGroupMessagesAsRead(@PathVariable Long groupId) {
 
         groupChatMessageService.markAllGroupMessagesAsRead(groupId, getCurrentUserId(), getCurrentOrgId());

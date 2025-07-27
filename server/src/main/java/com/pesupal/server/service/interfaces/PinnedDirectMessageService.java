@@ -2,6 +2,7 @@ package com.pesupal.server.service.interfaces;
 
 import com.pesupal.server.dto.request.CreatePinDirectMessageDto;
 import com.pesupal.server.dto.request.PinnedChatDto;
+import com.pesupal.server.model.chat.DirectMessageChat;
 import com.pesupal.server.model.chat.PinnedDirectMessage;
 import com.pesupal.server.model.user.OrgMember;
 
@@ -10,15 +11,15 @@ import java.util.Optional;
 
 public interface PinnedDirectMessageService {
 
-    List<PinnedChatDto> getAllPinnedDirectMessages(OrgMember orgMember);
+    Optional<PinnedDirectMessage> getPinnedDirectMessageByPinnedByAndDirectMessageChat(OrgMember pinnedBy, DirectMessageChat chat);
 
-    Optional<PinnedDirectMessage> getPinnedDirectMessageByPinnedByIdAndPinnedUserIdAndOrgId(Long pinnedById, Long pinnedUserId, Long orgId);
+    List<PinnedChatDto> getAllPinnedDirectMessages();
 
     PinnedDirectMessage getPinnedDirectMessageById(Long id);
 
-    PinnedChatDto pinDirectMessage(CreatePinDirectMessageDto createPinDirectMessageDto, OrgMember orgMember);
+    PinnedChatDto pinDirectMessage(CreatePinDirectMessageDto createPinDirectMessageDto);
 
-    boolean isChatPinned(Long pinnedById, Long pinnedUserId, Long orgId);
+    boolean isChatPinned(OrgMember orgMember, String chatId);
 
     void unpinDirectMessage(Long id, OrgMember orgMember);
 }

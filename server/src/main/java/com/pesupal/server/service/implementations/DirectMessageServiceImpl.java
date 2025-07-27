@@ -7,7 +7,7 @@ import com.pesupal.server.enums.ReadReceipt;
 import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.exceptions.PermissionDeniedException;
-import com.pesupal.server.helpers.Chat;
+import com.pesupal.server.helpers.CurrentValueRetriever;
 import com.pesupal.server.helpers.InputValidator;
 import com.pesupal.server.helpers.TimeFormatterUtil;
 import com.pesupal.server.model.chat.DirectMessage;
@@ -17,6 +17,7 @@ import com.pesupal.server.model.chat.PinnedDirectMessage;
 import com.pesupal.server.model.org.Org;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.model.user.User;
+import com.pesupal.server.projections.RecentChatsProjection;
 import com.pesupal.server.repository.DirectMessageMediaFileRepository;
 import com.pesupal.server.repository.DirectMessageRepository;
 import com.pesupal.server.security.JwtUtil;
@@ -33,13 +34,11 @@ import org.springframework.data.domain.Sort;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
 @Qualifier("directMessageService")
-public class DirectMessageServiceImpl implements DirectMessageService {
+public class DirectMessageServiceImpl extends CurrentValueRetriever implements DirectMessageService {
 
     private final JwtUtil jwtUtil;
     private final S3Service s3Service;
@@ -47,11 +46,11 @@ public class DirectMessageServiceImpl implements DirectMessageService {
     private final UserService userService;
     private final OrgMemberService orgMemberService;
     private final DirectMessageRepository directMessageRepository;
+    private final DirectMessageChatService directMessageChatService;
     private final PinnedDirectMessageService pinnedDirectMessageService;
     private final DirectMessageReactionService directMessageReactionService;
     private final DirectMessageMediaFileService directMessageMediaFileService;
     private final DirectMessageMediaFileRepository directMessageMediaFileRepository;
-    private final DirectMessageChatService directMessageChatService;
 
     public DirectMessageServiceImpl(DirectMessageRepository directMessageRepository, @Lazy DirectMessageReactionService directMessageReactionService, UserService userService, OrgService orgService, OrgMemberService orgMemberService, PinnedDirectMessageService pinnedDirectMessageService, DirectMessageMediaFileRepository directMessageMediaFileRepository, S3Service s3Service, DirectMessageMediaFileService directMessageMediaFileService, JwtUtil jwtUtil, DirectMessageChatService directMessageChatService) {
         this.jwtUtil = jwtUtil;
@@ -97,25 +96,41 @@ public class DirectMessageServiceImpl implements DirectMessageService {
     }
 
     /**
+     * Check whether the user is part of this org
+     *
+     * @param directMessageChat
+     * @param userId
+     * @return
+     */
+    @Override
+    public boolean isUserPatOfThisChat(DirectMessageChat directMessageChat, Long userId) {
+
+        return (directMessageChat.getUser1().getId().equals(userId) || directMessageChat.getUser2().getId().equals(userId));
+    }
+
+    /**
      * Retrieves direct messages between two users by their IDs.
      *
      * @param getConversationBetweenUsers
      * @return List of MessageDto
      */
     @Override
-    public List<MessageDto> getDirectMessagesBetweenUsers(GetConversationBetweenUsers getConversationBetweenUsers, Long userId, Long orgId) {
+    public List<MessageDto> getDirectMessagesBetweenUsers(GetConversationBetweenUsers getConversationBetweenUsers) {
 
-        if (!Chat.isUserInChat(getConversationBetweenUsers.getChatId(), userId)) {
-            throw new PermissionDeniedException("You do not have permission to access this chat.");
+        OrgMember orgMember = getCurrentOrgMember();
+        Long orgId = orgMember.getOrg().getId();
+        DirectMessageChat directMessageChat = directMessageChatService.getDirectMessageByPublicId(getConversationBetweenUsers.getChatId());
+        if (!isUserPatOfThisChat(directMessageChat, orgMember.getId())) {
+            throw new PermissionDeniedException("You don't have permission to read this chat");
         }
 
         Pageable pageable = PageRequest.of(getConversationBetweenUsers.getPage(), getConversationBetweenUsers.getSize(), Sort.by("createdAt").descending());
         Page<DirectMessage> messages = null;
         Long pivotMessageId = getConversationBetweenUsers.getPivotMessageId();
         if (pivotMessageId != null) {
-            messages = directMessageRepository.findAllByChatIdAndIdLessThan(getConversationBetweenUsers.getChatId(), getConversationBetweenUsers.getPivotMessageId(), pageable);
+            messages = directMessageRepository.findAllByDirectMessageChatPublicIdAndIdLessThan(getConversationBetweenUsers.getChatId(), getConversationBetweenUsers.getPivotMessageId(), pageable);
         } else {
-            messages = directMessageRepository.findAllByChatId(getConversationBetweenUsers.getChatId(), pageable);
+            messages = directMessageRepository.findAllByDirectMessageChatPublicId(getConversationBetweenUsers.getChatId(), pageable);
         }
         Map<Long, UserPreviewDto> memo = new HashMap<>();
         return messages.stream().map(dm -> toMessageDto(dm, orgId, memo)).sorted(Comparator.comparing(MessageDto::getCreatedAt)).toList();
@@ -125,10 +140,16 @@ public class DirectMessageServiceImpl implements DirectMessageService {
      * Marks all messages in a chat as read for a specific user.
      *
      * @param chatId
-     * @param userId
      */
     @Override
-    public void markAllMessagesAsRead(String chatId, Long userId) {
+    public void markAllMessagesAsRead(String chatId) {
+
+        OrgMember orgMember = getCurrentOrgMember();
+        Long userId = orgMember.getId();
+        DirectMessageChat directMessageChat = directMessageChatService.getDirectMessageByPublicId(chatId);
+        if (!isUserPatOfThisChat(directMessageChat, userId)) {
+            throw new PermissionDeniedException("You don't have permission to read this chat");
+        }
 
         directMessageRepository.markMessagesAsRead(chatId, userId, ReadReceipt.READ);
     }
@@ -148,15 +169,14 @@ public class DirectMessageServiceImpl implements DirectMessageService {
     /**
      * Deletes a specific message in a chat by its ID.
      *
-     * @param userId
      * @param messageId
      */
     @Override
-    public void deleteMessage(Long userId, Long messageId) {
+    public void deleteMessage(Long messageId) {
 
         DirectMessage directMessage = getDirectMessageById(messageId);
 
-        if (directMessage.getSender().getId() != userId) {
+        if (directMessage.getSender().getPublicId().equals(getCurrentUserPublicId())) {
             throw new PermissionDeniedException("You do not have permission to delete this message.");
         }
 
@@ -181,7 +201,7 @@ public class DirectMessageServiceImpl implements DirectMessageService {
         int size = pageable.getPageSize();
         int offset = page * size;
 
-        Long userId = orgMember.getUser().getId();
+        Long userId = orgMember.getId();
         Long orgId = orgMember.getOrg().getId();
 
         User user = userService.getUserById(userId);
@@ -189,31 +209,21 @@ public class DirectMessageServiceImpl implements DirectMessageService {
 
         orgMemberService.validateUserIsOrgMember(user, org);
 
-        List<Object[]> rows = directMessageRepository.findRecentChatsPaged(userId, orgId, size, offset);
+        List<RecentChatsProjection> rows = directMessageRepository.findRecentChatsPaged(userId, orgId, size, offset);
 
-        List<RecentChatDto> chats = rows.stream().map(row -> {
-            String displayPicture = (String) row[0];
-            String userName = (String) row[1];
-            String userStatus = (String) row[2];
-            String sender = String.valueOf(row[3]);
-            String content = (String) row[4];
-            Boolean includedMedia = (Boolean) row[5];
-            LocalDateTime createdAt = ((Timestamp) row[6]).toLocalDateTime();
-            ReadReceipt readReceipt = ReadReceipt.valueOf((String) row[7]);
-            String chatId = (String) row[8];
-
+        List<RecentChatDto> chats = rows.stream().map(projection -> {
             LastMessageDto lastMessage = new LastMessageDto();
-            lastMessage.setSender(sender);
-            lastMessage.setMessage(content);
-            lastMessage.setMedia(includedMedia);
-            lastMessage.setCreatedAt(TimeFormatterUtil.formatShort(createdAt));
-            lastMessage.setReadReceipt(readReceipt);
+            lastMessage.setSender(projection.getSenderName());
+            lastMessage.setMessage(projection.getContent());
+            lastMessage.setMedia(projection.getIncludedMedia());
+            lastMessage.setCreatedAt(TimeFormatterUtil.formatShort(projection.getCreatedAt()));
+            lastMessage.setReadReceipt(ReadReceipt.valueOf(projection.getReadReceipt()));
 
             RecentChatDto dto = new RecentChatDto();
-            dto.setChatId(chatId);
-            dto.setName(userName);
-            dto.setImage(displayPicture);
-            dto.setStatus(userStatus);
+            dto.setChatId(projection.getChatPublicId());
+            dto.setName(projection.getDisplayName());
+            dto.setImage(projection.getDisplayPicture());
+            dto.setStatus(projection.getUserStatus());
             dto.setRecentMessage(lastMessage);
 
             return dto;
@@ -233,18 +243,18 @@ public class DirectMessageServiceImpl implements DirectMessageService {
     @Transactional
     public MessageDto save(ChatMessageDto chatMessageDto) {
 
-        Long orgId = chatMessageDto.getOrgId();
-        Org org = orgService.getOrgById(orgId);
-
         String token = (String) InputValidator.notNull(chatMessageDto.getToken(), "token");
 
         Claims claims = jwtUtil.extractAllClaims(token);
         String senderOrgMemberId = claims.get("orgMemberId").toString();
 
+        OrgMember orgMember = orgMemberService.getOrgMemberByPublicId(senderOrgMemberId);
+        Org org = orgMember.getOrg();
+
         DirectMessageChat directMessageChat = directMessageChatService.getDirectMessageByPublicId(chatMessageDto.getChatId());
 
         OrgMember sender = orgMemberService.getOrgMemberByPublicId(senderOrgMemberId);
-        OrgMember receiver = getReceiver(directMessageChat, sender);
+        OrgMember receiver = directMessageChat.getAnotherUser(sender);
 
         boolean containsMedia = chatMessageDto.getMedia() != null;
 
@@ -263,25 +273,7 @@ public class DirectMessageServiceImpl implements DirectMessageService {
             directMessageMediaFile.setDirectMessage(directMessage);
             directMessageMediaFileService.save(directMessageMediaFile);
         }
-        return toMessageDto(directMessage, orgId, new HashMap<>());
-    }
-
-    private OrgMember getReceiver(DirectMessageChat directMessageChat, OrgMember sender) {
-
-        OrgMember user1 = directMessageChat.getUser1();
-        OrgMember user2 = directMessageChat.getUser2();
-
-        OrgMember receiver = null;
-        if (user1.getId().equals(sender.getId())) {
-            receiver = user2;
-        } else if (user2.getId().equals(sender.getId())) {
-            receiver = user1;
-        }
-
-        if (receiver.isArchived()) {
-            throw new ActionProhibitedException("User " + receiver.getDisplayName() + " is no longer a member of this org.");
-        }
-        return receiver;
+        return toMessageDto(directMessage, org.getId(), new HashMap<>());
     }
 
     /**
@@ -289,33 +281,22 @@ public class DirectMessageServiceImpl implements DirectMessageService {
      * organization.
      *
      * @param chatId
-     * @param userId
-     * @param orgId
      * @return
      */
     @Override
-    public ChatPreviewDto getDirectMessagePreviewByChatId(String chatId, Long userId, Long orgId) {
+    public ChatPreviewDto getDirectMessagePreviewByChatId(String chatId) {
 
-        if (!Chat.isUserInChat(chatId, userId)) {
-            throw new PermissionDeniedException("You do not have permission to access this chat.");
-        }
-
-        Long[] parsedChatId = Chat.parseChatId(chatId);
-        if (!orgId.equals(parsedChatId[2])) {
-            throw new PermissionDeniedException("Chat not found in the specified organization.");
-        }
-
-        Long otherUserId = parsedChatId[0].equals(userId) ? parsedChatId[1] : parsedChatId[0];
-
-        OrgMember otherUserOrgMember = orgMemberService.getOrgMemberByUserIdAndOrgId(otherUserId, orgId);
+        DirectMessageChat directMessageChat = directMessageChatService.getDirectMessageByPublicId(chatId);
+        OrgMember currentUser = getCurrentOrgMember();
+        OrgMember otherUser = directMessageChat.getAnotherUser(currentUser);
 
         ChatPreviewDto chatPreviewDto = new ChatPreviewDto();
-        chatPreviewDto.setUserId(otherUserId);
+        chatPreviewDto.setUserId(otherUser.getPublicId());
         chatPreviewDto.setChatId(chatId);
-        chatPreviewDto.setActive(!otherUserOrgMember.isArchived());
-        chatPreviewDto.setDisplayName(otherUserOrgMember.getDisplayName());
-        chatPreviewDto.setDisplayPicture(otherUserOrgMember.getDisplayPicture());
-        Optional<PinnedDirectMessage> pinnedDirectMessage = pinnedDirectMessageService.getPinnedDirectMessageByPinnedByIdAndPinnedUserIdAndOrgId(userId, otherUserId, orgId);
+        chatPreviewDto.setActive(!otherUser.isArchived());
+        chatPreviewDto.setDisplayName(otherUser.getDisplayName());
+        chatPreviewDto.setDisplayPicture(otherUser.getDisplayPicture());
+        Optional<PinnedDirectMessage> pinnedDirectMessage = pinnedDirectMessageService.getPinnedDirectMessageByPinnedByAndDirectMessageChat(currentUser, directMessageChat);
         if (pinnedDirectMessage.isPresent()) {
             chatPreviewDto.setPinnedId(pinnedDirectMessage.get().getId());
         }

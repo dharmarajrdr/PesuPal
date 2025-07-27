@@ -1,12 +1,11 @@
 package com.pesupal.server.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.pesupal.server.helpers.Chat;
+import com.pesupal.server.model.chat.DirectMessageChat;
 import com.pesupal.server.model.chat.PinnedDirectMessage;
 import com.pesupal.server.model.group.Group;
 import com.pesupal.server.model.group.GroupChatPinned;
 import com.pesupal.server.model.user.OrgMember;
-import com.pesupal.server.model.user.User;
 import lombok.Data;
 
 @Data
@@ -23,13 +22,17 @@ public class PinnedChatDto {
 
     private String chatId;
 
-    public static PinnedChatDto fromUserAndOrgMemberAndPinnedDirectMessage(User user, OrgMember orgMember, PinnedDirectMessage pinnedDirectMessage) {
+    public static PinnedChatDto fromPinnedDirectMessage(PinnedDirectMessage pinnedDirectMessage) {
+
+        DirectMessageChat pinnedChat = pinnedDirectMessage.getChat();
+        OrgMember pinnedByUser = pinnedDirectMessage.getPinnedBy();
+        OrgMember pinnedUser = pinnedChat.getAnotherUser(pinnedByUser);
 
         PinnedChatDto dto = new PinnedChatDto();
-        dto.setDisplayName(orgMember.getDisplayName());
-        dto.setDisplayPicture(orgMember.getDisplayPicture());
-        dto.setStatus(orgMember.getStatus());
-        dto.setChatId(Chat.getChatId(orgMember.getUser().getId(), user.getId(), orgMember.getOrg().getId()));
+        dto.setDisplayName(pinnedUser.getDisplayName());
+        dto.setDisplayPicture(pinnedUser.getDisplayPicture());
+        dto.setStatus(pinnedUser.getStatus());
+        dto.setChatId(pinnedChat.getPublicId());
         dto.setId(pinnedDirectMessage.getId());
         return dto;
     }

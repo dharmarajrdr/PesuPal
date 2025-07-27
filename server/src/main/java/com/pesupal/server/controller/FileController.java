@@ -22,7 +22,7 @@ public class FileController extends CurrentValueRetriever {
     @PostMapping("/file")
     public ResponseEntity<ApiResponseDto> createFile(@RequestBody CreateFileDto createFileDto) throws Exception {
 
-        FileDto fileDto = fileService.createFile(createFileDto, getCurrentUserId(), getCurrentOrgId());
+        FileDto fileDto = fileService.createFile(createFileDto);
         return ResponseEntity.ok().body(new ApiResponseDto("File created successfully", fileDto));
     }
 }

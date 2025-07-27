@@ -13,7 +13,7 @@ public interface FileService {
 
     List<FileOrFolderDto> findAllByFolderAndOrgMember(Folder parentFolder, OrgMember orgMember);
 
-    FileDto createFile(CreateFileDto createFileDto, Long userId, Long orgId) throws Exception;
+    FileDto createFile(CreateFileDto createFileDto) throws Exception;
 
     File getFileByIdAndOrgId(Long fileId, Long orgId);
 }

@@ -6,9 +6,11 @@ import com.pesupal.server.dto.request.UpdatePollDto;
 import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.exceptions.PermissionDeniedException;
+import com.pesupal.server.helpers.CurrentValueRetriever;
 import com.pesupal.server.model.post.Poll;
 import com.pesupal.server.model.post.PollOption;
 import com.pesupal.server.model.post.Post;
+import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.repository.PollRepository;
 import com.pesupal.server.service.interfaces.OrgMemberService;
 import com.pesupal.server.service.interfaces.PollService;
@@ -21,7 +23,7 @@ import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
-public class PollServiceImpl implements PollService {
+public class PollServiceImpl extends CurrentValueRetriever implements PollService {
 
     private final PollRepository pollRepository;
     private final OrgMemberService orgMemberService;
@@ -56,6 +58,8 @@ public class PollServiceImpl implements PollService {
      */
     @Override
     public Poll createPoll(CreatePollDto createPollDto, Post post) {
+
+        validateNewPoll(createPollDto);
 
         Poll poll = createPollDto.toPoll();
         poll.setPost(post);
@@ -113,15 +117,13 @@ public class PollServiceImpl implements PollService {
      *
      * @param pollId
      * @param updatePollDto
-     * @param userId
-     * @param orgId
      */
     @Override
-    public void updatePoll(Long pollId, UpdatePollDto updatePollDto, Long userId, Long orgId) {
+    public void updatePoll(Long pollId, UpdatePollDto updatePollDto) {
 
-        orgMemberService.validateUserIsOrgMember(userId, orgId);
+        OrgMember orgMember = getCurrentOrgMember();
         Poll poll = getPollById(pollId);
-        if (!poll.getPost().getUser().getId().equals(userId)) {
+        if (!poll.getPost().getCreator().getId().equals(orgMember.getId())) {
             throw new PermissionDeniedException("You do not have permission to update this poll");
         }
 

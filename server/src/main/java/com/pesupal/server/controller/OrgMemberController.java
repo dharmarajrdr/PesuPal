@@ -28,17 +28,8 @@ public class OrgMemberController extends OrgSubscriptionManager {
     @PostMapping("/new_member")
     public ResponseEntity<ApiResponseDto> addMemberToOrg(@RequestBody AddOrgMemberDto addOrgMemberDto) {
 
-        OrgMember orgMember = orgMemberService.addMemberToOrg(addOrgMemberDto, getCurrentUserId(), getCurrentOrgId(), false);
+        OrgMember orgMember = orgMemberService.addMemberToOrg(addOrgMemberDto, getCurrentOrgMember(), false);
         return ResponseEntity.ok(new ApiResponseDto("Member added to organization successfully.", orgMember));
-    }
-
-    @GetMapping("/{userId}")
-    public ResponseEntity<ApiResponseDto> getOrgMemberByUserAndOrg(@PathVariable Long userId) {
-
-        // checkOrgSubscription();
-
-        UserBasicInfoDto userBasicInfoDto = orgMemberService.getOrgMemberBasicInfoByUserIdAndOrgId(userId, getCurrentOrgId());
-        return ResponseEntity.ok(new ApiResponseDto("Organization member retrieved successfully.", userBasicInfoDto));
     }
 
     @GetMapping("/display-picture")
@@ -62,7 +53,7 @@ public class OrgMemberController extends OrgSubscriptionManager {
     @GetMapping("")
     public ResponseEntity<ApiResponseDto> getAllOrgMembers() {
 
-        List<UserBasicInfoDto> orgMembers = orgMemberService.getAllOrgMembers(getCurrentUserId(), getCurrentOrgId());
+        List<UserBasicInfoDto> orgMembers = orgMemberService.getAllOrgMembers(getCurrentOrgMember());
         return ResponseEntity.ok(new ApiResponseDto("List of organization members retrieved successfully.", orgMembers));
     }
 

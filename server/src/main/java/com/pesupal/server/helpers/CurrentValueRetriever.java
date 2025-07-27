@@ -1,6 +1,7 @@
 package com.pesupal.server.helpers;
 
 import com.pesupal.server.config.RequestContext;
+import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.exceptions.MandatoryDataMissingException;
 import com.pesupal.server.exceptions.OrganizationNotSelectedException;
 import com.pesupal.server.model.user.OrgMember;
@@ -49,7 +50,11 @@ public class CurrentValueRetriever {
         if (orgMemberPublicId == null) {
             throw new OrganizationNotSelectedException();
         }
-        return orgMemberService.getOrgMemberByPublicId(orgMemberPublicId);
+        OrgMember orgMember = orgMemberService.getOrgMemberByPublicId(orgMemberPublicId);
+        if (orgMember.isArchived()) {
+            throw new ActionProhibitedException("You are no longer part of this org.");
+        }
+        return orgMember;
     }
 
     protected Long getCurrentOrgId() {

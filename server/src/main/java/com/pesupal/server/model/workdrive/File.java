@@ -2,7 +2,7 @@ package com.pesupal.server.model.workdrive;
 
 import com.pesupal.server.enums.Security;
 import com.pesupal.server.model.PublicAccessModel;
-import com.pesupal.server.model.user.User;
+import com.pesupal.server.model.user.OrgMember;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -22,7 +22,7 @@ public class File extends PublicAccessModel {
     private Long size;
 
     @ManyToOne
-    private User creator;
+    private OrgMember creator;
 
     @Column(nullable = false, unique = true)
     private UUID mediaId;

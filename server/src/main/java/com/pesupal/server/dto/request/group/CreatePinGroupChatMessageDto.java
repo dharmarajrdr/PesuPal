@@ -5,7 +5,7 @@ import lombok.Data;
 @Data
 public class CreatePinGroupChatMessageDto {
 
-    private Long pinnedGroupId;
+    private String groupId;
 
     private Integer orderIndex;
 }

@@ -2,8 +2,8 @@ package com.pesupal.server.service.implementations;
 
 import com.pesupal.server.dto.response.FileDto;
 import com.pesupal.server.exceptions.ActionProhibitedException;
+import com.pesupal.server.helpers.CurrentValueRetriever;
 import com.pesupal.server.model.user.OrgMember;
-import com.pesupal.server.model.user.User;
 import com.pesupal.server.model.workdrive.File;
 import com.pesupal.server.model.workdrive.StarredFile;
 import com.pesupal.server.repository.StarredFileRepository;
@@ -17,7 +17,7 @@ import java.util.List;
 
 @Service
 @AllArgsConstructor
-public class StarredFileServiceImpl implements StarredFileService {
+public class StarredFileServiceImpl extends CurrentValueRetriever implements StarredFileService {
 
     private final FileService fileService;
     private final OrgMemberService orgMemberService;
@@ -27,35 +27,32 @@ public class StarredFileServiceImpl implements StarredFileService {
      * Checks if a file is already starred by a user.
      *
      * @param file
-     * @param user
+     * @param starredBy
      * @return boolean indicating if the file is starred by the user
      */
     @Override
-    public boolean existsByFileAndUser(File file, User user) {
+    public boolean existsByFileAndStarredBy(File file, OrgMember starredBy) {
 
-        return starredFileRepository.existsByFileAndUser(file, user);
+        return starredFileRepository.existsByFileAndStarredBy(file, starredBy);
     }
 
     /**
      * Adds a file to the user's starred files list.
      *
      * @param fileId
-     * @param userId
-     * @param orgId
      */
     @Override
-    public void addStarredFile(Long fileId, Long userId, Long orgId) {
+    public void addStarredFile(Long fileId) {
 
-        OrgMember orgMember = orgMemberService.getOrgMemberByUserIdAndOrgId(userId, orgId);
-        User user = orgMember.getUser();
-        File file = fileService.getFileByIdAndOrgId(fileId, orgId);
+        OrgMember orgMember = getCurrentOrgMember();
+        File file = fileService.getFileByIdAndOrgId(fileId, orgMember.getOrg().getId());
 
-        if (existsByFileAndUser(file, user)) {
+        if (existsByFileAndStarredBy(file, orgMember)) {
             throw new ActionProhibitedException("You have already starred this file.");
         }
 
         StarredFile starredFile = new StarredFile();
-        starredFile.setUser(user);
+        starredFile.setStarredBy(orgMember);
         starredFile.setFile(file);
         starredFileRepository.save(starredFile);
     }

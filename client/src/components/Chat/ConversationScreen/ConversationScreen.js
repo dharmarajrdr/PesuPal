@@ -21,8 +21,6 @@ const ConversationScreen = ({ activeTabName }) => {
 
 	const { chatId } = useParams();
 
-	console.log(`ConversationScreen: chatId = ${chatId}`);
-
 	const dispatch = useDispatch();
 
 	dispatch(setActiveChatTab(activeTabName));
@@ -37,11 +35,9 @@ const ConversationScreen = ({ activeTabName }) => {
 	const currentChatPreview = useSelector(state => state.currentChatPreviewSlice);
 	const activeChatTab = useSelector(state => state.activeChatTab);
 	const myProfile = useSelector(state => state.myProfile) || {};
-	const { displayName, userId, active } = currentChatPreview || {};
+	const { displayName, active } = currentChatPreview || {};
 
 	const updateRecentChat = (msg) => {
-
-		console.log("Received message:", msg);
 
 		const { chatMode, message, sender } = msg || {};
 
@@ -57,8 +53,6 @@ const ConversationScreen = ({ activeTabName }) => {
 
 		const recentMessage = {
 			chatId: msg.chatId,
-			name: sender.displayName,
-			image: sender.displayPicture,
 			recentMessage: {
 				sender: sender.displayName,
 				message: message,
@@ -117,7 +111,7 @@ const ConversationScreen = ({ activeTabName }) => {
 
 		const { readAllMessagesApi } = activeChatTab || {};
 
-		apiRequest(`${readAllMessagesApi}/${chatId}/read_all`, "PUT").then(() => {
+		apiRequest(`${readAllMessagesApi}/${chatId}/read-all`, "PUT").then(() => {
 
 		}).catch(({ message }) => {
 			dispatch(showPopup({ message, type: 'error' }));
@@ -127,8 +121,6 @@ const ConversationScreen = ({ activeTabName }) => {
 	const clickSendMessageHandler = ({ message }) => {
 
 		const payload = {
-			orgId: sessionStorage.getItem('org-id'),
-			senderId: myProfile.id,
 			message
 		};
 
@@ -145,7 +137,7 @@ const ConversationScreen = ({ activeTabName }) => {
 		const isFirstLoad = true; // since chatId changed
 		const pivot = isFirstLoad ? null : pivotMessageId;
 
-		const { chatPreviewApi, retrieveConversationApi, readAllMessagesApi } = activeChatTab || {};
+		const { chatPreviewApi, retrieveConversationApi } = activeChatTab || {};
 
 		if (!chatPreviewApi) { return; }
 
@@ -181,9 +173,13 @@ const ConversationScreen = ({ activeTabName }) => {
 
 	useEffect(() => {
 
+		dispatch(setChatId(chatId));
+		if (!currentChatPreview) {
+			return getChatPreview(chatId);
+		}
+
 		dispatch(setShowChatHeaderOptionsModal(false));
 		dispatch(clearCurrentChatPreview());
-		dispatch(setChatId(chatId));
 		setPivotMessageId(null); // reset state — this takes effect after render
 		setRetrievingChat(true);
 		getChatPreview(chatId);
@@ -195,7 +191,7 @@ const ConversationScreen = ({ activeTabName }) => {
 		<div id='ConversationScreen' className='FCSB'>
 			{permissionDenied ? <PermissionDenied /> : <>
 				<ChatHeader />
-				<ChatMessages retrievingChat={retrievingChat} messages={messages} chatId={chatId} clickSendMessageHandler={clickSendMessageHandler} />
+				<ChatMessages active={active} retrievingChat={retrievingChat} messages={messages} chatId={chatId} clickSendMessageHandler={clickSendMessageHandler} />
 				{active ? <ChatInput clickSendMessageHandler={clickSendMessageHandler} /> : <ChatInputUserArchived displayName={displayName} />}
 			</>}
 		</div>

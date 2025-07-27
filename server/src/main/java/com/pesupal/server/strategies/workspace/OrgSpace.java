@@ -63,7 +63,7 @@ public class OrgSpace extends WorkspaceSupportsPublicFolder implements Workdrive
 
         // 1. Retrieve all subfolders in the given folder in the organization space
 
-        List<FileOrFolderDto> filesAndFolders = folderRepository.findAllByOrgAndSpaceAndParentFolder(orgMember.getOrg(), Workspace.ORG_SPACE, parentFolder)
+        List<FileOrFolderDto> filesAndFolders = folderRepository.findAllBySpaceAndParentFolder(Workspace.ORG_SPACE, parentFolder)
                 .stream()
                 .map(folder -> {
                     FolderDto folderDto = FolderDto.fromFolderAndOrgMember(folder, orgMember);

@@ -3,13 +3,13 @@ package com.pesupal.server.service.implementations;
 import com.pesupal.server.dto.request.CreatePollVoterDto;
 import com.pesupal.server.dto.response.PollDto;
 import com.pesupal.server.exceptions.ActionProhibitedException;
+import com.pesupal.server.helpers.CurrentValueRetriever;
 import com.pesupal.server.model.post.Poll;
 import com.pesupal.server.model.post.PollOption;
 import com.pesupal.server.model.post.PollVoter;
 import com.pesupal.server.model.post.Post;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.repository.PollVoterRepository;
-import com.pesupal.server.service.interfaces.OrgMemberService;
 import com.pesupal.server.service.interfaces.PollService;
 import com.pesupal.server.service.interfaces.PollVoterService;
 import com.pesupal.server.service.interfaces.PostService;
@@ -20,25 +20,24 @@ import java.util.Optional;
 
 @Service
 @AllArgsConstructor
-public class PollVoterServiceImpl implements PollVoterService {
+public class PollVoterServiceImpl extends CurrentValueRetriever implements PollVoterService {
 
     private final PostService postService;
-    private final PollVoterRepository pollVoterRepository;
     private final PollService pollService;
-    private final OrgMemberService orgMemberService;
+    private final PollVoterRepository pollVoterRepository;
 
     /**
      * Creates a new poll voter entry based on the provided DTO.
      *
      * @param createPollVoterDto
-     * @param userId
-     * @param orgId
      * @return
      */
     @Override
-    public PollDto createPollVoter(CreatePollVoterDto createPollVoterDto, Long userId, Long orgId) {
+    public PollDto createPollVoter(CreatePollVoterDto createPollVoterDto) {
 
-        OrgMember orgMember = orgMemberService.getOrgMemberByUserIdAndOrgId(userId, orgId);
+        OrgMember orgMember = getCurrentOrgMember();
+        Long orgId = orgMember.getOrg().getId();
+        Long userId = orgMember.getId();
 
         Poll poll = pollService.getPollById(createPollVoterDto.getPollId());
         if (!poll.getId().equals(createPollVoterDto.getPollId())) {
@@ -66,7 +65,7 @@ public class PollVoterServiceImpl implements PollVoterService {
             pollVoter.setPollOption(pollOption);
         } else {
             pollVoter = new PollVoter();
-            pollVoter.setVoter(orgMember.getUser());
+            pollVoter.setVoter(orgMember);
             pollVoter.setPollOption(pollOption);
         }
         pollVoter = pollVoterRepository.save(pollVoter);

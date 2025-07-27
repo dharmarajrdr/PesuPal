@@ -3,7 +3,6 @@ package com.pesupal.server.service.implementations;
 import com.pesupal.server.enums.CRUD;
 import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.model.user.OrgMember;
-import com.pesupal.server.model.user.User;
 import com.pesupal.server.model.workdrive.Folder;
 import com.pesupal.server.model.workdrive.PublicFolder;
 import com.pesupal.server.model.workdrive.SecuredFolderPermission;
@@ -24,27 +23,27 @@ public class SecuredFolderPermissionServiceImpl implements SecuredFolderPermissi
      * Retrieves the SecuredFolderPermission for a given folder and user.
      *
      * @param folder
-     * @param user
+     * @param accessGrantedTo
      * @return SecuredFolderPermission
      */
     @Override
-    public Optional<SecuredFolderPermission> getSecuredFolderPermissionByFolderAndUser(Folder folder, User user) {
+    public Optional<SecuredFolderPermission> getSecuredFolderPermissionByFolderAndUser(Folder folder, OrgMember accessGrantedTo) {
 
-        return securedFolderPermissionRepository.findByFolderAndUser(folder, user);
+        return securedFolderPermissionRepository.findByFolderAndAccessGrantedTo(folder, accessGrantedTo);
     }
 
     /**
      * Checks if the user has the necessary permission for a CRUD operation in a secured public folder.
      *
      * @param parentPublicFolder
-     * @param orgMember
+     * @param accessGrantedTo
      * @param crud
      * @return boolean
      */
     @Override
-    public boolean hasNecessaryPermission(PublicFolder parentPublicFolder, OrgMember orgMember, CRUD crud) {
+    public boolean hasNecessaryPermission(PublicFolder parentPublicFolder, OrgMember accessGrantedTo, CRUD crud) {
 
-        SecuredFolderPermission securedFolderPermission = getSecuredFolderPermissionByFolderAndUser(parentPublicFolder.getFolder(), orgMember.getUser())
+        SecuredFolderPermission securedFolderPermission = getSecuredFolderPermissionByFolderAndUser(parentPublicFolder.getFolder(), accessGrantedTo)
                 .orElseThrow(() -> new DataNotFoundException("User does not have " + crud.name().toLowerCase() + " access on this folder."));
         return switch (crud) {
             case CREATE, UPDATE, DELETE -> securedFolderPermission.isWritable();
@@ -62,7 +61,7 @@ public class SecuredFolderPermissionServiceImpl implements SecuredFolderPermissi
     @Override
     public boolean hasWritePermission(PublicFolder parentPublicFolder, OrgMember orgMember) {
 
-        return getSecuredFolderPermissionByFolderAndUser(parentPublicFolder.getFolder(), orgMember.getUser())
+        return getSecuredFolderPermissionByFolderAndUser(parentPublicFolder.getFolder(), orgMember)
                 .orElseThrow(() -> new DataNotFoundException("User does not have write access on this folder."))
                 .isWritable();
     }
@@ -77,7 +76,7 @@ public class SecuredFolderPermissionServiceImpl implements SecuredFolderPermissi
     @Override
     public boolean hasReadPermission(PublicFolder parentPublicFolder, OrgMember orgMember) {
 
-        return getSecuredFolderPermissionByFolderAndUser(parentPublicFolder.getFolder(), orgMember.getUser())
+        return getSecuredFolderPermissionByFolderAndUser(parentPublicFolder.getFolder(), orgMember)
                 .orElseThrow(() -> new DataNotFoundException("User does not have read access in this folder."))
                 .isReadable();
     }

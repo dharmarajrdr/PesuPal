@@ -17,7 +17,7 @@ public class PostCommentDto extends UserBasicInfoDto {
 
     private int replyCount;
 
-    private boolean deleteable;
+    private boolean deletable;
 
     public static PostCommentDto fromPostCommentAndOrgMember(PostComment postComment, OrgMember orgMember) {
 
@@ -26,7 +26,7 @@ public class PostCommentDto extends UserBasicInfoDto {
         dto.setMessage(postComment.getMessage());
         dto.setCreatedAt(postComment.getCreatedAt());
         dto.setReplyCount(postComment.getReplies().size());
-        dto.setUserId(postComment.getCommenter().getId());
+        dto.setUserId(postComment.getCommenter().getPublicId());
         dto.setDisplayName(orgMember.getDisplayName());
         dto.setDisplayPicture(orgMember.getDisplayPicture());
         return dto;

@@ -21,14 +21,14 @@ public class PinnedDirectMessageController extends CurrentValueRetriever {
     @GetMapping("")
     public ResponseEntity<ApiResponseDto> getAllPinnedDirectMessages() {
 
-        List<PinnedChatDto> pinnedDirectMessageDtos = pinnedDirectMessageService.getAllPinnedDirectMessages(getCurrentOrgMember());
+        List<PinnedChatDto> pinnedDirectMessageDtos = pinnedDirectMessageService.getAllPinnedDirectMessages();
         return ResponseEntity.ok().body(new ApiResponseDto("Pinned direct messages retrieved successfully", pinnedDirectMessageDtos));
     }
 
     @PostMapping("/pin")
     public ResponseEntity<ApiResponseDto> pinDirectMessage(@RequestBody CreatePinDirectMessageDto createPinDirectMessageDto) {
 
-        PinnedChatDto pinnedDirectMessageDto = pinnedDirectMessageService.pinDirectMessage(createPinDirectMessageDto, getCurrentOrgMember());
+        PinnedChatDto pinnedDirectMessageDto = pinnedDirectMessageService.pinDirectMessage(createPinDirectMessageDto);
         return ResponseEntity.ok().body(new ApiResponseDto("Direct message pinned successfully", pinnedDirectMessageDto));
     }
 

@@ -69,4 +69,16 @@ public class OrgServiceImpl implements OrgService {
         orgSubscriptionHistoryService.addSubscription(org.getId(), "FREE_TRIAL", null);
         return org;
     }
+
+    /**
+     * Get org by public Id
+     *
+     * @param orgId
+     * @return
+     */
+    @Override
+    public Org getOrgByPublicId(String orgId) {
+
+        return orgRepository.findByPublicId(orgId).orElseThrow(() -> new DataNotFoundException("Org not found."));
+    }
 }

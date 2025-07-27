@@ -13,11 +13,13 @@ public interface GroupChatPinnedService {
 
     Optional<GroupChatPinned> getPinnedGroupByPinnedByAndGroup(User pinnedBy, Group group);
 
-    List<PinnedChatDto> getAllPinnedGroupChatMessages(Long currentUserId, Long currentOrgId);
+    List<PinnedChatDto> getAllPinnedGroupChatMessages();
 
-    boolean isChatPinned(Long pinnedById, Long pinnedUserId, Long orgId);
+    boolean isChatPinned(Long pinnedById, Long groupId);
 
-    PinnedChatDto pinGroupChatMessage(CreatePinGroupChatMessageDto createPinGroupChatMessageDto, Long currentUserId, Long currentOrgId);
+    boolean isChatPinned(Long pinnedById, String groupId);
 
-    void unpinGroupChatMessage(Long id, Long currentUserId, Long currentOrgId);
+    PinnedChatDto pinGroupChatMessage(CreatePinGroupChatMessageDto createPinGroupChatMessageDto);
+
+    void unpinGroupChatMessage(String groupChatPublicId);
 }

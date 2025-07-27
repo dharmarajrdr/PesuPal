@@ -1,7 +1,7 @@
 package com.pesupal.server.model.post;
 
 import com.pesupal.server.model.BaseModel;
-import com.pesupal.server.model.user.User;
+import com.pesupal.server.model.user.OrgMember;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
 import lombok.Data;
@@ -11,7 +11,7 @@ import lombok.Data;
 public class PollVoter extends BaseModel {
 
     @ManyToOne
-    private User voter;
+    private OrgMember voter;
 
     @ManyToOne
     private PollOption pollOption;

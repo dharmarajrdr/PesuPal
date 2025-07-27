@@ -13,5 +13,5 @@ public interface FileRepository extends JpaRepository<File, Long> {
 
     List<File> findAllByFolder(Folder folder);
 
-    Optional<File> findByIdAndFolder_OrgId(Long id, Long orgId);
+    Optional<File> findByIdAndCreator_OrgId(Long id, Long orgId);
 }
