@@ -127,8 +127,6 @@ const ConversationScreen = ({ activeTabName }) => {
 	const clickSendMessageHandler = ({ message }) => {
 
 		const payload = {
-			orgId: sessionStorage.getItem('org-id'),
-			senderId: myProfile.id,
 			message
 		};
 
