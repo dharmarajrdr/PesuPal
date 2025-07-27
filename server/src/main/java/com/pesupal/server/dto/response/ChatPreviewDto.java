@@ -17,7 +17,9 @@ public class ChatPreviewDto {
 
     private String userId;
 
-    private boolean active;
+    private boolean active; // user active
+
+    private boolean groupActive;
 
     private Integer participantsCount;
 }

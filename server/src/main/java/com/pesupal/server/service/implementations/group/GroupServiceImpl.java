@@ -185,12 +185,16 @@ public class GroupServiceImpl extends CurrentValueRetriever implements GroupServ
             throw new DataNotFoundException("Group with ID " + groupId + " does not exist");
         }
 
-        groupChatMemberService.checkUserPartOfGroup(groupId);
+        GroupChatMember groupChatMember = groupChatMemberService.getGroupMemberByGroupIdAndUserId(groupId, userId);
+        if (!groupChatMember.isActive() && !group.isInactiveMemberAccessChat()) {
+            throw new PermissionDeniedException("You don't have permission to access this chat.");
+        }
 
         ChatPreviewDto chatPreviewDto = new ChatPreviewDto();
         chatPreviewDto.setChatId(Long.toString(group.getId()));
-        chatPreviewDto.setActive(group.isActive());
+        chatPreviewDto.setActive(groupChatMember.isActive());
         chatPreviewDto.setDisplayName(group.getName());
+        chatPreviewDto.setGroupActive(group.isActive());
         chatPreviewDto.setDisplayPicture(group.getDisplayPicture());
         chatPreviewDto.setParticipantsCount(group.getMembers().size());
         Optional<GroupChatPinned> pinnedGroupChat = groupchatPinnedService.getPinnedGroupByPinnedByAndGroup(orgMember, group);
