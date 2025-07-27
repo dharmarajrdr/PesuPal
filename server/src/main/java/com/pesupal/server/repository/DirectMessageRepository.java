@@ -2,7 +2,7 @@ package com.pesupal.server.repository;
 
 import com.pesupal.server.enums.ReadReceipt;
 import com.pesupal.server.model.chat.DirectMessage;
-import com.pesupal.server.projections.RecentChatsProjection;
+import com.pesupal.server.projections.RecentPrivateChatProjection;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -68,10 +68,7 @@ public interface DirectMessageRepository extends JpaRepository<DirectMessage, Lo
             ORDER BY dm.created_at DESC
             LIMIT :limit OFFSET :offset
             """, nativeQuery = true)
-    List<RecentChatsProjection> findRecentChatsPaged(@Param("userId") Long userId,
-                                                     @Param("orgId") Long orgId,
-                                                     @Param("limit") int limit,
-                                                     @Param("offset") int offset);
+    List<RecentPrivateChatProjection> findRecentChatsPaged(@Param("userId") Long userId, @Param("orgId") Long orgId, @Param("limit") int limit, @Param("offset") int offset);
 
 
     @Query(value = """

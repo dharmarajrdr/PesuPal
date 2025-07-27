@@ -2,7 +2,7 @@ package com.pesupal.server.projections;
 
 import java.time.LocalDateTime;
 
-public interface RecentChatsProjection {
+public interface RecentPrivateChatProjection {
 
     String getDisplayPicture();
 
