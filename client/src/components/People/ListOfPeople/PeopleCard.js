@@ -1,12 +1,23 @@
 import './PeopleCard.css';
 import { StatusIndicator } from '../../Auth/utils';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch } from "react-redux";
+import { showPopup } from '../../../store/reducers/PopupSlice';
 
 const PeopleCard = ({ person, setShowProfile }) => {
 
     const { displayName, displayPicture, designation, status, id, chatId } = person;
 
     const navigate = useNavigate();
+    const dispatch = useDispatch();
+
+    const redirectToChatHandler = (e) => {
+        e.stopPropagation();
+        if (chatId == null) {
+            return dispatch(showPopup({ 'message': 'Chat is not available for this user', 'type': 'error' }));
+        }
+        navigate(`/chat/messages/${chatId}`);
+    }
 
     return (
         <div className='FCCC PeopleCard' onClick={() => setShowProfile(true)}>
@@ -20,7 +31,7 @@ const PeopleCard = ({ person, setShowProfile }) => {
                 <span className='color777 fs10 mB5'>{designation}</span>
             </div>
             <div className='mT5 FRCC'>
-                <i className='profile_contacts fa fa-comment' style={{ backgroundColor: 'blue' }} onClick={() => navigate(`/chat/messages/${chatId}`)} />
+                <i className='profile_contacts fa fa-comment' style={{ backgroundColor: 'blue' }} onClick={redirectToChatHandler} />
                 <i className='profile_contacts fa fa-phone' style={{ backgroundColor: 'green' }} />
                 <i className='profile_contacts fa fa-video' style={{ backgroundColor: 'red' }} />
             </div>
