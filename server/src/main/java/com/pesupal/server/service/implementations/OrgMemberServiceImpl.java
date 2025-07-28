@@ -290,21 +290,6 @@ public class OrgMemberServiceImpl implements OrgMemberService {
     }
 
     /**
-     * Validates if a user is a member of an organization.
-     *
-     * @param userId
-     * @param orgId
-     */
-    @Override
-    public void validateUserIsOrgMember(Long userId, Long orgId) {
-
-        Org org = orgService.getOrgById(orgId);
-        User user = userService.getUserById(userId);
-
-        validateUserIsOrgMember(user, org);
-    }
-
-    /**
      * Retrieves all members of an organization.
      *
      * @param currentOrgMember
@@ -318,7 +303,7 @@ public class OrgMemberServiceImpl implements OrgMemberService {
         return orgMemberRepository.findAllByOrgIdOrderByDisplayNameAsc(orgId).stream().map(orgMember -> {
             UserBasicInfoDto userBasicInfoDto = UserBasicInfoDto.fromOrgMember(orgMember);
             DirectMessageChat directMessageChat = directMessageChatService.getOrCreateDirectMessageChat(currentOrgMember, orgMember);
-            if(directMessageChat != null) {
+            if (directMessageChat != null) {
                 userBasicInfoDto.setChatId(directMessageChat.getPublicId());
             }
             return userBasicInfoDto;
