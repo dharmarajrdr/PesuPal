@@ -103,7 +103,7 @@ public class DirectMessageServiceImpl extends CurrentValueRetriever implements D
      * @return
      */
     @Override
-    public boolean isUserPatOfThisChat(DirectMessageChat directMessageChat, Long userId) {
+    public boolean isUserPartOfThisChat(DirectMessageChat directMessageChat, Long userId) {
 
         return (directMessageChat.getUser1().getId().equals(userId) || directMessageChat.getUser2().getId().equals(userId));
     }
@@ -120,7 +120,7 @@ public class DirectMessageServiceImpl extends CurrentValueRetriever implements D
         OrgMember orgMember = getCurrentOrgMember();
         Long orgId = orgMember.getOrg().getId();
         DirectMessageChat directMessageChat = directMessageChatService.getDirectMessageByPublicId(getConversationBetweenUsers.getChatId());
-        if (!isUserPatOfThisChat(directMessageChat, orgMember.getId())) {
+        if (!isUserPartOfThisChat(directMessageChat, orgMember.getId())) {
             throw new PermissionDeniedException("You don't have permission to read this chat");
         }
 
@@ -147,7 +147,7 @@ public class DirectMessageServiceImpl extends CurrentValueRetriever implements D
         OrgMember orgMember = getCurrentOrgMember();
         Long userId = orgMember.getId();
         DirectMessageChat directMessageChat = directMessageChatService.getDirectMessageByPublicId(chatId);
-        if (!isUserPatOfThisChat(directMessageChat, userId)) {
+        if (!isUserPartOfThisChat(directMessageChat, userId)) {
             throw new PermissionDeniedException("You don't have permission to read this chat");
         }
 

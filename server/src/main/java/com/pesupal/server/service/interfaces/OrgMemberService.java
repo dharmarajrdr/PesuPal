@@ -32,8 +32,6 @@ public interface OrgMemberService {
 
     void validateUserIsOrgMember(User user, Org org);
 
-    void validateUserIsOrgMember(Long userId, Long orgId);
-
     List<UserBasicInfoDto> getAllOrgMembers(OrgMember orgMember);
 
     String getOrgMemberImageByUserIdAndOrgId(Long userId, Long currentOrgId);

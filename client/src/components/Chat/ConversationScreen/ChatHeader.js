@@ -63,9 +63,9 @@ const ChatHeader = () => {
                     });
                 } else {
                     const payload = {};
-                    if(activeChatTab.name == 'directMessage') {
+                    if (activeChatTab.name == 'directMessage') {
                         Object.assign(payload, { chatId, 'orderIndex': 1 });
-                    } else if(activeChatTab.name == 'groupMessage') {
+                    } else if (activeChatTab.name == 'groupMessage') {
                         Object.assign(payload, { 'groupId': chatId, 'orderIndex': 1 });
                     }
                     apiRequest(`${activeChatTab.pinnedMessagesApi}/pin`, 'POST', payload).then(({ data }) => {
@@ -79,14 +79,57 @@ const ChatHeader = () => {
             }
         },
         {
-            name: activeChatTab.name == 'groupMessage' ? 'View Members' : null,
+            name: activeChatTab.name == 'groupMessage' ? 'Group Info' : null,
+            icon: 'fa fa-info-circle',
+            onClick: () => {
+                setShowProfile(true);
+                dispatch(setShowChatHeaderOptionsModal(false));
+            }
+        },
+        {
+            name: activeChatTab.name == 'groupMessage' ? 'Add Participant' : null,
+            icon: 'fa fa-user-plus',
+            onClick: () => {
+                dispatch(setShowChatHeaderOptionsModal(false));
+            }
+        },
+        {
+            name: activeChatTab.name == 'groupMessage' ? 'View Participants' : null,
             icon: 'fa fa-users',
             onClick: () => {
                 setShowGroupMembers(true);
                 dispatch(setShowChatHeaderOptionsModal(false));
             }
         },
-        { name: 'View Media', icon: 'fa fa-image' }
+        {
+            name: activeChatTab.name == 'groupMessage' ? 'Permissions' : null,
+            icon: 'fa fa-lock',
+            onClick: () => {
+                dispatch(setShowChatHeaderOptionsModal(false));
+            }
+        },
+        { name: 'View Media', icon: 'fa fa-image' },
+        {
+            name: activeChatTab.name == 'groupMessage' ? 'Clear Chat' : null,
+            icon: 'fa fa-delete-left',
+            onClick: () => {
+                dispatch(setShowChatHeaderOptionsModal(false));
+            }
+        },
+        {
+            name: activeChatTab.name == 'groupMessage' ? 'Leave Group' : null,
+            icon: 'fa fa-sign-out-alt',
+            onClick: () => {
+                dispatch(setShowChatHeaderOptionsModal(false));
+            }
+        },
+        {
+            name: activeChatTab.name == 'groupMessage' ? 'Delete Group' : null,
+            icon: 'fa fa-trash',
+            onClick: () => {
+                dispatch(setShowChatHeaderOptionsModal(false));
+            }
+        }
     ];
 
     return (

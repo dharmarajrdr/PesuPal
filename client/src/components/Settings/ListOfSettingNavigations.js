@@ -15,7 +15,7 @@ export default [
     },
     {
         title: 'Manage People',
-        route: '/settings/manage-admins',
+        route: '/settings/manage-people',
         icon: 'fa fa-users',
         active: false,
         has_access: true

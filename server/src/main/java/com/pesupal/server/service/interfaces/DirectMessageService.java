@@ -15,7 +15,7 @@ public interface DirectMessageService extends ChatService {
 
     List<MessageDto> getDirectMessagesBetweenUsers(GetConversationBetweenUsers getConversationBetweenUsers);
 
-    boolean isUserPatOfThisChat(DirectMessageChat directMessageChat, Long userId);
+    boolean isUserPartOfThisChat(DirectMessageChat directMessageChat, Long userId);
 
     void markAllMessagesAsRead(String chatId);
 
