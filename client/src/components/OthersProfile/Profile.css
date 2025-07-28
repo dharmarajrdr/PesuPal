@@ -57,6 +57,7 @@
   height: 100%;
   border-bottom-left-radius: 20px;
   border-bottom-right-radius: 20px;
+  object-position: top;
 }
 
 #user_image_basic_info #user_basic_info {
