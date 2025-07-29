@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 
 public interface RecentGroupChatProjection {
 
-    Long getGroupId();
+    String getGroupId();
 
     String getGroupName();
 
