@@ -35,9 +35,12 @@ const ActiveChatTabSlice = createSlice({
                 throw new Error(`Invalid chat type: ${chatType}`);
             }
             return details[chatType];
+        },
+        'resetActiveChatTab': () => {
+            return {};
         }
     }
 });
 
-export const { setActiveChatTab } = ActiveChatTabSlice.actions;
+export const { setActiveChatTab, resetActiveChatTab } = ActiveChatTabSlice.actions;
 export default ActiveChatTabSlice.reducer;

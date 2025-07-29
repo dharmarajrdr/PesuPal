@@ -3,8 +3,19 @@ import ListOfChats from './ListOfChats/ListOfChats';
 import './ChatLayout.css'
 import { Navigate, Route, Routes } from 'react-router-dom';
 import ConversationScreenPlaceholder from './ConversationScreen/ConversationScreenPlaceholder';
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { resetActiveChatTab } from '../../store/reducers/ActiveChatTabSlice';
 
 const ChatLayout = () => {
+
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        return () => {
+            dispatch(resetActiveChatTab()); // Reset the active chat tab when the component unmounts
+        };
+    }, []);
 
     return (
         <div className='Layout FRCS'>

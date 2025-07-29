@@ -155,7 +155,7 @@ public class GroupServiceImpl extends CurrentValueRetriever implements GroupServ
             lastMessage.setCreatedAt(TimeFormatterUtil.formatShort(proj.getCreatedAt()));
 
             RecentChatDto dto = new RecentChatDto();
-            dto.setChatId(String.valueOf(proj.getGroupId()));
+            dto.setChatId(proj.getGroupId());
             dto.setName(proj.getGroupName());
             dto.setImage(proj.getSenderDisplayPicture());
             dto.setStatus(proj.getGroupVisibility());

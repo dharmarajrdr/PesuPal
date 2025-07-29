@@ -79,7 +79,7 @@ const Profile = ({ userId, setShowProfile }) => {
                 {loading ? <Loader /> :
                     error ? <ErrorMessage message={error} /> : <>
                         <div id='user_image_basic_info' className='FCCC'>
-                            <img src={displayPicture} id='user_photo' className='objectFitCover objectPositionCenter' />
+                            <img src={displayPicture} id='user_photo' className='objectFitCover' />
                             <div id='user_basic_info' className='FCCC'>
                                 <div className='row'>
                                     <h4 id='profile_name'>{displayName}</h4>

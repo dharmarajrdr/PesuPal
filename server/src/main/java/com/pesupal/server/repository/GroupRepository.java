@@ -21,7 +21,7 @@ public interface GroupRepository extends JpaRepository<Group, Long> {
                 JOIN groups g ON g.id = gcm.group_id AND g.org_id = :orgId
                 JOIN group_chat_message msg ON msg.group_id = g.id AND msg.deleted = false
             
-                WHERE gcm.user_id = :userId
+                WHERE gcm.participant_id = :userId
                   AND gcm.active = true
                   AND g.active = true
             
@@ -31,8 +31,8 @@ public interface GroupRepository extends JpaRepository<Group, Long> {
     Long countRecentGroupChats(@Param("userId") Long userId, @Param("orgId") Long orgId);
 
     @Query(value = """
-            SELECT
-                g.id AS groupId,
+             SELECT
+                g.public_id AS groupId,
                 g.name AS groupName,
                 g.visibility AS groupVisibility,
                 g.display_picture AS senderDisplayPicture,
@@ -44,24 +44,31 @@ public interface GroupRepository extends JpaRepository<Group, Long> {
                 msg.created_at AS createdAt
             
             FROM group_chat_member gcm
-            JOIN groups g ON g.id = gcm.group_id AND g.org_id = :orgId
-            JOIN group_chat_message msg ON msg.group_id = g.id
-            JOIN org_member sender ON sender.user_id = msg.sender_id AND sender.org_id = :orgId
+            JOIN groups g
+                ON g.id = gcm.group_id
+               AND gcm.participant_id = :userId
+               AND gcm.active = true
+               AND g.active = true
+               AND g.org_id = :orgId
             
-            -- Get only the latest message for each group
             JOIN (
                 SELECT group_id, MAX(created_at) AS latest
                 FROM group_chat_message
                 WHERE deleted = false
                 GROUP BY group_id
-            ) latest_msg ON latest_msg.group_id = msg.group_id AND latest_msg.latest = msg.created_at
+            ) latest_msg
+                ON latest_msg.group_id = g.id
             
-            WHERE gcm.user_id = :userId
-              AND gcm.active = true
-              AND g.active = true
+            JOIN group_chat_message msg
+                ON msg.group_id = g.id
+               AND msg.created_at = latest_msg.latest
+            
+            JOIN org_member sender
+                ON sender.user_id = msg.sender_id
+               AND sender.org_id = :orgId
             
             ORDER BY msg.created_at DESC
-            LIMIT :limit OFFSET :offset
+            LIMIT :limit OFFSET :offset;
             """, nativeQuery = true)
     List<RecentGroupChatProjection> findRecentGroupChatsPaged(@Param("userId") Long userId, @Param("orgId") Long orgId, @Param("limit") int limit, @Param("offset") int offset);
 
