@@ -34,7 +34,7 @@ const ChatMessages = ({ messages, showStartNewConversation, chatId, retrievingCh
                 lastDate = newDate;
 
                 // compare the msg.sender.id of current and previous message
-                const isSameSender = previousMessageSenderId === msg.sender.id;
+                const isSameSender = previousMessageSenderId === msg.sender.id && !showDate;
                 previousMessageSenderId = msg.sender.id;
 
                 return (
