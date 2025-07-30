@@ -22,6 +22,7 @@ import com.pesupal.server.model.user.User;
 import com.pesupal.server.repository.OrgMemberRepository;
 import com.pesupal.server.service.interfaces.*;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -308,6 +309,21 @@ public class OrgMemberServiceImpl implements OrgMemberService {
             }
             return userBasicInfoDto;
         }).toList();
+    }
+
+    /**
+     * Retrieves organization members based on a search query.
+     *
+     * @param orgMember
+     * @param search
+     * @return
+     */
+    @Override
+    public List<UserPreviewDto> getSearchedOrgMembers(OrgMember orgMember, String search, int page, int size) {
+
+        Long orgId = orgMember.getOrg().getId();
+        List<OrgMember> orgMembers = orgMemberRepository.fuzzySearchOrgMembers(orgId, search, PageRequest.of(page, size)).getContent();
+        return orgMembers.stream().map(UserPreviewDto::fromOrgMember).toList();
     }
 
     /**
