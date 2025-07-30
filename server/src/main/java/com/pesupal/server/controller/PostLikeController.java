@@ -17,21 +17,21 @@ public class PostLikeController {
     private final PostLikeService postLikeService;
 
     @GetMapping("/{postId}")
-    public ResponseEntity<ApiResponseDto> getPostLikes(@PathVariable Long postId) {
+    public ResponseEntity<ApiResponseDto> getPostLikes(@PathVariable String postId) {
 
         List<PostLikesDto> likes = postLikeService.getPostLikes(postId);
         return ResponseEntity.ok().body(new ApiResponseDto("Post likes retrieved successfully", likes));
     }
 
     @PostMapping("/{postId}")
-    public ResponseEntity<ApiResponseDto> likePost(@PathVariable Long postId) {
+    public ResponseEntity<ApiResponseDto> likePost(@PathVariable String postId) {
 
         postLikeService.likePost(postId);
         return ResponseEntity.ok().body(new ApiResponseDto("Post liked successfully"));
     }
 
     @DeleteMapping("/{postId}")
-    public ResponseEntity<ApiResponseDto> unlikePost(@PathVariable Long postId) {
+    public ResponseEntity<ApiResponseDto> unlikePost(@PathVariable String postId) {
 
         postLikeService.unlikePost(postId);
         return ResponseEntity.ok().body(new ApiResponseDto("Post unliked successfully"));

@@ -26,7 +26,7 @@ public class PostController {
     }
 
     @GetMapping("/{postId}")
-    public ResponseEntity<ApiResponseDto> getPostById(@PathVariable Long postId) {
+    public ResponseEntity<ApiResponseDto> getPostById(@PathVariable String postId) {
 
         PostDto post = postService.getPostByIdAndOrgId(postId);
         return ResponseEntity.ok().body(new ApiResponseDto("Post retrieved successfully.", post));
@@ -55,21 +55,21 @@ public class PostController {
     }
 
     @PutMapping("/archive/{postId}")
-    public ResponseEntity<ApiResponseDto> archivePost(@PathVariable Long postId) {
+    public ResponseEntity<ApiResponseDto> archivePost(@PathVariable String postId) {
 
         postService.archivePost(postId);
         return ResponseEntity.ok().body(new ApiResponseDto("Post archived successfully"));
     }
 
     @PatchMapping("/{postId}")
-    public ResponseEntity<ApiResponseDto> updatePost(@PathVariable Long postId, @RequestBody CreatePostDto createPostDto) {
+    public ResponseEntity<ApiResponseDto> updatePost(@PathVariable String postId, @RequestBody CreatePostDto createPostDto) {
 
         Post post = postService.updatePost(postId, createPostDto);
         return ResponseEntity.ok().body(new ApiResponseDto("Post updated successfully", post));
     }
 
     @DeleteMapping("/{postId}")
-    public ResponseEntity<ApiResponseDto> deletePost(@PathVariable Long postId) {
+    public ResponseEntity<ApiResponseDto> deletePost(@PathVariable String postId) {
 
         postService.deletePost(postId);
         return ResponseEntity.ok().body(new ApiResponseDto("Post deleted successfully"));
