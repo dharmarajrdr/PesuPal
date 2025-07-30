@@ -7,7 +7,6 @@ import com.pesupal.server.helpers.CurrentValueRetriever;
 import com.pesupal.server.model.post.Post;
 import com.pesupal.server.model.post.PostLike;
 import com.pesupal.server.model.user.OrgMember;
-import com.pesupal.server.model.user.User;
 import com.pesupal.server.repository.PostLikeRepository;
 import com.pesupal.server.service.interfaces.OrgMemberService;
 import com.pesupal.server.service.interfaces.PostLikeService;
@@ -31,15 +30,14 @@ public class PostLikeServiceImpl extends CurrentValueRetriever implements PostLi
      * @param postId
      */
     @Override
-    public void likePost(Long postId) {
+    public void likePost(String postId) {
 
         OrgMember orgMember = getCurrentOrgMember();
-        User user = orgMember.getUser();
-        Post post = postService.getPostByIdAndOrgId(postId, orgMember.getOrg().getId());
+        Post post = postService.getPostByPublicIdAndOrgId(postId, orgMember.getOrg().getId());
         if (!post.getStatus().equals(PostStatus.PUBLISHED)) {
             throw new ActionProhibitedException("The post that you are trying to like may be deleted or unpublished by the author.");
         }
-        if (postLikeRepository.existsByPostAndLiker(post, user)) {
+        if (postLikeRepository.existsByPostAndLiker(post, orgMember)) {
             throw new ActionProhibitedException("You have already liked this post.");
         }
         PostLike postLike = new PostLike();
@@ -54,15 +52,14 @@ public class PostLikeServiceImpl extends CurrentValueRetriever implements PostLi
      * @param postId
      */
     @Override
-    public void unlikePost(Long postId) {
+    public void unlikePost(String postId) {
 
         OrgMember orgMember = getCurrentOrgMember();
-        Post post = postService.getPostByIdAndOrgId(postId, orgMember.getOrg().getId());
-        User user = orgMember.getUser();
+        Post post = postService.getPostByPublicIdAndOrgId(postId, orgMember.getOrg().getId());
         if (!post.getStatus().equals(PostStatus.PUBLISHED)) {
             throw new ActionProhibitedException("The post that you are trying to unlike may be deleted or unpublished by the author.");
         }
-        PostLike postLike = postLikeRepository.findByPostAndLiker(post, user).orElseThrow(() -> new ActionProhibitedException("You have not liked this post."));
+        PostLike postLike = postLikeRepository.findByPostAndLiker(post, orgMember).orElseThrow(() -> new ActionProhibitedException("You have not liked this post."));
         postLikeRepository.delete(postLike);
     }
 
@@ -73,10 +70,10 @@ public class PostLikeServiceImpl extends CurrentValueRetriever implements PostLi
      * @return List<PostLikesDto>
      */
     @Override
-    public List<PostLikesDto> getPostLikes(Long postId) {
+    public List<PostLikesDto> getPostLikes(String postId) {
 
         OrgMember orgMember = getCurrentOrgMember();
-        return postLikeRepository.findByPostId(postId).stream().map(postLike -> {
+        return postLikeRepository.findByPostPublicIdAndPost_OrgId(postId, orgMember.getOrg().getId()).stream().map(postLike -> {
             OrgMember likerOrgMember = orgMemberService.getOrgMemberByUserIdAndOrgId(postLike.getLiker().getId(), orgMember.getOrg().getId());
             PostLikesDto postLikesDto = PostLikesDto.fromOrgMember(likerOrgMember);
             postLikesDto.setCreatedAt(postLike.getCreatedAt());
