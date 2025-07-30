@@ -12,7 +12,7 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class PostDto {
 
-    private Long id;
+    private String id;
 
     private UserBasicInfoDto owner;
 
@@ -45,7 +45,7 @@ public class PostDto {
     public static PostDto fromPost(Post post) {
 
         PostDto postDto = new PostDto();
-        postDto.setId(post.getId());
+        postDto.setId(post.getPublicId());
         postDto.setTitle(post.getTitle());
         postDto.setCreatedAt(post.getCreatedAt());
         postDto.setDescription(post.getDescription());

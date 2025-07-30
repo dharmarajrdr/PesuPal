@@ -11,7 +11,7 @@ import lombok.Data;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class GroupDto {
 
-    private Long id;
+    private String id;
 
     private String name;
 
@@ -25,7 +25,7 @@ public class GroupDto {
 
     public static GroupDto fromGroup(Group group) {
         GroupDto groupDto = new GroupDto();
-        groupDto.setId(group.getId());
+        groupDto.setId(group.getPublicId());
         groupDto.setName(group.getName());
         groupDto.setDescription(group.getDescription());
         groupDto.setVisibility(group.getVisibility());

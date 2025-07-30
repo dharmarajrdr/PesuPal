@@ -49,8 +49,8 @@ const CreateGroupModal = ({ setShowCreateGroupModal }) => {
 
         apiRequest(`/api/v1/group/create`, 'POST', groupData).then(({ data }) => {
             const { id } = data;
-            navigate(`/chat/group/${id}`);
             closeCreateGroupModal();
+            navigate(`/chat/groups/${id}`);
         }).catch(({ message }) => {
             console.error("Error creating group:", message);
             closeCreateGroupModal();

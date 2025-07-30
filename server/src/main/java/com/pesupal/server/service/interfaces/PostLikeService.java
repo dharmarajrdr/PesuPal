@@ -6,9 +6,9 @@ import java.util.List;
 
 public interface PostLikeService {
 
-    void likePost(Long postId);
+    void likePost(String postId);
 
-    void unlikePost(Long postId);
+    void unlikePost(String postId);
 
-    List<PostLikesDto> getPostLikes(Long postId);
+    List<PostLikesDto> getPostLikes(String postId);
 }

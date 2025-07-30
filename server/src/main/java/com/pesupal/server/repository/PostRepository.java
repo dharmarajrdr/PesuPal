@@ -20,4 +20,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     Optional<Post> findByPublicId(String publicId);
 
     Optional<Post> findByIdAndOrg(Long postId, Org org);
+
+    Optional<Post> findByPublicIdAndOrgId(String postId, Long orgId);
 }

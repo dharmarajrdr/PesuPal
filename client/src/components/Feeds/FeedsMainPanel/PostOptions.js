@@ -61,10 +61,18 @@ const PostOptions = ({ postId, commentable, setCommentable, isCreator, poll, pol
         }
     ];
 
+    const copyPostHandler = () => {
+        navigator.clipboard.writeText(`${window.location.origin}/post/${postId}`);
+        closeOptionsModal();
+        dispatch(showPopup({ message: 'Post link copied to clipboard', type: 'success' }));
+    }
+
     return (
         <div className="FCSS" id="post-options" >
 
             <div className='option' onClick={() => { setShowLikesList(true); closeOptionsModal(); }}>Show Post Likes</div>
+
+            <div className='option' onClick={copyPostHandler}>Copy Link</div>
 
             {
                 isCreator && <>

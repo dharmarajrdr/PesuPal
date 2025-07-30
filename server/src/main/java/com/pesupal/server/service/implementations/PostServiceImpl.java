@@ -134,15 +134,28 @@ public class PostServiceImpl extends CurrentValueRetriever implements PostServic
      * @return PostDto
      */
     @Override
-    public PostDto getPostByIdAndOrgId(Long postId) {
+    public PostDto getPostByIdAndOrgId(String postId) {
 
         OrgMember orgMember = getCurrentOrgMember();
         Long orgId = orgMember.getOrg().getId();
-        Post post = getPostByIdAndOrgId(postId, orgId);
+        Post post = getPostByPublicIdAndOrgId(postId, orgId);
         OrgMember postOwner = orgMemberService.getOrgMemberByUserIdAndOrgId(post.getCreator().getId(), orgId);
         PostDto postDto = getPostDtoFromPostAndOrgMember(post, postOwner);
         postDto.setLiked(isLiked(post.getLikes(), orgMember.getUser()));
         return postDto;
+    }
+
+    /**
+     * Retrieves a post by its public ID and organization ID.
+     *
+     * @param postId
+     * @param orgId
+     * @return
+     */
+    @Override
+    public Post getPostByPublicIdAndOrgId(String postId, Long orgId) {
+
+        return postRepository.findByPublicIdAndOrgId(postId, orgId).orElseThrow(() -> new DataNotFoundException("Post with ID " + postId + " does not exist."));
     }
 
     /**
@@ -185,10 +198,10 @@ public class PostServiceImpl extends CurrentValueRetriever implements PostServic
      * @param postId
      */
     @Override
-    public void archivePost(Long postId) {
+    public void archivePost(String postId) {
 
         OrgMember orgMember = getCurrentOrgMember();
-        Post post = getPostByIdAndOrgId(postId, orgMember.getOrg().getId());
+        Post post = getPostByPublicIdAndOrgId(postId, orgMember.getOrg().getId());
         if (!Objects.equals(post.getCreator().getId(), orgMember.getId())) {
             throw new PermissionDeniedException("You do not have permission to archive this post.");
         }
@@ -244,11 +257,11 @@ public class PostServiceImpl extends CurrentValueRetriever implements PostServic
      * @return
      */
     @Override
-    public Post updatePost(Long postId, CreatePostDto createPostDto) {
+    public Post updatePost(String postId, CreatePostDto createPostDto) {
 
         OrgMember orgMember = getCurrentOrgMember();
 
-        Post post = getPostByIdAndOrg(postId, orgMember.getOrg());
+        Post post = getPostByPublicIdAndOrgId(postId, orgMember.getOrg().getId());
         createPostDto.applyToPost(post);
         return postRepository.save(post);
     }
@@ -259,10 +272,10 @@ public class PostServiceImpl extends CurrentValueRetriever implements PostServic
      * @param postId
      */
     @Override
-    public void deletePost(Long postId) {
+    public void deletePost(String postId) {
 
         OrgMember orgMember = getCurrentOrgMember();
-        Post post = getPostByIdAndOrg(postId, orgMember.getOrg());
+        Post post = getPostByPublicIdAndOrgId(postId, orgMember.getOrg().getId());
         if (!post.getCreator().getId().equals(orgMember.getId())) {
             throw new PermissionDeniedException("You do not have permission to delete this post.");
         }
