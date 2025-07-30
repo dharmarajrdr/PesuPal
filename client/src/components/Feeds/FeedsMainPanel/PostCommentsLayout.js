@@ -48,7 +48,7 @@ const CommentContent = ({ html }) => <div className="comment-content html-conten
 
 const Comment = ({ comment, setComments, setCommentsCount }) => {
 
-    const { id, userId, displayName, displayPicture, message, createdAt, replyCount, deleteable } = comment;
+    const { id, userId, displayName, displayPicture, message, createdAt, replyCount, deletable } = comment;
 
     const [showReplies, setShowReplies] = useState(false);
     const [showProfile, setShowProfile] = useState(false);
@@ -98,7 +98,7 @@ const Comment = ({ comment, setComments, setCommentsCount }) => {
                             {showReplies && <CommentReply commentId={id} />}
                         </>}
                     </div>
-                    {deleteable && showDeleteIcon && <p className='fs12 cursP delete-comment color555' onClick={() => setClickedDelete(true)}><i className='fa fa-trash mR5 fs10 color777' />Delete</p>}
+                    {deletable && showDeleteIcon && <p className='fs12 cursP delete-comment color555' onClick={() => setClickedDelete(true)}><i className='fa fa-trash mR5 fs10 color777' />Delete</p>}
                     {clickedDelete && <ConfirmationPopup message={"Are you sure you want to delete this comment?"} onClose={() => setClickedDelete(false)} options={deletePopupOptions} />}
                 </div>
             </div>
