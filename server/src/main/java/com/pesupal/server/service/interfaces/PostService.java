@@ -15,17 +15,19 @@ public interface PostService {
 
     Post getPostByIdAndOrg(Long postId, Org org);
 
-    PostDto getPostByIdAndOrgId(Long postId);
+    PostDto getPostByIdAndOrgId(String postId);
+
+    Post getPostByPublicIdAndOrgId(String postId, Long orgId);
 
     PostsListDto getPostByUserId(String postOwnerId, int page, int size, SortOrder sortOrder);
 
-    void archivePost(Long postId);
+    void archivePost(String postId);
 
     PostsListDto getPostByTag(String tag, int page, int size, SortOrder sortOrder);
 
-    Post updatePost(Long postId, CreatePostDto createPostDto);
+    Post updatePost(String postId, CreatePostDto createPostDto);
 
-    void deletePost(Long postId);
+    void deletePost(String postId);
 
     Post getPostByPublicId(String postId);
 }
