@@ -1,5 +1,7 @@
-import React from 'react'
 import './AddUserLayout.css'
+import AddUserHeader from './AddUserHeader';
+import AddUserBody from './AddUserBody';
+import AddUserFooter from './AddUserFooter';
 
 const AddUserLayout = ({ setShowAddUserLayout }) => {
     const closeLayout = (e) => {
@@ -10,8 +12,10 @@ const AddUserLayout = ({ setShowAddUserLayout }) => {
     };
     return (
         <div className='entire-screen-overlay' onClick={closeLayout}>
-            <div id='add-user-layout' className='centerMe'>
-
+            <div id='add-user-layout' className='centerMe FCCB'>
+                <AddUserHeader />
+                <AddUserBody />
+                <AddUserFooter />
             </div>
         </div>
     )

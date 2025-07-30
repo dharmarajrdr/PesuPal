@@ -1,6 +1,7 @@
 #add-user-layout {
-    width: 75%;
+    width: 40%;
     height: 75%;
     background-color: #fff;
     border-radius: 5px;
+    overflow: hidden;
 }
