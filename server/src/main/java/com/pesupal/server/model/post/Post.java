@@ -20,6 +20,7 @@ public class Post extends PublicAccessModel {
     private Org org;
 
     @ManyToOne
+    @JsonIgnore
     private OrgMember creator;
 
     private String title;
