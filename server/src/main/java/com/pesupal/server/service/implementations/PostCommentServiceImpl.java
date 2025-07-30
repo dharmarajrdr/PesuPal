@@ -38,8 +38,8 @@ public class PostCommentServiceImpl extends CurrentValueRetriever implements Pos
         OrgMember commenter = getCurrentOrgMember();
         Long orgId = commenter.getOrg().getId();
 
-        Long postId = createPostCommentDto.getPostId();
-        Post post = postService.getPostByIdAndOrgId(postId, orgId);
+        String postId = createPostCommentDto.getPostId();
+        Post post = postService.getPostByPublicIdAndOrgId(postId, orgId);
 
         if (!post.isCommentable()) {
             throw new ActionProhibitedException("Comments are not allowed on this post.");

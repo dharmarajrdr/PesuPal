@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 public class CreatePostCommentDto {
 
-    private Long postId;
+    private String postId;
 
     private String message;
 
