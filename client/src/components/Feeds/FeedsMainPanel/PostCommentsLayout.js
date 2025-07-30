@@ -133,7 +133,7 @@ const CommentsContainer = ({ postId, commentable, setCommentsCount }) => {
     }, [postId]);
 
     return (
-        <div id='comments-container' className='FCCS mT20'>
+        <div id='comments-container' className='FCCS mT20 centerMe'>
             {
                 loading ? <Loader />
                     : error ? <ErrorMessage message={error} />
