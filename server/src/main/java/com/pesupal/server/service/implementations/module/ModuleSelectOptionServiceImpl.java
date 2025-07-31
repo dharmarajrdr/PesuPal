@@ -48,4 +48,16 @@ public class ModuleSelectOptionServiceImpl implements ModuleSelectOptionService 
 
         moduleSelectOptionRepository.deleteAllByModuleField(moduleField);
     }
+
+    /**
+     * Retrieves all module select options associated with a specific module field.
+     *
+     * @param moduleField
+     * @return
+     */
+    @Override
+    public List<ModuleSelectOption> getAllByModuleField(ModuleField moduleField) {
+
+        return moduleSelectOptionRepository.findAllByModuleField(moduleField);
+    }
 }

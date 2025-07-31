@@ -12,4 +12,6 @@ public interface ModuleSelectOptionService {
     void saveAll(List<ModuleSelectOption> selectOptions);
 
     void deleteAllByModuleField(ModuleField moduleField);
+
+    List<ModuleSelectOption> getAllByModuleField(ModuleField moduleField);
 }
