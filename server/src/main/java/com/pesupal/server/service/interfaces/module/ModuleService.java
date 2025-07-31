@@ -6,4 +6,6 @@ import com.pesupal.server.model.module.Module;
 public interface ModuleService {
 
     Module createModule(CreateModuleDto createModuleDto);
+
+    Module getModuleById(String moduleId);
 }

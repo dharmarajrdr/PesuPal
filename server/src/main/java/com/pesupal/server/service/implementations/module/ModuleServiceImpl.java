@@ -1,6 +1,7 @@
 package com.pesupal.server.service.implementations.module;
 
 import com.pesupal.server.dto.request.module.CreateModuleDto;
+import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.helpers.CurrentValueRetriever;
 import com.pesupal.server.model.module.Module;
 import com.pesupal.server.model.user.OrgMember;
@@ -29,5 +30,17 @@ public class ModuleServiceImpl extends CurrentValueRetriever implements ModuleSe
         module.setCreatedBy(orgMember);
         module.setActive(false);
         return moduleRepository.save(module);
+    }
+
+    /**
+     * Retrieves a module by its ID.
+     *
+     * @param moduleId
+     * @return
+     */
+    @Override
+    public Module getModuleById(String moduleId) {
+
+        return moduleRepository.findByPublicId(moduleId).orElseThrow(() -> new DataNotFoundException("Module with ID " + moduleId + " not found"));
     }
 }
