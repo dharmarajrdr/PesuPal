@@ -6,6 +6,7 @@ import com.pesupal.server.helpers.CurrentValueRetriever;
 import com.pesupal.server.model.module.Module;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.repository.ModuleRepository;
+import com.pesupal.server.service.interfaces.module.ModulePermissionService;
 import com.pesupal.server.service.interfaces.module.ModuleService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 public class ModuleServiceImpl extends CurrentValueRetriever implements ModuleService {
 
     private final ModuleRepository moduleRepository;
+    private final ModulePermissionService modulePermissionService;
 
     /**
      * Checks if the current user is the owner of the module.
@@ -42,7 +44,9 @@ public class ModuleServiceImpl extends CurrentValueRetriever implements ModuleSe
         Module module = createModuleDto.toModule();
         module.setCreatedBy(orgMember);
         module.setActive(false);
-        return moduleRepository.save(module);
+        moduleRepository.save(module);
+        modulePermissionService.initializeModulePermissions(module);
+        return module;
     }
 
     /**
