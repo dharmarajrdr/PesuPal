@@ -1,20 +1,26 @@
 ### Field type:
 
-| id | name        |
-|----|-------------|
-| 1  | string      |
-| 2  | integer     |
-| 3  | boolean     |
-| 4  | datetime    |
-| 5  | double      |
-| 6  | user        |
-| 7  | percent     |
-| 8  | file        |
-| 9  | text        |
-| 10 | select      |
-| 11 | multiselect |
-| 12 | relation    |
-| 13 | link        |
+| id | name         |
+|----|--------------|
+| 1  | string       |
+| 2  | integer      |
+| 3  | checkbox     |
+| 4  | datetime     |
+| 5  | double       |
+| 6  | user         |
+| 7  | percent      |
+| 8  | file         |
+| 9  | text         |
+| 10 | select       |
+| 11 | multiselect  |
+| 12 | relation     |
+| 13 | link         |
+| 14 | email        |
+| 15 | phone        |
+| 16 | geo_location |
+| 17 | currency     |
+| 18 | day          |
+| 19 | transition   |
 
 ### Filter Operators table:
 
@@ -80,7 +86,7 @@
 | 1  | 1         | Subject    | subject    | 1             | true        | true          | true          | true        | true        | true         | true           |
 | 2  | 1         | Due Date   | due_date   | 4             | false       | false         | true          | true        | true        | false        | true           |
 | 3  | 1         | Priority   | priority   | 10            | false       | true          | true          | true        | true        | true         | true           |
-| 4  | 1         | Status     | status     | 10            | false       | true          | true          | true        | true        | true         | true           |
+| 4  | 1         | Status     | status     | 19            | false       | true          | true          | true        | true        | true         | true           |
 | 5  | 1         | Created At | created_at | 4             | false       | false         | false         | false       | false       | true         | true           |
 | 6  | 1         | Updated At | updated_at | 4             | false       | false         | false         | false       | false       | false        | false          |
 | 7  | 1         | Created By | created_by | 6             | false       | false         | false         | false       | false       | true         | true           |
@@ -98,11 +104,11 @@
 
 ### Record Timeline table:
 
-| id | record_field_id | action_performed_by | previous_value | new_value   | created_at          |
-|----|-----------------|---------------------|----------------|-------------|---------------------|
-| 1  | 3               | 2                   | Low            | High        | 2023-10-01 10:40:00 |
-| 2  | 4               | 3                   | To do          | In Progress | 2023-10-01 11:10:00 |
-| 3  | 9               | 2                   | 2              | 4           | 2023-10-01 12:20:00 |
+| id | record_field_id | action_performed_by | previous_value | new_value | created_at          |
+|----|-----------------|---------------------|----------------|-----------|---------------------|
+| 1  | 3               | 2                   | Low            | High      | 2023-10-01 10:40:00 |
+| 2  | 4               | 3                   | To do          | Analysing | 2023-10-01 11:10:00 |
+| 3  | 9               | 2                   | 2              | 4         | 2023-10-01 12:20:00 |
 
 ### Record User Relation table:
 
@@ -112,21 +118,33 @@
 | 2  | b27a7c56cb | 8               | 3       |
 | 3  | b27a7c56cb | 9               | 4       |
 
+### Transition Options table:
+
+| id | module_field_id | value                   | score | is_default |
+|----|-----------------|-------------------------|-------|------------|
+| 1  | 4               | Backlog                 | 0     | true       |
+| 2  | 4               | To do                   | 10    | false      |
+| 3  | 4               | Analysing               | 25    | false      |
+| 4  | 4               | Development In Progress | 50    | false      |
+| 5  | 4               | Testing                 | 75    | false      |
+| 6  | 4               | Released                | 100   | false      |
+
+### Record Transition Relation table:
+
+| id | record_id  | module_field_id | transition_option_id |
+|----|------------|-----------------|----------------------|
+| 1  | b27a7c56cb | 4               | 2                    |
+
 ### Select Options table:
 
-| id | module_field_id | value       | score | is_default |
-|----|-----------------|-------------|-------|------------|
-| 1  | 3               | High        | 0     | false      |
-| 2  | 3               | Medium      | 50    | true       |
-| 3  | 3               | Low         | 100   | false      |
-| 4  | 4               | Backlog     | 0     | true       |
-| 5  | 4               | To do       | 10    | false      |
-| 6  | 4               | In Progress | 50    | false      |
-| 7  | 4               | Done        | 100   | false      |
+| id | module_field_id | value  | is_default |
+|----|-----------------|--------|------------|
+| 1  | 3               | High   | false      |
+| 2  | 3               | Medium | false      |
+| 3  | 3               | Low    | true       |
 
 ### Record Select Relation table:
 
 | id | record_id  | module_field_id | select_option_id |
 |----|------------|-----------------|------------------|
-| 1  | b27a7c56cb | 3               | 1                |
-| 2  | b27a7c56cb | 4               | 6                |
+| 1  | b27a7c56cb | 4               | 2                |
