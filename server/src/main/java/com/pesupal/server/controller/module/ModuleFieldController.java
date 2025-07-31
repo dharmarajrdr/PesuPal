@@ -20,8 +20,8 @@ public class ModuleFieldController {
     @PostMapping("/field")
     public ResponseEntity<ApiResponseDto> addModuleField(@RequestBody AddModuleFieldDto addModuleFieldDto) {
 
-        ModuleFieldDto moduleField = moduleFieldService.addModuleField(addModuleFieldDto);
-        return ResponseEntity.ok(new ApiResponseDto("Field added successfully", moduleField));
+        ModuleFieldDto moduleFieldDtos = moduleFieldService.addModuleField(addModuleFieldDto);
+        return ResponseEntity.ok(new ApiResponseDto("Field added successfully", moduleFieldDtos));
     }
 
     @GetMapping("/{moduleId}/fields")
@@ -33,8 +33,8 @@ public class ModuleFieldController {
 
     @DeleteMapping("/field/{fieldId}")
     public ResponseEntity<ApiResponseDto> deleteModuleField(@PathVariable Long fieldId) {
-        
+
         moduleFieldService.deleteModuleField(fieldId);
-        return ResponseEntity.ok(new ApiResponseDto("Field deleted successfully", null));
+        return ResponseEntity.ok(new ApiResponseDto("Field deleted successfully"));
     }
 }
