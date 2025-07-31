@@ -27,4 +27,22 @@ public class ModulePermissionServiceImpl implements ModulePermissionService {
 
         return modulePermissionRepository.findByModuleAndRole(module, moduleRole).orElseThrow(() -> new DataNotFoundException("Permission configuration missing for this module."));
     }
+
+    /**
+     * Initializes the permissions for a module based on predefined roles.
+     *
+     * @param module
+     */
+    @Override
+    public void initializeModulePermissions(Module module) {
+
+        ModulePermission ownerModulePermission = ModulePermission.builder().module(module).role(ModuleRole.OWNER).createRecord(true).readRecord(true).manageMembers(true).deleteRecord(true).build();
+        modulePermissionRepository.save(ownerModulePermission);
+
+        ModulePermission maintainerModulePermission = ModulePermission.builder().module(module).role(ModuleRole.MAINTAINER).createRecord(true).readRecord(true).manageMembers(false).deleteRecord(false).build();
+        modulePermissionRepository.save(maintainerModulePermission);
+
+        ModulePermission memberModulePermission = ModulePermission.builder().module(module).role(ModuleRole.MEMBER).createRecord(false).readRecord(true).manageMembers(false).deleteRecord(false).build();
+        modulePermissionRepository.save(memberModulePermission);
+    }
 }
