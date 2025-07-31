@@ -19,6 +19,7 @@ public abstract class PublicAccessModel extends BaseModel {
     @Column(unique = true, updatable = false, nullable = false)
     private String publicId;
 
+    @Column(updatable = false, nullable = false)
     private LocalDateTime createdAt;
 
     protected void setCreationTime() {

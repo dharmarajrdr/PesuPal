@@ -93,6 +93,14 @@
 | 8  | 1         | Updated By | updated_by | 6             | false       | false         | false         | false       | false       | false        | false          |
 | 9  | 1         | Owner      | owner      | 6             | false       | false         | false         | false       | true        | true         | true           |
 
+### Record table:
+
+| id | module_id | record_id  |
+|----|-----------|------------|
+| 1  | 1         | b27a7c56cb |
+| 2  | 1         | a1b2c3d4e5 |
+| 3  | 1         | f6g7h8i9j0 |
+
 ### Record Field Values table:
 
 | id | record_id  | module_field_id | value                           |
