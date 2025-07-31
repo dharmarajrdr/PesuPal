@@ -93,7 +93,15 @@ public class ModuleFieldServiceImpl extends CurrentValueRetriever implements Mod
 
         List<ModuleField> moduleFields = moduleFieldRepository.findAllByModuleOrderById(module);
 
-        return moduleFields.stream().map(ModuleFieldDto::fromModuleField).toList();
+        return moduleFields.stream().map(moduleField -> {
+            FieldType fieldType = moduleField.getFieldType();
+            if (fieldType.equals(FieldType.SELECT)) {
+                List<ModuleSelectOption> options = moduleSelectOptionService.getAllByModuleField(moduleField);
+                List<ModuleSelectOptionDto> optionDtos = options.stream().map(ModuleSelectOptionDto::fromModuleSelectOption).toList();
+                return ModuleFieldDto.fromModuleFieldWithOptions(moduleField, optionDtos);
+            }
+            return ModuleFieldDto.fromModuleField(moduleField);
+        }).toList();
     }
 
     /**

@@ -1,5 +1,6 @@
 package com.pesupal.server.dto.response.module;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.pesupal.server.enums.FieldType;
 import com.pesupal.server.model.module.ModuleField;
 import lombok.Data;
@@ -7,6 +8,7 @@ import lombok.Data;
 import java.util.List;
 
 @Data
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ModuleFieldDto {
 
     private String fieldName;
