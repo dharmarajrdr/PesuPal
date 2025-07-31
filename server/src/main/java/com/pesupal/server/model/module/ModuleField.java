@@ -1,5 +1,6 @@
 package com.pesupal.server.model.module;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.pesupal.server.enums.FieldType;
 import com.pesupal.server.model.BaseModel;
 import jakarta.persistence.Column;
@@ -13,13 +14,14 @@ import lombok.Data;
 public class ModuleField extends BaseModel {
 
     @ManyToOne
+    @JsonIgnore
     private Module module;
 
     @Column(nullable = false)
     private String name;
 
     @Enumerated
-    private FieldType field;
+    private FieldType fieldType;
 
     private boolean required;
 
