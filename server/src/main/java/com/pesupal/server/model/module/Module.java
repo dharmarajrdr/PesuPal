@@ -23,5 +23,7 @@ public class Module extends PublicAccessModel {
 
     private boolean allowDuplicateSubject;
 
+    private boolean openToRelation;
+
     private boolean active;
 }
