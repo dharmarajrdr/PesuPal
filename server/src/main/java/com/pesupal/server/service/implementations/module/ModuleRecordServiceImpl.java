@@ -4,27 +4,22 @@ import com.pesupal.server.dto.request.module.CreateModuleRecordDto;
 import com.pesupal.server.dto.response.module.ModuleRecordDto;
 import com.pesupal.server.exceptions.PermissionDeniedException;
 import com.pesupal.server.helpers.CurrentValueRetriever;
+import com.pesupal.server.model.module.*;
 import com.pesupal.server.model.module.Module;
-import com.pesupal.server.model.module.ModuleMember;
-import com.pesupal.server.model.module.ModulePermission;
-import com.pesupal.server.model.module.ModuleRole;
 import com.pesupal.server.model.user.OrgMember;
-import com.pesupal.server.repository.ModuleRecordRepository;
-import com.pesupal.server.service.interfaces.module.ModuleMemberService;
-import com.pesupal.server.service.interfaces.module.ModulePermissionService;
-import com.pesupal.server.service.interfaces.module.ModuleRecordService;
-import com.pesupal.server.service.interfaces.module.ModuleService;
+import com.pesupal.server.service.interfaces.module.*;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @AllArgsConstructor
 public class ModuleRecordServiceImpl extends CurrentValueRetriever implements ModuleRecordService {
 
-    private final ModuleRecordRepository moduleRecordRepository;
     private final ModuleService moduleService;
-    private final ModulePermissionService modulePermissionService;
     private final ModuleMemberService moduleMemberService;
+    private final ModulePermissionService modulePermissionService;
+    private final ModuleRecordTimelineService moduleRecordTimelineService;
 
     /**
      * Creates a new record in a module.
@@ -33,6 +28,7 @@ public class ModuleRecordServiceImpl extends CurrentValueRetriever implements Mo
      * @return
      */
     @Override
+    @Transactional
     public ModuleRecordDto createRecord(CreateModuleRecordDto createModuleRecordDto) {
 
         OrgMember orgMember = getCurrentOrgMember();
@@ -47,7 +43,12 @@ public class ModuleRecordServiceImpl extends CurrentValueRetriever implements Mo
         if (!modulePermission.isCreateRecord()) {
             throw new PermissionDeniedException("You do not have permission to create a record in this module.");
         }
-        
+
+        ModuleRecord moduleRecord = new ModuleRecord();
+        moduleRecord.setCreatedBy(orgMember);
+
+        moduleRecordTimelineService.createTimeLine(ModuleRecordTimeline.builder().record(moduleRecord).actionPerformedBy(orgMember).action("Created a new record.").build());
+
         return null;
     }
 }
