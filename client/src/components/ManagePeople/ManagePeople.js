@@ -29,7 +29,7 @@ const initialPeople = [
 
 const ManagePeople = () => {
 
-    const [showAddUserLayout, setShowAddUserLayout] = useState(false);
+    const [showAddUserLayout, setShowAddUserLayout] = useState(true);
 
     return (
         <div className="manage-people-container h100">

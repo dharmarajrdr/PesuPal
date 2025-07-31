@@ -57,6 +57,15 @@ public class OrgMemberController extends OrgSubscriptionManager {
         return ResponseEntity.ok(new ApiResponseDto("List of organization members retrieved successfully.", orgMembers));
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<ApiResponseDto> getSearchedOrgMembers(@RequestParam(name = "q") String search,
+                                                                @RequestParam(name = "page", defaultValue = "0") int page,
+                                                                @RequestParam(name = "size", defaultValue = "10") int size) {
+
+        List<UserPreviewDto> orgMembers = orgMemberService.getSearchedOrgMembers(getCurrentOrgMember(), search, page, size);
+        return ResponseEntity.ok(new ApiResponseDto("List of organization members retrieved successfully.", orgMembers));
+    }
+
     @GetMapping("/profile")
     public ResponseEntity<ApiResponseDto> getMyProfile() {
 

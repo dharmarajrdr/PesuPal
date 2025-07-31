@@ -34,6 +34,8 @@ public interface OrgMemberService {
 
     List<UserBasicInfoDto> getAllOrgMembers(OrgMember orgMember);
 
+    List<UserPreviewDto> getSearchedOrgMembers(OrgMember orgMember, String search, int page, int size);
+
     String getOrgMemberImageByUserIdAndOrgId(Long userId, Long currentOrgId);
 
     UserPreviewDto getUserPreview(OrgMember orgMember);

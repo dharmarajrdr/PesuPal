@@ -1,0 +1,38 @@
+#add-user-header {
+    height: 225px;
+}
+
+#user-cover-image-wrapper {
+    height: 150px;
+    overflow: hidden;
+}
+
+#user-cover-image-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top;
+}
+
+#user-display-picture-div-wrapper {
+    height: 75px;
+}
+
+#display-picture-wrapper {
+    width: 150px;
+    height: 150px;
+    overflow: hidden;
+    border-radius: 50%;
+    position: relative;
+    bottom: 35px;
+    left: 40px;
+    border: 2px solid var(--pure-white-hover);
+    box-shadow: 0 0 5px var(--box-shadow-color);
+}
+
+#display-picture-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
