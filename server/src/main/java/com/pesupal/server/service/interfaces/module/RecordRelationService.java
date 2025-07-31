@@ -1,6 +1,9 @@
 package com.pesupal.server.service.interfaces.module;
 
+import com.pesupal.server.model.module.ModuleField;
+import com.pesupal.server.model.module.ModuleRecord;
+
 public interface RecordRelationService {
 
-    public void save(Object data);
+    void save(ModuleRecord record, ModuleField field, Object data);
 }

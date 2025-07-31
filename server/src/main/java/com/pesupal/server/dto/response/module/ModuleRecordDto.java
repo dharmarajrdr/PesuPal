@@ -8,5 +8,6 @@ public class ModuleRecordDto {
 
     public static ModuleRecordDto fromModuleRecord(ModuleRecord moduleRecord) {
 
+        return null;
     }
 }

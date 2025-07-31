@@ -5,11 +5,17 @@ import com.pesupal.server.helpers.IdGenerator;
 import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.PrePersist;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
 
 @Data
+@SuperBuilder
+@AllArgsConstructor
+@NoArgsConstructor
 @MappedSuperclass
 public abstract class PublicAccessModel extends BaseModel {
 

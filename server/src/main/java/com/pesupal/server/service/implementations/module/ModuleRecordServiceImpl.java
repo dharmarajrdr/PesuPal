@@ -94,7 +94,7 @@ public class ModuleRecordServiceImpl extends CurrentValueRetriever implements Mo
 
             // 7. Get the appropriate RecordRelationService based on the field type to save the value
             RecordRelationService recordRelationService = recordRelationFactory.getRelationService(fieldType);
-            recordRelationService.save(value);
+            recordRelationService.save(moduleRecord, moduleField, value);
         }
 
         // 8. Log the creation of the record in the timeline

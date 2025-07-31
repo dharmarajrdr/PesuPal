@@ -65,6 +65,19 @@ public class ModuleFieldServiceImpl extends CurrentValueRetriever implements Mod
     }
 
     /**
+     * Retrieves all fields for a specific module by its ID.
+     *
+     * @param moduleId
+     * @return
+     */
+    @Override
+    public List<ModuleField> getModuleFieldsByModuleId(String moduleId) {
+
+        Module module = moduleService.getModuleById(moduleId);
+        return moduleFieldRepository.findAllByModuleOrderById(module);
+    }
+
+    /**
      * Retrieves all fields for a specific module.
      *
      * @param moduleId
@@ -116,4 +129,5 @@ public class ModuleFieldServiceImpl extends CurrentValueRetriever implements Mod
 
         moduleFieldRepository.delete(moduleField);
     }
+
 }
