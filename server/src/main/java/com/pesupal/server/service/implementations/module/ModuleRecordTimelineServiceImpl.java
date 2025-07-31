@@ -6,6 +6,8 @@ import com.pesupal.server.service.interfaces.module.ModuleRecordTimelineService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @AllArgsConstructor
 public class ModuleRecordTimelineServiceImpl implements ModuleRecordTimelineService {
@@ -20,5 +22,18 @@ public class ModuleRecordTimelineServiceImpl implements ModuleRecordTimelineServ
     @Override
     public void createTimeLine(ModuleRecordTimeline moduleRecordTimeline) {
 
+        moduleRecordTimelineRepository.save(moduleRecordTimeline);
+    }
+
+    /**
+     * Retrieves a list of module record timelines by the record ID.
+     *
+     * @param moduleRecordId
+     * @return
+     */
+    @Override
+    public List<ModuleRecordTimeline> getModuleRecordTimelinesByRecordId(String moduleRecordId) {
+
+        return moduleRecordTimelineRepository.findAllByRecord_PublicIdOrderByCreatedAt(moduleRecordId);
     }
 }
