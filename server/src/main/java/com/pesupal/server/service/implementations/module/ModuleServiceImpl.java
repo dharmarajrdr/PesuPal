@@ -17,6 +17,19 @@ public class ModuleServiceImpl extends CurrentValueRetriever implements ModuleSe
     private final ModuleRepository moduleRepository;
 
     /**
+     * Checks if the current user is the owner of the module.
+     *
+     * @param module
+     * @param orgMember
+     * @return
+     */
+    @Override
+    public boolean isModuleOwner(Module module, OrgMember orgMember) {
+
+        return module.getCreatedBy().getId().equals(orgMember.getId());
+    }
+
+    /**
      * Creates a new module.
      *
      * @param createModuleDto
