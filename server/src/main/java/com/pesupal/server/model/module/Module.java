@@ -1,5 +1,6 @@
 package com.pesupal.server.model.module;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.pesupal.server.model.PublicAccessModel;
 import com.pesupal.server.model.user.OrgMember;
 import jakarta.persistence.Column;
@@ -17,6 +18,7 @@ public class Module extends PublicAccessModel {
     private String description;
 
     @ManyToOne
+    @JsonIgnore
     private OrgMember createdBy;
 
     private boolean active;

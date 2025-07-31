@@ -2,10 +2,7 @@ package com.pesupal.server.model.module;
 
 import com.pesupal.server.model.PublicAccessModel;
 import com.pesupal.server.model.user.OrgMember;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -22,7 +19,7 @@ public class ModuleRecord extends PublicAccessModel {
     private String subject;
 
     @ManyToOne
-    @Column(updatable = false)
+    @JoinColumn(nullable = false, updatable = false)
     private OrgMember createdBy;
 
     @ManyToOne
