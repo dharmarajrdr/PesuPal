@@ -5,8 +5,12 @@ import com.pesupal.server.model.module.ModuleRecord;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface ModuleRecordRepository extends JpaRepository<ModuleRecord, Long> {
 
     boolean existsByModuleAndSubject(Module module, String subject);
+
+    Optional<ModuleRecord> findByPublicId(String recordId);
 }

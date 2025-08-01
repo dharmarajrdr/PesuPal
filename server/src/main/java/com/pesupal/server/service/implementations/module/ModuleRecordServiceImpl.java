@@ -3,12 +3,10 @@ package com.pesupal.server.service.implementations.module;
 import com.pesupal.server.dto.request.module.CreateModuleRecordDto;
 import com.pesupal.server.dto.response.module.ModuleRecordDto;
 import com.pesupal.server.enums.FieldType;
-import com.pesupal.server.exceptions.ActionProhibitedException;
-import com.pesupal.server.exceptions.DuplicateDataReceivedException;
-import com.pesupal.server.exceptions.MandatoryDataMissingException;
-import com.pesupal.server.exceptions.PermissionDeniedException;
+import com.pesupal.server.exceptions.*;
 import com.pesupal.server.factory.RecordRelationFactory;
 import com.pesupal.server.helpers.CurrentValueRetriever;
+import com.pesupal.server.helpers.ModuleHelper;
 import com.pesupal.server.model.module.*;
 import com.pesupal.server.model.module.Module;
 import com.pesupal.server.model.user.OrgMember;
@@ -89,7 +87,7 @@ public class ModuleRecordServiceImpl extends CurrentValueRetriever implements Mo
         List<ModuleField> moduleFields = moduleFieldService.getModuleFieldsByModuleId(moduleId);
         for (ModuleField moduleField : moduleFields) {
 
-            String attribute = moduleField.getName().replace(" ", "_").toLowerCase();
+            String attribute = ModuleHelper.getAttributeName(moduleField);
             Object value = data.get(attribute);
 
             // 7. If the value is null, check if the field is required
@@ -114,6 +112,17 @@ public class ModuleRecordServiceImpl extends CurrentValueRetriever implements Mo
     }
 
     /**
+     * Retrieves a module record by its public ID.
+     *
+     * @param recordId
+     * @return
+     */
+    public ModuleRecord getModuleRecordByPublicId(String recordId) {
+
+        return moduleRecordRepository.findByPublicId(recordId).orElseThrow(() -> new DataNotFoundException("Record with ID " + recordId + " not found."));
+    }
+
+    /**
      * Retrieves a record by its ID.
      *
      * @param recordId
@@ -122,7 +131,28 @@ public class ModuleRecordServiceImpl extends CurrentValueRetriever implements Mo
      */
     @Override
     public ModuleRecordDto getRecordById(String recordId) {
-        return null;
+
+        OrgMember orgMember = getCurrentOrgMember();
+
+        ModuleRecord moduleRecord = getModuleRecordByPublicId(recordId);
+        Module module = moduleRecord.getModule();
+        String moduleId = module.getPublicId();
+
+        ModuleMember moduleMember = moduleMemberService.getModuleMemberByOrgMemberAndModule(orgMember, module);
+        ModulePermission modulePermission = modulePermissionService.getModulePermissionByModuleAndRole(module, moduleMember.getRole());
+
+        if (!modulePermission.isReadRecord()) {
+            throw new PermissionDeniedException("You do not have permission to view this record.");
+        }
+
+        ModuleRecordDto moduleRecordDto = ModuleRecordDto.fromModuleRecord(moduleRecord);
+
+        List<ModuleField> moduleFields = moduleFieldService.getModuleFieldsByModuleId(moduleId);
+        for (ModuleField moduleField : moduleFields) {
+
+            String attribute = ModuleHelper.getAttributeName(moduleField);
+        }
+        return moduleRecordDto;
     }
 
     /**
