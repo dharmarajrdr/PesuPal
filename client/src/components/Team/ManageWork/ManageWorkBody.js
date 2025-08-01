@@ -10,11 +10,11 @@ const ManageWorkBody = () => {
     return (
         <div id='ManageWorkBody' className='w100 custom-scrollbar'>
             <Routes>
-                <Route path="" element={<Navigate to="/team/manage_work/list" />} />
-                <Route path='list' element={<ListView ManageWorkList={ManageWorkList} />} />
-                <Route path='kanban' element={<KanbanView ManageWorkListKanban={ManageWorkListKanban} />} />
+                <Route path='/:moduleId/list' element={<ListView ManageWorkList={ManageWorkList} />} />
+                <Route path='/:moduleId/kanban' element={<KanbanView ManageWorkListKanban={ManageWorkListKanban} />} />
+                <Route path='/:moduleId/*' element={<Navigate to="/team/manage_work" />} />
                 {/* Wildcard route to catch all unmatched routes */}
-                <Route path="*" element={<Navigate to="/team/manage_work/list" />} />
+                {/* <Route path="*" element={<Navigate to="/team/manage_work/list" />} /> */}
             </Routes>
         </div>
     )

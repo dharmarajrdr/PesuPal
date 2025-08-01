@@ -1,13 +1,49 @@
-#createRecord {
-  background-color: rgb(153, 103, 11);
+#createButtons {
+  width: 350px;
+}
+
+#createButtons div {
   padding: 10px 20px;
   border-radius: 10px;
   border: none;
   cursor: pointer;
 }
 
-#createRecord i,
-#createRecord span {
+#createButtons div i,
+#createButtons div span {
   color: var(--pure-white);
   font-size: 14px;
+}
+
+#createModule {
+  background-color: var(--primary-color);
+}
+
+#createRecord {
+  background-color: rgb(153, 103, 11);
+}
+
+#modulesList-filter-view {
+  width: calc(100% - 350px);
+  overflow: hidden;
+  height: 40px;
+}
+
+#filterIcon {
+  position: relative;
+  border: 1px solid #ccc;
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  border-radius: 5px;
+  background-color: var(--pure-white);
+}
+
+#filterIcon .fa-filter {
+  font-size: 16px;
+  color: var(--primary-color);
+}
+
+#filterIcon:hover {
+  background-color: var(--pure-white-hover);
 }

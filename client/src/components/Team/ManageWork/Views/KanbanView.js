@@ -1,7 +1,9 @@
-import React from 'react'
-import { Link } from 'react-router-dom';
+import React, { useEffect } from 'react'
+import { Link, useParams } from 'react-router-dom';
 import utils from '../../../../utils';
 import './KanbanView.css'
+import { setCurrentModuleId, setCurrentModuleView } from '../../../../store/reducers/CurrentModuleSlice';
+import { useDispatch } from 'react-redux';
 
 const RowComponent = ({ item }) => {
 
@@ -47,6 +49,15 @@ const ColumnComponent = ({ column }) => {
 }
 
 const KanbanView = ({ ManageWorkListKanban }) => {
+
+    const dispatch = useDispatch();
+    const { moduleId } = useParams();
+
+    useEffect(() => {
+        dispatch(setCurrentModuleView("kanban"));
+        dispatch(setCurrentModuleId(moduleId));
+    }, []);
+
     return (
         <div id='KanbanviewFrame' className='FRSS'>
             {ManageWorkListKanban.map((column, index) => <ColumnComponent column={column} key={index} />)}

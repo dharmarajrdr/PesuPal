@@ -1,9 +1,11 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import utils from '../../../../utils';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import './ListView.css'
 import Profile from '../../../OthersProfile/Profile';
 import SomeProfile from '../../../OthersProfile/SomeProfile';
+import { setCurrentModuleId, setCurrentModuleView } from '../../../../store/reducers/CurrentModuleSlice';
+import { useDispatch } from 'react-redux';
 
 const ListviewTopHeader = ({ item }) => {
     const { totalRecords, currentPage, totalPages } = item;
@@ -71,12 +73,22 @@ const ListviewBody = ({ header, data, setShowProfile }) => {
 }
 
 const ListView = ({ ManageWorkList }) => {
+
     const item = {
         totalRecords: 102,
         currentPage: 2,
         totalPages: 3
     }, { header, data } = ManageWorkList,
         [showProfile, setShowProfile] = React.useState(false);
+
+    const dispatch = useDispatch();
+    const { moduleId } = useParams();
+
+    useEffect(() => {
+        dispatch(setCurrentModuleView("list"));
+        dispatch(setCurrentModuleId(moduleId));
+    }, []);
+
     return (
         <div id='ListView'>
             <ListviewTopHeader item={item} />

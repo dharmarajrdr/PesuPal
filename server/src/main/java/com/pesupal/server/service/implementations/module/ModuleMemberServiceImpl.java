@@ -19,6 +19,8 @@ import com.pesupal.server.service.interfaces.module.ModuleService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @AllArgsConstructor
 public class ModuleMemberServiceImpl extends CurrentValueRetriever implements ModuleMemberService {
@@ -109,5 +111,17 @@ public class ModuleMemberServiceImpl extends CurrentValueRetriever implements Mo
         moduleMember.setOrgMember(memberToAdd);
         moduleMember.setModule(module);
         moduleMemberRepository.save(moduleMember);
+    }
+
+    /**
+     * Retrieves all modules that an organization member is part of.
+     *
+     * @param orgMember
+     * @return
+     */
+    @Override
+    public List<Module> getAllModulesOfOrgMember(OrgMember orgMember) {
+
+        return moduleMemberRepository.findAllByOrgMember(orgMember).stream().map(ModuleMember::getModule).toList();
     }
 }

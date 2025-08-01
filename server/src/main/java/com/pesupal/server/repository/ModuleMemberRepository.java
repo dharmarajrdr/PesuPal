@@ -6,6 +6,7 @@ import com.pesupal.server.model.user.OrgMember;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -18,4 +19,6 @@ public interface ModuleMemberRepository extends JpaRepository<ModuleMember, Long
     boolean existsByModule_PublicIdAndOrgMember_PublicId(String moduleId, String userId);
 
     Optional<ModuleMember> findByOrgMemberAndModule_PublicId(OrgMember orgMember, String moduleId);
+
+    List<ModuleMember> findAllByOrgMember(OrgMember orgMember);
 }

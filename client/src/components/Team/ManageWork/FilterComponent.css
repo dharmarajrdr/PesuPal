@@ -5,10 +5,9 @@
 
 .FilterComponentItem {
   background-color: var(--pure-white);
+  border: 1px solid #ddd;
   border-radius: 5px;
-  margin: 5px;
   position: relative;
-  left: -5px;
 }
 
 .FilterComponentItem i {
