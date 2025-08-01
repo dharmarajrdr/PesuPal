@@ -1,5 +1,6 @@
 package com.pesupal.server.service.implementations.module;
 
+import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.model.module.ModuleField;
 import com.pesupal.server.model.module.ModuleSelectOption;
 import com.pesupal.server.repository.ModuleSelectOptionRepository;
@@ -59,5 +60,18 @@ public class ModuleSelectOptionServiceImpl implements ModuleSelectOptionService 
     public List<ModuleSelectOption> getAllByModuleField(ModuleField moduleField) {
 
         return moduleSelectOptionRepository.findAllByModuleField(moduleField);
+    }
+
+    /**
+     * Retrieves a module select option by its associated module field and ID.
+     *
+     * @param field
+     * @param selectOptionId
+     * @return
+     */
+    @Override
+    public ModuleSelectOption getModuleSelectOptionByModuleFieldAndId(ModuleField field, Long selectOptionId) {
+
+        return moduleSelectOptionRepository.findByModuleFieldAndId(field, selectOptionId).orElseThrow(() -> new DataNotFoundException("Select option with ID '" + selectOptionId + "' not found for field: " + field.getName()));
     }
 }

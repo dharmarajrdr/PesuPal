@@ -14,4 +14,6 @@ public interface ModuleSelectOptionService {
     void deleteAllByModuleField(ModuleField moduleField);
 
     List<ModuleSelectOption> getAllByModuleField(ModuleField moduleField);
+
+    ModuleSelectOption getModuleSelectOptionByModuleFieldAndId(ModuleField field, Long selectOptionId);
 }
