@@ -10,10 +10,11 @@ import PopupSlice from './store/reducers/PopupSlice';
 import { configureStore } from '@reduxjs/toolkit';
 import { combineReducers } from 'redux';
 import CurrentOrgSlice from './store/reducers/CurrentOrgSlice';
-import LeftNavigationSlice from './store/reducers/LeftNavigationSlice';
 import ActiveChatTabSlice from './store/reducers/ActiveChatTabSlice';
-import ShowChatHeaderOptionsModalSlice from './store/reducers/ShowChatHeaderOptionsModalSlice';
+import LeftNavigationSlice from './store/reducers/LeftNavigationSlice';
+import CurrentModuleViewSlice from './store/reducers/CurrentModuleViewSlice';
 import CurrentChatPreviewSlice from './store/reducers/CurrentChatPreviewSlice';
+import ShowChatHeaderOptionsModalSlice from './store/reducers/ShowChatHeaderOptionsModalSlice';
 
 const store = configureStore({
     reducer: combineReducers({
@@ -28,6 +29,7 @@ const store = configureStore({
         activeChatTab: ActiveChatTabSlice,
         leftNavigation: LeftNavigationSlice,
         activeRecentChat: ActiveRecentChatSlice,
+        currentModuleView: CurrentModuleViewSlice,
         pinnedDirectMessage: PinnedDirectMessageSlice,
         showChatHeaderOptionsModalSlice: ShowChatHeaderOptionsModalSlice,
         currentChatPreviewSlice: CurrentChatPreviewSlice
