@@ -12,4 +12,6 @@ import java.util.List;
 public interface RecordSelectRelationRepository extends JpaRepository<RecordSelectRelation, Long> {
 
     List<RecordSelectRelation> findAllByRecordAndField(ModuleRecord moduleRecord, ModuleField moduleField);
+
+    void deleteAllByRecordAndField(ModuleRecord moduleRecord, ModuleField moduleField);
 }

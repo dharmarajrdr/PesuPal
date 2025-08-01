@@ -65,4 +65,16 @@ public class RecordSelectRelationServiceImpl implements RecordSelectRelationServ
 
         return moduleFieldDto;
     }
+
+    /**
+     * Deletes the relation data for a module record and field.
+     *
+     * @param moduleRecord
+     * @param moduleField
+     */
+    @Override
+    public void delete(ModuleRecord moduleRecord, ModuleField moduleField) {
+
+        recordSelectRelationRepository.deleteAllByRecordAndField(moduleRecord, moduleField);
+    }
 }
