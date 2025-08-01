@@ -13,4 +13,6 @@ public interface ModuleRecordRepository extends JpaRepository<ModuleRecord, Long
     boolean existsByModuleAndSubject(Module module, String subject);
 
     Optional<ModuleRecord> findByPublicId(String recordId);
+
+    void deleteAllByModule(Module module);
 }

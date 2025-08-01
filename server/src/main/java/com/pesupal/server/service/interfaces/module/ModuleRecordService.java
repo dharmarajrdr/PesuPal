@@ -15,4 +15,6 @@ public interface ModuleRecordService {
     ModuleRecordDto getRecordById(String recordId);
 
     List<ModuleRecordDto> getAllRecords(Integer page, Integer size, SortColumnDto sortColumnDto);
+
+    void deleteAllRecords(String moduleId);
 }

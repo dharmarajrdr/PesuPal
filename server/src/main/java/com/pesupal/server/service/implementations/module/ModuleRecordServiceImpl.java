@@ -233,4 +233,38 @@ public class ModuleRecordServiceImpl extends CurrentValueRetriever implements Mo
 
         return List.of();
     }
+
+    /**
+     * Deletes all records associated with a module.
+     *
+     * @param moduleId
+     */
+    @Override
+    @Transactional
+    public void deleteAllRecords(String moduleId) {
+
+        OrgMember orgMember = getCurrentOrgMember();
+
+        Module module = moduleService.getModuleById(moduleId);
+
+        ModuleMember moduleMember = moduleMemberService.getModuleMemberByOrgMemberAndModule(orgMember, module);
+        ModulePermission modulePermission = modulePermissionService.getModulePermissionByModuleAndRole(module, moduleMember.getRole());
+
+        if (!module.getCreatedBy().getPublicId().equals(orgMember.getPublicId()) && !modulePermission.isClearRecords()) {
+            throw new PermissionDeniedException("You do not have permission to clear records of this module.");
+        }
+
+        List<ModuleField> moduleFields = moduleFieldService.getModuleFieldsByModuleId(moduleId);
+        for (ModuleField moduleField : moduleFields) {
+
+            FieldType fieldType = moduleField.getFieldType();
+
+            RecordRelationService recordRelationService = recordRelationFactory.getRelationService(fieldType);
+            recordRelationService.deleteAllByModule(module);
+        }
+
+        moduleRecordTimelineService.deleteAllByModule(module);
+
+        moduleRecordRepository.deleteAllByModule(module);
+    }
 }
