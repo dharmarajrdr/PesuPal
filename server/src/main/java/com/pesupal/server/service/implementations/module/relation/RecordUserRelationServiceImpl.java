@@ -3,6 +3,7 @@ package com.pesupal.server.service.implementations.module.relation;
 import com.pesupal.server.dto.response.UserPreviewDto;
 import com.pesupal.server.dto.response.module.ModuleFieldDto;
 import com.pesupal.server.exceptions.DataNotFoundException;
+import com.pesupal.server.model.module.Module;
 import com.pesupal.server.model.module.ModuleField;
 import com.pesupal.server.model.module.ModuleRecord;
 import com.pesupal.server.model.module.relation.RecordUserRelation;
@@ -75,5 +76,16 @@ public class RecordUserRelationServiceImpl implements RecordUserRelationService 
     public void delete(ModuleRecord moduleRecord, ModuleField moduleField) {
 
         recordUserRelationRepository.deleteAllByRecordAndField(moduleRecord, moduleField);
+    }
+
+    /**
+     * Deletes all user relations for a given module record.
+     *
+     * @param module
+     */
+    @Override
+    public void deleteAllByModule(Module module) {
+
+        recordUserRelationRepository.deleteAllByRecord_Module(module);
     }
 }
