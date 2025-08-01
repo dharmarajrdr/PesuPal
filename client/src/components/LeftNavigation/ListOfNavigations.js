@@ -36,7 +36,7 @@ export default {
             "id": 5,
             "title": "Manage",
             "icon": "fa-solid fa-chart-gantt",
-            "route": "/manage",
+            "route": "/manage/module",
             "isActive": false,
             "notifyCount": "0"
         },

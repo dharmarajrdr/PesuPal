@@ -8,8 +8,8 @@ import { showPopup } from '../../../store/reducers/PopupSlice';
 
 const GetParams = () => {
     const params = useParams();
-    const [type, moduleId, view] = params['*'].split('/') || [];    /*  /module/:moduleId/:view  */
-    return { type, moduleId, view };
+    const [moduleId, view] = params['*'].split('/') || [];    /*  /module/:moduleId/:view  */
+    return { moduleId, view };
 }
 
 const CreateButtons = () => {
