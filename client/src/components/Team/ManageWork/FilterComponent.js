@@ -1,17 +1,6 @@
 import React from 'react'
 import './FilterComponent.css'
-
-const FilterComponentItem = ({ item }) => {
-    const { id, title, icon, dom, options } = item;
-    return (
-        <div className='FilterComponentItem p5 FRCC'>
-            <i className={icon + ' img_40_40 alignCenter'}></i>
-            <select defaultValue="All">
-                {options.map((option, index) => <option key={index} value={option.id}>{option.title}</option>)}
-            </select>
-        </div>
-    )
-}
+import FilterComponentItem from './FilterComponentItem'
 
 const SaveClearFilter = () => {
     return (
