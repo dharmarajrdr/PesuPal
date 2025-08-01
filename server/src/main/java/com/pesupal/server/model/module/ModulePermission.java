@@ -30,4 +30,6 @@ public class ModulePermission extends BaseModel {
     private boolean deleteRecord;
 
     private boolean manageMembers;
+
+    private boolean clearRecords;
 }
