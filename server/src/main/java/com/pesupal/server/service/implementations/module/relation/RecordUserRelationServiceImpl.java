@@ -1,6 +1,7 @@
 package com.pesupal.server.service.implementations.module.relation;
 
 import com.pesupal.server.dto.response.UserPreviewDto;
+import com.pesupal.server.dto.response.module.ModuleFieldDto;
 import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.model.module.ModuleField;
 import com.pesupal.server.model.module.ModuleRecord;
@@ -58,9 +59,12 @@ public class RecordUserRelationServiceImpl implements RecordUserRelationService 
      * @return
      */
     @Override
-    public Object getByModuleRecordAndModuleField(ModuleRecord moduleRecord, ModuleField moduleField) {
+    public ModuleFieldDto getByModuleRecordAndModuleField(ModuleRecord moduleRecord, ModuleField moduleField) {
+
+        ModuleFieldDto<UserPreviewDto> moduleFieldDto = ModuleFieldDto.fromModuleField(moduleField);
 
         RecordUserRelation recordUserRelation = getRecordSelectRelation(moduleRecord, moduleField);
-        return UserPreviewDto.fromOrgMember(recordUserRelation.getUser());
+        moduleFieldDto.setData(UserPreviewDto.fromOrgMember(recordUserRelation.getUser()));
+        return moduleFieldDto;
     }
 }

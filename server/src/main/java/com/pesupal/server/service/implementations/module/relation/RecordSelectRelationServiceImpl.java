@@ -1,5 +1,6 @@
 package com.pesupal.server.service.implementations.module.relation;
 
+import com.pesupal.server.dto.response.module.ModuleFieldDto;
 import com.pesupal.server.dto.response.module.ModuleSelectOptionDto;
 import com.pesupal.server.exceptions.MandatoryDataMissingException;
 import com.pesupal.server.model.module.ModuleField;
@@ -53,7 +54,9 @@ public class RecordSelectRelationServiceImpl implements RecordSelectRelationServ
      * @return
      */
     @Override
-    public List<ModuleSelectOptionDto> getByModuleRecordAndModuleField(ModuleRecord moduleRecord, ModuleField moduleField) {
+    public ModuleFieldDto getByModuleRecordAndModuleField(ModuleRecord moduleRecord, ModuleField moduleField) {
+
+        ModuleFieldDto<List<ModuleSelectOptionDto>> moduleFieldDto = ModuleFieldDto.fromModuleField(moduleField);
 
         // 1. Retrieve all selected options for the given field
         List<RecordSelectRelation> recordSelectRelations = recordSelectRelationRepository.findAllByRecordAndField(moduleRecord, moduleField);
@@ -61,6 +64,9 @@ public class RecordSelectRelationServiceImpl implements RecordSelectRelationServ
 
         // 2. Select all options for the given field
         List<ModuleSelectOption> moduleSelectOptions = moduleSelectOptionService.getAllByModuleField(moduleField);
-        return moduleSelectOptions.stream().map(moduleSelectOption -> ModuleSelectOptionDto.fromModuleSelectOption(moduleSelectOption, selectedOptionIds.contains(moduleSelectOption.getId()))).toList();
+        List<ModuleSelectOptionDto> moduleSelectOptionDtos = moduleSelectOptions.stream().map(moduleSelectOption -> ModuleSelectOptionDto.fromModuleSelectOption(moduleSelectOption, selectedOptionIds.contains(moduleSelectOption.getId()))).toList();
+        moduleFieldDto.setData(moduleSelectOptionDtos);
+
+        return moduleFieldDto;
     }
 }

@@ -1,5 +1,6 @@
 package com.pesupal.server.service.implementations.module;
 
+import com.pesupal.server.dto.request.SortColumnDto;
 import com.pesupal.server.dto.request.module.CreateModuleRecordDto;
 import com.pesupal.server.dto.response.module.ModuleFieldDto;
 import com.pesupal.server.dto.response.module.ModuleRecordDto;
@@ -154,11 +155,15 @@ public class ModuleRecordServiceImpl extends CurrentValueRetriever implements Mo
 
             FieldType fieldType = moduleField.getFieldType();
 
+            if (!moduleField.isShowInDetail()) {
+                continue;   // Skip fields that are not meant to be shown in detail view
+            }
+
             RecordRelationService recordRelationService = recordRelationFactory.getRelationService(fieldType);
-            Object data = recordRelationService.getByModuleRecordAndModuleField(moduleRecord, moduleField);
-            ModuleFieldDto<Object> moduleFieldDto = ModuleFieldDto.fromModuleField(moduleField);
-            moduleFieldDto.setData(data);
-            fields.add(moduleFieldDto);
+            ModuleFieldDto moduleFieldDto = recordRelationService.getByModuleRecordAndModuleField(moduleRecord, moduleField);
+            if (moduleFieldDto != null) {
+                fields.add(moduleFieldDto);
+            }
         }
         return moduleRecordDto;
     }
@@ -172,7 +177,8 @@ public class ModuleRecordServiceImpl extends CurrentValueRetriever implements Mo
      * @view <b>List view</b> of records
      */
     @Override
-    public List<ModuleRecordDto> getAllRecords(Integer page, Integer size) {
+    public List<ModuleRecordDto> getAllRecords(Integer page, Integer size, SortColumnDto sortColumnDto) {
+
         return List.of();
     }
 }
