@@ -1,13 +1,14 @@
 package com.pesupal.server.service.implementations.module;
 
+import com.pesupal.server.dto.request.SortColumnDto;
 import com.pesupal.server.dto.request.module.CreateModuleRecordDto;
+import com.pesupal.server.dto.response.module.ModuleFieldDto;
 import com.pesupal.server.dto.response.module.ModuleRecordDto;
 import com.pesupal.server.enums.FieldType;
-import com.pesupal.server.exceptions.DuplicateDataReceivedException;
-import com.pesupal.server.exceptions.MandatoryDataMissingException;
-import com.pesupal.server.exceptions.PermissionDeniedException;
+import com.pesupal.server.exceptions.*;
 import com.pesupal.server.factory.RecordRelationFactory;
 import com.pesupal.server.helpers.CurrentValueRetriever;
+import com.pesupal.server.helpers.ModuleHelper;
 import com.pesupal.server.model.module.*;
 import com.pesupal.server.model.module.Module;
 import com.pesupal.server.model.user.OrgMember;
@@ -56,33 +57,42 @@ public class ModuleRecordServiceImpl extends CurrentValueRetriever implements Mo
             throw new PermissionDeniedException("You do not have permission to create a record in this module.");
         }
 
+        // 2. If they have permission, Check whether the module has been published
+        if (!module.isActive()) {
+            throw new ActionProhibitedException("You cannot create a record in an inactive module. Publish the module first.");
+        }
+
         Map<String, Object> data = createModuleRecordDto.getData();
+        if (data == null) {
+            throw new MandatoryDataMissingException("The 'data' field is required but not provided.");
+        }
         String subject = (String) data.get("subject");
 
-        // 2. Validate that the subject is provided and not empty
+        // 3. Validate that the subject is provided and not empty
         if (subject == null || subject.isEmpty()) {
             throw new MandatoryDataMissingException("The 'subject' field is required but not provided.");
         }
 
-        // 3. Check if the subject is unique if duplicates are not allowed
+        // 4. Check if the subject is unique if duplicates are not allowed
         if (!module.isAllowDuplicateSubject() && moduleRecordRepository.existsByModuleAndSubject(module, subject)) {
             throw new DuplicateDataReceivedException("Record with subject '" + subject + "' already exists in this module.");
         }
 
-        // 4. Create the module record with basic information
+        // 5. Create the module record with basic information
         ModuleRecord moduleRecord = new ModuleRecord();
+        moduleRecord.setModule(module);
         moduleRecord.setCreatedBy(orgMember);
         moduleRecord.setSubject(subject);
         moduleRecordRepository.save(moduleRecord);
 
-        // 5. Retrieve all module fields for the module
+        // 6. Retrieve all module fields for the module
         List<ModuleField> moduleFields = moduleFieldService.getModuleFieldsByModuleId(moduleId);
         for (ModuleField moduleField : moduleFields) {
 
-            String attribute = moduleField.getName().replace(" ", "_").toLowerCase();
+            String attribute = ModuleHelper.getAttributeName(moduleField);
             Object value = data.get(attribute);
 
-            // 6. If the value is null, check if the field is required
+            // 7. If the value is null, check if the field is required
             if (value == null) {
                 if (moduleField.isRequired()) {
                     throw new MandatoryDataMissingException("The field '" + moduleField.getName() + "' is required but not provided.");
@@ -92,14 +102,83 @@ public class ModuleRecordServiceImpl extends CurrentValueRetriever implements Mo
 
             FieldType fieldType = moduleField.getFieldType();
 
-            // 7. Get the appropriate RecordRelationService based on the field type to save the value
+            // 8. Get the appropriate RecordRelationService based on the field type to save the value
             RecordRelationService recordRelationService = recordRelationFactory.getRelationService(fieldType);
             recordRelationService.save(moduleRecord, moduleField, value);
         }
 
-        // 8. Log the creation of the record in the timeline
+        // 9. Log the creation of the record in the timeline
         moduleRecordTimelineService.createTimeLine(ModuleRecordTimeline.builder().record(moduleRecord).actionPerformedBy(orgMember).action("Created a new record.").build());
 
         return ModuleRecordDto.fromModuleRecord(moduleRecord);
+    }
+
+    /**
+     * Retrieves a module record by its public ID.
+     *
+     * @param recordId
+     * @return
+     */
+    public ModuleRecord getModuleRecordByPublicId(String recordId) {
+
+        return moduleRecordRepository.findByPublicId(recordId).orElseThrow(() -> new DataNotFoundException("Record with ID " + recordId + " not found."));
+    }
+
+    /**
+     * Retrieves a record by its ID.
+     *
+     * @param recordId
+     * @return
+     * @view <b>Detail view</b> of a record
+     */
+    @Override
+    public ModuleRecordDto getRecordById(String recordId) {
+
+        OrgMember orgMember = getCurrentOrgMember();
+
+        ModuleRecord moduleRecord = getModuleRecordByPublicId(recordId);
+        Module module = moduleRecord.getModule();
+        String moduleId = module.getPublicId();
+
+        ModuleMember moduleMember = moduleMemberService.getModuleMemberByOrgMemberAndModule(orgMember, module);
+        ModulePermission modulePermission = modulePermissionService.getModulePermissionByModuleAndRole(module, moduleMember.getRole());
+
+        if (!modulePermission.isReadRecord()) {
+            throw new PermissionDeniedException("You do not have permission to view this record.");
+        }
+
+        ModuleRecordDto moduleRecordDto = ModuleRecordDto.fromModuleRecord(moduleRecord);
+        List<ModuleFieldDto> fields = moduleRecordDto.getFields();
+
+        List<ModuleField> moduleFields = moduleFieldService.getModuleFieldsByModuleId(moduleId);
+        for (ModuleField moduleField : moduleFields) {
+
+            FieldType fieldType = moduleField.getFieldType();
+
+            if (!moduleField.isShowInDetail()) {
+                continue;   // Skip fields that are not meant to be shown in detail view
+            }
+
+            RecordRelationService recordRelationService = recordRelationFactory.getRelationService(fieldType);
+            ModuleFieldDto moduleFieldDto = recordRelationService.getByModuleRecordAndModuleField(moduleRecord, moduleField);
+            if (moduleFieldDto != null) {
+                fields.add(moduleFieldDto);
+            }
+        }
+        return moduleRecordDto;
+    }
+
+    /**
+     * Retrieves all records with pagination.
+     *
+     * @param page
+     * @param size
+     * @return
+     * @view <b>List view</b> of records
+     */
+    @Override
+    public List<ModuleRecordDto> getAllRecords(Integer page, Integer size, SortColumnDto sortColumnDto) {
+
+        return List.of();
     }
 }

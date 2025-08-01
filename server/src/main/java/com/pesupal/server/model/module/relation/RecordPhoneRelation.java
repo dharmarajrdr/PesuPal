@@ -17,7 +17,7 @@ public class RecordPhoneRelation extends BaseModel {
     @OneToOne
     private ModuleField field;
 
-    @Enumerated
+    @Enumerated(EnumType.STRING)
     private CountryCode countryCode;
 
     @Column(nullable = false)

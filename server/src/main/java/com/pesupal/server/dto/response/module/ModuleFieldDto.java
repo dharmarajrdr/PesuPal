@@ -9,7 +9,9 @@ import java.util.List;
 
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ModuleFieldDto {
+public class ModuleFieldDto<T> {
+
+    private Long fieldId;
 
     private String fieldName;
 
@@ -29,11 +31,14 @@ public class ModuleFieldDto {
 
     private boolean showInDetail;
 
+    private T data;
+
     private List<ModuleSelectOptionDto> options;
 
     public static ModuleFieldDto fromModuleField(ModuleField moduleField) {
 
         ModuleFieldDto dto = new ModuleFieldDto();
+        dto.setFieldId(moduleField.getId());
         dto.setFieldName(moduleField.getName());
         dto.setFieldType(moduleField.getFieldType());
         dto.setRequired(moduleField.isRequired());

@@ -16,6 +16,10 @@ public class UserPreviewDto {
 
     public static UserPreviewDto fromOrgMember(OrgMember orgMember) {
 
+        if (orgMember == null) {
+            return null;
+        }
+
         UserPreviewDto userPreviewDto = new UserPreviewDto();
         userPreviewDto.setId(orgMember.getPublicId());
         userPreviewDto.setDisplayName(orgMember.getDisplayName());

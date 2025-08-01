@@ -25,7 +25,7 @@ public class ModulePermissionServiceImpl implements ModulePermissionService {
     @Override
     public ModulePermission getModulePermissionByModuleAndRole(Module module, ModuleRole moduleRole) {
 
-        return modulePermissionRepository.findByModuleAndRole(module, moduleRole).orElseThrow(() -> new DataNotFoundException("Permission configuration missing for this module."));
+        return modulePermissionRepository.findByModuleAndRole(module, moduleRole).orElseThrow(() -> new DataNotFoundException("Permission configuration missing for role '" + moduleRole + "' in this module."));
     }
 
     /**
