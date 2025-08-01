@@ -1,5 +1,7 @@
 package com.pesupal.server.service.implementations.module.relation;
 
+import com.pesupal.server.dto.response.UserPreviewDto;
+import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.model.module.ModuleField;
 import com.pesupal.server.model.module.ModuleRecord;
 import com.pesupal.server.model.module.relation.RecordUserRelation;
@@ -33,5 +35,32 @@ public class RecordUserRelationServiceImpl implements RecordUserRelationService 
         recordUserRelation.setField(field);
         recordUserRelation.setUser(orgMember);
         recordUserRelationRepository.save(recordUserRelation);
+    }
+
+    /**
+     * Retrieves the user relation data for a given module record and module field.
+     *
+     * @param record
+     * @param field
+     * @return
+     */
+    @Override
+    public RecordUserRelation getRecordSelectRelation(ModuleRecord record, ModuleField field) {
+
+        return recordUserRelationRepository.findByRecordAndField(record, field).orElseThrow(() -> new DataNotFoundException("No user relation found for the given field."));
+    }
+
+    /**
+     * Retrieves the user relation data for a given module record and module field.
+     *
+     * @param moduleRecord
+     * @param moduleField
+     * @return
+     */
+    @Override
+    public Object getByModuleRecordAndModuleField(ModuleRecord moduleRecord, ModuleField moduleField) {
+
+        RecordUserRelation recordUserRelation = getRecordSelectRelation(moduleRecord, moduleField);
+        return UserPreviewDto.fromOrgMember(recordUserRelation.getUser());
     }
 }
