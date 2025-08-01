@@ -10,13 +10,13 @@ const CreateButtons = () => {
 
     return (
         <div className='FRCE' id='createButtons'>
-            <div className='FRCC mR10' id='createModule'>
-                <i className='fa fa-plus pR5 w_20'></i>
-                <span>Create Module</span>
-            </div>
-            <div className='FRCC' id='createRecord'>
+            <div className='FRCC mR10' id='createRecord'>
                 <i className='fa fa-plus pR5 w_20'></i>
                 <span>Create Record</span>
+            </div>
+            <div className='FRCC' id='createModule'>
+                <i className='fa fa-plus pR5 w_20'></i>
+                <span>Create Module</span>
             </div>
         </div>
     )
