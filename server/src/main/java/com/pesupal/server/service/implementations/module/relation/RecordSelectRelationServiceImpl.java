@@ -2,7 +2,6 @@ package com.pesupal.server.service.implementations.module.relation;
 
 import com.pesupal.server.dto.response.module.ModuleFieldDto;
 import com.pesupal.server.dto.response.module.ModuleSelectOptionDto;
-import com.pesupal.server.exceptions.MandatoryDataMissingException;
 import com.pesupal.server.model.module.ModuleField;
 import com.pesupal.server.model.module.ModuleRecord;
 import com.pesupal.server.model.module.ModuleSelectOption;
@@ -36,9 +35,6 @@ public class RecordSelectRelationServiceImpl implements RecordSelectRelationServ
         recordSelectRelation.setRecord(record);
         recordSelectRelation.setField(field);
         Long selectOptionId = ((Number) data).longValue();
-        if (selectOptionId == null && field.isRequired()) {
-            throw new MandatoryDataMissingException("The field '" + field.getName() + "' is required and cannot be null.");
-        }
         if (selectOptionId != null) {
             ModuleSelectOption moduleSelectOption = moduleSelectOptionService.getModuleSelectOptionByModuleFieldAndId(field, selectOptionId);
             recordSelectRelation.setSelectOption(moduleSelectOption);
