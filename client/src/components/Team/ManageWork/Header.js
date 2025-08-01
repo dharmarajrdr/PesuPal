@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import './Header.css'
 import FilterComponentItem from './FilterComponentItem';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { apiRequest } from '../../../http_request';
 import { showPopup } from '../../../store/reducers/PopupSlice';
 
@@ -60,11 +60,12 @@ const ViewsList = () => {
         { id: "kanban", name: 'Kanban View' }
     ];
 
-    const { view: currentView, moduleId: currentModuleId } = useSelector((state) => state.currentModule);
+    const params = useParams();
+    const [moduleId, currentView] = params['*'].split('/') || [];
 
     const onChange = (e) => {
         const view = e.target.value;
-        const route = "/team/manage_work/" + currentModuleId + "/" + view;
+        const route = "/team/manage_work/" + moduleId + "/" + view;
         navigate(route);
     }
 
