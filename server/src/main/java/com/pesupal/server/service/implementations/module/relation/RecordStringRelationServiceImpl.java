@@ -2,6 +2,7 @@ package com.pesupal.server.service.implementations.module.relation;
 
 import com.pesupal.server.dto.response.module.ModuleFieldDto;
 import com.pesupal.server.exceptions.DataNotFoundException;
+import com.pesupal.server.model.module.Module;
 import com.pesupal.server.model.module.ModuleField;
 import com.pesupal.server.model.module.ModuleRecord;
 import com.pesupal.server.model.module.relation.RecordStringRelation;
@@ -43,9 +44,10 @@ public class RecordStringRelationServiceImpl implements RecordStringRelationServ
      * @return
      */
     @Override
-    public ModuleFieldDto getByModuleRecordAndModuleField(ModuleRecord moduleRecord, ModuleField moduleField) {
+    public ModuleFieldDto<String> getByModuleRecordAndModuleField(ModuleRecord moduleRecord, ModuleField moduleField) {
 
-        return recordStringRelationRepository.findByRecordAndField(moduleRecord, moduleField).orElseThrow(() -> new DataNotFoundException("No data found."));
+        RecordStringRelation recordStringRelation = recordStringRelationRepository.findByRecordAndField(moduleRecord, moduleField).orElseThrow(() -> new DataNotFoundException("No data found."));
+        return ModuleFieldDto.fromModuleFieldWithData(moduleField, recordStringRelation.getValue());
     }
 
     /**
@@ -58,5 +60,16 @@ public class RecordStringRelationServiceImpl implements RecordStringRelationServ
     public void delete(ModuleRecord moduleRecord, ModuleField moduleField) {
 
         recordStringRelationRepository.deleteAllByRecordAndField(moduleRecord, moduleField);
+    }
+
+    /**
+     * Deletes all relation data associated with a specific module.
+     *
+     * @param module
+     */
+    @Override
+    public void deleteAllByModule(Module module) {
+
+        recordStringRelationRepository.deleteAllByRecord_Module(module);
     }
 }

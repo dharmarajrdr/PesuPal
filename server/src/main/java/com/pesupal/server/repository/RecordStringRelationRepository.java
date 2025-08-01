@@ -1,6 +1,6 @@
 package com.pesupal.server.repository;
 
-import com.pesupal.server.dto.response.module.ModuleFieldDto;
+import com.pesupal.server.model.module.Module;
 import com.pesupal.server.model.module.ModuleField;
 import com.pesupal.server.model.module.ModuleRecord;
 import com.pesupal.server.model.module.relation.RecordStringRelation;
@@ -12,7 +12,9 @@ import java.util.Optional;
 @Repository
 public interface RecordStringRelationRepository extends JpaRepository<RecordStringRelation, Long> {
 
-    Optional<ModuleFieldDto> findByRecordAndField(ModuleRecord record, ModuleField field);
+    Optional<RecordStringRelation> findByRecordAndField(ModuleRecord record, ModuleField field);
 
     void deleteAllByRecordAndField(ModuleRecord moduleRecord, ModuleField moduleField);
+
+    void deleteAllByRecord_Module(Module module);
 }
