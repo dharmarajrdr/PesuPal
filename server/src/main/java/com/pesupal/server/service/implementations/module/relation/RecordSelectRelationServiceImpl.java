@@ -2,6 +2,7 @@ package com.pesupal.server.service.implementations.module.relation;
 
 import com.pesupal.server.dto.response.module.ModuleFieldDto;
 import com.pesupal.server.dto.response.module.ModuleSelectOptionDto;
+import com.pesupal.server.model.module.Module;
 import com.pesupal.server.model.module.ModuleField;
 import com.pesupal.server.model.module.ModuleRecord;
 import com.pesupal.server.model.module.ModuleSelectOption;
@@ -76,5 +77,16 @@ public class RecordSelectRelationServiceImpl implements RecordSelectRelationServ
     public void delete(ModuleRecord moduleRecord, ModuleField moduleField) {
 
         recordSelectRelationRepository.deleteAllByRecordAndField(moduleRecord, moduleField);
+    }
+
+    /**
+     * Deletes all relation data associated with a specific module.
+     *
+     * @param module
+     */
+    @Override
+    public void deleteAllByModule(Module module) {
+
+        recordSelectRelationRepository.deleteAllByRecord_Module(module);
     }
 }
