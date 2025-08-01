@@ -1,7 +1,6 @@
 package com.pesupal.server.service.implementations.module.relation;
 
 import com.pesupal.server.dto.response.module.ModuleFieldDto;
-import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.model.module.Module;
 import com.pesupal.server.model.module.ModuleField;
 import com.pesupal.server.model.module.ModuleRecord;
@@ -10,6 +9,8 @@ import com.pesupal.server.repository.RecordStringRelationRepository;
 import com.pesupal.server.service.interfaces.module.relation.RecordStringRelationService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -46,8 +47,9 @@ public class RecordStringRelationServiceImpl implements RecordStringRelationServ
     @Override
     public ModuleFieldDto<String> getByModuleRecordAndModuleField(ModuleRecord moduleRecord, ModuleField moduleField) {
 
-        RecordStringRelation recordStringRelation = recordStringRelationRepository.findByRecordAndField(moduleRecord, moduleField).orElseThrow(() -> new DataNotFoundException("No data found."));
-        return ModuleFieldDto.fromModuleFieldWithData(moduleField, recordStringRelation.getValue());
+        Optional<RecordStringRelation> recordStringRelationOptional = recordStringRelationRepository.findByRecordAndField(moduleRecord, moduleField);
+        String value = recordStringRelationOptional.isPresent() ? recordStringRelationOptional.get().getValue() : null;
+        return ModuleFieldDto.fromModuleFieldWithData(moduleField, value);
     }
 
     /**

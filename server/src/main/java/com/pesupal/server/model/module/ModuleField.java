@@ -23,6 +23,9 @@ public class ModuleField extends BaseModel {
     private FieldType fieldType;
 
     @ElementCollection
+    @CollectionTable(name = "module_field_restrict_from", joinColumns = @JoinColumn(name = "module_field_id"))
+    @Column(name = "role")
+    @Enumerated(EnumType.STRING)
     private List<ModuleRole> restrictFrom;
 
     private boolean required;
