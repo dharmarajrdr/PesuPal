@@ -9,4 +9,6 @@ public interface RecordRelationService {
     void save(ModuleRecord record, ModuleField field, Object data);
 
     ModuleFieldDto getByModuleRecordAndModuleField(ModuleRecord moduleRecord, ModuleField moduleField);
+
+    void delete(ModuleRecord moduleRecord, ModuleField moduleField);
 }

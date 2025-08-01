@@ -47,4 +47,16 @@ public class RecordStringRelationServiceImpl implements RecordStringRelationServ
 
         return recordStringRelationRepository.findByRecordAndField(moduleRecord, moduleField).orElseThrow(() -> new DataNotFoundException("No data found."));
     }
+
+    /**
+     * Deletes the relation data for a module record and field.
+     *
+     * @param moduleRecord
+     * @param moduleField
+     */
+    @Override
+    public void delete(ModuleRecord moduleRecord, ModuleField moduleField) {
+
+        recordStringRelationRepository.deleteAllByRecordAndField(moduleRecord, moduleField);
+    }
 }

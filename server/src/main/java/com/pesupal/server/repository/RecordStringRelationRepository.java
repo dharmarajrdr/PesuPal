@@ -13,4 +13,6 @@ import java.util.Optional;
 public interface RecordStringRelationRepository extends JpaRepository<RecordStringRelation, Long> {
 
     Optional<ModuleFieldDto> findByRecordAndField(ModuleRecord record, ModuleField field);
+
+    void deleteAllByRecordAndField(ModuleRecord moduleRecord, ModuleField moduleField);
 }
