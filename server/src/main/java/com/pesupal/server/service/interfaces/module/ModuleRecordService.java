@@ -1,5 +1,6 @@
 package com.pesupal.server.service.interfaces.module;
 
+import com.pesupal.server.dto.request.SortColumnDto;
 import com.pesupal.server.dto.request.module.CreateModuleRecordDto;
 import com.pesupal.server.dto.response.module.ModuleRecordDto;
 
@@ -11,5 +12,5 @@ public interface ModuleRecordService {
 
     ModuleRecordDto getRecordById(String recordId);
 
-    List<ModuleRecordDto> getAllRecords(Integer page, Integer size);
+    List<ModuleRecordDto> getAllRecords(Integer page, Integer size, SortColumnDto sortColumnDto);
 }
