@@ -4,10 +4,7 @@ import com.pesupal.server.enums.Day;
 import com.pesupal.server.model.BaseModel;
 import com.pesupal.server.model.module.ModuleField;
 import com.pesupal.server.model.module.ModuleRecord;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.*;
 import lombok.Data;
 
 @Data
@@ -20,6 +17,6 @@ public class RecordDayRelation extends BaseModel {
     @OneToOne
     private ModuleField field;
 
-    @Enumerated
+    @Enumerated(EnumType.STRING)
     private Day day;
 }
