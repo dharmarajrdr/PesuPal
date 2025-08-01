@@ -2,10 +2,7 @@ package com.pesupal.server.factory;
 
 import com.pesupal.server.enums.FieldType;
 import com.pesupal.server.service.interfaces.module.RecordRelationService;
-import com.pesupal.server.service.interfaces.module.relation.RecordPhoneRelationService;
-import com.pesupal.server.service.interfaces.module.relation.RecordSelectRelationService;
-import com.pesupal.server.service.interfaces.module.relation.RecordStringRelationService;
-import com.pesupal.server.service.interfaces.module.relation.RecordUserRelationService;
+import com.pesupal.server.service.interfaces.module.relation.*;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -18,8 +15,9 @@ import org.springframework.stereotype.Component;
 public class RecordRelationFactory {
 
     private final RecordUserRelationService recordUserRelationService;
-    private final RecordSelectRelationService recordSelectRelationService;
+    private final RecordLinkRelationService recordLinkRelationService;
     private final RecordPhoneRelationService recordPhoneRelationService;
+    private final RecordSelectRelationService recordSelectRelationService;
     private final RecordStringRelationService recordStringRelationService;
 
     public RecordRelationService getRelationService(FieldType fieldType) {
@@ -30,6 +28,9 @@ public class RecordRelationFactory {
             }
             case SELECT -> {
                 return recordSelectRelationService;
+            }
+            case LINK -> {
+                return recordLinkRelationService;
             }
             case STRING, EMAIL, TEXT -> {
                 return recordStringRelationService;

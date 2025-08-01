@@ -19,8 +19,8 @@ public class RecordLinkRelation extends BaseModel {
     private ModuleField field;
 
     @Column(nullable = false)
-    private String displayValue;
+    private String title;
 
     @Column(nullable = false)
-    private String linkUrl;
+    private String url;
 }
