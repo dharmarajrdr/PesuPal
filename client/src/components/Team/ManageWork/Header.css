@@ -1,13 +1,20 @@
-#createRecord {
-  background-color: rgb(153, 103, 11);
+#createButtons div {
   padding: 10px 20px;
   border-radius: 10px;
   border: none;
   cursor: pointer;
 }
 
-#createRecord i,
-#createRecord span {
+#createButtons div i,
+#createButtons div span {
   color: var(--pure-white);
   font-size: 14px;
+}
+
+#createModule {
+  background-color: var(--primary-color);
+}
+
+#createRecord {
+  background-color: rgb(153, 103, 11);
 }
