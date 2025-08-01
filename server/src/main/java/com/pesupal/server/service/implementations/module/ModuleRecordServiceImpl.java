@@ -193,7 +193,8 @@ public class ModuleRecordServiceImpl extends CurrentValueRetriever implements Mo
         String moduleId = module.getPublicId();
 
         ModuleMember moduleMember = moduleMemberService.getModuleMemberByOrgMemberAndModule(orgMember, module);
-        ModulePermission modulePermission = modulePermissionService.getModulePermissionByModuleAndRole(module, moduleMember.getRole());
+        ModuleRole moduleRole = moduleMember.getRole();
+        ModulePermission modulePermission = modulePermissionService.getModulePermissionByModuleAndRole(module, moduleRole);
 
         if (!modulePermission.isReadRecord()) {
             throw new PermissionDeniedException("You do not have permission to view this record.");
@@ -206,6 +207,10 @@ public class ModuleRecordServiceImpl extends CurrentValueRetriever implements Mo
         for (ModuleField moduleField : moduleFields) {
 
             FieldType fieldType = moduleField.getFieldType();
+            
+            if (moduleField.getRestrictFrom().contains(moduleRole)) {
+                continue;   // Skip fields that are restricted for the current role
+            }
 
             if (!moduleField.isShowInDetail()) {
                 continue;   // Skip fields that are not meant to be shown in detail view
