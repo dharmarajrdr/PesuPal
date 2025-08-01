@@ -10,6 +10,8 @@ public interface ModuleRecordService {
 
     ModuleRecordDto createRecord(CreateModuleRecordDto createModuleRecordDto);
 
+    void deleteRecord(String recordId);
+
     ModuleRecordDto getRecordById(String recordId);
 
     List<ModuleRecordDto> getAllRecords(Integer page, Integer size, SortColumnDto sortColumnDto);

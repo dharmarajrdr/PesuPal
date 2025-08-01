@@ -114,6 +114,58 @@ public class ModuleRecordServiceImpl extends CurrentValueRetriever implements Mo
     }
 
     /**
+     * Deletes a record by its public ID.
+     *
+     * @param recordId
+     */
+    @Override
+    @Transactional
+    public void deleteRecord(String recordId) {
+
+        OrgMember orgMember = getCurrentOrgMember();
+
+        ModuleRecord moduleRecord = getModuleRecordByPublicId(recordId);
+        Module module = moduleRecord.getModule();
+        String moduleId = module.getPublicId();
+
+        ModuleMember moduleMember = moduleMemberService.getModuleMemberByOrgMemberAndModule(orgMember, module);
+
+        // 1. Check if the module member is active
+        if (!moduleMember.isActive()) {
+            throw new PermissionDeniedException("You are no longer part of this module.");
+        }
+
+        ModulePermission modulePermission = modulePermissionService.getModulePermissionByModuleAndRole(module, moduleMember.getRole());
+
+        // 2. Check if the current user has permission to delete a record in the module
+        if (!ModuleHelper.isModuleOwner(module, orgMember) && !modulePermission.isDeleteRecord()) {
+            throw new PermissionDeniedException("You do not have permission to delete this record.");
+        }
+
+        // 3. Check if the module is active
+        if (!module.isActive()) {
+            throw new ActionProhibitedException("This record cannot be deleted because the module is no longer active.");
+        }
+
+        // 4. Retrieve all module fields for the module
+        List<ModuleField> moduleFields = moduleFieldService.getModuleFieldsByModuleId(moduleId);
+        for (ModuleField moduleField : moduleFields) {
+
+            FieldType fieldType = moduleField.getFieldType();
+
+            // 5. Get the appropriate RecordRelationService based on the field type to delete the value
+            RecordRelationService recordRelationService = recordRelationFactory.getRelationService(fieldType);
+            recordRelationService.delete(moduleRecord, moduleField);
+        }
+
+        // 6. Delete timeline entries related to this record
+        moduleRecordTimelineService.deleteByModuleRecord(moduleRecord);
+
+        // 7. Finally, delete the module record
+        moduleRecordRepository.delete(moduleRecord);
+    }
+
+    /**
      * Retrieves a module record by its public ID.
      *
      * @param recordId
