@@ -12,4 +12,6 @@ import java.util.Optional;
 public interface RecordUserRelationRepository extends JpaRepository<RecordUserRelation, Long> {
 
     Optional<RecordUserRelation> findByRecordAndField(ModuleRecord record, ModuleField field);
+
+    void deleteAllByRecordAndField(ModuleRecord moduleRecord, ModuleField moduleField);
 }

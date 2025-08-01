@@ -64,4 +64,16 @@ public class RecordUserRelationServiceImpl implements RecordUserRelationService 
         moduleFieldDto.setData(UserPreviewDto.fromOrgMember(recordUserRelation.getUser()));
         return moduleFieldDto;
     }
+
+    /**
+     * Deletes the user relation data for a given module record and module field.
+     *
+     * @param moduleRecord
+     * @param moduleField
+     */
+    @Override
+    public void delete(ModuleRecord moduleRecord, ModuleField moduleField) {
+
+        recordUserRelationRepository.deleteAllByRecordAndField(moduleRecord, moduleField);
+    }
 }
