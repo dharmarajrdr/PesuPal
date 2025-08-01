@@ -21,5 +21,9 @@ public class Module extends PublicAccessModel {
     @JsonIgnore
     private OrgMember createdBy;
 
+    private boolean allowDuplicateSubject;
+
+    private boolean openToRelation;
+
     private boolean active;
 }

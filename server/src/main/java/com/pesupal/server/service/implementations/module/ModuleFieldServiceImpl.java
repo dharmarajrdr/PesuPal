@@ -31,18 +31,6 @@ public class ModuleFieldServiceImpl extends CurrentValueRetriever implements Mod
     private final ModuleSelectOptionService moduleSelectOptionService;
 
     /**
-     * Checks if the current user is the owner of the module.
-     *
-     * @param module
-     * @param orgMember
-     * @return
-     */
-    private boolean isModuleOwner(Module module, OrgMember orgMember) {
-
-        return module.getCreatedBy().getId().equals(orgMember.getId());
-    }
-
-    /**
      * Adds a new field into a module.
      *
      * @param addModuleFieldDto
@@ -54,7 +42,7 @@ public class ModuleFieldServiceImpl extends CurrentValueRetriever implements Mod
 
         OrgMember orgMember = getCurrentOrgMember();
         Module module = moduleService.getModuleById(addModuleFieldDto.getModuleId());
-        if (!isModuleOwner(module, orgMember)) {
+        if (!moduleService.isModuleOwner(module, orgMember)) {
             throw new PermissionDeniedException("You do not have permission to add a field to this module.");
         }
 
@@ -77,6 +65,19 @@ public class ModuleFieldServiceImpl extends CurrentValueRetriever implements Mod
     }
 
     /**
+     * Retrieves all fields for a specific module by its ID.
+     *
+     * @param moduleId
+     * @return
+     */
+    @Override
+    public List<ModuleField> getModuleFieldsByModuleId(String moduleId) {
+
+        Module module = moduleService.getModuleById(moduleId);
+        return moduleFieldRepository.findAllByModuleOrderById(module);
+    }
+
+    /**
      * Retrieves all fields for a specific module.
      *
      * @param moduleId
@@ -87,7 +88,7 @@ public class ModuleFieldServiceImpl extends CurrentValueRetriever implements Mod
 
         OrgMember orgMember = getCurrentOrgMember();
         Module module = moduleService.getModuleById(moduleId);
-        if (!isModuleOwner(module, orgMember)) {
+        if (!moduleService.isModuleOwner(module, orgMember)) {
             throw new PermissionDeniedException("You do not have permission to view fields for this module.");
         }
 
@@ -117,7 +118,7 @@ public class ModuleFieldServiceImpl extends CurrentValueRetriever implements Mod
         ModuleField moduleField = moduleFieldRepository.findById(fieldId).orElseThrow(() -> new DataNotFoundException("Module field with ID " + fieldId + " not found."));
 
         Module module = moduleField.getModule();
-        if (!isModuleOwner(module, orgMember)) {
+        if (!moduleService.isModuleOwner(module, orgMember)) {
             throw new PermissionDeniedException("You do not have permission to delete this field.");
         }
 
@@ -128,4 +129,5 @@ public class ModuleFieldServiceImpl extends CurrentValueRetriever implements Mod
 
         moduleFieldRepository.delete(moduleField);
     }
+
 }

@@ -27,6 +27,8 @@ public class ModuleRecord extends PublicAccessModel {
 
     private LocalDateTime updatedAt;
 
+    private boolean deleted;
+
     @OneToMany(mappedBy = "record")
     private List<RecordNote> notes;
 }
