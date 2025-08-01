@@ -112,4 +112,29 @@ public class ModuleRecordServiceImpl extends CurrentValueRetriever implements Mo
 
         return ModuleRecordDto.fromModuleRecord(moduleRecord);
     }
+
+    /**
+     * Retrieves a record by its ID.
+     *
+     * @param recordId
+     * @return
+     * @view <b>Detail view</b> of a record
+     */
+    @Override
+    public ModuleRecordDto getRecordById(String recordId) {
+        return null;
+    }
+
+    /**
+     * Retrieves all records with pagination.
+     *
+     * @param page
+     * @param size
+     * @return
+     * @view <b>List view</b> of records
+     */
+    @Override
+    public List<ModuleRecordDto> getAllRecords(Integer page, Integer size) {
+        return List.of();
+    }
 }
