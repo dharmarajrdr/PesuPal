@@ -1,6 +1,7 @@
 package com.pesupal.server.service.implementations.module;
 
 import com.pesupal.server.dto.request.module.CreateModuleDto;
+import com.pesupal.server.dto.response.module.ModulePreviewDto;
 import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.exceptions.PermissionDeniedException;
@@ -14,6 +15,8 @@ import com.pesupal.server.service.interfaces.module.ModulePermissionService;
 import com.pesupal.server.service.interfaces.module.ModuleService;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class ModuleServiceImpl extends CurrentValueRetriever implements ModuleService {
@@ -80,5 +83,17 @@ public class ModuleServiceImpl extends CurrentValueRetriever implements ModuleSe
 
         module.setActive(true);
         moduleRepository.save(module);
+    }
+
+    /**
+     * Retrieves a list of all module previews that current user part of.
+     *
+     * @return
+     */
+    @Override
+    public List<ModulePreviewDto> getAllModulesPreview() {
+
+        OrgMember orgMember = getCurrentOrgMember();
+        return moduleMemberService.getAllModulesOfOrgMember(orgMember).stream().map(ModulePreviewDto::fromModule).toList();
     }
 }
