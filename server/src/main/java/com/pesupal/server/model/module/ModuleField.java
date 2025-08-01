@@ -3,10 +3,7 @@ package com.pesupal.server.model.module;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.pesupal.server.enums.FieldType;
 import com.pesupal.server.model.BaseModel;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.Data;
 
 @Data
@@ -20,7 +17,7 @@ public class ModuleField extends BaseModel {
     @Column(nullable = false)
     private String name;
 
-    @Enumerated
+    @Enumerated(EnumType.STRING)
     private FieldType fieldType;
 
     private boolean required;

@@ -8,6 +8,7 @@ import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.exceptions.DuplicateDataReceivedException;
 import com.pesupal.server.exceptions.PermissionDeniedException;
 import com.pesupal.server.helpers.CurrentValueRetriever;
+import com.pesupal.server.helpers.ModuleHelper;
 import com.pesupal.server.model.module.Module;
 import com.pesupal.server.model.module.ModuleField;
 import com.pesupal.server.model.module.ModuleSelectOption;
@@ -42,12 +43,12 @@ public class ModuleFieldServiceImpl extends CurrentValueRetriever implements Mod
 
         OrgMember orgMember = getCurrentOrgMember();
         Module module = moduleService.getModuleById(addModuleFieldDto.getModuleId());
-        if (!moduleService.isModuleOwner(module, orgMember)) {
+        if (!ModuleHelper.isModuleOwner(module, orgMember)) {
             throw new PermissionDeniedException("You do not have permission to add a field to this module.");
         }
 
         String fieldName = addModuleFieldDto.getFieldName();
-        if (moduleFieldRepository.existsByName(fieldName)) {
+        if (moduleFieldRepository.existsByNameAndModule(fieldName, module)) {
             throw new DuplicateDataReceivedException("A field with name '" + fieldName + "' already exists in the module.");
         }
 
@@ -88,7 +89,7 @@ public class ModuleFieldServiceImpl extends CurrentValueRetriever implements Mod
 
         OrgMember orgMember = getCurrentOrgMember();
         Module module = moduleService.getModuleById(moduleId);
-        if (!moduleService.isModuleOwner(module, orgMember)) {
+        if (!ModuleHelper.isModuleOwner(module, orgMember)) {
             throw new PermissionDeniedException("You do not have permission to view fields for this module.");
         }
 
@@ -118,7 +119,7 @@ public class ModuleFieldServiceImpl extends CurrentValueRetriever implements Mod
         ModuleField moduleField = moduleFieldRepository.findById(fieldId).orElseThrow(() -> new DataNotFoundException("Module field with ID " + fieldId + " not found."));
 
         Module module = moduleField.getModule();
-        if (!moduleService.isModuleOwner(module, orgMember)) {
+        if (!ModuleHelper.isModuleOwner(module, orgMember)) {
             throw new PermissionDeniedException("You do not have permission to delete this field.");
         }
 
