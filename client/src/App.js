@@ -9,7 +9,6 @@ import FeedsLayout from './components/Feeds/FeedsLayout';
 import ChatLayout from './components/Chat/ChatLayout';
 import PeopleLayout from './components/People/PeopleLayout';
 import TeamLayout from './components/Team/TeamLayout';
-import TrackerLayout from './components/Tracker/TrackerLayout';
 import { Provider } from 'react-redux';
 import PageNotFound from './components/Auth/PageNotFound';
 import SettingsLayout from './components/Settings/SettingsLayout';
@@ -20,6 +19,7 @@ import store from './store';
 import HomePageLayout from './components/Home/HomePageLayout';
 import CreateOrgModal from './components/Org/CreateOrgModal';
 import AuthModal from './components/Auth/AuthModal';
+import ManageWorkLayout from './components/Team/ManageWork/ManageWorkLayout';
 
 function App() {
 
@@ -52,7 +52,7 @@ function App() {
                     <Route path="/chat/*" element={<ChatLayout />} />
                     <Route path="/people/*" element={<PeopleLayout />} />
                     <Route path="/team/*" element={<TeamLayout />} />
-                    <Route path="/tracker" element={<TrackerLayout />} />
+                    <Route path="/manage/*" element={<ManageWorkLayout />} />
                     <Route path="/settings/*" element={<SettingsLayout />} />
                     <Route path='/more/*' element={<MoreFeaturesLayout />} />
                     <Route path="/signup" element={<Signup />} />

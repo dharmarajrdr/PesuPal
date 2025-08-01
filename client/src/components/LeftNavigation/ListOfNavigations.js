@@ -33,20 +33,20 @@ export default {
             'notifyCount': '5'
         },
         {
-            'id': 5,
+            "id": 5,
+            "title": "Manage",
+            "icon": "fa-solid fa-chart-gantt",
+            "route": "/manage",
+            "isActive": false,
+            "notifyCount": "0"
+        },
+        {
+            'id': 6,
             'title': 'Form',
             'icon': 'fa-regular fa-file-alt',
             'route': '/form',
             'isActive': false,
             'notifyCount': '0'
-        },
-        {
-            "id": 6,
-            "title": "Tracker",
-            "icon": "fa-solid fa-chart-gantt",
-            "route": "/tracker",
-            "isActive": false,
-            "notifyCount": "0"
         },
         {
             "id": 7,

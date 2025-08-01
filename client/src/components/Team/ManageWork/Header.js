@@ -42,7 +42,7 @@ const ModulesList = ({ modules }) => {
 
     const onChange = (e) => {
         const moduleId = e.target.value;
-        const route = `/team/manage_work/${moduleId}/${view || 'list'}`;
+        const route = `/manage/${moduleId}/${view || 'list'}`;
         navigate(route);
     }
 
@@ -65,7 +65,7 @@ const ViewsList = () => {
 
     const onChange = (e) => {
         const view = e.target.value;
-        const route = "/team/manage_work/" + moduleId + "/" + view;
+        const route = "/manage/" + moduleId + "/" + view;
         navigate(route);
     }
 
@@ -88,7 +88,7 @@ const Header = () => {
             setModules(data);
             if (data.length > 0 && !moduleId?.length) {
                 const { id } = data[0] || {};
-                navigate(`/team/manage_work/${id}/${view || 'list'}`);
+                navigate(`/manage/${id}/${view || 'list'}`);
             }
         }).catch(({ message }) => {
             dispatch(showPopup({ message, type: 'error' }));
