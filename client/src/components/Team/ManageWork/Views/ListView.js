@@ -1,10 +1,10 @@
 import React, { useEffect } from 'react'
 import utils from '../../../../utils';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import './ListView.css'
 import Profile from '../../../OthersProfile/Profile';
 import SomeProfile from '../../../OthersProfile/SomeProfile';
-import { setCurrentModuleView } from '../../../../store/reducers/CurrentModuleViewSlice';
+import { setCurrentModuleId, setCurrentModuleView } from '../../../../store/reducers/CurrentModuleSlice';
 import { useDispatch } from 'react-redux';
 
 const ListviewTopHeader = ({ item }) => {
@@ -82,9 +82,11 @@ const ListView = ({ ManageWorkList }) => {
         [showProfile, setShowProfile] = React.useState(false);
 
     const dispatch = useDispatch();
+    const { moduleId } = useParams();
 
     useEffect(() => {
         dispatch(setCurrentModuleView("list"));
+        dispatch(setCurrentModuleId(moduleId));
     }, []);
 
     return (
