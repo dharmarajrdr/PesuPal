@@ -6,7 +6,7 @@ import com.pesupal.server.model.module.ModuleRole;
 
 public interface ModulePermissionService {
 
-    ModulePermission getModulePermissionByModuleAndRole(Module moduleId, ModuleRole moduleRole);
+    ModulePermission getModulePermissionByModuleAndRole(Module module, ModuleRole moduleRole);
 
     void initializeModulePermissions(Module module);
 }
