@@ -6,10 +6,7 @@ import com.pesupal.server.model.module.Module;
 import com.pesupal.server.service.interfaces.module.ModuleService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @AllArgsConstructor
@@ -24,5 +21,12 @@ public class ModuleController {
         Module module = moduleService.createModule(createModuleDto);
         ApiResponseDto response = new ApiResponseDto("Module created successfully", module);
         return ResponseEntity.ok(response);
+    }
+
+    @PatchMapping("/{moduleId}/publish")
+    public ResponseEntity<ApiResponseDto> publishModule(@PathVariable String moduleId) {
+
+        moduleService.publishModule(moduleId);
+        return ResponseEntity.ok().body(new ApiResponseDto("Module published successfully"));
     }
 }
