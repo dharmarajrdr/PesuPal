@@ -50,4 +50,11 @@ public class ModuleRecordController {
         List<ModuleRecordDto> records = moduleRecordService.getAllRecords(page, size, sortColumnDto);
         return ResponseEntity.ok().body(new ApiResponseDto("Records retrieved successfully", records));
     }
+
+    @DeleteMapping("/{moduleId}/records")
+    public ResponseEntity<ApiResponseDto> deleteAllRecords(@PathVariable String moduleId) {
+
+        moduleRecordService.deleteAllRecords(moduleId);
+        return ResponseEntity.ok(new ApiResponseDto("All records deleted successfully"));
+    }
 }
