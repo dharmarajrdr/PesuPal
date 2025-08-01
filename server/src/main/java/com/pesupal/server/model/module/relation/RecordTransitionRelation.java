@@ -6,7 +6,6 @@ import com.pesupal.server.model.module.ModuleRecord;
 import com.pesupal.server.model.module.Transition;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
 import lombok.Data;
 
 @Entity
@@ -16,7 +15,7 @@ public class RecordTransitionRelation extends BaseModel {
     @ManyToOne
     private ModuleRecord record;
 
-    @OneToOne
+    @ManyToOne
     private ModuleField field;
 
     @ManyToOne

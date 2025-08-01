@@ -6,7 +6,6 @@ import com.pesupal.server.model.module.ModuleRecord;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
 import lombok.Data;
 
 @Data
@@ -16,7 +15,7 @@ public class RecordGeoLocationRelation extends BaseModel {
     @ManyToOne
     private ModuleRecord record;
 
-    @OneToOne
+    @ManyToOne
     private ModuleField field;
 
     @Column(nullable = false)
