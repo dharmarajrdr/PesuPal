@@ -31,10 +31,7 @@ public class RecordUserRelationServiceImpl implements RecordUserRelationService 
         String userId = (String) data;
         OrgMember orgMember = orgMemberService.getOrgMemberByPublicId(userId);
 
-        RecordUserRelation recordUserRelation = new RecordUserRelation();
-        recordUserRelation.setRecord(record);
-        recordUserRelation.setField(field);
-        recordUserRelation.setUser(orgMember);
+        RecordUserRelation recordUserRelation = RecordUserRelation.builder().record(record).field(field).user(orgMember).build();
         recordUserRelationRepository.save(recordUserRelation);
     }
 
