@@ -2,6 +2,7 @@ package com.pesupal.server.service.implementations.module;
 
 import com.pesupal.server.dto.request.SortColumnDto;
 import com.pesupal.server.dto.request.module.CreateModuleRecordDto;
+import com.pesupal.server.dto.response.PaginatedData;
 import com.pesupal.server.dto.response.module.ModuleFieldDto;
 import com.pesupal.server.dto.response.module.ModuleRecordDto;
 import com.pesupal.server.enums.FieldType;
@@ -12,12 +13,16 @@ import com.pesupal.server.helpers.ModuleHelper;
 import com.pesupal.server.model.module.*;
 import com.pesupal.server.model.module.Module;
 import com.pesupal.server.model.user.OrgMember;
+import com.pesupal.server.projections.PublicIdProjection;
 import com.pesupal.server.repository.ModuleRecordRepository;
 import com.pesupal.server.service.interfaces.module.*;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -184,7 +189,7 @@ public class ModuleRecordServiceImpl extends CurrentValueRetriever implements Mo
      * @view <b>Detail view</b> of a record
      */
     @Override
-    public ModuleRecordDto getRecordById(String recordId) {
+    public ModuleRecordDto getRecordById(String recordId, ModuleView moduleView) {
 
         OrgMember orgMember = getCurrentOrgMember();
 
@@ -207,12 +212,12 @@ public class ModuleRecordServiceImpl extends CurrentValueRetriever implements Mo
         for (ModuleField moduleField : moduleFields) {
 
             FieldType fieldType = moduleField.getFieldType();
-            
+
             if (moduleField.getRestrictFrom().contains(moduleRole)) {
                 continue;   // Skip fields that are restricted for the current role
             }
 
-            if (!moduleField.isShowInDetail()) {
+            if (!moduleView.canShowField(moduleField)) {
                 continue;   // Skip fields that are not meant to be shown in detail view
             }
 
@@ -234,9 +239,35 @@ public class ModuleRecordServiceImpl extends CurrentValueRetriever implements Mo
      * @view <b>List view</b> of records
      */
     @Override
-    public List<ModuleRecordDto> getAllRecords(Integer page, Integer size, SortColumnDto sortColumnDto) {
+    public PaginatedData<List<ModuleRecordDto>> getAllRecords(String moduleId, int page, int size, SortColumnDto sortColumnDto) {
 
-        return List.of();
+        Sort sort = null;
+        if (sortColumnDto == null) {
+            sort = Sort.by(Sort.Direction.fromString("DESC"), "createdAt");
+        } else {
+            sort = Sort.by(Sort.Direction.fromString(sortColumnDto.getOrder().toString()), sortColumnDto.getColumn());
+        }
+
+        PageRequest pageRequest = PageRequest.of(page, size + 1, sort);
+
+        List<String> recordsIds = new ArrayList<>(moduleRecordRepository.findAllPublicIdByModule_PublicId(moduleId, pageRequest).getContent().stream().map(PublicIdProjection::getPublicId).toList());
+
+        boolean hasMoreRecords = recordsIds.size() == size + 1;
+        Map<String, Object> info = Map.of(
+                "hasMoreRecords", hasMoreRecords,
+                "page", page,
+                "size", size
+        );
+
+        if (!recordsIds.isEmpty() && recordsIds.size() > size) {
+            recordsIds.remove(recordsIds.size() - 1); // safely remove the last element
+        }
+
+        List<ModuleRecordDto> moduleRecordDtos = new ArrayList<>();
+        for (String recordId : recordsIds) {
+            moduleRecordDtos.add(getRecordById(recordId, ModuleView.LIST_VIEW));
+        }
+        return new PaginatedData<>(moduleRecordDtos, info);
     }
 
     /**
