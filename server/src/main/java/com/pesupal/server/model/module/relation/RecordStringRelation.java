@@ -5,7 +5,6 @@ import com.pesupal.server.model.module.ModuleField;
 import com.pesupal.server.model.module.ModuleRecord;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
 import lombok.Data;
 
 @Data
@@ -15,7 +14,7 @@ public class RecordStringRelation extends BaseModel {
     @ManyToOne
     private ModuleRecord record;
 
-    @OneToOne
+    @ManyToOne
     private ModuleField field;
 
     private String value;

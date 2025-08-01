@@ -6,10 +6,16 @@ import com.pesupal.server.model.module.ModuleRecord;
 import com.pesupal.server.model.user.OrgMember;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 @Data
 @Entity
+@SuperBuilder
+@NoArgsConstructor
+@AllArgsConstructor
 public class RecordUserRelation extends BaseModel {
 
     @ManyToOne

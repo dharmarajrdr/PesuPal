@@ -1,5 +1,7 @@
 package com.pesupal.server.service.implementations.module;
 
+import com.pesupal.server.model.module.Module;
+import com.pesupal.server.model.module.ModuleRecord;
 import com.pesupal.server.model.module.ModuleRecordTimeline;
 import com.pesupal.server.repository.ModuleRecordTimelineRepository;
 import com.pesupal.server.service.interfaces.module.ModuleRecordTimelineService;
@@ -35,5 +37,27 @@ public class ModuleRecordTimelineServiceImpl implements ModuleRecordTimelineServ
     public List<ModuleRecordTimeline> getModuleRecordTimelinesByRecordId(String moduleRecordId) {
 
         return moduleRecordTimelineRepository.findAllByRecord_PublicIdOrderByCreatedAt(moduleRecordId);
+    }
+
+    /**
+     * Deletes all timelines associated with a specific module record.
+     *
+     * @param moduleRecord
+     */
+    @Override
+    public void deleteByModuleRecord(ModuleRecord moduleRecord) {
+
+        moduleRecordTimelineRepository.deleteAllByRecord(moduleRecord);
+    }
+
+    /**
+     * Deletes all timelines associated with a specific module.
+     *
+     * @param module
+     */
+    @Override
+    public void deleteAllByModule(Module module) {
+
+        moduleRecordTimelineRepository.deleteAllByRecord_Module(module);
     }
 }

@@ -2,7 +2,7 @@ package com.pesupal.server.service.implementations.module.relation;
 
 import com.pesupal.server.dto.response.module.ModuleFieldDto;
 import com.pesupal.server.dto.response.module.ModuleSelectOptionDto;
-import com.pesupal.server.exceptions.MandatoryDataMissingException;
+import com.pesupal.server.model.module.Module;
 import com.pesupal.server.model.module.ModuleField;
 import com.pesupal.server.model.module.ModuleRecord;
 import com.pesupal.server.model.module.ModuleSelectOption;
@@ -36,9 +36,6 @@ public class RecordSelectRelationServiceImpl implements RecordSelectRelationServ
         recordSelectRelation.setRecord(record);
         recordSelectRelation.setField(field);
         Long selectOptionId = ((Number) data).longValue();
-        if (selectOptionId == null && field.isRequired()) {
-            throw new MandatoryDataMissingException("The field '" + field.getName() + "' is required and cannot be null.");
-        }
         if (selectOptionId != null) {
             ModuleSelectOption moduleSelectOption = moduleSelectOptionService.getModuleSelectOptionByModuleFieldAndId(field, selectOptionId);
             recordSelectRelation.setSelectOption(moduleSelectOption);
@@ -68,5 +65,28 @@ public class RecordSelectRelationServiceImpl implements RecordSelectRelationServ
         moduleFieldDto.setData(moduleSelectOptionDtos);
 
         return moduleFieldDto;
+    }
+
+    /**
+     * Deletes the relation data for a module record and field.
+     *
+     * @param moduleRecord
+     * @param moduleField
+     */
+    @Override
+    public void delete(ModuleRecord moduleRecord, ModuleField moduleField) {
+
+        recordSelectRelationRepository.deleteAllByRecordAndField(moduleRecord, moduleField);
+    }
+
+    /**
+     * Deletes all relation data associated with a specific module.
+     *
+     * @param module
+     */
+    @Override
+    public void deleteAllByModule(Module module) {
+
+        recordSelectRelationRepository.deleteAllByRecord_Module(module);
     }
 }

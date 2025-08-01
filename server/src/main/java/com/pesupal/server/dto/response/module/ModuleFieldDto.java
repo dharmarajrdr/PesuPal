@@ -5,8 +5,6 @@ import com.pesupal.server.enums.FieldType;
 import com.pesupal.server.model.module.ModuleField;
 import lombok.Data;
 
-import java.util.List;
-
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ModuleFieldDto<T> {
@@ -33,8 +31,6 @@ public class ModuleFieldDto<T> {
 
     private T data;
 
-    private List<ModuleSelectOptionDto> options;
-
     public static ModuleFieldDto fromModuleField(ModuleField moduleField) {
 
         ModuleFieldDto dto = new ModuleFieldDto();
@@ -51,10 +47,10 @@ public class ModuleFieldDto<T> {
         return dto;
     }
 
-    public static ModuleFieldDto fromModuleFieldWithOptions(ModuleField moduleField, List<ModuleSelectOptionDto> options) {
+    public static ModuleFieldDto fromModuleFieldWithData(ModuleField moduleField, Object data) {
 
         ModuleFieldDto dto = fromModuleField(moduleField);
-        dto.setOptions(options);
+        dto.setData(data);
         return dto;
     }
 

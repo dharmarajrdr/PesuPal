@@ -6,6 +6,8 @@ import com.pesupal.server.model.BaseModel;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 @Entity
 public class ModuleField extends BaseModel {
@@ -19,6 +21,9 @@ public class ModuleField extends BaseModel {
 
     @Enumerated(EnumType.STRING)
     private FieldType fieldType;
+
+    @ElementCollection
+    private List<ModuleRole> restrictFrom;
 
     private boolean required;
 

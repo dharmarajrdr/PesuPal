@@ -6,7 +6,6 @@ import com.pesupal.server.dto.response.ApiResponseDto;
 import com.pesupal.server.dto.response.module.ModuleRecordDto;
 import com.pesupal.server.service.interfaces.module.ModuleRecordService;
 import lombok.AllArgsConstructor;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,15 +33,28 @@ public class ModuleRecordController {
         return ResponseEntity.ok().body(new ApiResponseDto("Record retrieved successfully", moduleRecordDto));
     }
 
+    @DeleteMapping("/record/{recordId}")
+    public ResponseEntity<ApiResponseDto> deleteRecordById(@PathVariable String recordId) {
+
+        moduleRecordService.deleteRecord(recordId);
+        return ResponseEntity.ok(new ApiResponseDto("Record deleted successfully"));
+    }
+
     @GetMapping("/records")
     public ResponseEntity<ApiResponseDto> getAllRecords(
             @RequestParam Integer page,
             @RequestParam Integer size,
-            @RequestParam(required = false) SortColumnDto sortColumnDto,
-            Sort sort) {
+            @RequestParam(required = false) SortColumnDto sortColumnDto) {
 
         // List view of records
         List<ModuleRecordDto> records = moduleRecordService.getAllRecords(page, size, sortColumnDto);
         return ResponseEntity.ok().body(new ApiResponseDto("Records retrieved successfully", records));
+    }
+
+    @DeleteMapping("/{moduleId}/records")
+    public ResponseEntity<ApiResponseDto> deleteAllRecords(@PathVariable String moduleId) {
+
+        moduleRecordService.deleteAllRecords(moduleId);
+        return ResponseEntity.ok(new ApiResponseDto("All records deleted successfully"));
     }
 }

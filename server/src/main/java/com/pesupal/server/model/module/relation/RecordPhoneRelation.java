@@ -14,7 +14,7 @@ public class RecordPhoneRelation extends BaseModel {
     @ManyToOne
     private ModuleRecord record;
 
-    @OneToOne
+    @ManyToOne
     private ModuleField field;
 
     @Enumerated(EnumType.STRING)

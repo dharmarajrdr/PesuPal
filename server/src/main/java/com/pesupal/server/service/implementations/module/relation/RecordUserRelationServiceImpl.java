@@ -3,6 +3,7 @@ package com.pesupal.server.service.implementations.module.relation;
 import com.pesupal.server.dto.response.UserPreviewDto;
 import com.pesupal.server.dto.response.module.ModuleFieldDto;
 import com.pesupal.server.exceptions.DataNotFoundException;
+import com.pesupal.server.model.module.Module;
 import com.pesupal.server.model.module.ModuleField;
 import com.pesupal.server.model.module.ModuleRecord;
 import com.pesupal.server.model.module.relation.RecordUserRelation;
@@ -31,10 +32,7 @@ public class RecordUserRelationServiceImpl implements RecordUserRelationService 
         String userId = (String) data;
         OrgMember orgMember = orgMemberService.getOrgMemberByPublicId(userId);
 
-        RecordUserRelation recordUserRelation = new RecordUserRelation();
-        recordUserRelation.setRecord(record);
-        recordUserRelation.setField(field);
-        recordUserRelation.setUser(orgMember);
+        RecordUserRelation recordUserRelation = RecordUserRelation.builder().record(record).field(field).user(orgMember).build();
         recordUserRelationRepository.save(recordUserRelation);
     }
 
@@ -66,5 +64,28 @@ public class RecordUserRelationServiceImpl implements RecordUserRelationService 
         RecordUserRelation recordUserRelation = getRecordSelectRelation(moduleRecord, moduleField);
         moduleFieldDto.setData(UserPreviewDto.fromOrgMember(recordUserRelation.getUser()));
         return moduleFieldDto;
+    }
+
+    /**
+     * Deletes the user relation data for a given module record and module field.
+     *
+     * @param moduleRecord
+     * @param moduleField
+     */
+    @Override
+    public void delete(ModuleRecord moduleRecord, ModuleField moduleField) {
+
+        recordUserRelationRepository.deleteAllByRecordAndField(moduleRecord, moduleField);
+    }
+
+    /**
+     * Deletes all user relations for a given module record.
+     *
+     * @param module
+     */
+    @Override
+    public void deleteAllByModule(Module module) {
+
+        recordUserRelationRepository.deleteAllByRecord_Module(module);
     }
 }
