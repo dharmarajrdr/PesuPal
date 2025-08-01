@@ -3,6 +3,7 @@ package com.pesupal.server.service.implementations.module;
 import com.pesupal.server.dto.request.module.CreateModuleRecordDto;
 import com.pesupal.server.dto.response.module.ModuleRecordDto;
 import com.pesupal.server.enums.FieldType;
+import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.exceptions.DuplicateDataReceivedException;
 import com.pesupal.server.exceptions.MandatoryDataMissingException;
 import com.pesupal.server.exceptions.PermissionDeniedException;
@@ -47,6 +48,10 @@ public class ModuleRecordServiceImpl extends CurrentValueRetriever implements Mo
         String moduleId = createModuleRecordDto.getModuleId();
         Module module = moduleService.getModuleById(moduleId);
 
+        if (!module.isActive()) {
+            throw new ActionProhibitedException("You cannot create a record in an inactive module. Publish the module first.");
+        }
+
         ModuleMember moduleMember = moduleMemberService.getModuleMemberByOrgMemberAndModule(orgMember, module);
         ModuleRole moduleRole = moduleMember.getRole();
 
@@ -57,6 +62,9 @@ public class ModuleRecordServiceImpl extends CurrentValueRetriever implements Mo
         }
 
         Map<String, Object> data = createModuleRecordDto.getData();
+        if (data == null) {
+            throw new MandatoryDataMissingException("The 'data' field is required but not provided.");
+        }
         String subject = (String) data.get("subject");
 
         // 2. Validate that the subject is provided and not empty
@@ -71,6 +79,7 @@ public class ModuleRecordServiceImpl extends CurrentValueRetriever implements Mo
 
         // 4. Create the module record with basic information
         ModuleRecord moduleRecord = new ModuleRecord();
+        moduleRecord.setModule(module);
         moduleRecord.setCreatedBy(orgMember);
         moduleRecord.setSubject(subject);
         moduleRecordRepository.save(moduleRecord);
