@@ -12,4 +12,10 @@ import java.util.Optional;
 public interface ModuleMemberRepository extends JpaRepository<ModuleMember, Long> {
 
     Optional<ModuleMember> findByOrgMemberAndModule(OrgMember orgMember, Module module);
+
+    int countAllByModule(Module module);
+
+    boolean existsByModule_PublicIdAndOrgMember_PublicId(String moduleId, String userId);
+
+    Optional<ModuleMember> findByOrgMemberAndModule_PublicId(OrgMember orgMember, String moduleId);
 }
