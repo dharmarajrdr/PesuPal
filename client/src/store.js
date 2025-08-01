@@ -12,7 +12,7 @@ import { combineReducers } from 'redux';
 import CurrentOrgSlice from './store/reducers/CurrentOrgSlice';
 import ActiveChatTabSlice from './store/reducers/ActiveChatTabSlice';
 import LeftNavigationSlice from './store/reducers/LeftNavigationSlice';
-import CurrentModuleViewSlice from './store/reducers/CurrentModuleViewSlice';
+import CurrentModuleSlice from './store/reducers/CurrentModuleSlice';
 import CurrentChatPreviewSlice from './store/reducers/CurrentChatPreviewSlice';
 import ShowChatHeaderOptionsModalSlice from './store/reducers/ShowChatHeaderOptionsModalSlice';
 
@@ -27,9 +27,9 @@ const store = configureStore({
         myProfile: MyProfileSlice,
         currentOrg: CurrentOrgSlice, 
         activeChatTab: ActiveChatTabSlice,
+        currentModule: CurrentModuleSlice,
         leftNavigation: LeftNavigationSlice,
         activeRecentChat: ActiveRecentChatSlice,
-        currentModuleView: CurrentModuleViewSlice,
         pinnedDirectMessage: PinnedDirectMessageSlice,
         showChatHeaderOptionsModalSlice: ShowChatHeaderOptionsModalSlice,
         currentChatPreviewSlice: CurrentChatPreviewSlice
