@@ -16,6 +16,7 @@ public class RecordRelationFactory {
 
     private final RecordUserRelationService recordUserRelationService;
     private final RecordLinkRelationService recordLinkRelationService;
+    private final RecordFileRelationService recordFileRelationService;
     private final RecordPhoneRelationService recordPhoneRelationService;
     private final RecordSelectRelationService recordSelectRelationService;
     private final RecordStringRelationService recordStringRelationService;
@@ -28,6 +29,9 @@ public class RecordRelationFactory {
             }
             case SELECT -> {
                 return recordSelectRelationService;
+            }
+            case FILE -> {
+                return recordFileRelationService;
             }
             case LINK -> {
                 return recordLinkRelationService;
