@@ -53,12 +53,6 @@ const ViewsList = () => {
 
     const currentView = useSelector((state) => state.currentModuleView);
 
-    useEffect(() => {
-        console.log("Update View:", currentView);
-    }, []);
-
-    console.log("Current View:", currentView);
-
     const onChange = (e) => {
         const view = e.target.value;
         const route = "/team/manage_work/" + view;

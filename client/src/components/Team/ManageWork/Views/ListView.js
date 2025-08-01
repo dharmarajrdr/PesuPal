@@ -5,6 +5,7 @@ import './ListView.css'
 import Profile from '../../../OthersProfile/Profile';
 import SomeProfile from '../../../OthersProfile/SomeProfile';
 import { setCurrentModuleView } from '../../../../store/reducers/CurrentModuleViewSlice';
+import { useDispatch } from 'react-redux';
 
 const ListviewTopHeader = ({ item }) => {
     const { totalRecords, currentPage, totalPages } = item;
@@ -80,8 +81,10 @@ const ListView = ({ ManageWorkList }) => {
     }, { header, data } = ManageWorkList,
         [showProfile, setShowProfile] = React.useState(false);
 
+    const dispatch = useDispatch();
+
     useEffect(() => {
-        setCurrentModuleView("list");
+        dispatch(setCurrentModuleView("list"));
     }, []);
 
     return (
