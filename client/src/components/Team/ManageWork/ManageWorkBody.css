@@ -1,5 +1,5 @@
 #ManageWorkBody {
-  height: calc(100vh - 150px);
+  height: calc(100vh - 90px);
   width: 100%;
   overflow-x: auto;
 }
