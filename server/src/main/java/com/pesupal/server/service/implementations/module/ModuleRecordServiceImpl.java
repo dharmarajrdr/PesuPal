@@ -1,6 +1,7 @@
 package com.pesupal.server.service.implementations.module;
 
 import com.pesupal.server.dto.request.module.CreateModuleRecordDto;
+import com.pesupal.server.dto.response.module.ModuleFieldDto;
 import com.pesupal.server.dto.response.module.ModuleRecordDto;
 import com.pesupal.server.enums.FieldType;
 import com.pesupal.server.exceptions.*;
@@ -146,11 +147,18 @@ public class ModuleRecordServiceImpl extends CurrentValueRetriever implements Mo
         }
 
         ModuleRecordDto moduleRecordDto = ModuleRecordDto.fromModuleRecord(moduleRecord);
+        List<ModuleFieldDto> fields = moduleRecordDto.getFields();
 
         List<ModuleField> moduleFields = moduleFieldService.getModuleFieldsByModuleId(moduleId);
         for (ModuleField moduleField : moduleFields) {
 
-            String attribute = ModuleHelper.getAttributeName(moduleField);
+            FieldType fieldType = moduleField.getFieldType();
+
+            RecordRelationService recordRelationService = recordRelationFactory.getRelationService(fieldType);
+            Object data = recordRelationService.getByModuleRecordAndModuleField(moduleRecord, moduleField);
+            ModuleFieldDto<Object> moduleFieldDto = ModuleFieldDto.fromModuleField(moduleField);
+            moduleFieldDto.setData(data);
+            fields.add(moduleFieldDto);
         }
         return moduleRecordDto;
     }
