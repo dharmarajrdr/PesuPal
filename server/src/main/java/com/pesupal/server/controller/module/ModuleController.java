@@ -2,11 +2,14 @@ package com.pesupal.server.controller.module;
 
 import com.pesupal.server.dto.request.module.CreateModuleDto;
 import com.pesupal.server.dto.response.ApiResponseDto;
+import com.pesupal.server.dto.response.module.ModulePreviewDto;
 import com.pesupal.server.model.module.Module;
 import com.pesupal.server.service.interfaces.module.ModuleService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @AllArgsConstructor
@@ -28,5 +31,12 @@ public class ModuleController {
 
         moduleService.publishModule(moduleId);
         return ResponseEntity.ok().body(new ApiResponseDto("Module published successfully"));
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<ApiResponseDto> getAllModulesOfUser() {
+
+        List<ModulePreviewDto> modules = moduleService.getAllModulesPreview();
+        return ResponseEntity.ok().body(new ApiResponseDto("Modules retrieved successfully", modules));
     }
 }
