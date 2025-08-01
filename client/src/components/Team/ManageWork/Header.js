@@ -6,6 +6,12 @@ import { useDispatch } from 'react-redux';
 import { apiRequest } from '../../../http_request';
 import { showPopup } from '../../../store/reducers/PopupSlice';
 
+const GetParams = () => {
+    const params = useParams();
+    const [type, moduleId, view] = params['*'].split('/') || [];    /*  /module/:moduleId/:view  */
+    return { type, moduleId, view };
+}
+
 const CreateButtons = () => {
 
     return (
@@ -37,12 +43,11 @@ const FilterIcon = () => {
 const ModulesList = ({ modules }) => {
 
     const navigate = useNavigate();
-    const params = useParams();
-    const [moduleId, view] = params['*'].split('/') || [];
+    const { moduleId, view } = GetParams();
 
     const onChange = (e) => {
         const moduleId = e.target.value;
-        const route = `/manage/${moduleId}/${view || 'list'}`;
+        const route = `/manage/module/${moduleId}/${view || 'list'}`;
         navigate(route);
     }
 
@@ -60,12 +65,11 @@ const ViewsList = () => {
         { id: "kanban", name: 'Kanban View' }
     ];
 
-    const params = useParams();
-    const [moduleId, currentView] = params['*'].split('/') || [];
+    const { moduleId, view: currentView } = GetParams();
 
     const onChange = (e) => {
         const view = e.target.value;
-        const route = "/manage/" + moduleId + "/" + view;
+        const route = "/manage/module/" + moduleId + "/" + view;
         navigate(route);
     }
 
@@ -78,17 +82,16 @@ const Header = () => {
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const params = useParams();
     const [modules, setModules] = useState([]);
 
-    const [moduleId, view] = params['*'].split('/') || [];
+    const { moduleId, view } = GetParams();
 
     useEffect(() => {
         apiRequest("/api/v1/module/all", "GET").then(({ data }) => {
             setModules(data);
             if (data.length > 0 && !moduleId?.length) {
                 const { id } = data[0] || {};
-                navigate(`/manage/${id}/${view || 'list'}`);
+                navigate(`/manage/module/${id}/${view || 'list'}`);
             }
         }).catch(({ message }) => {
             dispatch(showPopup({ message, type: 'error' }));
