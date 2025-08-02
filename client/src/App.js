@@ -20,6 +20,7 @@ import HomePageLayout from './components/Home/HomePageLayout';
 import CreateOrgModal from './components/Org/CreateOrgModal';
 import AuthModal from './components/Auth/AuthModal';
 import ManageWorkLayout from './components/Team/ManageWork/ManageWorkLayout';
+import NewModuleLayout from './components/Team/ManageWork/CreateModule/NewModuleLayout';
 
 function App() {
 
@@ -53,7 +54,7 @@ function App() {
                     <Route path="/people/*" element={<PeopleLayout />} />
                     <Route path="/team/*" element={<TeamLayout />} />
                     <Route path="/manage" element={<Navigate to="/manage/module" />} />
-                    <Route path="/manage/module/create" element={<PageNotFound />} />
+                    <Route path="/manage/module/create" element={<NewModuleLayout />} />
                     <Route path="/manage/module/*" element={<ManageWorkLayout />} />
                     <Route path="/settings/*" element={<SettingsLayout />} />
                     <Route path='/more/*' element={<MoreFeaturesLayout />} />
