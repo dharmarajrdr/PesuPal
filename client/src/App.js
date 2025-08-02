@@ -21,6 +21,7 @@ import CreateOrgModal from './components/Org/CreateOrgModal';
 import AuthModal from './components/Auth/AuthModal';
 import ManageWorkLayout from './components/Team/ManageWork/ManageWorkLayout';
 import NewModuleLayout from './components/Team/ManageWork/CreateModule/NewModuleLayout';
+import ModuleBuilderLayout from './components/Team/ManageWork/ModuleBuilder/ModuleBuilderLayout';
 
 function App() {
 
@@ -55,7 +56,7 @@ function App() {
                     <Route path="/team/*" element={<TeamLayout />} />
                     <Route path="/manage" element={<Navigate to="/manage/module" />} />
                     <Route path="/manage/module/create" element={<NewModuleLayout />} />
-                    <Route path="/manage/module/builder/*" element={<PageNotFound />} />
+                    <Route path="/manage/module/builder/*" element={<ModuleBuilderLayout />} />
                     <Route path="/manage/module/*" element={<ManageWorkLayout />} />
                     <Route path="/settings/*" element={<SettingsLayout />} />
                     <Route path='/more/*' element={<MoreFeaturesLayout />} />
