@@ -1,0 +1,78 @@
+#create-module-form-container {
+    padding: 20px;
+}
+
+#create-module-form-container #title {
+    font-size: 21px;
+    font-weight: 500;
+    color: var(--primary-color);
+    margin-bottom: 20px;
+}
+
+#create-module-form-container #description {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 20px;
+    line-height: 1.25;
+}
+
+#create-module-form-container #note-message {
+    font-size: 14px;
+    color: #888;
+}
+
+#create-module-form {
+    margin-top: 30px;
+}
+
+#create-module-form .row {
+    padding: 5px;
+    width: 35%;
+}
+
+#create-module-form .row label {
+    width: 100px;
+    font-size: 14px;
+    font-family: 'system-ui';
+}
+
+#create-module-form .mandatory-fields label::after {
+    content: '*';
+    color: red;
+    padding-left: 2px;
+}
+
+#create-module-form .row input,
+#create-module-form .row select {
+    width: calc(100% - 100px);
+    padding: 10px;
+    background-color: transparent;
+    border: none;
+    border-bottom: 1px solid #ccc;
+}
+
+#create-module-form .row button {
+    width: 100px;
+    padding: 7px 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#create-module-form .row #cancel-button {
+    background-color: #999;
+    color: white;
+}
+
+#create-module-form .row #cancel-button:hover {
+    background-color: #888;
+}
+
+#create-module-form .row #next-button {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+#create-module-form .row #next-button:hover {
+    background-color: var(--primary-color-active);
+}
