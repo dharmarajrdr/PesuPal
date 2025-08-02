@@ -50,7 +50,9 @@ const MoreOptionsButton = ({ moduleId }) => {
         {
             icon: 'fa fa-plus',
             name: 'New Module',
-            onClick: () => console.log('New Module clicked')
+            onClick: () => {
+                navigate('/manage/module/create');
+            }
         },
         {
             icon: 'fa fa-trash',
