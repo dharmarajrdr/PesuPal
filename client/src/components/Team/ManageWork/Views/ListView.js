@@ -2,8 +2,6 @@ import React, { useEffect } from 'react'
 import utils from '../../../../utils';
 import { Link, useParams } from 'react-router-dom';
 import './ListView.css'
-import Profile from '../../../OthersProfile/Profile';
-import SomeProfile from '../../../OthersProfile/SomeProfile';
 import { setCurrentModuleId, setCurrentModuleView } from '../../../../store/reducers/CurrentModuleSlice';
 import { useDispatch } from 'react-redux';
 
@@ -21,10 +19,17 @@ const ListviewTopHeader = ({ item }) => {
     </div>
 }
 
+const widthChart = {
+    "STRING": "350px",
+    "DATE_TIME": "225px",
+    "USER": "175px",
+    "SELECT": "250px"
+}
+
 const ListviewHeader = ({ header }) => {
     return <div className='rows FRCS' id='listview_table_header'>
-        {header.map(({ title, sort, width }, index) => {
-            return <div className='col FRCS' key={index} style={{ minWidth: width }}>
+        {header.map(({ title, sort }, index) => {
+            return <div className='col FRCS' key={index}>
                 <b>{title.replace(/_/mg, ' ')}</b>
                 {sort ?
                     <i className='fa fa-sort-down sortIcon'></i> :
@@ -35,38 +40,71 @@ const ListviewHeader = ({ header }) => {
     </div>
 }
 
-const ListviewBody = ({ header, data, setShowProfile }) => {
+const Column = ({ fieldType, data, index }) => {
 
-    const handleProfile = (e) => {
-        e.preventDefault();
-        setShowProfile(true);
+    let content = null;
+
+    switch (fieldType) {
+        case 'DATE_TIME': {
+            content = <span>{utils.convertDateAndTime(data)}</span>;
+            break;
+        }
+
+        case 'STRING': {
+            content = <span>{data}</span>;
+            break;
+        }
+
+        case 'USER': {
+            const { displayName, displayPicture } = data || {};
+            content = <>
+                {displayPicture && <img src={displayPicture} className='img_20_20 mR10' />}
+                <span>{displayName}</span>
+            </>;
+            break;
+        }
+
+        case 'SELECT': {
+            if (Array.isArray(data)) {
+                content = data.map(({ value }, idx) => (
+                    <span key={idx} className="mR5 typeSELECT">{value}</span>
+                ));
+            } else {
+                content = <span className="typeSELECT">{data}</span>;
+            }
+            break;
+        }
+        default: {
+            content = <span>{data}</span>;
+        }
     }
+
+    return (
+        <div className='col FRCS' key={index} style={{ 'width': widthChart[fieldType] }}>
+            {content}
+        </div>
+    );
+};
+
+const Row = ({ item, item_index }) => {
+
+    const { moduleId, recordId, fields } = item;
+    const route = `/manage/module/${moduleId}/record/${recordId}`;
+
+    return <Link to={route} className='rows FRCS' key={item_index}>
+        {fields?.map(({ data, fieldType }, index) => {
+            return <Column fieldType={fieldType} data={data} index={index} />
+        })}
+    </Link>
+}
+
+
+const ListviewBody = ({ data }) => {
 
     return <>
         {
             data.map((item, item_index) => {
-                return <Link to={item.route} className='rows FRCS' key={item_index}>
-                    {header.map(({ title, type, width }, index) => {
-                        const value = item[title.toLowerCase()];
-                        if (type == 'object') {
-                            const { image, name } = value || {}, icon_info = {};
-                            if (title == 'Tag') {
-                                Object.assign(icon_info, utils.getIconForTagWithColor(name) || {});
-                            } else if (title == 'Priority') {
-                                Object.assign(icon_info, utils.getPriortyColorAndIcon(name) || {});
-                            }
-                            const { icon, icon_color } = icon_info;
-                            return <div className='col FRCS' key={index} style={{ minWidth: width }}>
-                                {image && <img src={image} className='img_20_20 mR10' onClick={handleProfile} />}
-                                {icon && <i className={icon + ' img_20_20 mR5 alignCenter'} style={{ color: icon_color }}></i>}
-                                <span>{name}</span>
-                            </div>
-                        }
-                        return <div className='col FRCS' key={index} style={{ minWidth: width }}>
-                            <span>{value}</span>
-                        </div>
-                    })}
-                </Link>
+                return <Row item={item} key={item_index} />
             })
         }
     </>
@@ -94,9 +132,8 @@ const ListView = ({ ManageWorkList }) => {
             <ListviewTopHeader item={item} />
             <div id='listview_table' className='custom-scrollbar'>
                 <ListviewHeader header={header} />
-                <ListviewBody header={header} data={data} setShowProfile={setShowProfile} />
+                <ListviewBody data={data} />
             </div>
-            {showProfile && <Profile Profile={SomeProfile} setShowProfile={setShowProfile} />}
         </div>
     )
 }
