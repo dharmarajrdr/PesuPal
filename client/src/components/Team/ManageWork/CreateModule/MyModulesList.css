@@ -1,4 +1,51 @@
 #my-modules-list {
     width: 400px;
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
     background-color: var(--pure-white);
+    cursor: default;
+    overflow-y: auto;
+}
+
+#my-modules-list-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #888;
+    margin-bottom: 10px;
+    cursor: default;
+    position: sticky;
+    top: 0;
+    padding: 10px 20px 5px 20px;
+    text-align: left;
+    background-color: #fff;
+    box-shadow: 0 2px 4px var(--box-shadow-color);
+}
+
+.my-module-preview {
+    padding: 10px 20px;
+    border-bottom: 1px solid var(--light-gray);
+    border-bottom: 1px solid #e0e0e0;
+    cursor: pointer;
+}
+
+.my-module-preview p {
+    width: 65%;
+}
+
+.my-module-preview p span {
+    font-weight: 600;
+    max-width: calc(100% - 22px);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: left;
+    color: var(--primary-color);
+}
+
+.my-module-preview .created-time {
+    font-size: 11px;
+    color: #888;
+}
+
+.my-module-preview:hover {
+    background-color: var(--pure-white-hover);
 }
