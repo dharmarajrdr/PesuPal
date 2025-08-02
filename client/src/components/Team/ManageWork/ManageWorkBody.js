@@ -5,7 +5,6 @@ import { Route, Routes } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
 import { closeFilterBox, showFilterBox } from '../../../store/reducers/ModuleFilterSlice';
-import PageNotFound from '../../Auth/PageNotFound';
 import DataView from './DataView';
 
 const ManageWorkBody = () => {
@@ -24,8 +23,7 @@ const ManageWorkBody = () => {
     return (
         <div id='ManageWorkBody' className='w100 custom-scrollbar FRSE'>
             <Routes>
-                <Route path='/:moduleId/create' element={<PageNotFound />} />
-                <Route path='/:moduleId/*' element={<DataView filterBoxShowing={filterBoxShowing} ManageWorkList={ManageWorkList} ManageWorkListKanban={ManageWorkListKanban} />} />
+                <Route path='/:moduleId/:view' element={<DataView filterBoxShowing={filterBoxShowing} ManageWorkList={ManageWorkList} ManageWorkListKanban={ManageWorkListKanban} />} />
             </Routes>
         </div>
     )

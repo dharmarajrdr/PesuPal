@@ -8,8 +8,7 @@ import { showPopup } from '../../../store/reducers/PopupSlice';
 import { toggleFilterBox } from '../../../store/reducers/ModuleFilterSlice';
 
 const GetParams = () => {
-    const params = useParams();
-    const [moduleId, view] = params['*'].split('/') || [];    /*  /module/:moduleId/:view  */
+    const { moduleId, view } = useParams();
     return { moduleId, view };
 }
 
