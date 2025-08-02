@@ -1,6 +1,7 @@
 package com.pesupal.server.service.implementations.module;
 
 import com.pesupal.server.dto.request.module.CreateModuleDto;
+import com.pesupal.server.dto.response.module.ModuleDto;
 import com.pesupal.server.dto.response.module.ModulePreviewDto;
 import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.exceptions.DataNotFoundException;
@@ -133,5 +134,23 @@ public class ModuleServiceImpl extends CurrentValueRetriever implements ModuleSe
 
         OrgMember orgMember = getCurrentOrgMember();
         return moduleRepository.findAllByCreatedBy_PublicIdOrderByCreatedAtDesc(orgMember.getPublicId()).stream().map(ModulePreviewDto::fromModule).filter(Objects::nonNull).toList();
+    }
+
+    /**
+     * Retrieves a ModuleDto by its ID.
+     *
+     * @param moduleId
+     * @return
+     */
+    @Override
+    public ModuleDto getModuleDtoById(String moduleId) {
+
+        OrgMember orgMember = getCurrentOrgMember();
+        Module module = getModuleById(moduleId);
+
+        if (!ModuleHelper.isModuleOwner(module, orgMember)) {
+            throw new PermissionDeniedException("You do not have permission to view this module.");
+        }
+        return ModuleDto.fromModule(module);
     }
 }
