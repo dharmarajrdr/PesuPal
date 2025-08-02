@@ -21,4 +21,6 @@ public interface ModuleMemberRepository extends JpaRepository<ModuleMember, Long
     Optional<ModuleMember> findByOrgMemberAndModule_PublicId(OrgMember orgMember, String moduleId);
 
     List<ModuleMember> findAllByOrgMember(OrgMember orgMember);
+
+    void deleteAllByModule_PublicId(String moduleId);
 }

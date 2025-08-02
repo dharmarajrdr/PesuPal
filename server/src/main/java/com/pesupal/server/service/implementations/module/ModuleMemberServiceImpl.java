@@ -124,4 +124,15 @@ public class ModuleMemberServiceImpl extends CurrentValueRetriever implements Mo
 
         return moduleMemberRepository.findAllByOrgMember(orgMember).stream().map(ModuleMember::getModule).toList();
     }
+
+    /**
+     * Deletes all members in a module.
+     *
+     * @param moduleId
+     */
+    @Override
+    public void deleteAllMembersInModule(String moduleId) {
+
+        moduleMemberRepository.deleteAllByModule_PublicId(moduleId);
+    }
 }
