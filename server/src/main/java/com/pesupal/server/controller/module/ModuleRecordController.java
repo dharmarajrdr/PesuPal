@@ -23,8 +23,8 @@ public class ModuleRecordController {
     @PostMapping("/record/create")
     public ResponseEntity<ApiResponseDto> createRecord(@RequestBody CreateModuleRecordDto createModuleRecordDto) {
 
-        moduleRecordService.createRecord(createModuleRecordDto);
-        return ResponseEntity.ok(new ApiResponseDto("Record created successfully"));
+        ModuleRecordDto moduleRecordDto = moduleRecordService.createRecord(createModuleRecordDto);
+        return ResponseEntity.ok(new ApiResponseDto("Record created successfully", moduleRecordDto));
     }
 
     @GetMapping("/record/{recordId}")

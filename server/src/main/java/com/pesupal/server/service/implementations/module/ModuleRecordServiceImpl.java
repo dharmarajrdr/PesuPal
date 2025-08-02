@@ -230,9 +230,7 @@ public class ModuleRecordServiceImpl extends CurrentValueRetriever implements Mo
 
             RecordRelationService recordRelationService = recordRelationFactory.getRelationService(fieldType);
             ModuleFieldDto moduleFieldDto = recordRelationService.getByModuleRecordAndModuleField(moduleRecord, moduleField);
-//            if (moduleFieldDto != null) {
             fields.add(moduleFieldDto);
-//            }
         }
         return moduleRecordDto;
     }
