@@ -79,15 +79,13 @@ public class ModuleRecordServiceImpl extends CurrentValueRetriever implements Mo
         }
 
         // 4. Check if the subject is unique if duplicates are not allowed
-        if (!module.isAllowDuplicateSubject() && moduleRecordRepository.existsByModuleAndSubject(module, subject)) {
+        if (!module.isAllowDuplicateSubject() /* && moduleRecordRepository.existsByModuleAndSubject(module, subject)*/) {
             throw new DuplicateDataReceivedException("Record with subject '" + subject + "' already exists in this module.");
         }
 
         // 5. Create the module record with basic information
         ModuleRecord moduleRecord = new ModuleRecord();
         moduleRecord.setModule(module);
-        moduleRecord.setCreatedBy(orgMember);
-        moduleRecord.setSubject(subject);
         moduleRecordRepository.save(moduleRecord);
 
         // 6. Retrieve all module fields for the module
