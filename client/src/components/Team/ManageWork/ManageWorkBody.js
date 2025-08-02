@@ -1,6 +1,5 @@
 import './ManageWorkBody.css'
 import ManageWorkListKanban from './ManageWorkListKanban';
-import ManageWorkList from './ManageWorkList';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
@@ -30,7 +29,7 @@ const ManageWorkBody = () => {
 
                 <div id='views-render-frame'>
                     <Routes>
-                        <Route path='/list' element={<ListView ManageWorkList={ManageWorkList} />} />
+                        <Route path='/list' element={<ListView />} />
                         <Route path='/kanban' element={<KanbanView ManageWorkListKanban={ManageWorkListKanban} />} />
                         <Route path='/*' element={<Navigate to="/manage/module" />} />
                     </Routes>

@@ -12,4 +12,6 @@ import java.util.Optional;
 public interface ModulePermissionRepository extends JpaRepository<ModulePermission, Long> {
 
     Optional<ModulePermission> findByModuleAndRole(Module module, ModuleRole moduleRole);
+
+    void deleteAllByModule_PublicId(String moduleId);
 }

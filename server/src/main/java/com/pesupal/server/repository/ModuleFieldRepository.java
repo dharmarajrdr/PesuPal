@@ -15,4 +15,6 @@ public interface ModuleFieldRepository extends JpaRepository<ModuleField, Long> 
     boolean existsByNameAndModule(String fieldName, Module module);
 
     void deleteAllByModule_PublicId(String moduleId);
+
+    int countModuleFieldsByModule(Module module);
 }

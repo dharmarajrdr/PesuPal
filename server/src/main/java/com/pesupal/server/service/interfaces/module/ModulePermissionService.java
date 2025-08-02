@@ -9,4 +9,6 @@ public interface ModulePermissionService {
     ModulePermission getModulePermissionByModuleAndRole(Module module, ModuleRole moduleRole);
 
     void initializeModulePermissions(Module module);
+
+    void deleteAllPermissionsInModule(String moduleId);
 }

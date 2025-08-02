@@ -50,6 +50,7 @@ public class ModuleServiceImpl extends CurrentValueRetriever implements ModuleSe
         module.setCreatedBy(orgMember);
         module.setActive(false);
         moduleRepository.save(module);
+        moduleFieldService.addSystemFieldsIntoModule(module);
         moduleMemberService.addOrgOwnerToModule(module, orgMember);
         modulePermissionService.initializeModulePermissions(module);
         return module;
@@ -121,6 +122,7 @@ public class ModuleServiceImpl extends CurrentValueRetriever implements ModuleSe
         moduleRecordService.deleteAllRecords(moduleId);
         moduleFieldService.deleteAllFields(moduleId);
         moduleMemberService.deleteAllMembersInModule(moduleId);
+        modulePermissionService.deleteAllPermissionsInModule(moduleId);
         moduleRepository.delete(module);
     }
 

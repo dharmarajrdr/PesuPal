@@ -45,4 +45,15 @@ public class ModulePermissionServiceImpl implements ModulePermissionService {
         ModulePermission memberModulePermission = ModulePermission.builder().module(module).role(ModuleRole.MEMBER).createRecord(false).readRecord(true).manageMembers(false).deleteRecord(false).build();
         modulePermissionRepository.save(memberModulePermission);
     }
+
+    /**
+     * Deletes all permissions associated with a module.
+     *
+     * @param moduleId
+     */
+    @Override
+    public void deleteAllPermissionsInModule(String moduleId) {
+
+        modulePermissionRepository.deleteAllByModule_PublicId(moduleId);
+    }
 }

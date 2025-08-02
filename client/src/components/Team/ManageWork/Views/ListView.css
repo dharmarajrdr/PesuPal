@@ -62,7 +62,7 @@
   display: flex;
   flex-direction: row;
   align-items: stretch;
-  justify-content: space-between;
+  justify-content: flex-start;
 }
 
 #ListView #listview_table .rows:hover {
@@ -95,4 +95,18 @@
 #ListView #listview_table .rows .col .sortIcon {
   color: #555;
   margin-left: 10px;
+}
+
+#ListView #listview_table .rows .col .typeSELECT {
+  background-color: #eee;
+  width: fit-content;
+  padding: 3px 5px;
+  border-radius: 5px;
+  font-size: 13px;
+}
+
+#ListView #listview_table .rows .col span {
+  width: 100%;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }

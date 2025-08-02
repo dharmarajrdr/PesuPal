@@ -20,6 +20,7 @@ public class RecordRelationFactory {
     private final RecordPhoneRelationService recordPhoneRelationService;
     private final RecordSelectRelationService recordSelectRelationService;
     private final RecordStringRelationService recordStringRelationService;
+    private final RecordDateTimeRelationService recordDateTimeRelationService;
 
     public RecordRelationService getRelationService(FieldType fieldType) {
 
@@ -35,6 +36,9 @@ public class RecordRelationFactory {
             }
             case LINK -> {
                 return recordLinkRelationService;
+            }
+            case DATE_TIME -> {
+                return recordDateTimeRelationService;
             }
             case STRING, EMAIL, TEXT -> {
                 return recordStringRelationService;
