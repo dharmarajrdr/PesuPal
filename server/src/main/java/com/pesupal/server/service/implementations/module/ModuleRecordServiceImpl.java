@@ -147,26 +147,21 @@ public class ModuleRecordServiceImpl extends CurrentValueRetriever implements Mo
             throw new PermissionDeniedException("You do not have permission to delete this record.");
         }
 
-        // 3. Check if the module is active
-        if (!module.isActive()) {
-            throw new ActionProhibitedException("This record cannot be deleted because the module is no longer active.");
-        }
-
-        // 4. Retrieve all module fields for the module
+        // 3. Retrieve all module fields for the module
         List<ModuleField> moduleFields = moduleFieldService.getModuleFieldsByModuleId(moduleId);
         for (ModuleField moduleField : moduleFields) {
 
             FieldType fieldType = moduleField.getFieldType();
 
-            // 5. Get the appropriate RecordRelationService based on the field type to delete the value
+            // 4. Get the appropriate RecordRelationService based on the field type to delete the value
             RecordRelationService recordRelationService = recordRelationFactory.getRelationService(fieldType);
             recordRelationService.delete(moduleRecord, moduleField);
         }
 
-        // 6. Delete timeline entries related to this record
+        // 5. Delete timeline entries related to this record
         moduleRecordTimelineService.deleteByModuleRecord(moduleRecord);
 
-        // 7. Finally, delete the module record
+        // 6. Finally, delete the module record
         moduleRecordRepository.delete(moduleRecord);
     }
 
@@ -283,11 +278,14 @@ public class ModuleRecordServiceImpl extends CurrentValueRetriever implements Mo
 
         Module module = moduleService.getModuleById(moduleId);
 
-        ModuleMember moduleMember = moduleMemberService.getModuleMemberByOrgMemberAndModule(orgMember, module);
-        ModulePermission modulePermission = modulePermissionService.getModulePermissionByModuleAndRole(module, moduleMember.getRole());
 
-        if (!module.getCreatedBy().getPublicId().equals(orgMember.getPublicId()) && !modulePermission.isClearRecords()) {
-            throw new PermissionDeniedException("You do not have permission to clear records of this module.");
+        if (!ModuleHelper.isModuleOwner(module, orgMember)) {
+
+            ModuleMember moduleMember = moduleMemberService.getModuleMemberByOrgMemberAndModule(orgMember, module);
+            ModulePermission modulePermission = modulePermissionService.getModulePermissionByModuleAndRole(module, moduleMember.getRole());
+            if (!modulePermission.isClearRecords()) {
+                throw new PermissionDeniedException("You do not have permission to clear records of this module.");
+            }
         }
 
         List<ModuleField> moduleFields = moduleFieldService.getModuleFieldsByModuleId(moduleId);
