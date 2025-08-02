@@ -10,6 +10,7 @@ import PopupSlice from './store/reducers/PopupSlice';
 import { configureStore } from '@reduxjs/toolkit';
 import { combineReducers } from 'redux';
 import CurrentOrgSlice from './store/reducers/CurrentOrgSlice';
+import ModuleFilterSlice from './store/reducers/ModuleFilterSlice';
 import ActiveChatTabSlice from './store/reducers/ActiveChatTabSlice';
 import LeftNavigationSlice from './store/reducers/LeftNavigationSlice';
 import CurrentModuleSlice from './store/reducers/CurrentModuleSlice';
@@ -26,6 +27,7 @@ const store = configureStore({
         chatId: ChatIdSlice,
         myProfile: MyProfileSlice,
         currentOrg: CurrentOrgSlice, 
+        moduleFilter: ModuleFilterSlice,
         activeChatTab: ActiveChatTabSlice,
         currentModule: CurrentModuleSlice,
         leftNavigation: LeftNavigationSlice,
