@@ -1,20 +1,31 @@
-import React from 'react'
 import './ManageWorkBody.css'
-import KanbanView from './Views/KanbanView'
 import ManageWorkListKanban from './ManageWorkListKanban';
-import ListView from './Views/ListView';
 import ManageWorkList from './ManageWorkList';
-import { Navigate, Route, Routes } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { useEffect } from 'react';
+import { closeFilterBox, showFilterBox } from '../../../store/reducers/ModuleFilterSlice';
+import PageNotFound from '../../Auth/PageNotFound';
+import DataView from './DataView';
 
 const ManageWorkBody = () => {
+
+    const { filterBoxShowing } = useSelector((state) => state.moduleFilter);
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        if (filterBoxShowing) {
+            dispatch(showFilterBox());
+        } else {
+            dispatch(closeFilterBox());
+        }
+    }, []);
+
     return (
-        <div id='ManageWorkBody' className='w100 custom-scrollbar'>
+        <div id='ManageWorkBody' className='w100 custom-scrollbar FRSE'>
             <Routes>
-                <Route path='/:moduleId/list' element={<ListView ManageWorkList={ManageWorkList} />} />
-                <Route path='/:moduleId/kanban' element={<KanbanView ManageWorkListKanban={ManageWorkListKanban} />} />
-                <Route path='/:moduleId/*' element={<Navigate to="/team/manage_work" />} />
-                {/* Wildcard route to catch all unmatched routes */}
-                {/* <Route path="*" element={<Navigate to="/team/manage_work/list" />} /> */}
+                <Route path='/:moduleId/create' element={<PageNotFound />} />
+                <Route path='/:moduleId/*' element={<DataView filterBoxShowing={filterBoxShowing} ManageWorkList={ManageWorkList} ManageWorkListKanban={ManageWorkListKanban} />} />
             </Routes>
         </div>
     )

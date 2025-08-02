@@ -1,6 +1,6 @@
 import './App.css';
 import { useEffect } from 'react';
-import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
+import { Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { hasCookie } from './components/Auth/utils';
 import Signup from './components/Auth/Signup';
 import Signin from './components/Auth/Signin';
@@ -9,7 +9,6 @@ import FeedsLayout from './components/Feeds/FeedsLayout';
 import ChatLayout from './components/Chat/ChatLayout';
 import PeopleLayout from './components/People/PeopleLayout';
 import TeamLayout from './components/Team/TeamLayout';
-import TrackerLayout from './components/Tracker/TrackerLayout';
 import { Provider } from 'react-redux';
 import PageNotFound from './components/Auth/PageNotFound';
 import SettingsLayout from './components/Settings/SettingsLayout';
@@ -20,6 +19,9 @@ import store from './store';
 import HomePageLayout from './components/Home/HomePageLayout';
 import CreateOrgModal from './components/Org/CreateOrgModal';
 import AuthModal from './components/Auth/AuthModal';
+import ManageWorkLayout from './components/Team/ManageWork/ManageWorkLayout';
+import NewModuleLayout from './components/Team/ManageWork/CreateModule/NewModuleLayout';
+import ModuleBuilderLayout from './components/Team/ManageWork/ModuleBuilder/ModuleBuilderLayout';
 
 function App() {
 
@@ -52,7 +54,10 @@ function App() {
                     <Route path="/chat/*" element={<ChatLayout />} />
                     <Route path="/people/*" element={<PeopleLayout />} />
                     <Route path="/team/*" element={<TeamLayout />} />
-                    <Route path="/tracker" element={<TrackerLayout />} />
+                    <Route path="/manage" element={<Navigate to="/manage/module" />} />
+                    <Route path="/manage/module/create" element={<NewModuleLayout />} />
+                    <Route path="/manage/module/builder/:moduleId" element={<ModuleBuilderLayout />} />
+                    <Route path="/manage/module/*" element={<ManageWorkLayout />} />
                     <Route path="/settings/*" element={<SettingsLayout />} />
                     <Route path='/more/*' element={<MoreFeaturesLayout />} />
                     <Route path="/signup" element={<Signup />} />

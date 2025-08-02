@@ -15,4 +15,6 @@ public interface ModuleFieldService {
     void deleteModuleField(Long fieldId);
 
     List<ModuleField> getModuleFieldsByModuleId(String moduleId);
+
+    void deleteAllFields(String moduleId);
 }

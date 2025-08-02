@@ -16,4 +16,6 @@ public interface ModuleMemberService {
     void addMemberToModule(String moduleId, AddModuleMemberDto addModuleMemberDto);
 
     List<Module> getAllModulesOfOrgMember(OrgMember orgMember);
+
+    void deleteAllMembersInModule(String moduleId);
 }

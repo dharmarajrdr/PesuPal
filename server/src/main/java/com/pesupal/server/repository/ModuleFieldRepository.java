@@ -9,8 +9,10 @@ import java.util.List;
 
 @Repository
 public interface ModuleFieldRepository extends JpaRepository<ModuleField, Long> {
-    
+
     List<ModuleField> findAllByModuleOrderById(Module module);
 
     boolean existsByNameAndModule(String fieldName, Module module);
+
+    void deleteAllByModule_PublicId(String moduleId);
 }

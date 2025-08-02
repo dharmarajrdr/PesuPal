@@ -18,4 +18,6 @@ public interface ModuleSelectOptionRepository extends JpaRepository<ModuleSelect
     Optional<ModuleSelectOption> findByModuleFieldAndValue(ModuleField field, String value);
 
     Optional<ModuleSelectOption> findByModuleFieldAndId(ModuleField field, Long selectOptionId);
+
+    void deleteAllByModuleField_Module_PublicId(String moduleId);
 }

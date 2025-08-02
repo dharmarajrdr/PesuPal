@@ -2,6 +2,7 @@ package com.pesupal.server.controller.module;
 
 import com.pesupal.server.dto.request.module.CreateModuleDto;
 import com.pesupal.server.dto.response.ApiResponseDto;
+import com.pesupal.server.dto.response.module.ModuleDto;
 import com.pesupal.server.dto.response.module.ModulePreviewDto;
 import com.pesupal.server.model.module.Module;
 import com.pesupal.server.service.interfaces.module.ModuleService;
@@ -22,8 +23,14 @@ public class ModuleController {
     public ResponseEntity<ApiResponseDto> createModule(@RequestBody CreateModuleDto createModuleDto) {
 
         Module module = moduleService.createModule(createModuleDto);
-        ApiResponseDto response = new ApiResponseDto("Module created successfully", module);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok().body(new ApiResponseDto("Module created successfully", module));
+    }
+
+    @GetMapping("/{moduleId}")
+    public ResponseEntity<ApiResponseDto> getModuleById(@PathVariable String moduleId) {
+
+        ModuleDto moduleDto = moduleService.getModuleDtoById(moduleId);
+        return ResponseEntity.ok().body(new ApiResponseDto("Module retrieved successfully", moduleDto));
     }
 
     @PatchMapping("/{moduleId}/publish")
@@ -38,5 +45,19 @@ public class ModuleController {
 
         List<ModulePreviewDto> modules = moduleService.getAllModulesPreview();
         return ResponseEntity.ok().body(new ApiResponseDto("Modules retrieved successfully", modules));
+    }
+
+    @GetMapping("/created-by-me")
+    public ResponseEntity<ApiResponseDto> getModulesCreatedByMe() {
+
+        List<ModulePreviewDto> modules = moduleService.getModulesCreatedByMe();
+        return ResponseEntity.ok().body(new ApiResponseDto("Modules created by me retrieved successfully", modules));
+    }
+
+    @DeleteMapping("/{moduleId}")
+    public ResponseEntity<ApiResponseDto> deleteModule(@PathVariable String moduleId) {
+
+        moduleService.deleteModule(moduleId);
+        return ResponseEntity.ok().body(new ApiResponseDto("Module deleted successfully"));
     }
 }
