@@ -3,7 +3,7 @@ import Header from './Header'
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import ManageWorkBody from './ManageWorkBody'
-import { useParams } from 'react-router-dom'
+import { Route, Routes, useParams } from 'react-router-dom'
 import { showPopup } from '../../../store/reducers/PopupSlice';
 import PageNotFound from '../../Auth/PageNotFound';
 import Loader from '../../Loader';
@@ -14,7 +14,11 @@ import { setCurrentModuleData } from '../../../store/reducers/CurrentModuleSlice
 
 const ManageWorkLayout = () => {
 
-    const { moduleId, view } = useParams();
+    const params = useParams();
+    const [moduleId, view] = params['*'].split('/');
+
+    const shouldValidateModuleId = moduleId !== undefined && moduleId !== '';
+
     const dispatch = useDispatch();
 
     const [loading, setLoading] = useState(true);
@@ -23,6 +27,10 @@ const ManageWorkLayout = () => {
     const [permissionDenied, setPermissionDenied] = useState(false);
 
     useEffect(() => {
+        if (!shouldValidateModuleId) {
+            setLoading(false);
+            return;
+        }
         apiRequest(`/api/v1/module/${moduleId}`, "GET").then(({ data }) => {
             setLoading(false);
             dispatch(setCurrentModuleData(data));
@@ -48,7 +56,9 @@ const ManageWorkLayout = () => {
                 error ? <InternalServerError /> : (
                     <div id='ManageWorkLayout'>
                         <Header />
-                        <ManageWorkBody />
+                        <Routes>
+                            <Route path='/:moduleId/*' element={<ManageWorkBody />} />
+                        </Routes>
                     </div>
                 )
 }

@@ -8,7 +8,8 @@ import { showPopup } from '../../../store/reducers/PopupSlice';
 import { toggleFilterBox } from '../../../store/reducers/ModuleFilterSlice';
 
 const GetParams = () => {
-    const { moduleId, view } = useParams();
+    const params = useParams();
+    const [moduleId, view] = params['*'].split('/');
     return { moduleId, view };
 }
 
@@ -123,8 +124,6 @@ const Header = () => {
 
     const { moduleId, view } = GetParams();
 
-    const isCreateRecordPage = view === 'create';
-
     useEffect(() => {
         apiRequest("/api/v1/module/all", "GET").then(({ data }) => {
             setModules(data);
@@ -137,7 +136,7 @@ const Header = () => {
         });
     }, []);
 
-    return isCreateRecordPage ? null : (
+    return (
         <div id='task_header' className='FCSS w100'>
             <div className='FRCB w100 mB10'>
                 {/* <CustomModules CustomModulesList={CustomModulesList} /> */}
