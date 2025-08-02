@@ -122,4 +122,16 @@ public class ModuleServiceImpl extends CurrentValueRetriever implements ModuleSe
         moduleMemberService.deleteAllMembersInModule(moduleId);
         moduleRepository.delete(module);
     }
+
+    /**
+     * Retrieves a list of module previews created by the current user.
+     *
+     * @return
+     */
+    @Override
+    public List<ModulePreviewDto> getModulesCreatedByMe() {
+
+        OrgMember orgMember = getCurrentOrgMember();
+        return moduleRepository.findAllByCreatedBy_PublicIdOrderByCreatedAtDesc(orgMember.getPublicId()).stream().map(ModulePreviewDto::fromModule).filter(Objects::nonNull).toList();
+    }
 }

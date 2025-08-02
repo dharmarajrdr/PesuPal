@@ -40,6 +40,13 @@ public class ModuleController {
         return ResponseEntity.ok().body(new ApiResponseDto("Modules retrieved successfully", modules));
     }
 
+    @GetMapping("/created-by-me")
+    public ResponseEntity<ApiResponseDto> getModulesCreatedByMe() {
+
+        List<ModulePreviewDto> modules = moduleService.getModulesCreatedByMe();
+        return ResponseEntity.ok().body(new ApiResponseDto("Modules created by me retrieved successfully", modules));
+    }
+
     @DeleteMapping("/{moduleId}")
     public ResponseEntity<ApiResponseDto> deleteModule(@PathVariable String moduleId) {
 

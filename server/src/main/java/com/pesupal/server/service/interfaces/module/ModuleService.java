@@ -17,4 +17,6 @@ public interface ModuleService {
     List<ModulePreviewDto> getAllModulesPreview();
 
     void deleteModule(String moduleId);
+
+    List<ModulePreviewDto> getModulesCreatedByMe();
 }
