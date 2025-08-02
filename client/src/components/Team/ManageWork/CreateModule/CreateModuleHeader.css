@@ -1,0 +1,41 @@
+#create-module-header {
+    background-color: var(--pure-white);
+    padding: 10px;
+    box-shadow: 0 2px 4px var(--box-shadow-color);
+}
+
+#publishButton {
+    background-color: var(--primary-color);
+    border: none;
+    color: white;
+    padding: 7px 10px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+#publishButton:hover {
+    background-color: var(--primary-color-active);
+}
+
+#more-options-button {
+    background-color: var(--pure-white-hover);
+    width: 30px;
+    height: 30px;
+    line-height: 28px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 5px;
+    border: 1px solid #fff;
+    box-sizing: border-box;
+}
+
+#more-options-button:hover {
+    border-color: #eee;
+}
