@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import OptionsModal from '../../../Utils/OptionsModal'
+import { useSelector } from 'react-redux';
 import './ModuleBuilderHeader.css'
 import MyModulesListOverlay from '../CreateModule/MyModulesListOverlay'
 
@@ -48,12 +49,17 @@ const MoreOptionsButton = () => {
     )
 }
 
-const ModuleBuilderHeader = ({ module }) => {
-    
+const ModuleBuilderHeader = () => {
+
+    const module = useSelector(state => state.currentModule.data);
+    const { name, description } = module || {};
+
     return (
         <div id='create-module-header' className='w100 FRCB'>
             <div className='FRCS'>
-
+                <i className='fa fa-arrow-left fs16 mR10' onClick={() => window.history.back()}></i>
+                <h4 id='module-name'>{name}</h4>
+                <i className='fa fa-info-circle fs12 mL10 colorDDD' title={description || 'No description found'}></i>
             </div>
             <div className='FRCE'>
                 <PublishButton />
