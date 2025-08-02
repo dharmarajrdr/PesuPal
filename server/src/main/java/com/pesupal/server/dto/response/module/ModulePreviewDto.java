@@ -13,6 +13,11 @@ public class ModulePreviewDto {
     private boolean active;
 
     public static ModulePreviewDto fromModule(Module module) {
+
+        if (module == null) {
+            return null;
+        }
+
         ModulePreviewDto dto = new ModulePreviewDto();
         dto.setId(module.getPublicId());
         dto.setName(module.getName());
