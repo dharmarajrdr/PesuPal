@@ -3,7 +3,7 @@ import Header from './Header'
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import ManageWorkBody from './ManageWorkBody'
-import { Route, Routes, useParams } from 'react-router-dom'
+import { Route, Routes, useNavigate, useParams } from 'react-router-dom'
 import { showPopup } from '../../../store/reducers/PopupSlice';
 import PageNotFound from '../../Auth/PageNotFound';
 import Loader from '../../Loader';
@@ -20,14 +20,28 @@ const ManageWorkLayout = () => {
     const shouldValidateModuleId = moduleId !== undefined && moduleId !== '';
 
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     const [loading, setLoading] = useState(true);
+    const [modules, setModules] = useState([]);
     const [error, setError] = useState(false);
     const [moduleNotFound, setModuleNotFound] = useState(false);
     const [permissionDenied, setPermissionDenied] = useState(false);
 
     useEffect(() => {
-        if (!shouldValidateModuleId) {
+        apiRequest("/api/v1/module/all", "GET").then(({ data }) => {
+            setModules(data);
+            if (data.length > 0 && !moduleId?.length) {
+                const { id } = data[0] || {};
+                navigate(`/manage/module/${id}/${view || 'list'}`);
+            }
+        }).catch(({ message }) => {
+            dispatch(showPopup({ message, type: 'error' }));
+        });
+    }, []);
+
+    useEffect(() => {
+        if (!shouldValidateModuleId || modules.length == 0) {
             setLoading(false);
             return;
         }
@@ -55,12 +69,14 @@ const ManageWorkLayout = () => {
             permissionDenied ? <PermissionDenied /> :
                 error ? <InternalServerError /> : (
                     <div id='ManageWorkLayout'>
-                        <Header />
-                        <Routes>
-                            <Route path='/:moduleId/*' element={<ManageWorkBody />} />
-                        </Routes>
+                        <Header modules={modules} />
+                        {modules.length > 0 ?
+                            <Routes>
+                                <Route path='/:moduleId/*' element={<ManageWorkBody />} />
+                            </Routes> : null
+                        }
                     </div>
-                )
+                );
 }
 
 export default ManageWorkLayout

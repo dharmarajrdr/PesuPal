@@ -116,35 +116,19 @@ const ViewsList = () => {
     )
 }
 
-const Header = () => {
-
-    const navigate = useNavigate();
-    const dispatch = useDispatch();
-    const [modules, setModules] = useState([]);
-
-    const { moduleId, view } = GetParams();
-
-    useEffect(() => {
-        apiRequest("/api/v1/module/all", "GET").then(({ data }) => {
-            setModules(data);
-            if (data.length > 0 && !moduleId?.length) {
-                const { id } = data[0] || {};
-                navigate(`/manage/module/${id}/${view || 'list'}`);
-            }
-        }).catch(({ message }) => {
-            dispatch(showPopup({ message, type: 'error' }));
-        });
-    }, []);
+const Header = ({ modules }) => {
 
     return (
         <div id='task_header' className='FCSS w100'>
             <div className='FRCB w100 mB10'>
                 {/* <CustomModules CustomModulesList={CustomModulesList} /> */}
                 <div className='FRCS' id='modulesList-filter-view'>
-                    <ModulesList modules={modules} />
-                    <FilterIcon />
-                    <ViewsList />
-                    <ModuleBuilder />
+                    {modules.length > 0 && <>
+                        <ModulesList modules={modules} />
+                        <FilterIcon />
+                        <ViewsList />
+                        <ModuleBuilder />
+                    </>}
                 </div>
                 <CreateButtons />
             </div>
