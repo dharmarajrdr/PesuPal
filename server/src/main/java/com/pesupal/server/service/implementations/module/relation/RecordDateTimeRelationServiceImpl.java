@@ -12,6 +12,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -29,7 +30,7 @@ public class RecordDateTimeRelationServiceImpl implements RecordDateTimeRelation
     @Override
     public void save(ModuleRecord record, ModuleField field, Object data) {
 
-        LocalDateTime dateTime = (LocalDateTime) data;
+        LocalDateTime dateTime = data instanceof LocalDateTime ? (LocalDateTime) data : LocalDateTime.parse(data.toString());
         RecordDateTimeRelation recordDateTimeRelation = new RecordDateTimeRelation();
         recordDateTimeRelation.setRecord(record);
         recordDateTimeRelation.setField(field);
@@ -48,8 +49,14 @@ public class RecordDateTimeRelationServiceImpl implements RecordDateTimeRelation
     public ModuleFieldDto<LocalDateTime> getByModuleRecordAndModuleField(ModuleRecord moduleRecord, ModuleField moduleField) {
 
         ModuleFieldDto<LocalDateTime> moduleFieldDto = ModuleFieldDto.fromModuleField(moduleField);
-        RecordDateTimeRelation recordDateTimeRelation = recordDateTimeRelationRepository.findByRecordAndField(moduleRecord, moduleField).orElseThrow(() -> new DataNotFoundException("No date-time relation found for the given record and field."));
-        moduleFieldDto.setData(recordDateTimeRelation.getDateTime());
+        Optional<RecordDateTimeRelation> recordDateTimeRelation = recordDateTimeRelationRepository.findByRecordAndField(moduleRecord, moduleField);
+        if (recordDateTimeRelation.isEmpty()) {
+            if (moduleField.isRequired()) {
+                throw new DataNotFoundException("No date-time relation found for field '" + moduleField.getName() + "' in this record.");
+            }
+        } else {
+            moduleFieldDto.setData(recordDateTimeRelation.get().getDateTime());
+        }
         return moduleFieldDto;
     }
 
