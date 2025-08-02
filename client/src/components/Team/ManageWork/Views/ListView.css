@@ -41,7 +41,7 @@
 }
 
 #ListView #listview_table #listview_table_header {
-  background-color: rgb(83, 133, 83);
+  background-color: var(--tertiary-color);
   width: max-content;
   position: sticky;
   top: 0;
