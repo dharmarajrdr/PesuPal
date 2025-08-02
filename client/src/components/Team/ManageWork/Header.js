@@ -54,7 +54,7 @@ const ModuleBuilder = () => {
 
     return (
         <div className="FRCC mL10" id='moduleBuilderIcon' title='Module Builder' onClick={clickHandler}>
-            <i className='fa fa-cog'></i>
+            <i className='fa fa-wrench'></i>
         </div>
     )
 }
