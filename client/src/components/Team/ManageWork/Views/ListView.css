@@ -77,6 +77,7 @@
   text-overflow: ellipsis;
 }
 
+#ListView #listview_table .rows .col a,
 #ListView #listview_table .rows .col i,
 #ListView #listview_table .rows .col b,
 #ListView #listview_table .rows .col span {
@@ -86,6 +87,16 @@
 #ListView #listview_table .rows .col b {
   color: #555;
   font-weight: 500;
+}
+
+#ListView #listview_table .rows .col a {
+  color: #65b0ff;
+  text-decoration: none;
+}
+
+#ListView #listview_table .rows .col a:hover {
+  color: #007bff;
+  text-decoration: underline;
 }
 
 #ListView #listview_table .rows .col span {

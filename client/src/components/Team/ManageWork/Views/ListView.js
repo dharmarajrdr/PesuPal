@@ -25,7 +25,9 @@ const widthChart = {
     "STRING": "350px",
     "DATE_TIME": "225px",
     "USER": "225px",
-    "SELECT": "250px"
+    "SELECT": "250px",
+    "TEXT": "350px",
+    "LINK": "250px"
 }
 
 const ListviewHeader = ({ header }) => {
@@ -76,8 +78,18 @@ const Column = ({ fieldType, data, index }) => {
             }
             break;
         }
-        default: {
+        case 'TEXT': {
             content = <span>{data}</span>;
+            break;
+        }
+        case 'LINK': {
+            const { url, title } = data || {};
+            content = <a href={url} target="_blank" rel="noopener noreferrer" onClick={(e) => { e.stopPropagation(); }}>
+                <i className='fa fa-link mR5 colorAAA'></i>{title}</a>;
+            break;
+        }
+        default: {
+            content = <span>Unable to display</span>;
         }
     }
 
