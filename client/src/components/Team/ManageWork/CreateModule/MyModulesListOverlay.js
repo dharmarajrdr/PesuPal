@@ -3,9 +3,11 @@ import './MyModulesList.css';
 import utils from '../../../../utils';
 import { apiRequest } from '../../../../http_request';
 import Loader from '../../../Loader';
+import { useNavigate } from 'react-router-dom';
 
 const MyModulePreview = ({ module }) => {
 
+    const navigate = useNavigate();
     const { id, name, createdAt, active, accessibility } = module || {};
 
     const accessibilityIcon = {
@@ -14,8 +16,12 @@ const MyModulePreview = ({ module }) => {
         "SELECTIVE_MEMBERS": "fa fa-user-friends"
     }
 
+    const modulePreviewClickedHandler = () => {
+        navigate(`/manage/module/builder/${id}`);
+    }
+
     return (
-        <div className='my-module-preview FRSB w100'>
+        <div className='my-module-preview FRSB w100' onClick={modulePreviewClickedHandler}>
             <p className='FRCS'>
                 <span title={name}>{name}</span>
                 <i className={`${accessibilityIcon[accessibility.name]} fs12 color777 pL5`} title={accessibility.description}></i>
