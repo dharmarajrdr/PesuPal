@@ -1,3 +1,5 @@
+import { useState } from 'react'
+import OptionsModal from '../../../Utils/OptionsModal'
 import './CreateModuleHeader.css'
 
 const PublishButton = () => {
@@ -8,9 +10,30 @@ const PublishButton = () => {
 
 const MoreOptionsButton = () => {
 
+    const options = [
+        {
+            icon: 'fa fa-plus',
+            name: 'New Module',
+            onClick: () => console.log('New Module clicked')
+        },
+        {
+            icon: 'fa fa-trash',
+            name: 'Delete Module',
+            onClick: () => console.log('Delete Module clicked')
+        },
+        {
+            icon: 'fa fa-folder',
+            name: 'My Modules',
+            onClick: () => console.log('My Modules clicked')
+        }
+    ];
+
+    const [showOptions, setShowOptions] = useState(false);
+
     return (
-        <div id='more-options-button' className='FRCC mL10'>
+        <div id='more-options-button' className='FRCC mL10' onClick={() => setShowOptions(!showOptions)}>
             <i className='fa fa-ellipsis-vertical fs16'></i>
+            {showOptions && <OptionsModal options={options} style={{ position: 'relative', top: '10px', right: '160px', width: '200px' }} />}
         </div>
     )
 }
