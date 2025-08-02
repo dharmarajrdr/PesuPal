@@ -42,6 +42,23 @@ const CreateButtons = () => {
     )
 }
 
+const ModuleBuilder = () => {
+
+    const navigate = useNavigate();
+    const { moduleId } = GetParams();
+
+    const clickHandler = (e) => {
+        e.stopPropagation();
+        navigate(`/manage/module/builder/${moduleId}`);
+    }
+
+    return (
+        <div className="FRCC mL10" id='moduleBuilderIcon' title='Module Builder' onClick={clickHandler}>
+            <i className='fa fa-cog'></i>
+        </div>
+    )
+}
+
 const FilterIcon = () => {
 
     const [filterApplied, setFilterApplied] = useState(false);
@@ -54,7 +71,7 @@ const FilterIcon = () => {
     }
 
     return (
-        <div className={`FRCC mR10 ${filterBoxShowing ? 'active' : ''}`} id='filterIcon' onClick={toggleFilterHandler}>
+        <div className={`FRCC mR10 ${filterBoxShowing ? 'active' : ''}`} title='Filter' id='filterIcon' onClick={toggleFilterHandler}>
             <i className='fa fa-filter'></i>
             {filterApplied && <i className='fa fa-circle' style={{ fontSize: '8px', position: 'absolute', top: '-2px', right: '-2px', color: 'red' }}></i>}
         </div>
@@ -129,6 +146,7 @@ const Header = () => {
                     <ModulesList modules={modules} />
                     <FilterIcon />
                     <ViewsList />
+                    <ModuleBuilder />
                 </div>
                 <CreateButtons />
             </div>
