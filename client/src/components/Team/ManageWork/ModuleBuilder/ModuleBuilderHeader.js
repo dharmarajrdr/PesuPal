@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import OptionsModal from '../../../Utils/OptionsModal'
 import './ModuleBuilderHeader.css'
-import MyModulesListOverlay from './MyModulesListOverlay'
+import MyModulesListOverlay from '../CreateModule/MyModulesListOverlay'
 
 const PublishButton = () => {
     return (
@@ -48,7 +48,8 @@ const MoreOptionsButton = () => {
     )
 }
 
-const ModuleBuilderHeader = () => {
+const ModuleBuilderHeader = ({ module }) => {
+    
     return (
         <div id='create-module-header' className='w100 FRCB'>
             <div className='FRCS'>
