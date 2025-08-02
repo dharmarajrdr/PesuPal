@@ -14,6 +14,7 @@ import com.pesupal.server.model.module.ModuleField;
 import com.pesupal.server.model.module.ModuleSelectOption;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.repository.ModuleFieldRepository;
+import com.pesupal.server.repository.ModuleSelectOptionRepository;
 import com.pesupal.server.service.interfaces.module.ModuleFieldService;
 import com.pesupal.server.service.interfaces.module.ModuleSelectOptionService;
 import com.pesupal.server.service.interfaces.module.ModuleService;
@@ -30,6 +31,7 @@ public class ModuleFieldServiceImpl extends CurrentValueRetriever implements Mod
     private final ModuleService moduleService;
     private final ModuleFieldRepository moduleFieldRepository;
     private final ModuleSelectOptionService moduleSelectOptionService;
+    private final ModuleSelectOptionRepository moduleSelectOptionRepository;
 
     /**
      * Adds a new field into a module.
@@ -76,6 +78,18 @@ public class ModuleFieldServiceImpl extends CurrentValueRetriever implements Mod
 
         Module module = moduleService.getModuleById(moduleId);
         return moduleFieldRepository.findAllByModuleOrderById(module);
+    }
+
+    /**
+     * Deletes all fields associated with a specific module.
+     *
+     * @param moduleId
+     */
+    @Override
+    public void deleteAllFields(String moduleId) {
+
+        moduleSelectOptionRepository.deleteAllByModuleField_Module_PublicId(moduleId);
+        moduleFieldRepository.deleteAllByModule_PublicId(moduleId);
     }
 
     /**
