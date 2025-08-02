@@ -4,7 +4,8 @@ const CurrentModuleSlice = createSlice({
     name: "currentModule",
     initialState: {
         view: null,
-        moduleId: null
+        moduleId: null,
+        data: {}
     },
     reducers: {
         setCurrentModuleId: (state, action) => {
@@ -13,15 +14,19 @@ const CurrentModuleSlice = createSlice({
         setCurrentModuleView: (state, action) => {
             return { ...state, 'view': action.payload }
         },
+        setCurrentModuleData: (state, action) => {
+            return { ...state, 'data': action.payload }
+        },
         resetCurrentModuleView: () => {
             return {
                 view: null,
-                moduleId: null
+                moduleId: null,
+                data: {}
             };
         }
     }
 })
 
-export const { setCurrentModuleView, setCurrentModuleId, resetCurrentModuleView } = CurrentModuleSlice.actions;
+export const { setCurrentModuleView, setCurrentModuleId, setCurrentModuleData, resetCurrentModuleView } = CurrentModuleSlice.actions;
 
 export default CurrentModuleSlice.reducer;
