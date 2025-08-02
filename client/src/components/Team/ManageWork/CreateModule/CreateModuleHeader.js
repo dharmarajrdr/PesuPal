@@ -37,7 +37,7 @@ const MoreOptionsButton = () => {
     }
 
     const [showOptions, setShowOptions] = useState(false);
-    const [showMyModulesList, setShowMyModulesList] = useState(true);
+    const [showMyModulesList, setShowMyModulesList] = useState(false);
 
     return (
         <div id='more-options-button' className='FRCC mL10' onClick={() => setShowOptions(!showOptions)}>
