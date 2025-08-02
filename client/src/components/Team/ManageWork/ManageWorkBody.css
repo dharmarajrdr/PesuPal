@@ -1,5 +1,35 @@
 #ManageWorkBody {
   height: calc(100vh - 90px);
-  width: 100%;
+  overflow-x: scroll;
+}
+
+#ManageWorkBody #filter-container {
+  padding: 10px;
+  width: 350px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  height: 100%;
+  margin-right: 10px;
+  background-color: var(--pure-white-hover);
+}
+
+.filter-enabled #views-render-frame {
+  width: calc(100vw - 400px - 75px);
+}
+
+#views-render-frame {
+  /* width: calc(100vw - 400px - 75px); */
+  width: calc(100vw - 115px);
+  height: 100%;
   overflow-x: auto;
+  transition-duration: 0.5s;
+}
+
+#manage-work-slider {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: flex-end;
+  height: 100%;
+  width: calc(100vw + 350px);
 }
