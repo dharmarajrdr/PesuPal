@@ -2,9 +2,10 @@ import { useEffect, useState } from 'react'
 import './Header.css'
 import FilterComponentItem from './FilterComponentItem';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { apiRequest } from '../../../http_request';
 import { showPopup } from '../../../store/reducers/PopupSlice';
+import { toggleFilterBox } from '../../../store/reducers/ModuleFilterSlice';
 
 const GetParams = () => {
     const params = useParams();
@@ -31,9 +32,16 @@ const CreateButtons = () => {
 const FilterIcon = () => {
 
     const [filterApplied, setFilterApplied] = useState(false);
+    const { filterBoxShowing } = useSelector((state) => state.moduleFilter);
+    const dispatch = useDispatch();
+
+    const toggleFilterHandler = (e) => {
+        e.stopPropagation();
+        dispatch(toggleFilterBox());
+    }
 
     return (
-        <div className='FRCC mR10' id='filterIcon'>
+        <div className={`FRCC mR10 ${filterBoxShowing ? 'active' : ''}`} id='filterIcon' onClick={toggleFilterHandler}>
             <i className='fa fa-filter'></i>
             {filterApplied && <i className='fa fa-circle' style={{ fontSize: '8px', position: 'absolute', top: '-2px', right: '-2px', color: 'red' }}></i>}
         </div>

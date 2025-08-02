@@ -47,3 +47,7 @@
 #filterIcon:hover {
   background-color: var(--pure-white-hover);
 }
+
+#filterIcon.active {
+  background-color: var(--pure-white-hover);
+}

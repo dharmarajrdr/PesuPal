@@ -19,6 +19,13 @@
   justify-content: space-between;
 }
 
+.FRSE {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: flex-end;
+}
+
 .FRCB {
   display: flex;
   flex-direction: row;
