@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import OptionsModal from '../../../Utils/OptionsModal'
 import './CreateModuleHeader.css'
+import MyModulesListOverlay from './MyModulesListOverlay'
 
 const PublishButton = () => {
     return (
@@ -24,16 +25,25 @@ const MoreOptionsButton = () => {
         {
             icon: 'fa fa-folder',
             name: 'My Modules',
-            onClick: () => console.log('My Modules clicked')
+            onClick: () => {
+                closeOptions();
+                setShowMyModulesList(true);
+            }
         }
     ];
 
+    const closeOptions = () => {
+        setShowOptions(false);
+    }
+
     const [showOptions, setShowOptions] = useState(false);
+    const [showMyModulesList, setShowMyModulesList] = useState(true);
 
     return (
         <div id='more-options-button' className='FRCC mL10' onClick={() => setShowOptions(!showOptions)}>
             <i className='fa fa-ellipsis-vertical fs16'></i>
             {showOptions && <OptionsModal options={options} style={{ position: 'relative', top: '10px', right: '160px', width: '200px' }} />}
+            {showMyModulesList && <MyModulesListOverlay onCloseModal={() => setShowMyModulesList(false)} />}
         </div>
     )
 }
