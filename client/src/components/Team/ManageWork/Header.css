@@ -29,7 +29,8 @@
   height: 40px;
 }
 
-#filterIcon {
+#filterIcon, 
+#moduleBuilderIcon {
   position: relative;
   border: 1px solid #ccc;
   cursor: pointer;
@@ -39,12 +40,14 @@
   background-color: var(--pure-white);
 }
 
-#filterIcon .fa-filter {
+#filterIcon .fa-filter, 
+#moduleBuilderIcon i {
   font-size: 16px;
   color: var(--primary-color);
 }
 
-#filterIcon:hover {
+#filterIcon:hover, 
+#moduleBuilderIcon:hover {
   background-color: var(--pure-white-hover);
 }
 

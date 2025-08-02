@@ -1,7 +1,22 @@
 #create-module-header {
     background-color: var(--pure-white);
-    padding: 10px;
+    padding: 10px 20px;
     box-shadow: 0 2px 4px var(--box-shadow-color);
+}
+
+#create-module-header i {
+    width: 20px;
+    height: 20px;
+    text-align: center;
+    line-height: 21px;
+    cursor: pointer;
+}
+
+#create-module-header #module-name {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--primary-color);
+    cursor: default;
 }
 
 #publishButton {

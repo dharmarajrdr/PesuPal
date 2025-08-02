@@ -1,12 +1,13 @@
 import './ManageWorkBody.css'
 import ManageWorkListKanban from './ManageWorkListKanban';
 import ManageWorkList from './ManageWorkList';
-import { Route, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
 import { closeFilterBox, showFilterBox } from '../../../store/reducers/ModuleFilterSlice';
-import PageNotFound from '../../Auth/PageNotFound';
-import DataView from './DataView';
+import FilterContainer from './FilterContainer/FilterContainer';
+import ListView from './Views/ListView';
+import KanbanView from './Views/KanbanView';
 
 const ManageWorkBody = () => {
 
@@ -23,10 +24,18 @@ const ManageWorkBody = () => {
 
     return (
         <div id='ManageWorkBody' className='w100 custom-scrollbar FRSE'>
-            <Routes>
-                <Route path='/:moduleId/create' element={<PageNotFound />} />
-                <Route path='/:moduleId/*' element={<DataView filterBoxShowing={filterBoxShowing} ManageWorkList={ManageWorkList} ManageWorkListKanban={ManageWorkListKanban} />} />
-            </Routes>
+            <div id='manage-work-slider' className={`FRSE ${filterBoxShowing ? 'filter-enabled' : ''}`}>
+
+                <FilterContainer />
+
+                <div id='views-render-frame'>
+                    <Routes>
+                        <Route path='/list' element={<ListView ManageWorkList={ManageWorkList} />} />
+                        <Route path='/kanban' element={<KanbanView ManageWorkListKanban={ManageWorkListKanban} />} />
+                        <Route path='/*' element={<Navigate to="/manage/module" />} />
+                    </Routes>
+                </div>
+            </div>
         </div>
     )
 }

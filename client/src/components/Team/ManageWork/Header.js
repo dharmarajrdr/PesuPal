@@ -9,7 +9,7 @@ import { toggleFilterBox } from '../../../store/reducers/ModuleFilterSlice';
 
 const GetParams = () => {
     const params = useParams();
-    const [moduleId, view] = params['*'].split('/') || [];    /*  /module/:moduleId/:view  */
+    const [moduleId, view] = params['*'].split('/');
     return { moduleId, view };
 }
 
@@ -42,6 +42,23 @@ const CreateButtons = () => {
     )
 }
 
+const ModuleBuilder = () => {
+
+    const navigate = useNavigate();
+    const { moduleId } = GetParams();
+
+    const clickHandler = (e) => {
+        e.stopPropagation();
+        navigate(`/manage/module/builder/${moduleId}`);
+    }
+
+    return (
+        <div className="FRCC mL10" id='moduleBuilderIcon' title='Module Builder' onClick={clickHandler}>
+            <i className='fa fa-wrench'></i>
+        </div>
+    )
+}
+
 const FilterIcon = () => {
 
     const [filterApplied, setFilterApplied] = useState(false);
@@ -54,7 +71,7 @@ const FilterIcon = () => {
     }
 
     return (
-        <div className={`FRCC mR10 ${filterBoxShowing ? 'active' : ''}`} id='filterIcon' onClick={toggleFilterHandler}>
+        <div className={`FRCC mR10 ${filterBoxShowing ? 'active' : ''}`} title='Filter' id='filterIcon' onClick={toggleFilterHandler}>
             <i className='fa fa-filter'></i>
             {filterApplied && <i className='fa fa-circle' style={{ fontSize: '8px', position: 'absolute', top: '-2px', right: '-2px', color: 'red' }}></i>}
         </div>
@@ -107,8 +124,6 @@ const Header = () => {
 
     const { moduleId, view } = GetParams();
 
-    const isCreateRecordPage = view === 'create';
-
     useEffect(() => {
         apiRequest("/api/v1/module/all", "GET").then(({ data }) => {
             setModules(data);
@@ -121,7 +136,7 @@ const Header = () => {
         });
     }, []);
 
-    return isCreateRecordPage ? null : (
+    return (
         <div id='task_header' className='FCSS w100'>
             <div className='FRCB w100 mB10'>
                 {/* <CustomModules CustomModulesList={CustomModulesList} /> */}
@@ -129,6 +144,7 @@ const Header = () => {
                     <ModulesList modules={modules} />
                     <FilterIcon />
                     <ViewsList />
+                    <ModuleBuilder />
                 </div>
                 <CreateButtons />
             </div>

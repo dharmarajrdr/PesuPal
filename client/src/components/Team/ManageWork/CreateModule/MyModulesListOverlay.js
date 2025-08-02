@@ -26,7 +26,7 @@ const MyModulePreview = ({ module }) => {
                 <span title={name}>{name}</span>
                 <i className={`${accessibilityIcon[accessibility.name]} fs12 color777 pL5`} title={accessibility.description}></i>
             </p>
-            <span className='created-time'>Created {utils.agoTimeCalculator(createdAt)}</span>
+            <span className='created-time'>{utils.agoTimeCalculator(createdAt)}</span>
         </div>
     )
 }
