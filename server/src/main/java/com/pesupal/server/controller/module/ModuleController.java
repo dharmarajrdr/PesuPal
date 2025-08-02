@@ -39,4 +39,11 @@ public class ModuleController {
         List<ModulePreviewDto> modules = moduleService.getAllModulesPreview();
         return ResponseEntity.ok().body(new ApiResponseDto("Modules retrieved successfully", modules));
     }
+
+    @DeleteMapping("/{moduleId}")
+    public ResponseEntity<ApiResponseDto> deleteModule(@PathVariable String moduleId) {
+
+        moduleService.deleteModule(moduleId);
+        return ResponseEntity.ok().body(new ApiResponseDto("Module deleted successfully"));
+    }
 }

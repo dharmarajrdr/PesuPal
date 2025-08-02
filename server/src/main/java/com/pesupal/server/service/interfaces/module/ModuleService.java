@@ -15,4 +15,6 @@ public interface ModuleService {
     void publishModule(String moduleId);
 
     List<ModulePreviewDto> getAllModulesPreview();
+
+    void deleteModule(String moduleId);
 }
