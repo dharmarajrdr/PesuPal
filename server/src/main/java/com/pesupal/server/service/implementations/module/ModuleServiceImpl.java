@@ -122,6 +122,7 @@ public class ModuleServiceImpl extends CurrentValueRetriever implements ModuleSe
         moduleRecordService.deleteAllRecords(moduleId);
         moduleFieldService.deleteAllFields(moduleId);
         moduleMemberService.deleteAllMembersInModule(moduleId);
+        modulePermissionService.deleteAllPermissionsInModule(moduleId);
         moduleRepository.delete(module);
     }
 
