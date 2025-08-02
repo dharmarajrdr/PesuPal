@@ -15,13 +15,26 @@ const GetParams = () => {
 
 const CreateButtons = () => {
 
+    const navigate = useNavigate();
+    const { moduleId } = GetParams();
+
+    const createModuleHandler = (e) => {
+        e.stopPropagation();
+        navigate('/manage/module/create');
+    }
+
+    const createRecordHandler = (e) => {
+        e.stopPropagation();
+        navigate(`/manage/module/${moduleId}/create`);
+    }
+
     return (
-        <div className='FRCE' id='createButtons'>
+        <div className='FRCE' id='createButtons' onClick={createRecordHandler}>
             <div className='FRCC mR10' id='createRecord'>
                 <i className='fa fa-plus pR5 w_20'></i>
                 <span>Create Record</span>
             </div>
-            <div className='FRCC' id='createModule'>
+            <div className='FRCC' id='createModule' onClick={createModuleHandler}>
                 <i className='fa fa-plus pR5 w_20'></i>
                 <span>Create Module</span>
             </div>
@@ -94,6 +107,8 @@ const Header = () => {
 
     const { moduleId, view } = GetParams();
 
+    const isCreateRecordPage = view === 'create';
+
     useEffect(() => {
         apiRequest("/api/v1/module/all", "GET").then(({ data }) => {
             setModules(data);
@@ -106,7 +121,7 @@ const Header = () => {
         });
     }, []);
 
-    return (
+    return isCreateRecordPage ? null : (
         <div id='task_header' className='FCSS w100'>
             <div className='FRCB w100 mB10'>
                 {/* <CustomModules CustomModulesList={CustomModulesList} /> */}

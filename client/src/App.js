@@ -53,6 +53,7 @@ function App() {
                     <Route path="/people/*" element={<PeopleLayout />} />
                     <Route path="/team/*" element={<TeamLayout />} />
                     <Route path="/manage" element={<Navigate to="/manage/module" />} />
+                    <Route path="/manage/module/create" element={<PageNotFound />} />
                     <Route path="/manage/module/*" element={<ManageWorkLayout />} />
                     <Route path="/settings/*" element={<SettingsLayout />} />
                     <Route path='/more/*' element={<MoreFeaturesLayout />} />
