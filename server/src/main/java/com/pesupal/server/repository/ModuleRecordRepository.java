@@ -12,10 +12,12 @@ import java.util.Optional;
 
 @Repository
 public interface ModuleRecordRepository extends JpaRepository<ModuleRecord, Long> {
-    
+
     Optional<ModuleRecord> findByPublicId(String recordId);
 
     void deleteAllByModule(Module module);
 
-    Page<PublicIdProjection> findAllPublicIdByModule_PublicId(String moduleId, Pageable pageable);
+    Page<PublicIdProjection> findAllPublicIdByModule(Module module, Pageable pageRequest);
+
+    int countAllByModule(Module module);
 }

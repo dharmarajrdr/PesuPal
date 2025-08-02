@@ -21,6 +21,7 @@ import com.pesupal.server.repository.ModuleRecordRepository;
 import com.pesupal.server.service.interfaces.module.*;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -248,20 +249,26 @@ public class ModuleRecordServiceImpl extends CurrentValueRetriever implements Mo
 
         Sort sort = null;
         if (sortColumnDto == null) {
-            sort = Sort.by(Sort.Direction.fromString("DESC"), "createdAt");
+            sort = Sort.by("createdAt").descending();
         } else {
-            sort = Sort.by(Sort.Direction.fromString(sortColumnDto.getOrder().toString()), sortColumnDto.getColumn());
+            sort = sortColumnDto.getOrder().isAscending() ? Sort.by(sortColumnDto.getColumn()).ascending() : Sort.by(sortColumnDto.getColumn()).descending();
         }
 
-        PageRequest pageRequest = PageRequest.of(page, size + 1, sort);
+        Pageable pageable = PageRequest.of(page, size + 1, sort);
+//        Pageable pageable = Pageable.ofSize(size + 1).withPage(page);
 
-        List<String> recordsIds = new ArrayList<>(moduleRecordRepository.findAllPublicIdByModule_PublicId(moduleId, pageRequest).getContent().stream().map(PublicIdProjection::getPublicId).toList());
+        Module module = moduleService.getModuleById(moduleId);
+
+        int totalRecords = moduleRecordRepository.countAllByModule(module);
+
+        List<String> recordsIds = totalRecords > 0 ? new ArrayList<>(moduleRecordRepository.findAllPublicIdByModule(module, pageable).getContent().stream().map(PublicIdProjection::getPublicId).toList()) : new ArrayList<>();
 
         boolean hasMoreRecords = recordsIds.size() == size + 1;
         Map<String, Object> info = Map.of(
                 "hasMoreRecords", hasMoreRecords,
                 "page", page,
-                "size", size
+                "size", size,
+                "totalRecords", totalRecords
         );
 
         if (!recordsIds.isEmpty() && recordsIds.size() > size) {
