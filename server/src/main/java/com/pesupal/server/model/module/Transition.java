@@ -18,7 +18,4 @@ public class Transition extends BaseModel {
 
     @Column(nullable = false)
     private Integer score;
-
-    @Column(nullable = false)
-    private String colorCode;
 }
