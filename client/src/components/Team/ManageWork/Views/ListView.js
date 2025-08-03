@@ -1,12 +1,7 @@
-import { useEffect, useState } from 'react'
 import utils from '../../../../utils';
-import { Link, useParams } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import './ListView.css'
-import { useSearchParams } from 'react-router-dom';
-import { setCurrentModuleId, setCurrentModuleView } from '../../../../store/reducers/CurrentModuleSlice';
 import { useDispatch } from 'react-redux';
-import { apiRequest } from '../../../../http_request';
-import Loader from '../../../Loader';
 import { showPopup } from '../../../../store/reducers/PopupSlice';
 
 const ListviewTopHeader = ({ item, searchParams, setSearchParams }) => {
@@ -123,9 +118,10 @@ const Column = ({ fieldType, data, index }) => {
         case 'LINK': {
             const { url, title } = data || {};
             content = url && (
-                <span className='FRCS link-wrapper' onClick={(e) => { e.stopPropagation(); window.open(url, '_blank', 'noopener,noreferrer'); }}>
-                    <i className='fa fa-link mR5 colorAAA'></i>{title}
-                </span>
+                <p className='FRCS link-wrapper' onClick={(e) => { e.stopPropagation(); window.open(url, '_blank', 'noopener,noreferrer'); }}>
+                    <i className='fa fa-link mR5 colorAAA'></i>
+                    <span>{title}</span>
+                </p>
             );
             break;
         }
@@ -164,18 +160,6 @@ const ListviewBody = ({ records }) => <>
 const generateHeader = ({ fields }) => fields.map(({ fieldName, fieldType }) => ({ fieldName, fieldType }));
 
 
-const NoRecordsAvailable = () => {
-
-    return (
-        <div className='FCCC w100 h100' id='no-data-found'>
-            <p className='FRCC w100'>
-                <i className='fa fa-exclamation-triangle mR5'></i>
-                No records found
-            </p>
-        </div>
-    )
-}
-
 const ListViewTable = ({ records }) => {
 
     const header = generateHeader({ fields: records[0]?.fields || [] });
@@ -186,41 +170,14 @@ const ListViewTable = ({ records }) => {
     </div>
 }
 
-const ListView = () => {
+const ListView = ({ records, info, searchParams, setSearchParams }) => {
 
-    const [loader, setLoader] = useState(true);
-    const [info, setInfo] = useState({});
-
-    const [searchParams, setSearchParams] = useSearchParams();
-    const dispatch = useDispatch();
-    const { moduleId } = useParams();
-    const [error, setError] = useState(null);
-    const [records, setRecords] = useState([]);
-
-    const page = parseInt(searchParams.get('page') || '1', 10);
-
-    const size = 3;
-
-    useEffect(() => {
-        console.log('ListView mounted');
-        dispatch(setCurrentModuleView("list"));
-        dispatch(setCurrentModuleId(moduleId));
-        apiRequest(`/api/v1/module/${moduleId}/records?page=${page - 1}&size=${size}`, 'GET').then(({ data, info }) => {
-            setLoader(false);
-            setInfo(info);
-            setRecords(data);
-        }).catch(({ message }) => {
-            setLoader(false);
-            setError(message);
-        });
-    }, [page, moduleId]);
-
-    return loader ? <Loader /> :
-        records.length ?
-            <div id='ListView'>
-                <ListviewTopHeader item={info} searchParams={searchParams} setSearchParams={setSearchParams} />
-                <ListViewTable records={records} />
-            </div> : <NoRecordsAvailable />
+    return (
+        <div id='ListView'>
+            <ListviewTopHeader item={info} searchParams={searchParams} setSearchParams={setSearchParams} />
+            <ListViewTable records={records} />
+        </div>
+    )
 }
 
 export default ListView

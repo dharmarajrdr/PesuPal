@@ -28,7 +28,7 @@ const ManageWorkLayout = () => {
     const [moduleNotFound, setModuleNotFound] = useState(false);
     const [permissionDenied, setPermissionDenied] = useState(false);
 
-    useEffect(() => {
+    const getModulesList = () => {
         apiRequest("/api/v1/module/all", "GET").then(({ data }) => {
             setModules(data);
             if (data.length > 0 && !moduleId?.length) {
@@ -38,16 +38,27 @@ const ManageWorkLayout = () => {
         }).catch(({ message }) => {
             dispatch(showPopup({ message, type: 'error' }));
         });
+    }
+
+    useEffect(() => {
+        if (!shouldValidateModuleId) {
+            getModulesList();
+        }
     }, []);
 
     useEffect(() => {
-        if (!shouldValidateModuleId || modules.length == 0) {
+        if (!shouldValidateModuleId) {
             setLoading(false);
             return;
         }
+        setLoading(true);
+        setPermissionDenied(false);
+        setModuleNotFound(false);
+        setError(false);
         apiRequest(`/api/v1/module/${moduleId}`, "GET").then(({ data }) => {
             setLoading(false);
             dispatch(setCurrentModuleData(data));
+            getModulesList();
         }).catch(({ message, statusCode }) => {
             setLoading(false);
             if (statusCode == 404) {

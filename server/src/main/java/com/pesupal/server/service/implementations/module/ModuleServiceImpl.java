@@ -9,6 +9,7 @@ import com.pesupal.server.exceptions.PermissionDeniedException;
 import com.pesupal.server.helpers.CurrentValueRetriever;
 import com.pesupal.server.helpers.ModuleHelper;
 import com.pesupal.server.model.module.Module;
+import com.pesupal.server.model.module.ModulePermission;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.repository.ModuleRepository;
 import com.pesupal.server.service.interfaces.module.*;
@@ -28,7 +29,7 @@ public class ModuleServiceImpl extends CurrentValueRetriever implements ModuleSe
     private final ModuleRecordService moduleRecordService;
     private final ModulePermissionService modulePermissionService;
 
-    public ModuleServiceImpl(ModuleRepository moduleRepository, @Lazy ModuleMemberService moduleMemberService, ModulePermissionService modulePermissionService, @Lazy ModuleRecordService moduleRecordService, @Lazy ModuleFieldService moduleFieldService) {
+    public ModuleServiceImpl(ModuleRepository moduleRepository, @Lazy ModuleMemberService moduleMemberService, @Lazy ModulePermissionService modulePermissionService, @Lazy ModuleRecordService moduleRecordService, @Lazy ModuleFieldService moduleFieldService) {
         this.moduleRepository = moduleRepository;
         this.moduleFieldService = moduleFieldService;
         this.moduleMemberService = moduleMemberService;
@@ -150,9 +151,10 @@ public class ModuleServiceImpl extends CurrentValueRetriever implements ModuleSe
         OrgMember orgMember = getCurrentOrgMember();
         Module module = getModuleById(moduleId);
 
-        if (!ModuleHelper.isModuleOwner(module, orgMember)) {
-            throw new PermissionDeniedException("You do not have permission to view this module.");
-        }
-        return ModuleDto.fromModule(module);
+        ModuleDto moduleDto = ModuleDto.fromModuleWithOrgMember(module, orgMember);
+        ModulePermission modulePermission = modulePermissionService.verifyModuleAccessibility(module, orgMember);
+        moduleDto.setReadRecord(modulePermission.isReadRecord());
+        moduleDto.setCreateRecord(modulePermission.isCreateRecord());
+        return moduleDto;
     }
 }

@@ -1,10 +1,8 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import './Header.css'
 import FilterComponentItem from './FilterComponentItem';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { apiRequest } from '../../../http_request';
-import { showPopup } from '../../../store/reducers/PopupSlice';
 import { toggleFilterBox } from '../../../store/reducers/ModuleFilterSlice';
 
 const GetParams = () => {
@@ -18,6 +16,9 @@ const CreateButtons = () => {
     const navigate = useNavigate();
     const { moduleId } = GetParams();
 
+    const { data: currentModuleData } = useSelector((state) => state.currentModule);
+    const { createRecord } = currentModuleData || { 'createRecord': false };
+
     const createModuleHandler = (e) => {
         e.stopPropagation();
         navigate('/manage/module/create');
@@ -30,10 +31,10 @@ const CreateButtons = () => {
 
     return (
         <div className='FRCE' id='createButtons' onClick={createRecordHandler}>
-            <div className='FRCC mR10' id='createRecord'>
+            {createRecord && <div className='FRCC mR10' id='createRecord'>
                 <i className='fa fa-plus pR5 w_20'></i>
                 <span>Create Record</span>
-            </div>
+            </div>}
             <div className='FRCC' id='createModule' onClick={createModuleHandler}>
                 <i className='fa fa-plus pR5 w_20'></i>
                 <span>Create Module</span>
@@ -47,12 +48,15 @@ const ModuleBuilder = () => {
     const navigate = useNavigate();
     const { moduleId } = GetParams();
 
+    const { data: currentModuleData } = useSelector((state) => state.currentModule);
+    const { accessModuleBuilder } = currentModuleData || { 'accessModuleBuilder': false };
+
     const clickHandler = (e) => {
         e.stopPropagation();
         navigate(`/manage/module/builder/${moduleId}`);
     }
 
-    return (
+    return accessModuleBuilder && (
         <div className="FRCC mL10" id='moduleBuilderIcon' title='Module Builder' onClick={clickHandler}>
             <i className='fa fa-wrench'></i>
         </div>

@@ -95,12 +95,12 @@
   font-weight: 500;
 }
 
-#ListView #listview_table .rows .col .link-wrapper {
+#ListView #listview_table .rows .col .link-wrapper span {
   color: #65b0ff;
   text-decoration: none;
 }
 
-#ListView #listview_table .rows .col .link-wrapper:hover {
+#ListView #listview_table .rows .col .link-wrapper span:hover {
   color: #007bff;
   text-decoration: underline;
 }
