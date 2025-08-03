@@ -8,6 +8,7 @@ import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.exceptions.PermissionDeniedException;
 import com.pesupal.server.helpers.CurrentValueRetriever;
 import com.pesupal.server.helpers.ModuleHelper;
+import com.pesupal.server.model.module.*;
 import com.pesupal.server.model.module.Module;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.repository.ModuleRepository;
@@ -150,9 +151,27 @@ public class ModuleServiceImpl extends CurrentValueRetriever implements ModuleSe
         OrgMember orgMember = getCurrentOrgMember();
         Module module = getModuleById(moduleId);
 
-        if (!ModuleHelper.isModuleOwner(module, orgMember)) {
-            throw new PermissionDeniedException("You do not have permission to view this module.");
+        ModuleAccessibility moduleAccessibility = module.getAccessibility();
+        ModuleDto moduleDto = ModuleDto.fromModule(module);
+        switch (moduleAccessibility) {
+            case ANYONE_IN_ORG -> {
+                if (!module.getCreatedBy().getOrg().getId().equals(orgMember.getOrg().getId())) {
+                    throw new PermissionDeniedException("Module does not exist in your organization.");
+                }
+            }
+            case ONLY_ME -> {
+                if (!module.getCreatedBy().getPublicId().equals(orgMember.getPublicId())) {
+                    throw new PermissionDeniedException("You do not have permission to access this module.");
+                }
+            }
+            case SELECTIVE_MEMBERS -> {
+                ModuleMember moduleMember = moduleMemberService.getModuleMemberByOrgMemberAndModule(orgMember, module);
+                ModuleRole moduleRole = moduleMember.getRole();
+                ModulePermission modulePermission = modulePermissionService.getModulePermissionByModuleAndRole(module, moduleRole);
+                moduleDto.setCreateRecord(modulePermission.isCreateRecord());
+                moduleDto.setReadRecord(modulePermission.isReadRecord());
+            }
         }
-        return ModuleDto.fromModule(module);
+        return moduleDto;
     }
 }

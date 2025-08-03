@@ -25,6 +25,10 @@ public class ModuleDto {
 
     private boolean openToRelation;
 
+    private Boolean createRecord;
+
+    private Boolean readRecord;
+
     public static ModuleDto fromModule(Module module) {
 
         ModuleDto moduleDto = new ModuleDto();
