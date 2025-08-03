@@ -12,13 +12,11 @@ const ListviewTopHeader = ({ item, searchParams, setSearchParams }) => {
 
     const { totalRecords, page } = item;
 
-    const handleSelectChange = (event) => {
-
-        const nextPage = parseInt(event.target.value, 10);
+    const pageSelected = (pageNumber) => {
 
         // Update just the page param (preserving others if needed)
         const updatedParams = new URLSearchParams(searchParams);
-        updatedParams.set('page', nextPage);
+        updatedParams.set('page', pageNumber);
         setSearchParams(updatedParams);
     };
 
@@ -26,11 +24,11 @@ const ListviewTopHeader = ({ item, searchParams, setSearchParams }) => {
     return <div className='FRCB w100 pB10' id='ListviewHeader'>
         <p className='FRCS' id='total_records'>Total Records <b>{totalRecords}</b></p>
         <div className='FRCE' id='pagination'>
-            <i className='img_30_30 paginationIcon fa fa-chevron-left'></i>
-            <select id='select_pages' value={page + 1} onChange={(e) => handleSelectChange(e)}>
+            <i className='img_30_30 paginationIcon fa fa-chevron-left' onClick={() => pageSelected(page)}></i>
+            <select id='select_pages' value={page + 1} onChange={(e) => pageSelected(e.target.value)}>
                 {Array.from({ length: 10 }, (_, i) => <option key={i} value={i + 1}>Page {i + 1}</option>)}
             </select>
-            <i className='img_30_30 paginationIcon fa fa-chevron-right'></i>
+            <i className='img_30_30 paginationIcon fa fa-chevron-right' onClick={() => pageSelected(page + 2)}></i>
         </div>
     </div>
 }
