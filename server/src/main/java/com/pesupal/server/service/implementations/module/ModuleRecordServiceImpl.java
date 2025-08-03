@@ -2,9 +2,11 @@ package com.pesupal.server.service.implementations.module;
 
 import com.pesupal.server.dto.request.SortColumnDto;
 import com.pesupal.server.dto.request.module.CreateModuleRecordDto;
+import com.pesupal.server.dto.response.KanbanViewDto;
 import com.pesupal.server.dto.response.PaginatedData;
 import com.pesupal.server.dto.response.module.ModuleFieldDto;
 import com.pesupal.server.dto.response.module.ModuleRecordDto;
+import com.pesupal.server.dto.response.module.TransitionDto;
 import com.pesupal.server.enums.FieldType;
 import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.exceptions.DataNotFoundException;
@@ -15,21 +17,21 @@ import com.pesupal.server.helpers.CurrentValueRetriever;
 import com.pesupal.server.helpers.ModuleHelper;
 import com.pesupal.server.model.module.*;
 import com.pesupal.server.model.module.Module;
+import com.pesupal.server.model.module.relation.RecordTransitionRelation;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.projections.PublicIdProjection;
 import com.pesupal.server.repository.ModuleRecordRepository;
+import com.pesupal.server.repository.RecordTransitionRelationRepository;
 import com.pesupal.server.service.interfaces.module.*;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @AllArgsConstructor
@@ -42,6 +44,7 @@ public class ModuleRecordServiceImpl extends CurrentValueRetriever implements Mo
     private final ModuleRecordRepository moduleRecordRepository;
     private final ModulePermissionService modulePermissionService;
     private final ModuleRecordTimelineService moduleRecordTimelineService;
+    private final RecordTransitionRelationRepository recordTransitionRelationRepository;
 
     /**
      * Creates a new record in a module.
@@ -257,35 +260,24 @@ public class ModuleRecordServiceImpl extends CurrentValueRetriever implements Mo
     @Override
     public PaginatedData<List<ModuleRecordDto>> getAllRecords(String moduleId, int page, int size, SortColumnDto sortColumnDto) {
 
-        Sort sort = null;
+        Sort sort;
         if (sortColumnDto == null) {
             sort = Sort.by("createdAt").descending();
         } else {
             sort = sortColumnDto.getOrder().isAscending() ? Sort.by(sortColumnDto.getColumn()).ascending() : Sort.by(sortColumnDto.getColumn()).descending();
         }
 
-        Pageable pageable = PageRequest.of(page, size + 1, sort);
+        Pageable pageable = PageRequest.of(page, size, sort);
 
         OrgMember orgMember = getCurrentOrgMember();
         Module module = moduleService.getModuleById(moduleId);
 
         validateRecordsReadAccessibility(module, orgMember);
 
-        int totalRecords = moduleRecordRepository.countAllByModule(module);
+        Page<PublicIdProjection> recordsPage = moduleRecordRepository.findAllPublicIdByModule(module, pageable);
+        Map<String, Object> info = Map.of("hasMoreRecords", recordsPage.hasNext(), "page", page, "size", size, "totalRecords", recordsPage.getTotalElements());
 
-        List<String> recordsIds = totalRecords > 0 ? new ArrayList<>(moduleRecordRepository.findAllPublicIdByModule(module, pageable).getContent().stream().map(PublicIdProjection::getPublicId).toList()) : new ArrayList<>();
-
-        boolean hasMoreRecords = recordsIds.size() == size + 1;
-        Map<String, Object> info = Map.of(
-                "hasMoreRecords", hasMoreRecords,
-                "page", page,
-                "size", size,
-                "totalRecords", totalRecords
-        );
-
-        if (!recordsIds.isEmpty() && recordsIds.size() > size) {
-            recordsIds.remove(recordsIds.size() - 1); // safely remove the last element
-        }
+        List<String> recordsIds = new ArrayList<>(recordsPage.stream().map(PublicIdProjection::getPublicId).toList());
 
         List<ModuleRecordDto> moduleRecordDtos = new ArrayList<>();
         for (String recordId : recordsIds) {
@@ -329,5 +321,55 @@ public class ModuleRecordServiceImpl extends CurrentValueRetriever implements Mo
         moduleRecordTimelineService.deleteAllByModule(module);
 
         moduleRecordRepository.deleteAllByModule(module);
+    }
+
+    /**
+     * Retrieves records grouped by transition for a module.
+     *
+     * @param moduleId
+     * @param size
+     * @param sortColumnDto
+     * @return
+     * @view <b>Kanban view</b> of records grouped by transitions
+     */
+    @Override
+    public List<KanbanViewDto<TransitionDto, PaginatedData<List<ModuleRecordDto>>>> getRecordsGroupedByTransition(String moduleId, Integer size, SortColumnDto sortColumnDto) {
+
+        Sort sort;
+        if (sortColumnDto == null) {
+            sort = Sort.by("record.createdAt").descending();
+        } else {
+            sort = sortColumnDto.getOrder().isAscending() ? Sort.by(sortColumnDto.getColumn()).ascending() : Sort.by(sortColumnDto.getColumn()).descending();
+        }
+
+        Pageable pageable = PageRequest.of(0, size, sort);
+
+        OrgMember orgMember = getCurrentOrgMember();
+        Module module = moduleService.getModuleById(moduleId);
+
+        validateRecordsReadAccessibility(module, orgMember);
+
+        ModuleField moduleField = moduleFieldService.getFieldByModuleAndType(module, FieldType.TRANSITION).orElseThrow(() -> new ActionProhibitedException("Kanban view is not supported as no field with type TRANSITION found in this module."));
+
+        List<Transition> transitions = moduleField.getTransitions();
+        transitions.sort(Comparator.comparing(Transition::getScore));
+
+        List<KanbanViewDto<TransitionDto, PaginatedData<List<ModuleRecordDto>>>> kanbanViewDtos = new ArrayList<>();
+
+        for (Transition transition : transitions) {
+            KanbanViewDto<TransitionDto, PaginatedData<List<ModuleRecordDto>>> kanbanViewDto = new KanbanViewDto<>();
+            List<ModuleRecordDto> moduleRecordDtos = new ArrayList<>();
+            Page<RecordTransitionRelation> recordTransitionRelations = recordTransitionRelationRepository.findAllByTransition(transition, pageable);
+            List<String> recordIds = recordTransitionRelations.getContent().stream().map(relation -> relation.getRecord().getPublicId()).toList();
+            Map<String, Object> info = Map.of("hasMoreRecords", recordTransitionRelations.hasNext(), "page", 0, "size", size, "totalRecords", recordTransitionRelations.getTotalElements());
+            for (String recordId : recordIds) {
+                moduleRecordDtos.add(getRecordById(recordId, ModuleView.LIST_VIEW));
+            }
+            kanbanViewDto.setKey(TransitionDto.fromTransition(transition));
+            kanbanViewDto.setValue(new PaginatedData<>(moduleRecordDtos, info));
+            kanbanViewDtos.add(kanbanViewDto);
+        }
+
+        return kanbanViewDtos;
     }
 }

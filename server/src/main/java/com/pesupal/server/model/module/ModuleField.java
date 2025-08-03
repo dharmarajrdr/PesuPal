@@ -31,6 +31,9 @@ public class ModuleField extends BaseModel {
     @Enumerated(EnumType.STRING)
     private List<ModuleRole> restrictFrom;
 
+    @OneToMany(mappedBy = "field", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Transition> transitions;
+
     private boolean required;
 
     private boolean searchable;

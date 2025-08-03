@@ -3,8 +3,10 @@ package com.pesupal.server.controller.module;
 import com.pesupal.server.dto.request.SortColumnDto;
 import com.pesupal.server.dto.request.module.CreateModuleRecordDto;
 import com.pesupal.server.dto.response.ApiResponseDto;
+import com.pesupal.server.dto.response.KanbanViewDto;
 import com.pesupal.server.dto.response.PaginatedData;
 import com.pesupal.server.dto.response.module.ModuleRecordDto;
+import com.pesupal.server.dto.response.module.TransitionDto;
 import com.pesupal.server.model.module.ModuleView;
 import com.pesupal.server.service.interfaces.module.ModuleRecordService;
 import lombok.AllArgsConstructor;
@@ -42,7 +44,7 @@ public class ModuleRecordController {
         return ResponseEntity.ok(new ApiResponseDto("Record deleted successfully"));
     }
 
-    @GetMapping("{moduleId}/records")
+    @GetMapping("/{moduleId}/records")
     public ResponseEntity<ApiResponseDto> getAllRecords(
             @PathVariable String moduleId,
             @RequestParam Integer page,
@@ -52,6 +54,17 @@ public class ModuleRecordController {
         // List view of records
         PaginatedData<List<ModuleRecordDto>> paginatedData = moduleRecordService.getAllRecords(moduleId, page, size, sortColumnDto);
         return ResponseEntity.ok().body(new ApiResponseDto("Records retrieved successfully", paginatedData.getData(), paginatedData.getInfo()));
+    }
+
+    @GetMapping("/{moduleId}/records-group-by-transition")
+    public ResponseEntity<ApiResponseDto> getRecordsGroupedByTransition(
+            @PathVariable String moduleId,
+            @RequestParam Integer size,
+            @RequestParam(required = false) SortColumnDto sortColumnDto) {
+
+        // Kanban view of records grouped by transition
+        List<KanbanViewDto<TransitionDto, PaginatedData<List<ModuleRecordDto>>>> kanbanViewDtos = moduleRecordService.getRecordsGroupedByTransition(moduleId, size, sortColumnDto);
+        return ResponseEntity.ok().body(new ApiResponseDto("Records grouped by transition retrieved successfully", kanbanViewDtos));
     }
 
     @DeleteMapping("/{moduleId}/records")
