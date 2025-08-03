@@ -1,19 +1,27 @@
 package com.pesupal.server.service.implementations.module;
 
 import com.pesupal.server.exceptions.DataNotFoundException;
+import com.pesupal.server.exceptions.PermissionDeniedException;
+import com.pesupal.server.helpers.CurrentValueRetriever;
+import com.pesupal.server.model.module.*;
 import com.pesupal.server.model.module.Module;
-import com.pesupal.server.model.module.ModulePermission;
-import com.pesupal.server.model.module.ModuleRole;
+import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.repository.ModulePermissionRepository;
+import com.pesupal.server.service.interfaces.module.ModuleMemberService;
 import com.pesupal.server.service.interfaces.module.ModulePermissionService;
-import lombok.AllArgsConstructor;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 @Service
-@AllArgsConstructor
-public class ModulePermissionServiceImpl implements ModulePermissionService {
+public class ModulePermissionServiceImpl extends CurrentValueRetriever implements ModulePermissionService {
 
+    private final ModuleMemberService moduleMemberService;
     private final ModulePermissionRepository modulePermissionRepository;
+
+    public ModulePermissionServiceImpl(@Lazy ModuleMemberService moduleMemberService, ModulePermissionRepository modulePermissionRepository) {
+        this.moduleMemberService = moduleMemberService;
+        this.modulePermissionRepository = modulePermissionRepository;
+    }
 
     /**
      * Retrieves a module permission by module ID and role.
@@ -55,5 +63,37 @@ public class ModulePermissionServiceImpl implements ModulePermissionService {
     public void deleteAllPermissionsInModule(String moduleId) {
 
         modulePermissionRepository.deleteAllByModule_PublicId(moduleId);
+    }
+
+    /**
+     * Verifies the accessibility of a module based on the current user's organization membership and the module's accessibility settings.
+     *
+     * @param module
+     * @return
+     */
+    @Override
+    public ModulePermission verifyModuleAccessibility(Module module) {
+
+        ModuleAccessibility moduleAccessibility = module.getAccessibility();
+        OrgMember orgMember = getCurrentOrgMember();
+        switch (moduleAccessibility) {
+            case ONLY_ME: {
+                if (!module.getCreatedBy().getPublicId().equals(orgMember.getPublicId())) {
+                    throw new PermissionDeniedException("You do not have permission to access this module.");
+                }
+            }
+            case ANYONE_IN_ORG: {
+                if (!module.getCreatedBy().getOrg().getId().equals(orgMember.getOrg().getId())) {
+                    throw new PermissionDeniedException("Module does not exist in your organization.");
+                }
+            }
+            case SELECTIVE_MEMBERS: {
+                ModuleMember moduleMember = moduleMemberService.getModuleMemberByOrgMemberAndModule(orgMember, module);
+                return getModulePermissionByModuleAndRole(module, moduleMember.getRole());
+            }
+            default: {
+                throw new PermissionDeniedException("Module accessibility is not defined.");
+            }
+        }
     }
 }

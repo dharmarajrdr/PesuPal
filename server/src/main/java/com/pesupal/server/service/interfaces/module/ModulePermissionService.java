@@ -11,4 +11,6 @@ public interface ModulePermissionService {
     void initializeModulePermissions(Module module);
 
     void deleteAllPermissionsInModule(String moduleId);
+
+    ModulePermission verifyModuleAccessibility(Module module);
 }
