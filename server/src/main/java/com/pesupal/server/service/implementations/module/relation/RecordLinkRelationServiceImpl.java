@@ -12,6 +12,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -64,12 +65,21 @@ public class RecordLinkRelationServiceImpl implements RecordLinkRelationService 
     @Override
     public ModuleFieldDto getByModuleRecordAndModuleField(ModuleRecord moduleRecord, ModuleField moduleField) {
 
-        RecordLinkRelation recordLinkRelation = recordLinkRelationRepository.findByRecordAndField(moduleRecord, moduleField).orElseThrow(() -> new DataNotFoundException("No link relation found for record: " + moduleRecord.getId() + " and field: " + moduleField.getId()));
-        Map<String, Object> data = Map.of(
-                "title", recordLinkRelation.getTitle(),
-                "url", recordLinkRelation.getUrl()
-        );
-        return ModuleFieldDto.fromModuleFieldWithData(moduleField, data);
+        Optional<RecordLinkRelation> optionalRecordLinkRelation = recordLinkRelationRepository.findByRecordAndField(moduleRecord, moduleField);
+        ModuleFieldDto moduleFieldDto = ModuleFieldDto.fromModuleField(moduleField);
+        if (optionalRecordLinkRelation.isEmpty()) {
+            if (moduleField.isRequired()) {
+                throw new DataNotFoundException("No link relation found for record: " + moduleRecord.getId() + " and field: " + moduleField.getId());
+            }
+        } else {
+            RecordLinkRelation recordLinkRelation = optionalRecordLinkRelation.get();
+            Map<String, Object> data = Map.of(
+                    "title", recordLinkRelation.getTitle(),
+                    "url", recordLinkRelation.getUrl()
+            );
+            moduleFieldDto.setData(data);
+        }
+        return moduleFieldDto;
     }
 
     /**
