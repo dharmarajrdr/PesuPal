@@ -109,7 +109,7 @@ const Column = ({ fieldType, data, index }) => {
         case 'SELECT': {
             if (Array.isArray(data)) {
                 content = data.map(({ value, selected }, idx) => (
-                    selected ? <span key={idx} className="mR5 typeSELECT">{value}</span> : null
+                    selected ? <span key={idx} className="mR5 typeSELECT" style={{ backgroundColor: utils.uniqueColorGenerator(value), color: '#fff' }}>{value}</span> : null
                 ));
             } else {
                 content = <span className="typeSELECT">{data}</span>;
