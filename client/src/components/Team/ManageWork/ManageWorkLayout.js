@@ -11,11 +11,14 @@ import PermissionDenied from '../../Auth/PermissionDenied';
 import InternalServerError from '../../Auth/InternalServerError';
 import { apiRequest } from '../../../http_request';
 import { setCurrentModuleData } from '../../../store/reducers/CurrentModuleSlice';
+import CreateRecordLayout from './CreateRecord/CreateRecordLayout';
 
 const ManageWorkLayout = () => {
 
     const params = useParams();
     const [moduleId, view] = params['*'].split('/');
+
+    const createRecordPage = view === 'create';
 
     const shouldValidateModuleId = moduleId !== undefined && moduleId !== '';
 
@@ -80,9 +83,10 @@ const ManageWorkLayout = () => {
             permissionDenied ? <PermissionDenied /> :
                 error ? <InternalServerError /> : (
                     <div id='ManageWorkLayout'>
-                        <Header modules={modules} />
+                        {!createRecordPage && <Header modules={modules} />}
                         {modules.length > 0 ?
                             <Routes>
+                                <Route path='/:moduleId/create' element={<CreateRecordLayout />} />
                                 <Route path='/:moduleId/*' element={<ManageWorkBody />} />
                             </Routes> : null
                         }
