@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import utils from '../../../../utils';
 import { Link, useParams } from 'react-router-dom';
 import './ListView.css'
+import { useSearchParams } from 'react-router-dom';
 import { setCurrentModuleId, setCurrentModuleView } from '../../../../store/reducers/CurrentModuleSlice';
 import { useDispatch } from 'react-redux';
 import { apiRequest } from '../../../../http_request';
@@ -84,8 +85,8 @@ const Column = ({ fieldType, data, index }) => {
         }
         case 'LINK': {
             const { url, title } = data || {};
-            content = <a href={url} target="_blank" rel="noopener noreferrer" onClick={(e) => { e.stopPropagation(); }}>
-                <i className='fa fa-link mR5 colorAAA'></i>{title}</a>;
+            content = url && (<a href={url} target="_blank" rel="noopener noreferrer" onClick={(e) => { e.stopPropagation(); }}>
+                <i className='fa fa-link mR5 colorAAA'></i>{title}</a>);
             break;
         }
         default: {
@@ -113,9 +114,9 @@ const Row = ({ item, item_index }) => {
 }
 
 
-const ListviewBody = ({ data }) => <>
+const ListviewBody = ({ records }) => <>
     {
-        data.map((item, item_index) => <Row item={item} key={item_index} item_index={item_index} />)
+        records.map((item, item_index) => <Row item={item} key={item_index} item_index={item_index} />)
     }
 </>
 
@@ -135,20 +136,35 @@ const NoRecordsAvailable = () => {
     )
 }
 
+const ListViewTable = ({ records }) => {
+
+    const header = generateHeader({ fields: records[0]?.fields || [] });
+
+    return records.length ? <div id='listview_table' className='custom-scrollbar'>
+        <ListviewHeader header={header} />
+        <ListviewBody records={records} />
+    </div> : <NoRecordsAvailable />
+}
+
 const ListView = () => {
 
+    const [loader, setLoader] = useState(true);
+    const [info, setInfo] = useState({});
+
+    const [searchParams] = useSearchParams();
     const dispatch = useDispatch();
     const { moduleId } = useParams();
-    const [loader, setLoader] = useState(true);
     const [error, setError] = useState(null);
     const [records, setRecords] = useState([]);
-    const [info, setInfo] = useState({});
+
+    const [page, setPage] = useState(searchParams.get('page') || 1);
+    const size = 3;
 
     useEffect(() => {
         console.log('ListView mounted');
         dispatch(setCurrentModuleView("list"));
         dispatch(setCurrentModuleId(moduleId));
-        apiRequest(`/api/v1/module/${moduleId}/records?page=0&size=25`, 'GET').then(({ data, info }) => {
+        apiRequest(`/api/v1/module/${moduleId}/records?page=${page - 1}&size=${size}`, 'GET').then(({ data, info }) => {
             setLoader(false);
             setInfo(info);
             setRecords(data);
@@ -158,18 +174,12 @@ const ListView = () => {
         });
     }, []);
 
-    const header = generateHeader({ fields: records[0]?.fields || [] });
-
     return loader ? <Loader /> :
-        records.length ? (
-            <div id='ListView'>
-                <ListviewTopHeader item={info} />
-                <div id='listview_table' className='custom-scrollbar'>
-                    <ListviewHeader header={header} />
-                    <ListviewBody data={records} />
-                </div>
-            </div>
-        ) : <NoRecordsAvailable />
+
+        <div id='ListView'>
+            <ListviewTopHeader item={info} />
+            <ListViewTable records={records} />
+        </div>
 }
 
 export default ListView
