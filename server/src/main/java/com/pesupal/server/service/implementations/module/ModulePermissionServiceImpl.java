@@ -72,10 +72,9 @@ public class ModulePermissionServiceImpl extends CurrentValueRetriever implement
      * @return
      */
     @Override
-    public ModulePermission verifyModuleAccessibility(Module module) {
+    public ModulePermission verifyModuleAccessibility(Module module, OrgMember orgMember) {
 
         ModuleAccessibility moduleAccessibility = module.getAccessibility();
-        OrgMember orgMember = getCurrentOrgMember();
         switch (moduleAccessibility) {
             case ONLY_ME: {
                 if (!module.getCreatedBy().getPublicId().equals(orgMember.getPublicId())) {
