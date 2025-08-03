@@ -48,12 +48,15 @@ const ModuleBuilder = () => {
     const navigate = useNavigate();
     const { moduleId } = GetParams();
 
+    const { data: currentModuleData } = useSelector((state) => state.currentModule);
+    const { accessModuleBuilder } = currentModuleData || { 'accessModuleBuilder': false };
+
     const clickHandler = (e) => {
         e.stopPropagation();
         navigate(`/manage/module/builder/${moduleId}`);
     }
 
-    return (
+    return accessModuleBuilder && (
         <div className="FRCC mL10" id='moduleBuilderIcon' title='Module Builder' onClick={clickHandler}>
             <i className='fa fa-wrench'></i>
         </div>
