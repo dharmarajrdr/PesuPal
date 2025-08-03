@@ -9,6 +9,7 @@ import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.exceptions.DuplicateDataReceivedException;
 import com.pesupal.server.exceptions.PermissionDeniedException;
+import com.pesupal.server.factory.RecordRelationFactory;
 import com.pesupal.server.helpers.CurrentValueRetriever;
 import com.pesupal.server.helpers.ModuleHelper;
 import com.pesupal.server.model.module.Module;
@@ -21,6 +22,7 @@ import com.pesupal.server.repository.ModuleSelectOptionRepository;
 import com.pesupal.server.service.interfaces.module.ModuleFieldService;
 import com.pesupal.server.service.interfaces.module.ModuleSelectOptionService;
 import com.pesupal.server.service.interfaces.module.ModuleService;
+import com.pesupal.server.service.interfaces.module.RecordRelationService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,6 +36,7 @@ import java.util.Optional;
 public class ModuleFieldServiceImpl extends CurrentValueRetriever implements ModuleFieldService {
 
     private final ModuleService moduleService;
+    private final RecordRelationFactory recordRelationFactory;
     private final ModuleFieldRepository moduleFieldRepository;
     private final ModuleSelectOptionService moduleSelectOptionService;
     private final ModuleSelectOptionRepository moduleSelectOptionRepository;
@@ -71,14 +74,8 @@ public class ModuleFieldServiceImpl extends CurrentValueRetriever implements Mod
         ModuleField moduleField = addModuleFieldDto.toModuleField(module);
         moduleFieldRepository.save(moduleField);
 
-        if (moduleField.getFieldType().equals(FieldType.SELECT)) {
-            List<ModuleSelectOption> selectOptions = addModuleFieldDto.getOptions().stream().map(addModuleSelectOptionDto -> addModuleSelectOptionDto.toModuleSelectOption(moduleField)).toList();
-            moduleSelectOptionService.saveAll(selectOptions);
-            List<ModuleSelectOptionDto> moduleSelectOptionDtos = selectOptions.stream().map(ModuleSelectOptionDto::fromModuleSelectOption).toList();
-            return ModuleFieldDto.fromModuleFieldWithData(moduleField, moduleSelectOptionDtos);
-        }
-
-        return ModuleFieldDto.fromModuleField(moduleField);
+        RecordRelationService recordRelationService = recordRelationFactory.getRelationService(moduleField.getFieldType());
+        return recordRelationService.storeInitialValuesOnFieldsCreation(moduleField, addModuleFieldDto);
     }
 
     /**
