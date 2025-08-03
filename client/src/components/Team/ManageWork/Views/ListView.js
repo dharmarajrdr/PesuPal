@@ -115,6 +115,16 @@ const Column = ({ fieldType, data, index }) => {
             content = <span>{data}</span>;
             break;
         }
+        case 'TRANSITION': {
+            const { name, score } = data || {};
+            content = name ? (
+                <div className='FRCS'>
+                    <i className="fa fa-chart-line fs12 color777 w_30"></i>
+                    <span>{name}</span>
+                </div>
+            ) : null;
+            break;
+        }
         case 'LINK': {
             const { url, title } = data || {};
             content = url && (
