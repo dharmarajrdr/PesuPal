@@ -349,7 +349,7 @@ public class ModuleRecordServiceImpl extends CurrentValueRetriever implements Mo
 
         validateRecordsReadAccessibility(module, orgMember);
 
-        ModuleField moduleField = moduleFieldService.getFieldByModuleAndType(module, FieldType.TRANSITION).orElseThrow(() -> new DataNotFoundException("Kanban view is not supported as no field with type TRANSITION found in this module."));
+        ModuleField moduleField = moduleFieldService.getFieldByModuleAndType(module, FieldType.TRANSITION).orElseThrow(() -> new ActionProhibitedException("Kanban view is not supported as no field with type TRANSITION found in this module."));
 
         List<Transition> transitions = moduleField.getTransitions();
         transitions.sort(Comparator.comparing(Transition::getScore));
