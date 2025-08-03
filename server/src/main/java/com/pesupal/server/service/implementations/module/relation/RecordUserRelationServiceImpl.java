@@ -1,6 +1,5 @@
 package com.pesupal.server.service.implementations.module.relation;
 
-import com.pesupal.server.dto.request.module.AddModuleFieldDto;
 import com.pesupal.server.dto.response.UserPreviewDto;
 import com.pesupal.server.dto.response.module.ModuleFieldDto;
 import com.pesupal.server.exceptions.DataNotFoundException;
@@ -10,6 +9,7 @@ import com.pesupal.server.model.module.ModuleRecord;
 import com.pesupal.server.model.module.relation.RecordUserRelation;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.repository.RecordUserRelationRepository;
+import com.pesupal.server.service.implementations.module.RecordRelationServiceImpl;
 import com.pesupal.server.service.interfaces.OrgMemberService;
 import com.pesupal.server.service.interfaces.module.relation.RecordUserRelationService;
 import lombok.AllArgsConstructor;
@@ -19,7 +19,7 @@ import java.util.Optional;
 
 @Service
 @AllArgsConstructor
-public class RecordUserRelationServiceImpl implements RecordUserRelationService {
+public class RecordUserRelationServiceImpl extends RecordRelationServiceImpl implements RecordUserRelationService {
 
     private final OrgMemberService orgMemberService;
     private final RecordUserRelationRepository recordUserRelationRepository;
@@ -99,18 +99,5 @@ public class RecordUserRelationServiceImpl implements RecordUserRelationService 
     public void deleteAllByModule(Module module) {
 
         recordUserRelationRepository.deleteAllByRecord_Module(module);
-    }
-
-    /**
-     * Stores initial values on fields creation.
-     *
-     * @param moduleField
-     * @param addModuleFieldDto
-     * @return
-     */
-    @Override
-    public ModuleFieldDto storeInitialValuesOnFieldsCreation(ModuleField moduleField, AddModuleFieldDto addModuleFieldDto) {
-
-        return ModuleFieldDto.fromModuleField(moduleField);
     }
 }

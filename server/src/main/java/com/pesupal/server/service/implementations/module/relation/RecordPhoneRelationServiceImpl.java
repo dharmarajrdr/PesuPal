@@ -1,6 +1,5 @@
 package com.pesupal.server.service.implementations.module.relation;
 
-import com.pesupal.server.dto.request.module.AddModuleFieldDto;
 import com.pesupal.server.dto.response.module.ModuleFieldDto;
 import com.pesupal.server.enums.CountryCode;
 import com.pesupal.server.exceptions.DataNotFoundException;
@@ -10,6 +9,7 @@ import com.pesupal.server.model.module.ModuleField;
 import com.pesupal.server.model.module.ModuleRecord;
 import com.pesupal.server.model.module.relation.RecordPhoneRelation;
 import com.pesupal.server.repository.RecordPhoneRelationRepository;
+import com.pesupal.server.service.implementations.module.RecordRelationServiceImpl;
 import com.pesupal.server.service.interfaces.module.relation.RecordPhoneRelationService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,7 +18,7 @@ import java.util.Map;
 
 @Service
 @AllArgsConstructor
-public class RecordPhoneRelationServiceImpl implements RecordPhoneRelationService {
+public class RecordPhoneRelationServiceImpl extends RecordRelationServiceImpl implements RecordPhoneRelationService {
 
     private final RecordPhoneRelationRepository recordPhoneRelationRepository;
 
@@ -117,16 +117,4 @@ public class RecordPhoneRelationServiceImpl implements RecordPhoneRelationServic
         recordPhoneRelationRepository.deleteAllByRecord_Module(module);
     }
 
-    /**
-     * Stores initial values on fields creation.
-     *
-     * @param moduleField
-     * @param addModuleFieldDto
-     * @return
-     */
-    @Override
-    public ModuleFieldDto storeInitialValuesOnFieldsCreation(ModuleField moduleField, AddModuleFieldDto addModuleFieldDto) {
-
-        return ModuleFieldDto.fromModuleField(moduleField);
-    }
 }

@@ -1,12 +1,12 @@
 package com.pesupal.server.service.implementations.module.relation;
 
-import com.pesupal.server.dto.request.module.AddModuleFieldDto;
 import com.pesupal.server.dto.response.module.ModuleFieldDto;
 import com.pesupal.server.model.module.Module;
 import com.pesupal.server.model.module.ModuleField;
 import com.pesupal.server.model.module.ModuleRecord;
 import com.pesupal.server.model.module.relation.RecordFileRelation;
 import com.pesupal.server.repository.RecordFileRelationRepository;
+import com.pesupal.server.service.implementations.module.RecordRelationServiceImpl;
 import com.pesupal.server.service.interfaces.module.relation.RecordFileRelationService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,7 +16,7 @@ import java.util.UUID;
 
 @Service
 @AllArgsConstructor
-public class RecordFileRelationServiceImpl implements RecordFileRelationService {
+public class RecordFileRelationServiceImpl extends RecordRelationServiceImpl implements RecordFileRelationService {
 
     private final RecordFileRelationRepository recordFileRelationRepository;
 
@@ -103,16 +103,4 @@ public class RecordFileRelationServiceImpl implements RecordFileRelationService 
         recordFileRelationRepository.deleteAllByRecord_Module(module);
     }
 
-    /**
-     * Stores initial values on fields creation.
-     *
-     * @param moduleField
-     * @param addModuleFieldDto
-     * @return
-     */
-    @Override
-    public ModuleFieldDto storeInitialValuesOnFieldsCreation(ModuleField moduleField, AddModuleFieldDto addModuleFieldDto) {
-
-        return ModuleFieldDto.fromModuleField(moduleField);
-    }
 }
