@@ -31,10 +31,13 @@ const NoRecordsAvailable = () => {
 const ManageWorkBody = () => {
 
     const dispatch = useDispatch();
+    const params = useParams();
+    const { moduleId } = params;
+    const view = params['*'] ? params['*'].split('/')[0] : 'list';
+    const [searchParams, setSearchParams] = useSearchParams();
+
     const { filterBoxShowing } = useSelector((state) => state.moduleFilter);
 
-    const [searchParams, setSearchParams] = useSearchParams();
-    const { moduleId } = useParams();
     const [loader, setLoader] = useState(true);
     const [info, setInfo] = useState({});
     const [error, setError] = useState(null);
@@ -56,8 +59,11 @@ const ManageWorkBody = () => {
 
     useEffect(() => {
 
-        dispatch(setCurrentModuleView("list"));
+        dispatch(setCurrentModuleView(view));
         dispatch(setCurrentModuleId(moduleId));
+        setLoader(true);
+        setRecords([]);
+        setInfo({});
         apiRequest(`/api/v1/module/${moduleId}/records?page=${page - 1}&size=${size}`, 'GET').then(({ data, info }) => {
             setLoader(false);
             setInfo(info);
@@ -73,7 +79,7 @@ const ManageWorkBody = () => {
                 setError(true);
             }
         });
-    }, [page, moduleId]);
+    }, [page, moduleId, view]);
 
     return loader ? <Loader /> :
         moduleNotFound ? <PageNotFound /> :

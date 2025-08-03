@@ -118,9 +118,10 @@ const Column = ({ fieldType, data, index }) => {
         case 'LINK': {
             const { url, title } = data || {};
             content = url && (
-                <span className='FRCS link-wrapper' onClick={(e) => { e.stopPropagation(); window.open(url, '_blank', 'noopener,noreferrer'); }}>
-                    <i className='fa fa-link mR5 colorAAA'></i>{title}
-                </span>
+                <p className='FRCS link-wrapper' onClick={(e) => { e.stopPropagation(); window.open(url, '_blank', 'noopener,noreferrer'); }}>
+                    <i className='fa fa-link mR5 colorAAA'></i>
+                    <span>{title}</span>
+                </p>
             );
             break;
         }
