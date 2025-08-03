@@ -89,6 +89,8 @@ const ModulesList = ({ modules }) => {
         navigate(route);
     }
 
+    modules = modules.filter(module => module.active);  // Filter out inactive modules
+
     return <span className='mR10'>
         <FilterComponentItem item={{ id: 1, title: 'Module 1', icon: 'fa fa-chart-bar', options: modules }} onChange={onChange} selectedValue={moduleId} />
     </span>
@@ -116,35 +118,19 @@ const ViewsList = () => {
     )
 }
 
-const Header = () => {
-
-    const navigate = useNavigate();
-    const dispatch = useDispatch();
-    const [modules, setModules] = useState([]);
-
-    const { moduleId, view } = GetParams();
-
-    useEffect(() => {
-        apiRequest("/api/v1/module/all", "GET").then(({ data }) => {
-            setModules(data);
-            if (data.length > 0 && !moduleId?.length) {
-                const { id } = data[0] || {};
-                navigate(`/manage/module/${id}/${view || 'list'}`);
-            }
-        }).catch(({ message }) => {
-            dispatch(showPopup({ message, type: 'error' }));
-        });
-    }, []);
+const Header = ({ modules }) => {
 
     return (
         <div id='task_header' className='FCSS w100'>
             <div className='FRCB w100 mB10'>
                 {/* <CustomModules CustomModulesList={CustomModulesList} /> */}
                 <div className='FRCS' id='modulesList-filter-view'>
-                    <ModulesList modules={modules} />
-                    <FilterIcon />
-                    <ViewsList />
-                    <ModuleBuilder />
+                    {modules.length > 0 && <>
+                        <ModulesList modules={modules} />
+                        <FilterIcon />
+                        <ViewsList />
+                        <ModuleBuilder />
+                    </>}
                 </div>
                 <CreateButtons />
             </div>

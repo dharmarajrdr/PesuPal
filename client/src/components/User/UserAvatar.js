@@ -1,22 +1,8 @@
 import { useState } from "react";
 import './UserAvatar.css';
+import utils from "../../utils";
 
-const getAvatarColor = (name) => {
-    const colors = [
-        '#FF5733', '#330F57', '#30FE15', '#FF33A6', '#318E15',
-        '#A7AF45', '#8E44AD', '#3498DB', '#E67E22', '#2ECC71',
-        '#E74C3C', '#1ABC9C', '#9B59B6', '#34495E', '#7F8C8D',
-        '#F1C40F', '#D35400', '#C0392B', '#16A085', '#2980B9'
-    ];
 
-    let hash = 0;
-    for (let i = 0; i < name.length; i++) {
-        hash = name.charCodeAt(i) + ((hash << 5) - hash);
-    }
-
-    const index = Math.abs(hash) % colors.length;
-    return colors[index];
-}
 
 const UserAvatar = ({ displayPicture, displayName, setShowProfile }) => {
 
@@ -24,7 +10,7 @@ const UserAvatar = ({ displayPicture, displayName, setShowProfile }) => {
 
     return (imageError || !displayPicture) ? (
         displayName ? (
-            <p className="user-avatar-placeholder-first-character img_40_40" style={{ backgroundColor: getAvatarColor(displayName) }}>
+            <p className="user-avatar-placeholder-first-character img_40_40" style={{ backgroundColor: utils.uniqueColorGenerator(displayName) }}>
                 {displayName.charAt(0).toUpperCase()}
             </p>
         ) : (

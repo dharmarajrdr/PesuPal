@@ -2,21 +2,59 @@ import { useEffect, useState } from 'react'
 import utils from '../../../../utils';
 import { Link, useParams } from 'react-router-dom';
 import './ListView.css'
+import { useSearchParams } from 'react-router-dom';
 import { setCurrentModuleId, setCurrentModuleView } from '../../../../store/reducers/CurrentModuleSlice';
 import { useDispatch } from 'react-redux';
 import { apiRequest } from '../../../../http_request';
 import Loader from '../../../Loader';
+import { showPopup } from '../../../../store/reducers/PopupSlice';
 
-const ListviewTopHeader = ({ item }) => {
-    const { totalRecords, page } = item;
+const ListviewTopHeader = ({ item, searchParams, setSearchParams }) => {
+
+    const { totalRecords, page, hasMoreRecords, size } = item;
+    const totalPagesCount = Math.ceil(totalRecords / size);
+    const dispatch = useDispatch();
+
+    const pageSelected = (pageNumber) => {
+
+        if (pageNumber < 1) {
+            return dispatch(showPopup({ message: 'Invalid page number', type: 'error' }));
+        }
+
+        // Update just the page param (preserving others if needed)
+        const updatedParams = new URLSearchParams(searchParams);
+        updatedParams.set('page', pageNumber);
+        setSearchParams(updatedParams);
+    };
+
+    const leftArrowClicked = () => {
+        if (page >= 1) {
+            pageSelected(page);
+        } else {
+            return dispatch(showPopup({ message: 'No previous pages available', type: 'error' }));
+        }
+    }
+
+    const rightArrawClicked = () => {
+        if (hasMoreRecords) {
+            pageSelected(page + 2);
+        } else {
+            return dispatch(showPopup({ message: 'No more pages available', type: 'error' }));
+        }
+    };
+
+
     return <div className='FRCB w100 pB10' id='ListviewHeader'>
-        <p className='FRCS' id='total_records'>Total Records <b>{totalRecords}</b></p>
+        <div className='FRCS'>
+            <p className='FRCS' id='total_records'>Total Records <b>{totalRecords}</b></p>
+            <p className='FRCS mL10 pL10' id='records_per_page'>Records Per Page: <b>{size}</b></p>
+        </div>
         <div className='FRCE' id='pagination'>
-            <i className='img_30_30 paginationIcon fa fa-chevron-left'></i>
-            <select id='select_pages' defaultValue={page}>
-                {Array.from({ length: 10 }, (_, i) => <option key={i} value={i + 1}>Page {i + 1}</option>)}
+            <i className='img_30_30 paginationIcon fa fa-chevron-left' onClick={leftArrowClicked}></i>
+            <select id='select_pages' value={page + 1} onChange={(e) => pageSelected(e.target.value)}>
+                {Array.from({ length: totalPagesCount }, (_, i) => <option key={i} value={i + 1}>Page {i + 1}</option>)}
             </select>
-            <i className='img_30_30 paginationIcon fa fa-chevron-right'></i>
+            <i className='img_30_30 paginationIcon fa fa-chevron-right' onClick={rightArrawClicked}></i>
         </div>
     </div>
 }
@@ -25,7 +63,9 @@ const widthChart = {
     "STRING": "350px",
     "DATE_TIME": "225px",
     "USER": "225px",
-    "SELECT": "250px"
+    "SELECT": "250px",
+    "TEXT": "350px",
+    "LINK": "250px"
 }
 
 const ListviewHeader = ({ header }) => {
@@ -69,15 +109,28 @@ const Column = ({ fieldType, data, index }) => {
         case 'SELECT': {
             if (Array.isArray(data)) {
                 content = data.map(({ value, selected }, idx) => (
-                    selected ? <span key={idx} className="mR5 typeSELECT">{value}</span> : null
+                    selected ? <span key={idx} className="mR5 typeSELECT" style={{ backgroundColor: utils.uniqueColorGenerator(value) }}>{value}</span> : null
                 ));
             } else {
-                content = <span className="typeSELECT">{data}</span>;
+                content = <span className="typeSELECT" style={{ backgroundColor: utils.uniqueColorGenerator(data), color: '#fff' }}>{data}</span>;
             }
             break;
         }
-        default: {
+        case 'TEXT': {
             content = <span>{data}</span>;
+            break;
+        }
+        case 'LINK': {
+            const { url, title } = data || {};
+            content = url && (
+                <span className='FRCS link-wrapper' onClick={(e) => { e.stopPropagation(); window.open(url, '_blank', 'noopener,noreferrer'); }}>
+                    <i className='fa fa-link mR5 colorAAA'></i>{title}
+                </span>
+            );
+            break;
+        }
+        default: {
+            content = <span>Unable to display</span>;
         }
     }
 
@@ -101,9 +154,9 @@ const Row = ({ item, item_index }) => {
 }
 
 
-const ListviewBody = ({ data }) => <>
+const ListviewBody = ({ records }) => <>
     {
-        data.map((item, item_index) => <Row item={item} key={item_index} item_index={item_index} />)
+        records.map((item, item_index) => <Row item={item} key={item_index} item_index={item_index} />)
     }
 </>
 
@@ -123,20 +176,36 @@ const NoRecordsAvailable = () => {
     )
 }
 
+const ListViewTable = ({ records }) => {
+
+    const header = generateHeader({ fields: records[0]?.fields || [] });
+
+    return <div id='listview_table' className='custom-scrollbar'>
+        <ListviewHeader header={header} />
+        <ListviewBody records={records} />
+    </div>
+}
+
 const ListView = () => {
 
+    const [loader, setLoader] = useState(true);
+    const [info, setInfo] = useState({});
+
+    const [searchParams, setSearchParams] = useSearchParams();
     const dispatch = useDispatch();
     const { moduleId } = useParams();
-    const [loader, setLoader] = useState(true);
     const [error, setError] = useState(null);
     const [records, setRecords] = useState([]);
-    const [info, setInfo] = useState({});
+
+    const page = parseInt(searchParams.get('page') || '1', 10);
+
+    const size = 3;
 
     useEffect(() => {
         console.log('ListView mounted');
         dispatch(setCurrentModuleView("list"));
         dispatch(setCurrentModuleId(moduleId));
-        apiRequest(`/api/v1/module/${moduleId}/records?page=0&size=25`, 'GET').then(({ data, info }) => {
+        apiRequest(`/api/v1/module/${moduleId}/records?page=${page - 1}&size=${size}`, 'GET').then(({ data, info }) => {
             setLoader(false);
             setInfo(info);
             setRecords(data);
@@ -144,20 +213,14 @@ const ListView = () => {
             setLoader(false);
             setError(message);
         });
-    }, []);
-
-    const header = generateHeader({ fields: records[0]?.fields || [] });
+    }, [page, moduleId]);
 
     return loader ? <Loader /> :
-        records.length ? (
+        records.length ?
             <div id='ListView'>
-                <ListviewTopHeader item={info} />
-                <div id='listview_table' className='custom-scrollbar'>
-                    <ListviewHeader header={header} />
-                    <ListviewBody data={records} />
-                </div>
-            </div>
-        ) : <NoRecordsAvailable />
+                <ListviewTopHeader item={info} searchParams={searchParams} setSearchParams={setSearchParams} />
+                <ListViewTable records={records} />
+            </div> : <NoRecordsAvailable />
 }
 
 export default ListView
