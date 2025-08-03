@@ -3,3 +3,7 @@
     height: 100vh;
     padding: 20px;
 }
+
+#ManageWorkLayout .notfound-container {
+    height: calc(100% - 50px);
+}

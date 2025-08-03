@@ -16,6 +16,9 @@ const CreateButtons = () => {
     const navigate = useNavigate();
     const { moduleId } = GetParams();
 
+    const { data: currentModuleData } = useSelector((state) => state.currentModule);
+    const { createRecord } = currentModuleData || { 'createRecord': false };
+
     const createModuleHandler = (e) => {
         e.stopPropagation();
         navigate('/manage/module/create');
@@ -28,10 +31,10 @@ const CreateButtons = () => {
 
     return (
         <div className='FRCE' id='createButtons' onClick={createRecordHandler}>
-            <div className='FRCC mR10' id='createRecord'>
+            {createRecord && <div className='FRCC mR10' id='createRecord'>
                 <i className='fa fa-plus pR5 w_20'></i>
                 <span>Create Record</span>
-            </div>
+            </div>}
             <div className='FRCC' id='createModule' onClick={createModuleHandler}>
                 <i className='fa fa-plus pR5 w_20'></i>
                 <span>Create Module</span>
