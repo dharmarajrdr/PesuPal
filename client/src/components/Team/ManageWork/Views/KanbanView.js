@@ -30,17 +30,18 @@ const RowComponent = ({ item }) => {
 };
 
 const ColumnComponent = ({ column }) => {
-    const { status, items } = column,
-        itemCount = items?.length || 0;
+    const { id, key, value } = column,
+        { data, info } = value || {},
+        { totalRecords } = info || {};
     return <div className='kanbanviewColumn FCSS'>
         <div className='kanbanviewStage FRCB'>
-            <span className='alignCenter'>{status}</span>
-            <span className='columnCount'>{itemCount}</span>
+            <span className='alignCenter'>{key.name}</span>
+            <span className='columnCount'>{totalRecords}</span>
         </div>
         <div className='FCSS kanbanviewItems noScrollbar'>
             {
-                items.length ?
-                    items.map((item, index) => <RowComponent item={item} key={index} />) :
+                data.length ?
+                    data.map((item, index) => <RowComponent item={item} key={index} />) :
                     <div className='w100 alignCenter colorAAA selectNone h100 FRCC'>No records</div>
             }
         </div>
