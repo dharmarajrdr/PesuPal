@@ -1,5 +1,4 @@
-import './ManageWorkBody.css'
-import ManageWorkListKanban from './ManageWorkListKanban';
+import './ManageWorkBody.css';
 import { Navigate, Route, Routes, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
@@ -47,7 +46,12 @@ const ManageWorkBody = () => {
 
     const page = parseInt(searchParams.get('page') || '1', 10);
 
-    const size = 3;
+    const size = 25;
+
+    const API = {
+        "list": `/api/v1/module/${moduleId}/records?page=${page - 1}&size=${size}`,
+        "kanban": `/api/v1/module/${moduleId}/records-group-by-transition?page=${page - 1}&size=${size}`
+    }
 
     useEffect(() => {
         if (filterBoxShowing) {
@@ -63,8 +67,11 @@ const ManageWorkBody = () => {
         dispatch(setCurrentModuleId(moduleId));
         setLoader(true);
         setRecords([]);
+        setError(null);
+        setModuleNotFound(false);
+        setPermissionDenied(false);
         setInfo({});
-        apiRequest(`/api/v1/module/${moduleId}/records?page=${page - 1}&size=${size}`, 'GET').then(({ data, info }) => {
+        apiRequest(API[view], 'GET').then(({ data, info }) => {
             setLoader(false);
             setInfo(info);
             setRecords(data);
@@ -94,7 +101,7 @@ const ManageWorkBody = () => {
                                 <div id='views-render-frame'>
                                     <Routes>
                                         <Route path='/list' element={<ListView records={records} info={info} searchParams={searchParams} setSearchParams={setSearchParams} />} />
-                                        <Route path='/kanban' element={<KanbanView ManageWorkListKanban={ManageWorkListKanban} />} />
+                                        <Route path='/kanban' element={<KanbanView records={records} />} />
                                         <Route path='/*' element={<Navigate to="/manage/module" />} />
                                     </Routes>
                                 </div>

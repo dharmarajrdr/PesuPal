@@ -6,7 +6,7 @@ import { showPopup } from '../../../../store/reducers/PopupSlice';
 
 const ListviewTopHeader = ({ item, searchParams, setSearchParams }) => {
 
-    const { totalRecords, page, hasMoreRecords, size } = item;
+    const { totalRecords, page, hasMoreRecords, size } = item || {};
     const totalPagesCount = Math.ceil(totalRecords / size);
     const dispatch = useDispatch();
 
