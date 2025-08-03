@@ -8,8 +8,8 @@ import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.exceptions.PermissionDeniedException;
 import com.pesupal.server.helpers.CurrentValueRetriever;
 import com.pesupal.server.helpers.ModuleHelper;
-import com.pesupal.server.model.module.*;
 import com.pesupal.server.model.module.Module;
+import com.pesupal.server.model.module.ModulePermission;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.repository.ModuleRepository;
 import com.pesupal.server.service.interfaces.module.*;
@@ -29,7 +29,7 @@ public class ModuleServiceImpl extends CurrentValueRetriever implements ModuleSe
     private final ModuleRecordService moduleRecordService;
     private final ModulePermissionService modulePermissionService;
 
-    public ModuleServiceImpl(ModuleRepository moduleRepository, @Lazy ModuleMemberService moduleMemberService, ModulePermissionService modulePermissionService, @Lazy ModuleRecordService moduleRecordService, @Lazy ModuleFieldService moduleFieldService) {
+    public ModuleServiceImpl(ModuleRepository moduleRepository, @Lazy ModuleMemberService moduleMemberService, @Lazy ModulePermissionService modulePermissionService, @Lazy ModuleRecordService moduleRecordService, @Lazy ModuleFieldService moduleFieldService) {
         this.moduleRepository = moduleRepository;
         this.moduleFieldService = moduleFieldService;
         this.moduleMemberService = moduleMemberService;
@@ -148,30 +148,12 @@ public class ModuleServiceImpl extends CurrentValueRetriever implements ModuleSe
     @Override
     public ModuleDto getModuleDtoById(String moduleId) {
 
-        OrgMember orgMember = getCurrentOrgMember();
         Module module = getModuleById(moduleId);
 
-        ModuleAccessibility moduleAccessibility = module.getAccessibility();
         ModuleDto moduleDto = ModuleDto.fromModule(module);
-        switch (moduleAccessibility) {
-            case ANYONE_IN_ORG -> {
-                if (!module.getCreatedBy().getOrg().getId().equals(orgMember.getOrg().getId())) {
-                    throw new PermissionDeniedException("Module does not exist in your organization.");
-                }
-            }
-            case ONLY_ME -> {
-                if (!module.getCreatedBy().getPublicId().equals(orgMember.getPublicId())) {
-                    throw new PermissionDeniedException("You do not have permission to access this module.");
-                }
-            }
-            case SELECTIVE_MEMBERS -> {
-                ModuleMember moduleMember = moduleMemberService.getModuleMemberByOrgMemberAndModule(orgMember, module);
-                ModuleRole moduleRole = moduleMember.getRole();
-                ModulePermission modulePermission = modulePermissionService.getModulePermissionByModuleAndRole(module, moduleRole);
-                moduleDto.setCreateRecord(modulePermission.isCreateRecord());
-                moduleDto.setReadRecord(modulePermission.isReadRecord());
-            }
-        }
+        ModulePermission modulePermission = modulePermissionService.verifyModuleAccessibility(module);
+        moduleDto.setReadRecord(modulePermission.isReadRecord());
+        moduleDto.setCreateRecord(modulePermission.isCreateRecord());
         return moduleDto;
     }
 }
