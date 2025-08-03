@@ -159,18 +159,6 @@ const ListviewBody = ({ records }) => <>
 const generateHeader = ({ fields }) => fields.map(({ fieldName, fieldType }) => ({ fieldName, fieldType }));
 
 
-const NoRecordsAvailable = () => {
-
-    return (
-        <div className='FCCC w100 h100' id='no-data-found'>
-            <p className='FRCC w100'>
-                <i className='fa fa-exclamation-triangle mR5'></i>
-                No records found
-            </p>
-        </div>
-    )
-}
-
 const ListViewTable = ({ records }) => {
 
     const header = generateHeader({ fields: records[0]?.fields || [] });
@@ -184,11 +172,10 @@ const ListViewTable = ({ records }) => {
 const ListView = ({ records, info, searchParams, setSearchParams }) => {
 
     return (
-        records.length ?
-            <div id='ListView'>
-                <ListviewTopHeader item={info} searchParams={searchParams} setSearchParams={setSearchParams} />
-                <ListViewTable records={records} />
-            </div> : <NoRecordsAvailable />
+        <div id='ListView'>
+            <ListviewTopHeader item={info} searchParams={searchParams} setSearchParams={setSearchParams} />
+            <ListViewTable records={records} />
+        </div>
     )
 }
 

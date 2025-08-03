@@ -16,6 +16,18 @@ import PageNotFound from '../../Auth/PageNotFound';
 import Loader from '../../Loader';
 import InternalServerError from '../../Auth/InternalServerError';
 
+const NoRecordsAvailable = () => {
+
+    return (
+        <div className='FCCC w100' id='no-data-found'>
+            <p className='FRCC w100'>
+                <i className='fa fa-exclamation-triangle mR5'></i>
+                No records found
+            </p>
+        </div>
+    )
+}
+
 const ManageWorkBody = () => {
 
     const dispatch = useDispatch();
@@ -66,22 +78,23 @@ const ManageWorkBody = () => {
     return loader ? <Loader /> :
         moduleNotFound ? <PageNotFound /> :
             permissionDenied ? <PermissionDenied /> :
-                error ? <InternalServerError /> : (
-                    <div id='ManageWorkBody' className='w100 custom-scrollbar FRSE'>
-                        <div id='manage-work-slider' className={`FRSE ${filterBoxShowing ? 'filter-enabled' : ''}`}>
+                error ? <InternalServerError /> :
+                    records.length ? (
+                        <div id='ManageWorkBody' className='w100 custom-scrollbar FRSE'>
+                            <div id='manage-work-slider' className={`FRSE ${filterBoxShowing ? 'filter-enabled' : ''}`}>
 
-                            <FilterContainer />
+                                <FilterContainer />
 
-                            <div id='views-render-frame'>
-                                <Routes>
-                                    <Route path='/list' element={<ListView records={records} info={info} searchParams={searchParams} setSearchParams={setSearchParams} />} />
-                                    <Route path='/kanban' element={<KanbanView ManageWorkListKanban={ManageWorkListKanban} />} />
-                                    <Route path='/*' element={<Navigate to="/manage/module" />} />
-                                </Routes>
+                                <div id='views-render-frame'>
+                                    <Routes>
+                                        <Route path='/list' element={<ListView records={records} info={info} searchParams={searchParams} setSearchParams={setSearchParams} />} />
+                                        <Route path='/kanban' element={<KanbanView ManageWorkListKanban={ManageWorkListKanban} />} />
+                                        <Route path='/*' element={<Navigate to="/manage/module" />} />
+                                    </Routes>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                )
+                    ) : <NoRecordsAvailable />
 }
 
 export default ManageWorkBody
