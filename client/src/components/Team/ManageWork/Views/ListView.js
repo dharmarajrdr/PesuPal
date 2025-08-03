@@ -1,12 +1,7 @@
-import { useEffect, useState } from 'react'
 import utils from '../../../../utils';
-import { Link, useParams } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import './ListView.css'
-import { useSearchParams } from 'react-router-dom';
-import { setCurrentModuleId, setCurrentModuleView } from '../../../../store/reducers/CurrentModuleSlice';
 import { useDispatch } from 'react-redux';
-import { apiRequest } from '../../../../http_request';
-import Loader from '../../../Loader';
 import { showPopup } from '../../../../store/reducers/PopupSlice';
 
 const ListviewTopHeader = ({ item, searchParams, setSearchParams }) => {
@@ -186,41 +181,15 @@ const ListViewTable = ({ records }) => {
     </div>
 }
 
-const ListView = () => {
+const ListView = ({ records, info, searchParams, setSearchParams }) => {
 
-    const [loader, setLoader] = useState(true);
-    const [info, setInfo] = useState({});
-
-    const [searchParams, setSearchParams] = useSearchParams();
-    const dispatch = useDispatch();
-    const { moduleId } = useParams();
-    const [error, setError] = useState(null);
-    const [records, setRecords] = useState([]);
-
-    const page = parseInt(searchParams.get('page') || '1', 10);
-
-    const size = 3;
-
-    useEffect(() => {
-        console.log('ListView mounted');
-        dispatch(setCurrentModuleView("list"));
-        dispatch(setCurrentModuleId(moduleId));
-        apiRequest(`/api/v1/module/${moduleId}/records?page=${page - 1}&size=${size}`, 'GET').then(({ data, info }) => {
-            setLoader(false);
-            setInfo(info);
-            setRecords(data);
-        }).catch(({ message }) => {
-            setLoader(false);
-            setError(message);
-        });
-    }, [page, moduleId]);
-
-    return loader ? <Loader /> :
+    return (
         records.length ?
             <div id='ListView'>
                 <ListviewTopHeader item={info} searchParams={searchParams} setSearchParams={setSearchParams} />
                 <ListViewTable records={records} />
             </div> : <NoRecordsAvailable />
+    )
 }
 
 export default ListView
