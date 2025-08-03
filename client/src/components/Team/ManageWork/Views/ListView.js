@@ -109,7 +109,7 @@ const Column = ({ fieldType, data, index }) => {
         case 'SELECT': {
             if (Array.isArray(data)) {
                 content = data.map(({ value, selected }, idx) => (
-                    selected ? <span key={idx} className="mR5 typeSELECT" style={{ backgroundColor: utils.uniqueColorGenerator(value)}}>{value}</span> : null
+                    selected ? <span key={idx} className="mR5 typeSELECT" style={{ backgroundColor: utils.uniqueColorGenerator(value) }}>{value}</span> : null
                 ));
             } else {
                 content = <span className="typeSELECT" style={{ backgroundColor: utils.uniqueColorGenerator(data), color: '#fff' }}>{data}</span>;
@@ -180,10 +180,10 @@ const ListViewTable = ({ records }) => {
 
     const header = generateHeader({ fields: records[0]?.fields || [] });
 
-    return records.length ? <div id='listview_table' className='custom-scrollbar'>
+    return <div id='listview_table' className='custom-scrollbar'>
         <ListviewHeader header={header} />
         <ListviewBody records={records} />
-    </div> : <NoRecordsAvailable />
+    </div>
 }
 
 const ListView = () => {
@@ -213,14 +213,14 @@ const ListView = () => {
             setLoader(false);
             setError(message);
         });
-    }, [page]);
+    }, [page, moduleId]);
 
     return loader ? <Loader /> :
-
-        <div id='ListView'>
-            <ListviewTopHeader item={info} searchParams={searchParams} setSearchParams={setSearchParams} />
-            <ListViewTable records={records} />
-        </div>
+        records.length ?
+            <div id='ListView'>
+                <ListviewTopHeader item={info} searchParams={searchParams} setSearchParams={setSearchParams} />
+                <ListViewTable records={records} />
+            </div> : <NoRecordsAvailable />
 }
 
 export default ListView
