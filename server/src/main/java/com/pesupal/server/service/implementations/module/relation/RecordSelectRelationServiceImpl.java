@@ -1,5 +1,6 @@
 package com.pesupal.server.service.implementations.module.relation;
 
+import com.pesupal.server.dto.request.module.AddModuleFieldDto;
 import com.pesupal.server.dto.response.module.ModuleFieldDto;
 import com.pesupal.server.dto.response.module.ModuleSelectOptionDto;
 import com.pesupal.server.model.module.Module;
@@ -88,5 +89,21 @@ public class RecordSelectRelationServiceImpl implements RecordSelectRelationServ
     public void deleteAllByModule(Module module) {
 
         recordSelectRelationRepository.deleteAllByRecord_Module(module);
+    }
+
+    /**
+     * Stores initial values for fields when they are created, specifically for select fields.
+     *
+     * @param addModuleFieldDto
+     * @param moduleField
+     * @return
+     */
+    @Override
+    public ModuleFieldDto storeInitialValuesOnFieldsCreation(ModuleField moduleField, AddModuleFieldDto addModuleFieldDto) {
+
+        List<ModuleSelectOption> selectOptions = addModuleFieldDto.getOptions().stream().map(addModuleSelectOptionDto -> addModuleSelectOptionDto.toModuleSelectOption(moduleField)).toList();
+        moduleSelectOptionService.saveAll(selectOptions);
+        List<ModuleSelectOptionDto> moduleSelectOptionDtos = selectOptions.stream().map(ModuleSelectOptionDto::fromModuleSelectOption).toList();
+        return ModuleFieldDto.fromModuleFieldWithData(moduleField, moduleSelectOptionDtos);
     }
 }

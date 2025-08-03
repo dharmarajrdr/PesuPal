@@ -21,6 +21,7 @@ public class RecordRelationFactory {
     private final RecordSelectRelationService recordSelectRelationService;
     private final RecordStringRelationService recordStringRelationService;
     private final RecordDateTimeRelationService recordDateTimeRelationService;
+    private final RecordTransitionRelationService recordTransitionRelationService;
 
     public RecordRelationService getRelationService(FieldType fieldType) {
 
@@ -36,6 +37,9 @@ public class RecordRelationFactory {
             }
             case LINK -> {
                 return recordLinkRelationService;
+            }
+            case TRANSITION -> {
+                return recordTransitionRelationService;
             }
             case DATE_TIME -> {
                 return recordDateTimeRelationService;

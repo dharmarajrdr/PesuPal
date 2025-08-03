@@ -40,6 +40,8 @@ public class AddModuleFieldDto {
 
     private List<AddModuleSelectOptionDto> options;
 
+    private List<AddTransitionDto> transitions;
+
     public ModuleField toModuleField() {
 
         List<ModuleRole> restrictFromList = restrictFrom.stream().toList();
