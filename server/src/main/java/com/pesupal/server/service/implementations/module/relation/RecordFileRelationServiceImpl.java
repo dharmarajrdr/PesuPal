@@ -1,5 +1,6 @@
 package com.pesupal.server.service.implementations.module.relation;
 
+import com.pesupal.server.dto.request.module.AddModuleFieldDto;
 import com.pesupal.server.dto.response.module.ModuleFieldDto;
 import com.pesupal.server.model.module.Module;
 import com.pesupal.server.model.module.ModuleField;
@@ -100,5 +101,18 @@ public class RecordFileRelationServiceImpl implements RecordFileRelationService 
     public void deleteAllByModule(Module module) {
 
         recordFileRelationRepository.deleteAllByRecord_Module(module);
+    }
+
+    /**
+     * Stores initial values on fields creation.
+     *
+     * @param moduleField
+     * @param addModuleFieldDto
+     * @return
+     */
+    @Override
+    public ModuleFieldDto storeInitialValuesOnFieldsCreation(ModuleField moduleField, AddModuleFieldDto addModuleFieldDto) {
+
+        return ModuleFieldDto.fromModuleField(moduleField);
     }
 }

@@ -1,5 +1,6 @@
 package com.pesupal.server.service.implementations.module.relation;
 
+import com.pesupal.server.dto.request.module.AddModuleFieldDto;
 import com.pesupal.server.dto.response.module.ModuleFieldDto;
 import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.model.module.Module;
@@ -103,5 +104,18 @@ public class RecordLinkRelationServiceImpl implements RecordLinkRelationService 
     public void deleteAllByModule(Module module) {
 
         recordLinkRelationRepository.deleteAllByRecord_Module(module);
+    }
+
+    /**
+     * Stores initial values on fields creation.
+     *
+     * @param moduleField
+     * @param addModuleFieldDto
+     * @return
+     */
+    @Override
+    public ModuleFieldDto storeInitialValuesOnFieldsCreation(ModuleField moduleField, AddModuleFieldDto addModuleFieldDto) {
+
+        return ModuleFieldDto.fromModuleField(moduleField);
     }
 }
