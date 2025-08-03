@@ -1,6 +1,5 @@
 package com.pesupal.server.service.implementations.module.relation;
 
-import com.pesupal.server.dto.request.module.AddModuleFieldDto;
 import com.pesupal.server.dto.response.module.ModuleFieldDto;
 import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.model.module.Module;
@@ -8,6 +7,7 @@ import com.pesupal.server.model.module.ModuleField;
 import com.pesupal.server.model.module.ModuleRecord;
 import com.pesupal.server.model.module.relation.RecordDateTimeRelation;
 import com.pesupal.server.repository.RecordDateTimeRelationRepository;
+import com.pesupal.server.service.implementations.module.RecordRelationServiceImpl;
 import com.pesupal.server.service.interfaces.module.relation.RecordDateTimeRelationService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,7 +17,7 @@ import java.util.Optional;
 
 @Service
 @AllArgsConstructor
-public class RecordDateTimeRelationServiceImpl implements RecordDateTimeRelationService {
+public class RecordDateTimeRelationServiceImpl extends RecordRelationServiceImpl implements RecordDateTimeRelationService {
 
     private final RecordDateTimeRelationRepository recordDateTimeRelationRepository;
 
@@ -84,16 +84,4 @@ public class RecordDateTimeRelationServiceImpl implements RecordDateTimeRelation
         recordDateTimeRelationRepository.deleteAllByRecord_Module(module);
     }
 
-    /**
-     * Stores initial values on fields creation.
-     *
-     * @param moduleField
-     * @param addModuleFieldDto
-     * @return
-     */
-    @Override
-    public ModuleFieldDto storeInitialValuesOnFieldsCreation(ModuleField moduleField, AddModuleFieldDto addModuleFieldDto) {
-
-        return ModuleFieldDto.fromModuleField(moduleField);
-    }
 }

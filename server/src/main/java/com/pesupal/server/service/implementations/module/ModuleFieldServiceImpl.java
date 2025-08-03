@@ -72,9 +72,12 @@ public class ModuleFieldServiceImpl extends CurrentValueRetriever implements Mod
         }
 
         ModuleField moduleField = addModuleFieldDto.toModuleField(module);
+        RecordRelationService recordRelationService = recordRelationFactory.getRelationService(moduleField.getFieldType());
+
+        recordRelationService.beforeFieldCreation(moduleField);
+
         moduleFieldRepository.save(moduleField);
 
-        RecordRelationService recordRelationService = recordRelationFactory.getRelationService(moduleField.getFieldType());
         return recordRelationService.storeInitialValuesOnFieldsCreation(moduleField, addModuleFieldDto);
     }
 
@@ -116,6 +119,19 @@ public class ModuleFieldServiceImpl extends CurrentValueRetriever implements Mod
         }
 
         moduleFieldRepository.saveAll(SYSTEM_FIELDS.stream().map(systemField -> systemField.toModuleField(module)).toList());
+    }
+
+    /**
+     * Retrieves a specific field by its module and field type.
+     *
+     * @param module
+     * @param fieldType
+     * @return
+     */
+    @Override
+    public Optional<ModuleField> getFieldByModuleAndType(Module module, FieldType fieldType) {
+
+        return moduleFieldRepository.findByModuleAndFieldType(module, fieldType);
     }
 
     /**

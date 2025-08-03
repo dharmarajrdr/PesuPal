@@ -3,6 +3,8 @@ package com.pesupal.server.service.implementations.module.relation;
 import com.pesupal.server.dto.request.module.AddModuleFieldDto;
 import com.pesupal.server.dto.response.module.ModuleFieldDto;
 import com.pesupal.server.dto.response.module.TransitionDto;
+import com.pesupal.server.enums.FieldType;
+import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.model.module.Module;
 import com.pesupal.server.model.module.ModuleField;
@@ -10,9 +12,11 @@ import com.pesupal.server.model.module.ModuleRecord;
 import com.pesupal.server.model.module.Transition;
 import com.pesupal.server.model.module.relation.RecordTransitionRelation;
 import com.pesupal.server.repository.RecordTransitionRelationRepository;
+import com.pesupal.server.service.implementations.module.RecordRelationServiceImpl;
+import com.pesupal.server.service.interfaces.module.ModuleFieldService;
 import com.pesupal.server.service.interfaces.module.TransitionService;
 import com.pesupal.server.service.interfaces.module.relation.RecordTransitionRelationService;
-import lombok.AllArgsConstructor;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,11 +24,17 @@ import java.util.Map;
 import java.util.Optional;
 
 @Service
-@AllArgsConstructor
-public class RecordTransitionRelationServiceImpl implements RecordTransitionRelationService {
+public class RecordTransitionRelationServiceImpl extends RecordRelationServiceImpl implements RecordTransitionRelationService {
 
     private final TransitionService transitionService;
+    private final ModuleFieldService moduleFieldService;
     private final RecordTransitionRelationRepository recordTransitionRelationRepository;
+
+    public RecordTransitionRelationServiceImpl(TransitionService transitionService, @Lazy ModuleFieldService moduleFieldService, RecordTransitionRelationRepository recordTransitionRelationRepository) {
+        this.transitionService = transitionService;
+        this.moduleFieldService = moduleFieldService;
+        this.recordTransitionRelationRepository = recordTransitionRelationRepository;
+    }
 
     /**
      * Saves a record transition relation.
@@ -117,5 +127,20 @@ public class RecordTransitionRelationServiceImpl implements RecordTransitionRela
         transitionService.saveAll(transitions);
         List<TransitionDto> transitionDtos = transitions.stream().map(TransitionDto::fromTransition).toList();
         return ModuleFieldDto.fromModuleFieldWithData(moduleField, transitionDtos);
+    }
+
+    /**
+     * Validates if a module already has transition field defined before creating a new transition.
+     *
+     * @param moduleField
+     */
+    @Override
+    public void beforeFieldCreation(ModuleField moduleField) {
+
+        Optional<ModuleField> moduleFields = moduleFieldService.getFieldByModuleAndType(moduleField.getModule(), FieldType.TRANSITION);
+        boolean thisModuleAlreadyHasTransitions = moduleFields.isPresent();
+        if (thisModuleAlreadyHasTransitions) {
+            throw new ActionProhibitedException("A module should have at most one transition field defined. Field '" + moduleFields.get().getName() + "' is already defined as a transition field.");
+        }
     }
 }

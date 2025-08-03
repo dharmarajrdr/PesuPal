@@ -17,4 +17,6 @@ public interface RecordRelationService {
     void deleteAllByModule(Module module);
 
     ModuleFieldDto storeInitialValuesOnFieldsCreation(ModuleField moduleField, AddModuleFieldDto addModuleFieldDto);
+
+    void beforeFieldCreation(ModuleField moduleField);
 }
