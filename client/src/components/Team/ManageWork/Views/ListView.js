@@ -8,13 +8,26 @@ import { useDispatch } from 'react-redux';
 import { apiRequest } from '../../../../http_request';
 import Loader from '../../../Loader';
 
-const ListviewTopHeader = ({ item }) => {
+const ListviewTopHeader = ({ item, searchParams, setSearchParams }) => {
+
     const { totalRecords, page } = item;
+
+    const handleSelectChange = (event) => {
+
+        const nextPage = parseInt(event.target.value, 10);
+
+        // Update just the page param (preserving others if needed)
+        const updatedParams = new URLSearchParams(searchParams);
+        updatedParams.set('page', nextPage);
+        setSearchParams(updatedParams);
+    };
+
+
     return <div className='FRCB w100 pB10' id='ListviewHeader'>
         <p className='FRCS' id='total_records'>Total Records <b>{totalRecords}</b></p>
         <div className='FRCE' id='pagination'>
             <i className='img_30_30 paginationIcon fa fa-chevron-left'></i>
-            <select id='select_pages' defaultValue={page}>
+            <select id='select_pages' value={page + 1} onChange={(e) => handleSelectChange(e)}>
                 {Array.from({ length: 10 }, (_, i) => <option key={i} value={i + 1}>Page {i + 1}</option>)}
             </select>
             <i className='img_30_30 paginationIcon fa fa-chevron-right'></i>
@@ -85,8 +98,11 @@ const Column = ({ fieldType, data, index }) => {
         }
         case 'LINK': {
             const { url, title } = data || {};
-            content = url && (<a href={url} target="_blank" rel="noopener noreferrer" onClick={(e) => { e.stopPropagation(); }}>
-                <i className='fa fa-link mR5 colorAAA'></i>{title}</a>);
+            content = url && (
+                <span className='FRCS link-wrapper' onClick={(e) => { e.stopPropagation(); window.open(url, '_blank', 'noopener,noreferrer'); }}>
+                    <i className='fa fa-link mR5 colorAAA'></i>{title}
+                </span>
+            );
             break;
         }
         default: {
@@ -151,13 +167,14 @@ const ListView = () => {
     const [loader, setLoader] = useState(true);
     const [info, setInfo] = useState({});
 
-    const [searchParams] = useSearchParams();
+    const [searchParams, setSearchParams] = useSearchParams();
     const dispatch = useDispatch();
     const { moduleId } = useParams();
     const [error, setError] = useState(null);
     const [records, setRecords] = useState([]);
 
-    const [page, setPage] = useState(searchParams.get('page') || 1);
+    const page = parseInt(searchParams.get('page') || '1', 10);
+
     const size = 3;
 
     useEffect(() => {
@@ -172,12 +189,12 @@ const ListView = () => {
             setLoader(false);
             setError(message);
         });
-    }, []);
+    }, [page]);
 
     return loader ? <Loader /> :
 
         <div id='ListView'>
-            <ListviewTopHeader item={info} />
+            <ListviewTopHeader item={info} searchParams={searchParams} setSearchParams={setSearchParams} />
             <ListViewTable records={records} />
         </div>
 }
