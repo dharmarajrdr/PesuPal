@@ -267,23 +267,17 @@ public class ModuleRecordServiceImpl extends CurrentValueRetriever implements Mo
             sort = sortColumnDto.getOrder().isAscending() ? Sort.by(sortColumnDto.getColumn()).ascending() : Sort.by(sortColumnDto.getColumn()).descending();
         }
 
-        Pageable pageable = PageRequest.of(page, size + 1, sort);
+        Pageable pageable = PageRequest.of(page, size, sort);
 
         OrgMember orgMember = getCurrentOrgMember();
         Module module = moduleService.getModuleById(moduleId);
 
         validateRecordsReadAccessibility(module, orgMember);
 
-        int totalRecords = moduleRecordRepository.countAllByModule(module);
+        Page<PublicIdProjection> recordsPage = moduleRecordRepository.findAllPublicIdByModule(module, pageable);
+        Map<String, Object> info = Map.of("hasMoreRecords", recordsPage.hasNext(), "page", page, "size", size, "totalRecords", recordsPage.getTotalElements());
 
-        List<String> recordsIds = totalRecords > 0 ? new ArrayList<>(moduleRecordRepository.findAllPublicIdByModule(module, pageable).getContent().stream().map(PublicIdProjection::getPublicId).toList()) : new ArrayList<>();
-
-        boolean hasMoreRecords = recordsIds.size() == size + 1;
-        Map<String, Object> info = Map.of("hasMoreRecords", hasMoreRecords, "page", page, "size", size, "totalRecords", totalRecords);
-
-        if (!recordsIds.isEmpty() && recordsIds.size() > size) {
-            recordsIds.remove(recordsIds.size() - 1); // safely remove the last element
-        }
+        List<String> recordsIds = new ArrayList<>(recordsPage.stream().map(PublicIdProjection::getPublicId).toList());
 
         List<ModuleRecordDto> moduleRecordDtos = new ArrayList<>();
         for (String recordId : recordsIds) {
@@ -339,7 +333,7 @@ public class ModuleRecordServiceImpl extends CurrentValueRetriever implements Mo
      * @view <b>Kanban view</b> of records grouped by transitions
      */
     @Override
-    public List<KanbanViewDto<TransitionDto, List<ModuleRecordDto>>> getRecordsGroupedByTransition(String moduleId, Integer size, SortColumnDto sortColumnDto) {
+    public List<KanbanViewDto<TransitionDto, PaginatedData<List<ModuleRecordDto>>>> getRecordsGroupedByTransition(String moduleId, Integer size, SortColumnDto sortColumnDto) {
 
         Sort sort;
         if (sortColumnDto == null) {
@@ -348,7 +342,7 @@ public class ModuleRecordServiceImpl extends CurrentValueRetriever implements Mo
             sort = sortColumnDto.getOrder().isAscending() ? Sort.by(sortColumnDto.getColumn()).ascending() : Sort.by(sortColumnDto.getColumn()).descending();
         }
 
-        Pageable pageable = PageRequest.of(0, size + 1, sort);
+        Pageable pageable = PageRequest.of(0, size, sort);
 
         OrgMember orgMember = getCurrentOrgMember();
         Module module = moduleService.getModuleById(moduleId);
@@ -360,18 +354,19 @@ public class ModuleRecordServiceImpl extends CurrentValueRetriever implements Mo
         List<Transition> transitions = moduleField.getTransitions();
         transitions.sort(Comparator.comparing(Transition::getScore));
 
-        List<KanbanViewDto<TransitionDto, List<ModuleRecordDto>>> kanbanViewDtos = new ArrayList<>();
+        List<KanbanViewDto<TransitionDto, PaginatedData<List<ModuleRecordDto>>>> kanbanViewDtos = new ArrayList<>();
 
         for (Transition transition : transitions) {
-            KanbanViewDto<TransitionDto, List<ModuleRecordDto>> kanbanViewDto = new KanbanViewDto<>();
+            KanbanViewDto<TransitionDto, PaginatedData<List<ModuleRecordDto>>> kanbanViewDto = new KanbanViewDto<>();
             List<ModuleRecordDto> moduleRecordDtos = new ArrayList<>();
             Page<RecordTransitionRelation> recordTransitionRelations = recordTransitionRelationRepository.findAllByTransition(transition, pageable);
             List<String> recordIds = recordTransitionRelations.getContent().stream().map(relation -> relation.getRecord().getPublicId()).toList();
+            Map<String, Object> info = Map.of("hasMoreRecords", recordTransitionRelations.hasNext(), "page", 0, "size", size, "totalRecords", recordTransitionRelations.getTotalElements());
             for (String recordId : recordIds) {
                 moduleRecordDtos.add(getRecordById(recordId, ModuleView.LIST_VIEW));
             }
             kanbanViewDto.setKey(TransitionDto.fromTransition(transition));
-            kanbanViewDto.setValue(moduleRecordDtos);
+            kanbanViewDto.setValue(new PaginatedData<>(moduleRecordDtos, info));
             kanbanViewDtos.add(kanbanViewDto);
         }
 

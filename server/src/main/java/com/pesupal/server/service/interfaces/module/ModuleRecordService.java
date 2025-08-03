@@ -22,5 +22,5 @@ public interface ModuleRecordService {
 
     void deleteAllRecords(String moduleId);
 
-    List<KanbanViewDto<TransitionDto, List<ModuleRecordDto>>> getRecordsGroupedByTransition(String moduleId, Integer size, SortColumnDto sortColumnDto);
+    List<KanbanViewDto<TransitionDto, PaginatedData<List<ModuleRecordDto>>>> getRecordsGroupedByTransition(String moduleId, Integer size, SortColumnDto sortColumnDto);
 }

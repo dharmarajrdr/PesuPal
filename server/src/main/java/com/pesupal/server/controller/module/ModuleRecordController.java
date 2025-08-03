@@ -63,7 +63,7 @@ public class ModuleRecordController {
             @RequestParam(required = false) SortColumnDto sortColumnDto) {
 
         // Kanban view of records grouped by transition
-        List<KanbanViewDto<TransitionDto, List<ModuleRecordDto>>> kanbanViewDtos = moduleRecordService.getRecordsGroupedByTransition(moduleId, size, sortColumnDto);
+        List<KanbanViewDto<TransitionDto, PaginatedData<List<ModuleRecordDto>>>> kanbanViewDtos = moduleRecordService.getRecordsGroupedByTransition(moduleId, size, sortColumnDto);
         return ResponseEntity.ok().body(new ApiResponseDto("Records grouped by transition retrieved successfully", kanbanViewDtos));
     }
 
