@@ -2,6 +2,7 @@ package com.pesupal.server.dto.response.module;
 
 import com.pesupal.server.dto.response.UserPreviewDto;
 import com.pesupal.server.model.module.Module;
+import com.pesupal.server.model.user.OrgMember;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -29,6 +30,8 @@ public class ModuleDto {
 
     private Boolean readRecord;
 
+    private Boolean accessModuleBuilder;
+
     public static ModuleDto fromModule(Module module) {
 
         ModuleDto moduleDto = new ModuleDto();
@@ -39,6 +42,12 @@ public class ModuleDto {
         moduleDto.setCreatedAt(module.getCreatedAt());
         moduleDto.setPublicId(module.getPublicId());
         moduleDto.setAllowDuplicateSubject(module.isAllowDuplicateSubject());
+        return moduleDto;
+    }
+
+    public static ModuleDto fromModuleWithOrgMember(Module module, OrgMember orgMember) {
+        ModuleDto moduleDto = fromModule(module);
+        moduleDto.setAccessModuleBuilder(module.getCreatedBy().getId().equals(orgMember.getId()));
         return moduleDto;
     }
 }
