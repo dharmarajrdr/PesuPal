@@ -148,10 +148,11 @@ public class ModuleServiceImpl extends CurrentValueRetriever implements ModuleSe
     @Override
     public ModuleDto getModuleDtoById(String moduleId) {
 
+        OrgMember orgMember = getCurrentOrgMember();
         Module module = getModuleById(moduleId);
 
-        ModuleDto moduleDto = ModuleDto.fromModule(module);
-        ModulePermission modulePermission = modulePermissionService.verifyModuleAccessibility(module);
+        ModuleDto moduleDto = ModuleDto.fromModuleWithOrgMember(module, orgMember);
+        ModulePermission modulePermission = modulePermissionService.verifyModuleAccessibility(module, orgMember);
         moduleDto.setReadRecord(modulePermission.isReadRecord());
         moduleDto.setCreateRecord(modulePermission.isCreateRecord());
         return moduleDto;

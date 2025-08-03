@@ -205,7 +205,7 @@ public class ModuleRecordServiceImpl extends CurrentValueRetriever implements Mo
         Module module = moduleRecord.getModule();
         String moduleId = module.getPublicId();
 
-        validateRecordsReadAccessibility(module);
+        validateRecordsReadAccessibility(module, orgMember);
 
         ModuleMember moduleMember = moduleMemberService.getModuleMemberByOrgMemberAndModule(orgMember, module);
         ModuleRole moduleRole = moduleMember.getRole();
@@ -238,9 +238,9 @@ public class ModuleRecordServiceImpl extends CurrentValueRetriever implements Mo
         return moduleRecordDto;
     }
 
-    private void validateRecordsReadAccessibility(Module module) {
+    private void validateRecordsReadAccessibility(Module module, OrgMember orgMember) {
 
-        ModulePermission modulePermission = modulePermissionService.verifyModuleAccessibility(module);
+        ModulePermission modulePermission = modulePermissionService.verifyModuleAccessibility(module, orgMember);
         if (!modulePermission.isReadRecord()) {
             throw new PermissionDeniedException("You do not have permission to read records in this module.");
         }
@@ -266,9 +266,10 @@ public class ModuleRecordServiceImpl extends CurrentValueRetriever implements Mo
 
         Pageable pageable = PageRequest.of(page, size + 1, sort);
 
+        OrgMember orgMember = getCurrentOrgMember();
         Module module = moduleService.getModuleById(moduleId);
 
-        validateRecordsReadAccessibility(module);
+        validateRecordsReadAccessibility(module, orgMember);
 
         int totalRecords = moduleRecordRepository.countAllByModule(module);
 
