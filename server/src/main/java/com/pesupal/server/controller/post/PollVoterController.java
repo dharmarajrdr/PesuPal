@@ -3,7 +3,7 @@ package com.pesupal.server.controller.post;
 import com.pesupal.server.dto.request.post.CreatePollVoterDto;
 import com.pesupal.server.dto.response.ApiResponseDto;
 import com.pesupal.server.dto.response.post.PollDto;
-import com.pesupal.server.service.interfaces.PollVoterService;
+import com.pesupal.server.service.interfaces.post.PollVoterService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;

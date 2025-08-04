@@ -4,7 +4,7 @@ import com.pesupal.server.dto.request.chat.group_message.GetGroupConversationDto
 import com.pesupal.server.dto.response.ApiResponseDto;
 import com.pesupal.server.dto.response.MessageDto;
 import com.pesupal.server.helpers.CurrentValueRetriever;
-import com.pesupal.server.service.interfaces.group.GroupChatMessageService;
+import com.pesupal.server.service.interfaces.chat.group_message.GroupChatMessageService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

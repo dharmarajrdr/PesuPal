@@ -6,7 +6,7 @@ import com.pesupal.server.dto.response.post.PostDto;
 import com.pesupal.server.dto.response.post.PostsListDto;
 import com.pesupal.server.enums.SortOrder;
 import com.pesupal.server.model.post.Post;
-import com.pesupal.server.service.interfaces.PostService;
+import com.pesupal.server.service.interfaces.post.PostService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

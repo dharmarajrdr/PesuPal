@@ -5,7 +5,7 @@ import com.pesupal.server.dto.response.ApiResponseDto;
 import com.pesupal.server.dto.response.UserPreviewDto;
 import com.pesupal.server.dto.response.chat.group_message.GroupDto;
 import com.pesupal.server.enums.Role;
-import com.pesupal.server.service.interfaces.group.GroupChatMemberService;
+import com.pesupal.server.service.interfaces.chat.group_message.GroupChatMemberService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

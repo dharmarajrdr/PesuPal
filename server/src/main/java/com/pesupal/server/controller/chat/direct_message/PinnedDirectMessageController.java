@@ -4,7 +4,7 @@ import com.pesupal.server.dto.request.chat.direct_message.CreatePinDirectMessage
 import com.pesupal.server.dto.request.chat.direct_message.PinnedChatDto;
 import com.pesupal.server.dto.response.ApiResponseDto;
 import com.pesupal.server.helpers.CurrentValueRetriever;
-import com.pesupal.server.service.interfaces.PinnedDirectMessageService;
+import com.pesupal.server.service.interfaces.chat.direct_message.PinnedDirectMessageService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

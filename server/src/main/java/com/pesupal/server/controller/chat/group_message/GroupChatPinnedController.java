@@ -3,7 +3,7 @@ package com.pesupal.server.controller.chat.group_message;
 import com.pesupal.server.dto.request.chat.direct_message.PinnedChatDto;
 import com.pesupal.server.dto.request.chat.group_message.CreatePinGroupChatMessageDto;
 import com.pesupal.server.dto.response.ApiResponseDto;
-import com.pesupal.server.service.interfaces.group.GroupChatPinnedService;
+import com.pesupal.server.service.interfaces.chat.group_message.GroupChatPinnedService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

@@ -4,7 +4,7 @@ import com.pesupal.server.dto.request.org.CreateOrgDto;
 import com.pesupal.server.dto.response.ApiResponseDto;
 import com.pesupal.server.helpers.CurrentValueRetriever;
 import com.pesupal.server.model.org.Org;
-import com.pesupal.server.service.interfaces.OrgService;
+import com.pesupal.server.service.interfaces.org.OrgService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;

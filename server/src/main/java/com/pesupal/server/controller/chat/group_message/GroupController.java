@@ -5,7 +5,7 @@ import com.pesupal.server.dto.response.ApiResponseDto;
 import com.pesupal.server.dto.response.chat.ChatPreviewDto;
 import com.pesupal.server.dto.response.chat.RecentChatPagedDto;
 import com.pesupal.server.dto.response.chat.group_message.GroupDto;
-import com.pesupal.server.service.interfaces.group.GroupService;
+import com.pesupal.server.service.interfaces.chat.group_message.GroupService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;

@@ -5,7 +5,7 @@ import com.pesupal.server.dto.request.recruit.JobOpeningFilterDto;
 import com.pesupal.server.dto.response.ApiResponseDto;
 import com.pesupal.server.dto.response.recruit.JobOpeningDto;
 import com.pesupal.server.enums.JobOpeningStatus;
-import com.pesupal.server.service.interfaces.JobOpeningService;
+import com.pesupal.server.service.interfaces.recruit.JobOpeningService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

@@ -2,7 +2,7 @@ package com.pesupal.server.controller.org;
 
 import com.pesupal.server.dto.response.ApiResponseDto;
 import com.pesupal.server.dto.response.UserBasicInfoDto;
-import com.pesupal.server.service.interfaces.ProfileService;
+import com.pesupal.server.service.interfaces.org.ProfileService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

@@ -5,7 +5,7 @@ import com.pesupal.server.dto.response.MessageDto;
 import com.pesupal.server.enums.ChatMode;
 import com.pesupal.server.exceptions.WebsocketException;
 import com.pesupal.server.factory.ChatServiceFactory;
-import com.pesupal.server.service.interfaces.ChatService;
+import com.pesupal.server.service.interfaces.chat.ChatService;
 import lombok.AllArgsConstructor;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;

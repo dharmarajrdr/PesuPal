@@ -4,7 +4,7 @@ import com.pesupal.server.dto.request.org.AddSubscriptionDto;
 import com.pesupal.server.dto.response.ApiResponseDto;
 import com.pesupal.server.helpers.CurrentValueRetriever;
 import com.pesupal.server.model.subscription.SubscriptionPlan;
-import com.pesupal.server.service.interfaces.SubscriptionPlanService;
+import com.pesupal.server.service.interfaces.org.SubscriptionPlanService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

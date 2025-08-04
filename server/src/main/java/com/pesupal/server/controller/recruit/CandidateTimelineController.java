@@ -2,7 +2,7 @@ package com.pesupal.server.controller.recruit;
 
 import com.pesupal.server.dto.response.ApiResponseDto;
 import com.pesupal.server.helpers.CurrentValueRetriever;
-import com.pesupal.server.service.interfaces.CandidateTimelineService;
+import com.pesupal.server.service.interfaces.recruit.CandidateTimelineService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

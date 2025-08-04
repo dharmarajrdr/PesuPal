@@ -2,7 +2,7 @@ package com.pesupal.server.controller.post;
 
 import com.pesupal.server.dto.response.ApiResponseDto;
 import com.pesupal.server.dto.response.post.PostLikesDto;
-import com.pesupal.server.service.interfaces.PostLikeService;
+import com.pesupal.server.service.interfaces.post.PostLikeService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

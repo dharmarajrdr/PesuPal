@@ -3,7 +3,7 @@ package com.pesupal.server.controller.chat.group_message;
 import com.pesupal.server.dto.request.chat.group_message.UpdateGroupChatConfigurationDto;
 import com.pesupal.server.dto.response.ApiResponseDto;
 import com.pesupal.server.helpers.CurrentValueRetriever;
-import com.pesupal.server.service.interfaces.group.GroupChatConfigurationService;
+import com.pesupal.server.service.interfaces.chat.group_message.GroupChatConfigurationService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PatchMapping;

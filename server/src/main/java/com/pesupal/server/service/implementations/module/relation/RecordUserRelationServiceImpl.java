@@ -10,7 +10,7 @@ import com.pesupal.server.model.module.relation.RecordUserRelation;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.repository.RecordUserRelationRepository;
 import com.pesupal.server.service.implementations.module.RecordRelationServiceImpl;
-import com.pesupal.server.service.interfaces.OrgMemberService;
+import com.pesupal.server.service.interfaces.org.OrgMemberService;
 import com.pesupal.server.service.interfaces.module.relation.RecordUserRelationService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;

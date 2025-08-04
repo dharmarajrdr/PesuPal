@@ -9,7 +9,7 @@ import com.pesupal.server.dto.response.org.OrgDetailDto;
 import com.pesupal.server.helpers.OrgSubscriptionManager;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.security.CustomUserDetails;
-import com.pesupal.server.service.interfaces.OrgMemberService;
+import com.pesupal.server.service.interfaces.org.OrgMemberService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

@@ -2,8 +2,8 @@ package com.pesupal.server.strategies.payment_gateway;
 
 import com.pesupal.server.dto.request.PaymentDto;
 import com.pesupal.server.dto.response.WebhookDto;
-import com.pesupal.server.service.interfaces.PaymentGateway;
-import com.pesupal.server.service.interfaces.WebhookService;
+import com.pesupal.server.service.interfaces.chat.WebhookService;
+import com.pesupal.server.service.interfaces.payment.PaymentGateway;
 import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
 import com.stripe.model.*;

@@ -7,8 +7,8 @@ import com.pesupal.server.exceptions.PermissionDeniedException;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.model.workdrive.Folder;
 import com.pesupal.server.model.workdrive.PublicFolder;
-import com.pesupal.server.service.interfaces.PublicFolderService;
-import com.pesupal.server.service.interfaces.SecuredFolderPermissionService;
+import com.pesupal.server.service.interfaces.drive.PublicFolderService;
+import com.pesupal.server.service.interfaces.drive.SecuredFolderPermissionService;
 
 public abstract class WorkspaceSupportsPublicFolder {
 

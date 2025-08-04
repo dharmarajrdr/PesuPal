@@ -12,7 +12,7 @@ import com.pesupal.server.model.module.ModulePermission;
 import com.pesupal.server.model.module.ModuleRole;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.repository.ModuleMemberRepository;
-import com.pesupal.server.service.interfaces.OrgMemberService;
+import com.pesupal.server.service.interfaces.org.OrgMemberService;
 import com.pesupal.server.service.interfaces.module.ModuleMemberService;
 import com.pesupal.server.service.interfaces.module.ModulePermissionService;
 import com.pesupal.server.service.interfaces.module.ModuleService;

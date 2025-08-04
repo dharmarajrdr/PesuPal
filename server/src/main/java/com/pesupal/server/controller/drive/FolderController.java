@@ -6,7 +6,7 @@ import com.pesupal.server.dto.response.drive.FileOrFolderDto;
 import com.pesupal.server.dto.response.drive.FolderDto;
 import com.pesupal.server.enums.Workspace;
 import com.pesupal.server.helpers.CurrentValueRetriever;
-import com.pesupal.server.service.interfaces.FolderService;
+import com.pesupal.server.service.interfaces.drive.FolderService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

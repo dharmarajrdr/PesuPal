@@ -4,7 +4,7 @@ import com.pesupal.server.dto.request.drive.CreateFileDto;
 import com.pesupal.server.dto.response.ApiResponseDto;
 import com.pesupal.server.dto.response.drive.FileDto;
 import com.pesupal.server.helpers.CurrentValueRetriever;
-import com.pesupal.server.service.interfaces.FileService;
+import com.pesupal.server.service.interfaces.drive.FileService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;

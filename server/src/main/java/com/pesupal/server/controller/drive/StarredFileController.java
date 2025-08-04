@@ -1,7 +1,7 @@
 package com.pesupal.server.controller.drive;
 
 import com.pesupal.server.dto.response.ApiResponseDto;
-import com.pesupal.server.service.interfaces.StarredFileService;
+import com.pesupal.server.service.interfaces.drive.StarredFileService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
