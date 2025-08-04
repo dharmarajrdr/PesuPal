@@ -5,7 +5,7 @@ import com.pesupal.server.model.module.Module;
 import com.pesupal.server.model.module.ModuleField;
 import com.pesupal.server.model.module.ModuleRecord;
 import com.pesupal.server.model.module.relation.RecordFileRelation;
-import com.pesupal.server.repository.RecordFileRelationRepository;
+import com.pesupal.server.repository.module.relation.RecordFileRelationRepository;
 import com.pesupal.server.service.implementations.module.RecordRelationServiceImpl;
 import com.pesupal.server.service.interfaces.module.relation.RecordFileRelationService;
 import lombok.AllArgsConstructor;

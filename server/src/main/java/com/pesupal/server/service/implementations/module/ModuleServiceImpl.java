@@ -11,7 +11,7 @@ import com.pesupal.server.helpers.ModuleHelper;
 import com.pesupal.server.model.module.Module;
 import com.pesupal.server.model.module.ModulePermission;
 import com.pesupal.server.model.user.OrgMember;
-import com.pesupal.server.repository.ModuleRepository;
+import com.pesupal.server.repository.module.ModuleRepository;
 import com.pesupal.server.service.interfaces.module.*;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;

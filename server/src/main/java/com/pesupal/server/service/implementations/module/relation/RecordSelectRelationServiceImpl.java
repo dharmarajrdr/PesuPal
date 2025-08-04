@@ -8,7 +8,7 @@ import com.pesupal.server.model.module.ModuleField;
 import com.pesupal.server.model.module.ModuleRecord;
 import com.pesupal.server.model.module.ModuleSelectOption;
 import com.pesupal.server.model.module.relation.RecordSelectRelation;
-import com.pesupal.server.repository.RecordSelectRelationRepository;
+import com.pesupal.server.repository.module.relation.RecordSelectRelationRepository;
 import com.pesupal.server.service.implementations.module.RecordRelationServiceImpl;
 import com.pesupal.server.service.interfaces.module.ModuleSelectOptionService;
 import com.pesupal.server.service.interfaces.module.relation.RecordSelectRelationService;
