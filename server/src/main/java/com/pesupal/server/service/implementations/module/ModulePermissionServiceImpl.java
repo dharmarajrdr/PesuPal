@@ -6,7 +6,7 @@ import com.pesupal.server.helpers.CurrentValueRetriever;
 import com.pesupal.server.model.module.*;
 import com.pesupal.server.model.module.Module;
 import com.pesupal.server.model.user.OrgMember;
-import com.pesupal.server.repository.ModulePermissionRepository;
+import com.pesupal.server.repository.module.ModulePermissionRepository;
 import com.pesupal.server.service.interfaces.module.ModuleMemberService;
 import com.pesupal.server.service.interfaces.module.ModulePermissionService;
 import org.springframework.context.annotation.Lazy;

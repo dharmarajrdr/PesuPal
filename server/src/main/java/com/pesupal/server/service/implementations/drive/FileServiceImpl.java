@@ -10,7 +10,7 @@ import com.pesupal.server.helpers.CurrentValueRetriever;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.model.workdrive.File;
 import com.pesupal.server.model.workdrive.Folder;
-import com.pesupal.server.repository.FileRepository;
+import com.pesupal.server.repository.drive.FileRepository;
 import com.pesupal.server.service.interfaces.drive.FileService;
 import com.pesupal.server.service.interfaces.drive.FolderService;
 import jakarta.transaction.Transactional;

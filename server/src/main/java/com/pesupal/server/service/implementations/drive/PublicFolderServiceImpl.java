@@ -2,7 +2,7 @@ package com.pesupal.server.service.implementations.drive;
 
 import com.pesupal.server.enums.CRUD;
 import com.pesupal.server.model.workdrive.PublicFolder;
-import com.pesupal.server.repository.PublicFolderRepository;
+import com.pesupal.server.repository.drive.PublicFolderRepository;
 import com.pesupal.server.service.interfaces.drive.PublicFolderService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;

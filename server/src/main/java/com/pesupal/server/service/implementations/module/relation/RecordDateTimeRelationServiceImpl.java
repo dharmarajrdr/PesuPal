@@ -6,7 +6,7 @@ import com.pesupal.server.model.module.Module;
 import com.pesupal.server.model.module.ModuleField;
 import com.pesupal.server.model.module.ModuleRecord;
 import com.pesupal.server.model.module.relation.RecordDateTimeRelation;
-import com.pesupal.server.repository.RecordDateTimeRelationRepository;
+import com.pesupal.server.repository.module.relation.RecordDateTimeRelationRepository;
 import com.pesupal.server.service.implementations.module.RecordRelationServiceImpl;
 import com.pesupal.server.service.interfaces.module.relation.RecordDateTimeRelationService;
 import lombok.AllArgsConstructor;

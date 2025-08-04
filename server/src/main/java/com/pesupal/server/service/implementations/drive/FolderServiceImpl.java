@@ -11,7 +11,7 @@ import com.pesupal.server.factory.WorkspaceFactory;
 import com.pesupal.server.helpers.CurrentValueRetriever;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.model.workdrive.Folder;
-import com.pesupal.server.repository.FolderRepository;
+import com.pesupal.server.repository.drive.FolderRepository;
 import com.pesupal.server.service.interfaces.drive.FolderService;
 import com.pesupal.server.service.interfaces.drive.WorkdriveSpace;
 import com.pesupal.server.service.interfaces.org.OrgMemberService;

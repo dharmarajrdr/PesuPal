@@ -10,7 +10,7 @@ import com.pesupal.server.exceptions.PermissionDeniedException;
 import com.pesupal.server.helpers.CurrentValueRetriever;
 import com.pesupal.server.model.recruit.JobOpening;
 import com.pesupal.server.model.user.OrgMember;
-import com.pesupal.server.repository.JobOpeningRepository;
+import com.pesupal.server.repository.recruit.JobOpeningRepository;
 import com.pesupal.server.service.interfaces.org.OrgMemberService;
 import com.pesupal.server.service.interfaces.recruit.JobOpeningService;
 import lombok.AllArgsConstructor;

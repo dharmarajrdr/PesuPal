@@ -11,7 +11,7 @@ import com.pesupal.server.model.chat.DirectMessage;
 import com.pesupal.server.model.chat.DirectMessageReaction;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.projections.ReactionCountProjection;
-import com.pesupal.server.repository.DirectMessageReactionRepository;
+import com.pesupal.server.repository.chat.direct_message.DirectMessageReactionRepository;
 import com.pesupal.server.service.interfaces.chat.direct_message.DirectMessageReactionService;
 import com.pesupal.server.service.interfaces.chat.direct_message.DirectMessageService;
 import lombok.AllArgsConstructor;

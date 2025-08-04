@@ -6,7 +6,7 @@ import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.model.workdrive.Folder;
 import com.pesupal.server.model.workdrive.PublicFolder;
 import com.pesupal.server.model.workdrive.SecuredFolderPermission;
-import com.pesupal.server.repository.SecuredFolderPermissionRepository;
+import com.pesupal.server.repository.drive.SecuredFolderPermissionRepository;
 import com.pesupal.server.service.interfaces.drive.SecuredFolderPermissionService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;

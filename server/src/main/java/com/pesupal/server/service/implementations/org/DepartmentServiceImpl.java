@@ -7,7 +7,7 @@ import com.pesupal.server.helpers.CurrentValueRetriever;
 import com.pesupal.server.model.department.Department;
 import com.pesupal.server.model.org.Org;
 import com.pesupal.server.model.user.OrgMember;
-import com.pesupal.server.repository.DepartmentRepository;
+import com.pesupal.server.repository.org.DepartmentRepository;
 import com.pesupal.server.service.interfaces.org.DepartmentService;
 import com.pesupal.server.service.interfaces.org.OrgMemberService;
 import lombok.AllArgsConstructor;

@@ -9,7 +9,7 @@ import com.pesupal.server.model.post.PollOption;
 import com.pesupal.server.model.post.PollVoter;
 import com.pesupal.server.model.post.Post;
 import com.pesupal.server.model.user.OrgMember;
-import com.pesupal.server.repository.PollVoterRepository;
+import com.pesupal.server.repository.post.PollVoterRepository;
 import com.pesupal.server.service.interfaces.post.PollService;
 import com.pesupal.server.service.interfaces.post.PollVoterService;
 import com.pesupal.server.service.interfaces.post.PostService;

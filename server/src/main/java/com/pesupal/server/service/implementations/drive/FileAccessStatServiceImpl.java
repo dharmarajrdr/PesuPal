@@ -7,7 +7,7 @@ import com.pesupal.server.exceptions.PermissionDeniedException;
 import com.pesupal.server.helpers.CurrentValueRetriever;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.model.workdrive.File;
-import com.pesupal.server.repository.FileAccessStatRepository;
+import com.pesupal.server.repository.drive.FileAccessStatRepository;
 import com.pesupal.server.service.interfaces.drive.FileAccessStatService;
 import com.pesupal.server.service.interfaces.drive.FileService;
 import com.pesupal.server.service.interfaces.org.OrgMemberService;

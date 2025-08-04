@@ -6,7 +6,7 @@ import com.pesupal.server.helpers.CurrentValueRetriever;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.model.workdrive.File;
 import com.pesupal.server.model.workdrive.StarredFile;
-import com.pesupal.server.repository.StarredFileRepository;
+import com.pesupal.server.repository.drive.StarredFileRepository;
 import com.pesupal.server.service.interfaces.drive.FileService;
 import com.pesupal.server.service.interfaces.org.OrgMemberService;
 import com.pesupal.server.service.interfaces.drive.StarredFileService;

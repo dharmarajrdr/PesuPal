@@ -7,7 +7,7 @@ import com.pesupal.server.helpers.CurrentValueRetriever;
 import com.pesupal.server.model.post.Post;
 import com.pesupal.server.model.post.PostLike;
 import com.pesupal.server.model.user.OrgMember;
-import com.pesupal.server.repository.PostLikeRepository;
+import com.pesupal.server.repository.post.PostLikeRepository;
 import com.pesupal.server.service.interfaces.org.OrgMemberService;
 import com.pesupal.server.service.interfaces.post.PostLikeService;
 import com.pesupal.server.service.interfaces.post.PostService;

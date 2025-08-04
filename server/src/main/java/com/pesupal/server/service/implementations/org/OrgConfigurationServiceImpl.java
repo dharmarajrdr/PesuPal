@@ -3,7 +3,7 @@ package com.pesupal.server.service.implementations.org;
 import com.pesupal.server.enums.Role;
 import com.pesupal.server.model.org.Org;
 import com.pesupal.server.model.org.OrgConfiguration;
-import com.pesupal.server.repository.OrgConfigurationRepository;
+import com.pesupal.server.repository.org.OrgConfigurationRepository;
 import com.pesupal.server.service.interfaces.org.OrgConfigurationService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;

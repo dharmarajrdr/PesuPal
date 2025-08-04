@@ -9,7 +9,7 @@ import com.pesupal.server.helpers.CurrentValueRetriever;
 import com.pesupal.server.model.chat.DirectMessageChat;
 import com.pesupal.server.model.chat.PinnedDirectMessage;
 import com.pesupal.server.model.user.OrgMember;
-import com.pesupal.server.repository.PinnedDirectMessageRepository;
+import com.pesupal.server.repository.chat.direct_message.PinnedDirectMessageRepository;
 import com.pesupal.server.service.interfaces.chat.direct_message.DirectMessageChatService;
 import com.pesupal.server.service.interfaces.chat.direct_message.PinnedDirectMessageService;
 import lombok.AllArgsConstructor;

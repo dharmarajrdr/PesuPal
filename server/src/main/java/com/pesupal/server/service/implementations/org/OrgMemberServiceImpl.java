@@ -19,7 +19,7 @@ import com.pesupal.server.model.org.OrgSubscriptionHistory;
 import com.pesupal.server.model.user.Designation;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.model.user.User;
-import com.pesupal.server.repository.OrgMemberRepository;
+import com.pesupal.server.repository.org.OrgMemberRepository;
 import com.pesupal.server.service.interfaces.*;
 import com.pesupal.server.service.interfaces.chat.direct_message.DirectMessageChatService;
 import com.pesupal.server.service.interfaces.org.*;

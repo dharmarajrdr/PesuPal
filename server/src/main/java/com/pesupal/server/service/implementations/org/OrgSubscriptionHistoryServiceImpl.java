@@ -11,7 +11,7 @@ import com.pesupal.server.model.org.OrgSubscriptionHistory;
 import com.pesupal.server.model.payment.Transaction;
 import com.pesupal.server.model.subscription.SubscriptionPlan;
 import com.pesupal.server.model.user.OrgMember;
-import com.pesupal.server.repository.OrgSubscriptionHistoryRepository;
+import com.pesupal.server.repository.org.OrgSubscriptionHistoryRepository;
 import com.pesupal.server.service.interfaces.org.OrgMemberService;
 import com.pesupal.server.service.interfaces.org.OrgService;
 import com.pesupal.server.service.interfaces.org.OrgSubscriptionHistoryService;

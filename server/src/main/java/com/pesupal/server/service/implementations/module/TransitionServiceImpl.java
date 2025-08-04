@@ -2,7 +2,7 @@ package com.pesupal.server.service.implementations.module;
 
 import com.pesupal.server.model.module.ModuleField;
 import com.pesupal.server.model.module.Transition;
-import com.pesupal.server.repository.TransitionRepository;
+import com.pesupal.server.repository.module.TransitionRepository;
 import com.pesupal.server.service.interfaces.module.TransitionService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;

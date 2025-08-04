@@ -9,7 +9,7 @@ import com.pesupal.server.helpers.CurrentValueRetriever;
 import com.pesupal.server.model.post.Post;
 import com.pesupal.server.model.post.PostComment;
 import com.pesupal.server.model.user.OrgMember;
-import com.pesupal.server.repository.PostCommentRepository;
+import com.pesupal.server.repository.post.PostCommentRepository;
 import com.pesupal.server.service.interfaces.org.OrgMemberService;
 import com.pesupal.server.service.interfaces.post.PostCommentService;
 import com.pesupal.server.service.interfaces.post.PostService;

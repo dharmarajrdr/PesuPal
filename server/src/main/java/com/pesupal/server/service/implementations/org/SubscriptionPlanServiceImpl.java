@@ -6,7 +6,7 @@ import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.exceptions.PermissionDeniedException;
 import com.pesupal.server.model.subscription.SubscriptionPlan;
 import com.pesupal.server.model.user.User;
-import com.pesupal.server.repository.SubscriptionPlanRepository;
+import com.pesupal.server.repository.org.SubscriptionPlanRepository;
 import com.pesupal.server.service.interfaces.UserService;
 import com.pesupal.server.service.interfaces.org.SubscriptionPlanService;
 import lombok.AllArgsConstructor;

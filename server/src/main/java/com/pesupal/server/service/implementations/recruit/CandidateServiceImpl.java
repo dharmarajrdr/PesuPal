@@ -15,7 +15,7 @@ import com.pesupal.server.model.recruit.CandidateTimeline;
 import com.pesupal.server.model.recruit.JobOpening;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.model.user.User;
-import com.pesupal.server.repository.CandidateRepository;
+import com.pesupal.server.repository.recruit.CandidateRepository;
 import com.pesupal.server.service.interfaces.UserService;
 import com.pesupal.server.service.interfaces.org.OrgMemberService;
 import com.pesupal.server.service.interfaces.recruit.CandidateService;

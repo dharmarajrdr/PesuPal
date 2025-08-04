@@ -13,7 +13,7 @@ import com.pesupal.server.model.group.Group;
 import com.pesupal.server.model.group.GroupChatConfiguration;
 import com.pesupal.server.model.group.GroupChatMember;
 import com.pesupal.server.model.user.OrgMember;
-import com.pesupal.server.repository.GroupChatMemberRepository;
+import com.pesupal.server.repository.chat.group_message.GroupChatMemberRepository;
 import com.pesupal.server.service.interfaces.org.OrgMemberService;
 import com.pesupal.server.service.interfaces.chat.group_message.GroupChatConfigurationService;
 import com.pesupal.server.service.interfaces.chat.group_message.GroupChatMemberService;

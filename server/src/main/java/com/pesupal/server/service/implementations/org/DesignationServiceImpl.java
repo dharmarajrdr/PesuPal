@@ -7,7 +7,7 @@ import com.pesupal.server.exceptions.DuplicateDataReceivedException;
 import com.pesupal.server.model.org.Org;
 import com.pesupal.server.model.user.Designation;
 import com.pesupal.server.projections.DesignationProjection;
-import com.pesupal.server.repository.DesignationRepository;
+import com.pesupal.server.repository.org.DesignationRepository;
 import com.pesupal.server.service.interfaces.org.DesignationService;
 import com.pesupal.server.service.interfaces.org.OrgService;
 import lombok.AllArgsConstructor;

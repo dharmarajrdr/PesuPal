@@ -1,7 +1,7 @@
 package com.pesupal.server.service.implementations.post;
 
 import com.pesupal.server.model.post.Tag;
-import com.pesupal.server.repository.TagRepository;
+import com.pesupal.server.repository.post.TagRepository;
 import com.pesupal.server.service.interfaces.post.TagService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;

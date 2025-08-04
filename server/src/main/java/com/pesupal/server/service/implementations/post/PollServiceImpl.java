@@ -11,7 +11,7 @@ import com.pesupal.server.model.post.Poll;
 import com.pesupal.server.model.post.PollOption;
 import com.pesupal.server.model.post.Post;
 import com.pesupal.server.model.user.OrgMember;
-import com.pesupal.server.repository.PollRepository;
+import com.pesupal.server.repository.post.PollRepository;
 import com.pesupal.server.service.interfaces.org.OrgMemberService;
 import com.pesupal.server.service.interfaces.post.PollService;
 import lombok.AllArgsConstructor;

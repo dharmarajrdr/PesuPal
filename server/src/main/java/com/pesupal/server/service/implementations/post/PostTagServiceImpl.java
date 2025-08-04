@@ -2,7 +2,7 @@ package com.pesupal.server.service.implementations.post;
 
 import com.pesupal.server.enums.PostStatus;
 import com.pesupal.server.model.post.PostTag;
-import com.pesupal.server.repository.PostTagRepository;
+import com.pesupal.server.repository.post.PostTagRepository;
 import com.pesupal.server.service.interfaces.post.PostTagService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;

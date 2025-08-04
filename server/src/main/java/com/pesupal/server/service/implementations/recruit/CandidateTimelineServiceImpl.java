@@ -7,7 +7,7 @@ import com.pesupal.server.exceptions.PermissionDeniedException;
 import com.pesupal.server.model.recruit.Candidate;
 import com.pesupal.server.model.recruit.CandidateTimeline;
 import com.pesupal.server.model.user.OrgMember;
-import com.pesupal.server.repository.CandidateTimelineRepository;
+import com.pesupal.server.repository.recruit.CandidateTimelineRepository;
 import com.pesupal.server.service.interfaces.recruit.CandidateService;
 import com.pesupal.server.service.interfaces.recruit.CandidateTimelineService;
 import com.pesupal.server.service.interfaces.org.OrgMemberService;

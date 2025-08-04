@@ -19,7 +19,7 @@ import com.pesupal.server.model.post.PostMedia;
 import com.pesupal.server.model.post.PostTag;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.model.user.User;
-import com.pesupal.server.repository.PostRepository;
+import com.pesupal.server.repository.post.PostRepository;
 import com.pesupal.server.service.interfaces.org.OrgMemberService;
 import com.pesupal.server.service.interfaces.post.PollService;
 import com.pesupal.server.service.interfaces.post.PostService;

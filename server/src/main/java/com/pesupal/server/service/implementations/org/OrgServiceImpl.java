@@ -5,7 +5,7 @@ import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.exceptions.DuplicateDataReceivedException;
 import com.pesupal.server.model.org.Org;
 import com.pesupal.server.model.user.User;
-import com.pesupal.server.repository.OrgRepository;
+import com.pesupal.server.repository.org.OrgRepository;
 import com.pesupal.server.service.interfaces.UserService;
 import com.pesupal.server.service.interfaces.org.*;
 import jakarta.transaction.Transactional;

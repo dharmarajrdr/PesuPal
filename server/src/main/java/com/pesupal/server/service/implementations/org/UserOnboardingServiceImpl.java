@@ -4,7 +4,7 @@ import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.model.user.User;
 import com.pesupal.server.model.user.UserOnboarding;
-import com.pesupal.server.repository.UserOnboardingRepository;
+import com.pesupal.server.repository.org.UserOnboardingRepository;
 import com.pesupal.server.service.interfaces.org.UserOnboardingService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;

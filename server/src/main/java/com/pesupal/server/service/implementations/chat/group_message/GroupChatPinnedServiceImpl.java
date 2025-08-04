@@ -8,7 +8,7 @@ import com.pesupal.server.helpers.CurrentValueRetriever;
 import com.pesupal.server.model.group.Group;
 import com.pesupal.server.model.group.GroupChatPinned;
 import com.pesupal.server.model.user.OrgMember;
-import com.pesupal.server.repository.GroupChatPinnedRepository;
+import com.pesupal.server.repository.chat.group_message.GroupChatPinnedRepository;
 import com.pesupal.server.service.interfaces.chat.group_message.GroupChatPinnedService;
 import com.pesupal.server.service.interfaces.chat.group_message.GroupService;
 import org.springframework.context.annotation.Lazy;
