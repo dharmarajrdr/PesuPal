@@ -2,7 +2,7 @@ package com.pesupal.server.service.implementations;
 
 import com.pesupal.server.config.StaticConfig;
 import com.pesupal.server.dto.request.PaymentDto;
-import com.pesupal.server.dto.request.PurchaseSubscriptionDto;
+import com.pesupal.server.dto.request.org.PurchaseSubscriptionDto;
 import com.pesupal.server.enums.PaymentStatus;
 import com.pesupal.server.enums.SupportedGateway;
 import com.pesupal.server.exceptions.ActionProhibitedException;

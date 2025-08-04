@@ -1,7 +1,7 @@
 package com.pesupal.server.service.interfaces;
 
-import com.pesupal.server.dto.request.CreatePollDto;
-import com.pesupal.server.dto.request.UpdatePollDto;
+import com.pesupal.server.dto.request.post.CreatePollDto;
+import com.pesupal.server.dto.request.post.UpdatePollDto;
 import com.pesupal.server.model.post.Poll;
 import com.pesupal.server.model.post.Post;
 

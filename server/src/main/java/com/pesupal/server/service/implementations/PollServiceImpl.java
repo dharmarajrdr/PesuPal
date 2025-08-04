@@ -1,8 +1,8 @@
 package com.pesupal.server.service.implementations;
 
 import com.pesupal.server.config.StaticConfig;
-import com.pesupal.server.dto.request.CreatePollDto;
-import com.pesupal.server.dto.request.UpdatePollDto;
+import com.pesupal.server.dto.request.post.CreatePollDto;
+import com.pesupal.server.dto.request.post.UpdatePollDto;
 import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.exceptions.PermissionDeniedException;

@@ -1,9 +1,9 @@
 package com.pesupal.server.service.implementations;
 
 import com.pesupal.server.config.StaticConfig;
-import com.pesupal.server.dto.request.CreateJobOpeningDto;
-import com.pesupal.server.dto.request.JobOpeningFilterDto;
-import com.pesupal.server.dto.response.JobOpeningDto;
+import com.pesupal.server.dto.request.recruit.CreateJobOpeningDto;
+import com.pesupal.server.dto.request.recruit.JobOpeningFilterDto;
+import com.pesupal.server.dto.response.recruit.JobOpeningDto;
 import com.pesupal.server.enums.JobOpeningStatus;
 import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.exceptions.PermissionDeniedException;

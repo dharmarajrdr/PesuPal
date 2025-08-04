@@ -1,8 +1,8 @@
 package com.pesupal.server.controller.drive;
 
-import com.pesupal.server.dto.request.CreateFileDto;
+import com.pesupal.server.dto.request.drive.CreateFileDto;
 import com.pesupal.server.dto.response.ApiResponseDto;
-import com.pesupal.server.dto.response.FileDto;
+import com.pesupal.server.dto.response.drive.FileDto;
 import com.pesupal.server.helpers.CurrentValueRetriever;
 import com.pesupal.server.service.interfaces.FileService;
 import lombok.AllArgsConstructor;

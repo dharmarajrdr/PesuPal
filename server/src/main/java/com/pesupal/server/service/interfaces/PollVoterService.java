@@ -1,7 +1,7 @@
 package com.pesupal.server.service.interfaces;
 
-import com.pesupal.server.dto.request.CreatePollVoterDto;
-import com.pesupal.server.dto.response.PollDto;
+import com.pesupal.server.dto.request.post.CreatePollVoterDto;
+import com.pesupal.server.dto.response.post.PollDto;
 
 public interface PollVoterService {
 

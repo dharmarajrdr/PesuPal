@@ -1,8 +1,8 @@
 package com.pesupal.server.strategies.workspace;
 
-import com.pesupal.server.dto.request.CreateFolderDto;
-import com.pesupal.server.dto.response.FileOrFolderDto;
-import com.pesupal.server.dto.response.FolderDto;
+import com.pesupal.server.dto.request.drive.CreateFolderDto;
+import com.pesupal.server.dto.response.drive.FileOrFolderDto;
+import com.pesupal.server.dto.response.drive.FolderDto;
 import com.pesupal.server.enums.CRUD;
 import com.pesupal.server.enums.FileOrFolder;
 import com.pesupal.server.enums.Workspace;

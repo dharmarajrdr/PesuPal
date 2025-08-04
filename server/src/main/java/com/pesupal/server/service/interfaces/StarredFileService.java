@@ -1,6 +1,6 @@
 package com.pesupal.server.service.interfaces;
 
-import com.pesupal.server.dto.response.FileDto;
+import com.pesupal.server.dto.response.drive.FileDto;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.model.workdrive.File;
 

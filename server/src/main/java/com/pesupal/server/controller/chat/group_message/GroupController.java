@@ -1,10 +1,10 @@
 package com.pesupal.server.controller.chat.group_message;
 
-import com.pesupal.server.dto.request.group.CreateGroupDto;
+import com.pesupal.server.dto.request.chat.group_message.CreateGroupDto;
 import com.pesupal.server.dto.response.ApiResponseDto;
-import com.pesupal.server.dto.response.ChatPreviewDto;
-import com.pesupal.server.dto.response.RecentChatPagedDto;
-import com.pesupal.server.dto.response.group.GroupDto;
+import com.pesupal.server.dto.response.chat.ChatPreviewDto;
+import com.pesupal.server.dto.response.chat.RecentChatPagedDto;
+import com.pesupal.server.dto.response.chat.group_message.GroupDto;
 import com.pesupal.server.service.interfaces.group.GroupService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Pageable;

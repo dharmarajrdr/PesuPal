@@ -1,8 +1,8 @@
 package com.pesupal.server.service.implementations;
 
 import com.pesupal.server.config.StaticConfig;
-import com.pesupal.server.dto.request.CreateCandidateTimelineDto;
-import com.pesupal.server.dto.response.CandidateTimelineDto;
+import com.pesupal.server.dto.request.recruit.CreateCandidateTimelineDto;
+import com.pesupal.server.dto.response.recruit.CandidateTimelineDto;
 import com.pesupal.server.exceptions.PermissionDeniedException;
 import com.pesupal.server.model.recruit.Candidate;
 import com.pesupal.server.model.recruit.CandidateTimeline;

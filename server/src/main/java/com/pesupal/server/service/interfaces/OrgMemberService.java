@@ -1,9 +1,9 @@
 package com.pesupal.server.service.interfaces;
 
-import com.pesupal.server.dto.request.AddOrgMemberDto;
-import com.pesupal.server.dto.response.OrgDetailDto;
+import com.pesupal.server.dto.request.org.AddOrgMemberDto;
 import com.pesupal.server.dto.response.UserBasicInfoDto;
 import com.pesupal.server.dto.response.UserPreviewDto;
+import com.pesupal.server.dto.response.org.OrgDetailDto;
 import com.pesupal.server.model.org.Org;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.model.user.User;

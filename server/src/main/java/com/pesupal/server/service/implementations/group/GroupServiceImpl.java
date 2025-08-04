@@ -1,11 +1,11 @@
 package com.pesupal.server.service.implementations.group;
 
-import com.pesupal.server.dto.request.group.CreateGroupDto;
-import com.pesupal.server.dto.response.ChatPreviewDto;
-import com.pesupal.server.dto.response.LastMessageDto;
-import com.pesupal.server.dto.response.RecentChatDto;
-import com.pesupal.server.dto.response.RecentChatPagedDto;
-import com.pesupal.server.dto.response.group.GroupDto;
+import com.pesupal.server.dto.request.chat.group_message.CreateGroupDto;
+import com.pesupal.server.dto.response.chat.ChatPreviewDto;
+import com.pesupal.server.dto.response.chat.LastMessageDto;
+import com.pesupal.server.dto.response.chat.RecentChatDto;
+import com.pesupal.server.dto.response.chat.RecentChatPagedDto;
+import com.pesupal.server.dto.response.chat.group_message.GroupDto;
 import com.pesupal.server.enums.Role;
 import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.exceptions.DataNotFoundException;

@@ -1,6 +1,6 @@
 package com.pesupal.server.service.interfaces.group;
 
-import com.pesupal.server.dto.request.group.UpdateGroupChatConfigurationDto;
+import com.pesupal.server.dto.request.chat.group_message.UpdateGroupChatConfigurationDto;
 import com.pesupal.server.enums.Role;
 import com.pesupal.server.model.group.Group;
 import com.pesupal.server.model.group.GroupChatConfiguration;

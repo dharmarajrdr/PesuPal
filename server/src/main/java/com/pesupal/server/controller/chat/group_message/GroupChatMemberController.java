@@ -1,9 +1,9 @@
 package com.pesupal.server.controller.chat.group_message;
 
-import com.pesupal.server.dto.request.group.AddGroupMemberDto;
+import com.pesupal.server.dto.request.chat.group_message.AddGroupMemberDto;
 import com.pesupal.server.dto.response.ApiResponseDto;
 import com.pesupal.server.dto.response.UserPreviewDto;
-import com.pesupal.server.dto.response.group.GroupDto;
+import com.pesupal.server.dto.response.chat.group_message.GroupDto;
 import com.pesupal.server.enums.Role;
 import com.pesupal.server.service.interfaces.group.GroupChatMemberService;
 import lombok.AllArgsConstructor;

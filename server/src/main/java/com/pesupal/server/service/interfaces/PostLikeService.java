@@ -1,6 +1,6 @@
 package com.pesupal.server.service.interfaces;
 
-import com.pesupal.server.dto.response.PostLikesDto;
+import com.pesupal.server.dto.response.post.PostLikesDto;
 
 import java.util.List;
 

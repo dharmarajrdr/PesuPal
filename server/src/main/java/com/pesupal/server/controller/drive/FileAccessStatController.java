@@ -1,8 +1,8 @@
 package com.pesupal.server.controller.drive;
 
 import com.pesupal.server.dto.response.ApiResponseDto;
-import com.pesupal.server.dto.response.FileAccessStatDto;
-import com.pesupal.server.dto.response.FileDto;
+import com.pesupal.server.dto.response.drive.FileAccessStatDto;
+import com.pesupal.server.dto.response.drive.FileDto;
 import com.pesupal.server.service.interfaces.FileAccessStatService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;

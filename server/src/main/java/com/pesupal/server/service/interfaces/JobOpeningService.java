@@ -1,8 +1,8 @@
 package com.pesupal.server.service.interfaces;
 
-import com.pesupal.server.dto.request.CreateJobOpeningDto;
-import com.pesupal.server.dto.request.JobOpeningFilterDto;
-import com.pesupal.server.dto.response.JobOpeningDto;
+import com.pesupal.server.dto.request.recruit.CreateJobOpeningDto;
+import com.pesupal.server.dto.request.recruit.JobOpeningFilterDto;
+import com.pesupal.server.dto.response.recruit.JobOpeningDto;
 import com.pesupal.server.model.recruit.JobOpening;
 
 import java.util.List;

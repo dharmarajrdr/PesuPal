@@ -1,9 +1,9 @@
 package com.pesupal.server.controller.recruit;
 
-import com.pesupal.server.dto.request.CreateJobOpeningDto;
-import com.pesupal.server.dto.request.JobOpeningFilterDto;
+import com.pesupal.server.dto.request.recruit.CreateJobOpeningDto;
+import com.pesupal.server.dto.request.recruit.JobOpeningFilterDto;
 import com.pesupal.server.dto.response.ApiResponseDto;
-import com.pesupal.server.dto.response.JobOpeningDto;
+import com.pesupal.server.dto.response.recruit.JobOpeningDto;
 import com.pesupal.server.enums.JobOpeningStatus;
 import com.pesupal.server.service.interfaces.JobOpeningService;
 import lombok.AllArgsConstructor;

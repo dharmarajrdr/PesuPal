@@ -1,7 +1,7 @@
 package com.pesupal.server.service.implementations;
 
-import com.pesupal.server.dto.request.CreateReplyCommentDto;
-import com.pesupal.server.dto.response.ReplyCommentDto;
+import com.pesupal.server.dto.request.post.CreateReplyCommentDto;
+import com.pesupal.server.dto.response.post.ReplyCommentDto;
 import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.exceptions.PermissionDeniedException;
 import com.pesupal.server.helpers.CurrentValueRetriever;

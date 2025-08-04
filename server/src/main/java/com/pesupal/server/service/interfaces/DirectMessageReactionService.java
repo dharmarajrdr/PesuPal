@@ -1,6 +1,6 @@
 package com.pesupal.server.service.interfaces;
 
-import com.pesupal.server.dto.response.ReactMessageResponseDto;
+import com.pesupal.server.dto.response.chat.ReactMessageResponseDto;
 import com.pesupal.server.enums.Reaction;
 import com.pesupal.server.model.chat.DirectMessage;
 import com.pesupal.server.model.chat.DirectMessageReaction;

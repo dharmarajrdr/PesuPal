@@ -1,8 +1,8 @@
 package com.pesupal.server.service.implementations.group;
 
-import com.pesupal.server.dto.request.group.AddGroupMemberDto;
+import com.pesupal.server.dto.request.chat.group_message.AddGroupMemberDto;
 import com.pesupal.server.dto.response.UserPreviewDto;
-import com.pesupal.server.dto.response.group.GroupDto;
+import com.pesupal.server.dto.response.chat.group_message.GroupDto;
 import com.pesupal.server.enums.Role;
 import com.pesupal.server.enums.Visibility;
 import com.pesupal.server.exceptions.ActionProhibitedException;

@@ -1,6 +1,6 @@
 package com.pesupal.server.service.implementations;
 
-import com.pesupal.server.dto.request.CreateOrgDto;
+import com.pesupal.server.dto.request.org.CreateOrgDto;
 import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.exceptions.DuplicateDataReceivedException;
 import com.pesupal.server.model.org.Org;

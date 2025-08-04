@@ -1,8 +1,8 @@
 package com.pesupal.server.service.interfaces;
 
-import com.pesupal.server.dto.request.CreatePostDto;
-import com.pesupal.server.dto.response.PostDto;
-import com.pesupal.server.dto.response.PostsListDto;
+import com.pesupal.server.dto.request.post.CreatePostDto;
+import com.pesupal.server.dto.response.post.PostDto;
+import com.pesupal.server.dto.response.post.PostsListDto;
 import com.pesupal.server.enums.SortOrder;
 import com.pesupal.server.model.org.Org;
 import com.pesupal.server.model.post.Post;

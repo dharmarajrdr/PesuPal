@@ -1,7 +1,7 @@
 package com.pesupal.server.service.interfaces;
 
-import com.pesupal.server.dto.request.CreateCandidateTimelineDto;
-import com.pesupal.server.dto.response.CandidateTimelineDto;
+import com.pesupal.server.dto.request.recruit.CreateCandidateTimelineDto;
+import com.pesupal.server.dto.response.recruit.CandidateTimelineDto;
 
 import java.util.List;
 

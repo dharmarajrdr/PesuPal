@@ -1,8 +1,8 @@
 package com.pesupal.server.service.interfaces;
 
-import com.pesupal.server.dto.request.CreateCandidateDto;
-import com.pesupal.server.dto.request.CreateReferralDto;
-import com.pesupal.server.dto.response.CandidateDto;
+import com.pesupal.server.dto.request.recruit.CreateCandidateDto;
+import com.pesupal.server.dto.request.recruit.CreateReferralDto;
+import com.pesupal.server.dto.response.recruit.CandidateDto;
 import com.pesupal.server.enums.JobApplicationStatus;
 import com.pesupal.server.model.recruit.Candidate;
 

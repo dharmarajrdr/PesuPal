@@ -1,6 +1,6 @@
 package com.pesupal.server.controller.org;
 
-import com.pesupal.server.dto.request.CreateOrgDto;
+import com.pesupal.server.dto.request.org.CreateOrgDto;
 import com.pesupal.server.dto.response.ApiResponseDto;
 import com.pesupal.server.helpers.CurrentValueRetriever;
 import com.pesupal.server.model.org.Org;

@@ -1,6 +1,6 @@
 package com.pesupal.server.controller.org;
 
-import com.pesupal.server.dto.request.PurchaseSubscriptionDto;
+import com.pesupal.server.dto.request.org.PurchaseSubscriptionDto;
 import com.pesupal.server.dto.response.ApiResponseDto;
 import com.pesupal.server.helpers.CurrentValueRetriever;
 import com.pesupal.server.model.org.OrgSubscriptionHistory;

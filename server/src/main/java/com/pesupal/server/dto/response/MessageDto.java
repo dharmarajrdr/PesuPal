@@ -1,6 +1,7 @@
 package com.pesupal.server.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.pesupal.server.dto.response.chat.MediaFileDto;
 import com.pesupal.server.enums.ChatMode;
 import com.pesupal.server.enums.Reaction;
 import com.pesupal.server.enums.ReadReceipt;

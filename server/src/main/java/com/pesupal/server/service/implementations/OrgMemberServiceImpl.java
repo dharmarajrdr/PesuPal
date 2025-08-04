@@ -1,12 +1,12 @@
 package com.pesupal.server.service.implementations;
 
-import com.pesupal.server.dto.request.AddOrgMemberDto;
-import com.pesupal.server.dto.request.CreateDepartmentDto;
-import com.pesupal.server.dto.request.CreateDesignationDto;
-import com.pesupal.server.dto.response.LatestSubscriptionDto;
-import com.pesupal.server.dto.response.OrgDetailDto;
+import com.pesupal.server.dto.request.org.AddOrgMemberDto;
+import com.pesupal.server.dto.request.org.CreateDepartmentDto;
+import com.pesupal.server.dto.request.org.CreateDesignationDto;
 import com.pesupal.server.dto.response.UserBasicInfoDto;
 import com.pesupal.server.dto.response.UserPreviewDto;
+import com.pesupal.server.dto.response.org.LatestSubscriptionDto;
+import com.pesupal.server.dto.response.org.OrgDetailDto;
 import com.pesupal.server.enums.Role;
 import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.exceptions.DataNotFoundException;

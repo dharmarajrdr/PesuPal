@@ -1,7 +1,7 @@
 package com.pesupal.server.service.interfaces;
 
-import com.pesupal.server.dto.request.CreateDesignationDto;
-import com.pesupal.server.dto.request.UpdateDesignationDto;
+import com.pesupal.server.dto.request.org.CreateDesignationDto;
+import com.pesupal.server.dto.request.org.UpdateDesignationDto;
 import com.pesupal.server.model.user.Designation;
 import com.pesupal.server.projections.DesignationProjection;
 

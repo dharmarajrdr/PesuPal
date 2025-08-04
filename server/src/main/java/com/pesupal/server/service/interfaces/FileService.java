@@ -1,8 +1,8 @@
 package com.pesupal.server.service.interfaces;
 
-import com.pesupal.server.dto.request.CreateFileDto;
-import com.pesupal.server.dto.response.FileDto;
-import com.pesupal.server.dto.response.FileOrFolderDto;
+import com.pesupal.server.dto.request.drive.CreateFileDto;
+import com.pesupal.server.dto.response.drive.FileDto;
+import com.pesupal.server.dto.response.drive.FileOrFolderDto;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.model.workdrive.File;
 import com.pesupal.server.model.workdrive.Folder;

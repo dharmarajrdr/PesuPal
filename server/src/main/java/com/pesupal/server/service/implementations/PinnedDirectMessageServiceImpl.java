@@ -1,7 +1,7 @@
 package com.pesupal.server.service.implementations;
 
-import com.pesupal.server.dto.request.CreatePinDirectMessageDto;
-import com.pesupal.server.dto.request.PinnedChatDto;
+import com.pesupal.server.dto.request.chat.direct_message.CreatePinDirectMessageDto;
+import com.pesupal.server.dto.request.chat.direct_message.PinnedChatDto;
 import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.exceptions.PermissionDeniedException;

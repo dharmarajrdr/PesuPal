@@ -1,7 +1,7 @@
 package com.pesupal.server.service.interfaces;
 
-import com.pesupal.server.dto.request.CreateDepartmentDto;
-import com.pesupal.server.dto.response.DepartmentDto;
+import com.pesupal.server.dto.request.org.CreateDepartmentDto;
+import com.pesupal.server.dto.response.org.DepartmentDto;
 import com.pesupal.server.model.department.Department;
 import com.pesupal.server.model.org.Org;
 

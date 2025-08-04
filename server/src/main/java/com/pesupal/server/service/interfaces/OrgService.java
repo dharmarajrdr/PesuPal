@@ -1,6 +1,6 @@
 package com.pesupal.server.service.interfaces;
 
-import com.pesupal.server.dto.request.CreateOrgDto;
+import com.pesupal.server.dto.request.org.CreateOrgDto;
 import com.pesupal.server.model.org.Org;
 
 public interface OrgService {

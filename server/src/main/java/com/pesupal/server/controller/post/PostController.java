@@ -1,9 +1,9 @@
 package com.pesupal.server.controller.post;
 
-import com.pesupal.server.dto.request.CreatePostDto;
+import com.pesupal.server.dto.request.post.CreatePostDto;
 import com.pesupal.server.dto.response.ApiResponseDto;
-import com.pesupal.server.dto.response.PostDto;
-import com.pesupal.server.dto.response.PostsListDto;
+import com.pesupal.server.dto.response.post.PostDto;
+import com.pesupal.server.dto.response.post.PostsListDto;
 import com.pesupal.server.enums.SortOrder;
 import com.pesupal.server.model.post.Post;
 import com.pesupal.server.service.interfaces.PostService;

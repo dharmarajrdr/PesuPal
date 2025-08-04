@@ -1,7 +1,7 @@
 package com.pesupal.server.service.implementations;
 
-import com.pesupal.server.dto.response.ReactMessageResponseDto;
 import com.pesupal.server.dto.response.UserBasicInfoDto;
+import com.pesupal.server.dto.response.chat.ReactMessageResponseDto;
 import com.pesupal.server.enums.Reaction;
 import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.exceptions.DataNotFoundException;

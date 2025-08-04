@@ -1,11 +1,11 @@
 package com.pesupal.server.controller.org;
 
 import com.pesupal.server.config.RequestContext;
-import com.pesupal.server.dto.request.AddOrgMemberDto;
+import com.pesupal.server.dto.request.org.AddOrgMemberDto;
 import com.pesupal.server.dto.response.ApiResponseDto;
-import com.pesupal.server.dto.response.OrgDetailDto;
 import com.pesupal.server.dto.response.UserBasicInfoDto;
 import com.pesupal.server.dto.response.UserPreviewDto;
+import com.pesupal.server.dto.response.org.OrgDetailDto;
 import com.pesupal.server.helpers.OrgSubscriptionManager;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.security.CustomUserDetails;

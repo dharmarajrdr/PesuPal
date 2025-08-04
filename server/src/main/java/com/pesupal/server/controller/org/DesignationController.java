@@ -1,6 +1,6 @@
 package com.pesupal.server.controller.org;
 
-import com.pesupal.server.dto.request.CreateDesignationDto;
+import com.pesupal.server.dto.request.org.CreateDesignationDto;
 import com.pesupal.server.dto.response.ApiResponseDto;
 import com.pesupal.server.model.user.Designation;
 import com.pesupal.server.service.interfaces.DesignationService;

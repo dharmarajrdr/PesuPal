@@ -1,8 +1,8 @@
 package com.pesupal.server.controller.post;
 
-import com.pesupal.server.dto.request.CreatePollVoterDto;
+import com.pesupal.server.dto.request.post.CreatePollVoterDto;
 import com.pesupal.server.dto.response.ApiResponseDto;
-import com.pesupal.server.dto.response.PollDto;
+import com.pesupal.server.dto.response.post.PollDto;
 import com.pesupal.server.service.interfaces.PollVoterService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;

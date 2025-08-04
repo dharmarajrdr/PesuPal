@@ -1,8 +1,8 @@
 package com.pesupal.server.service.implementations;
 
 import com.pesupal.server.config.StaticConfig;
-import com.pesupal.server.dto.response.FileAccessStatDto;
-import com.pesupal.server.dto.response.FileDto;
+import com.pesupal.server.dto.response.drive.FileAccessStatDto;
+import com.pesupal.server.dto.response.drive.FileDto;
 import com.pesupal.server.exceptions.PermissionDeniedException;
 import com.pesupal.server.helpers.CurrentValueRetriever;
 import com.pesupal.server.model.user.OrgMember;

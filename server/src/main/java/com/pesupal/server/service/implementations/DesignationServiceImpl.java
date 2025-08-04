@@ -1,7 +1,7 @@
 package com.pesupal.server.service.implementations;
 
-import com.pesupal.server.dto.request.CreateDesignationDto;
-import com.pesupal.server.dto.request.UpdateDesignationDto;
+import com.pesupal.server.dto.request.org.CreateDesignationDto;
+import com.pesupal.server.dto.request.org.UpdateDesignationDto;
 import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.exceptions.DuplicateDataReceivedException;
 import com.pesupal.server.model.org.Org;

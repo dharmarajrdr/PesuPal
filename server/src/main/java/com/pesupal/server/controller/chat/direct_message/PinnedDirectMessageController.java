@@ -1,7 +1,7 @@
 package com.pesupal.server.controller.chat.direct_message;
 
-import com.pesupal.server.dto.request.CreatePinDirectMessageDto;
-import com.pesupal.server.dto.request.PinnedChatDto;
+import com.pesupal.server.dto.request.chat.direct_message.CreatePinDirectMessageDto;
+import com.pesupal.server.dto.request.chat.direct_message.PinnedChatDto;
 import com.pesupal.server.dto.response.ApiResponseDto;
 import com.pesupal.server.helpers.CurrentValueRetriever;
 import com.pesupal.server.service.interfaces.PinnedDirectMessageService;

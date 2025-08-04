@@ -1,7 +1,7 @@
 package com.pesupal.server.service.implementations;
 
-import com.pesupal.server.dto.request.CreatePostCommentDto;
-import com.pesupal.server.dto.response.PostCommentDto;
+import com.pesupal.server.dto.request.post.CreatePostCommentDto;
+import com.pesupal.server.dto.response.post.PostCommentDto;
 import com.pesupal.server.enums.PostStatus;
 import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.exceptions.DataNotFoundException;

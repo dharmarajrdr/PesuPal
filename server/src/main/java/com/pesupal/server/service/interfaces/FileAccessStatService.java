@@ -1,7 +1,7 @@
 package com.pesupal.server.service.interfaces;
 
-import com.pesupal.server.dto.response.FileAccessStatDto;
-import com.pesupal.server.dto.response.FileDto;
+import com.pesupal.server.dto.response.drive.FileAccessStatDto;
+import com.pesupal.server.dto.response.drive.FileDto;
 
 import java.util.List;
 

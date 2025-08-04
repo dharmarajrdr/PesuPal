@@ -1,9 +1,9 @@
 package com.pesupal.server.service.interfaces;
 
-import com.pesupal.server.dto.request.GetConversationBetweenUsers;
-import com.pesupal.server.dto.response.ChatPreviewDto;
+import com.pesupal.server.dto.request.chat.direct_message.GetConversationBetweenUsers;
 import com.pesupal.server.dto.response.MessageDto;
-import com.pesupal.server.dto.response.RecentChatPagedDto;
+import com.pesupal.server.dto.response.chat.ChatPreviewDto;
+import com.pesupal.server.dto.response.chat.RecentChatPagedDto;
 import com.pesupal.server.model.chat.DirectMessage;
 import com.pesupal.server.model.chat.DirectMessageChat;
 import com.pesupal.server.model.user.OrgMember;

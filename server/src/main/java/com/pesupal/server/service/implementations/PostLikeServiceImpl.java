@@ -1,6 +1,6 @@
 package com.pesupal.server.service.implementations;
 
-import com.pesupal.server.dto.response.PostLikesDto;
+import com.pesupal.server.dto.response.post.PostLikesDto;
 import com.pesupal.server.enums.PostStatus;
 import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.helpers.CurrentValueRetriever;

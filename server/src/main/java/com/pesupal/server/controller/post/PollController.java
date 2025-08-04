@@ -1,6 +1,6 @@
 package com.pesupal.server.controller.post;
 
-import com.pesupal.server.dto.request.UpdatePollDto;
+import com.pesupal.server.dto.request.post.UpdatePollDto;
 import com.pesupal.server.dto.response.ApiResponseDto;
 import com.pesupal.server.service.interfaces.PollService;
 import lombok.AllArgsConstructor;

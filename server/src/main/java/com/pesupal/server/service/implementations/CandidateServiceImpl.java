@@ -1,10 +1,10 @@
 package com.pesupal.server.service.implementations;
 
 import com.pesupal.server.config.StaticConfig;
-import com.pesupal.server.dto.request.CreateCandidateDto;
-import com.pesupal.server.dto.request.CreateCandidateTimelineDto;
-import com.pesupal.server.dto.request.CreateReferralDto;
-import com.pesupal.server.dto.response.CandidateDto;
+import com.pesupal.server.dto.request.recruit.CreateCandidateDto;
+import com.pesupal.server.dto.request.recruit.CreateCandidateTimelineDto;
+import com.pesupal.server.dto.request.recruit.CreateReferralDto;
+import com.pesupal.server.dto.response.recruit.CandidateDto;
 import com.pesupal.server.enums.JobApplicationStatus;
 import com.pesupal.server.enums.JobOpeningStatus;
 import com.pesupal.server.exceptions.ActionProhibitedException;

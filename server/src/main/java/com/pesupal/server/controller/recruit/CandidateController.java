@@ -1,8 +1,8 @@
 package com.pesupal.server.controller.recruit;
 
-import com.pesupal.server.dto.request.CreateCandidateDto;
+import com.pesupal.server.dto.request.recruit.CreateCandidateDto;
 import com.pesupal.server.dto.response.ApiResponseDto;
-import com.pesupal.server.dto.response.CandidateDto;
+import com.pesupal.server.dto.response.recruit.CandidateDto;
 import com.pesupal.server.helpers.CurrentValueRetriever;
 import com.pesupal.server.service.interfaces.CandidateService;
 import lombok.AllArgsConstructor;

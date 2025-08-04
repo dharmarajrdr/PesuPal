@@ -1,6 +1,6 @@
 package com.pesupal.server.helpers;
 
-import com.pesupal.server.dto.request.CreateFolderDto;
+import com.pesupal.server.dto.request.drive.CreateFolderDto;
 import com.pesupal.server.enums.CRUD;
 import com.pesupal.server.enums.Security;
 import com.pesupal.server.exceptions.PermissionDeniedException;

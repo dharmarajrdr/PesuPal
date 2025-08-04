@@ -1,6 +1,6 @@
 package com.pesupal.server.service.interfaces;
 
-import com.pesupal.server.dto.request.PurchaseSubscriptionDto;
+import com.pesupal.server.dto.request.org.PurchaseSubscriptionDto;
 import com.pesupal.server.model.org.OrgSubscriptionHistory;
 import com.pesupal.server.model.payment.Transaction;
 

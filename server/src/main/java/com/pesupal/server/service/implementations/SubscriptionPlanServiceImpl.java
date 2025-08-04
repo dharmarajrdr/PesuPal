@@ -1,7 +1,7 @@
 package com.pesupal.server.service.implementations;
 
 import com.pesupal.server.config.StaticConfig;
-import com.pesupal.server.dto.request.AddSubscriptionDto;
+import com.pesupal.server.dto.request.org.AddSubscriptionDto;
 import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.exceptions.PermissionDeniedException;
 import com.pesupal.server.model.subscription.SubscriptionPlan;

@@ -1,7 +1,11 @@
 package com.pesupal.server.service.implementations;
 
-import com.pesupal.server.dto.request.CreatePostDto;
-import com.pesupal.server.dto.response.*;
+import com.pesupal.server.dto.request.post.CreatePostDto;
+import com.pesupal.server.dto.response.UserBasicInfoDto;
+import com.pesupal.server.dto.response.post.PollDto;
+import com.pesupal.server.dto.response.post.PostDto;
+import com.pesupal.server.dto.response.post.PostImpressionDto;
+import com.pesupal.server.dto.response.post.PostsListDto;
 import com.pesupal.server.enums.PostStatus;
 import com.pesupal.server.enums.SortOrder;
 import com.pesupal.server.exceptions.ActionProhibitedException;

@@ -1,7 +1,7 @@
 package com.pesupal.server.service.implementations.group;
 
-import com.pesupal.server.dto.request.PinnedChatDto;
-import com.pesupal.server.dto.request.group.CreatePinGroupChatMessageDto;
+import com.pesupal.server.dto.request.chat.direct_message.PinnedChatDto;
+import com.pesupal.server.dto.request.chat.group_message.CreatePinGroupChatMessageDto;
 import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.helpers.CurrentValueRetriever;

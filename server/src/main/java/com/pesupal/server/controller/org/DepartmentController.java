@@ -1,8 +1,8 @@
 package com.pesupal.server.controller.org;
 
 import com.pesupal.server.dto.response.ApiResponseDto;
-import com.pesupal.server.dto.response.DepartmentDto;
 import com.pesupal.server.dto.response.UserBasicInfoDto;
+import com.pesupal.server.dto.response.org.DepartmentDto;
 import com.pesupal.server.helpers.CurrentValueRetriever;
 import com.pesupal.server.service.interfaces.DepartmentService;
 import com.pesupal.server.service.interfaces.OrgMemberService;

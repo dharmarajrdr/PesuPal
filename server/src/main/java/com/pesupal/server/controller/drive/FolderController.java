@@ -1,9 +1,9 @@
 package com.pesupal.server.controller.drive;
 
-import com.pesupal.server.dto.request.CreateFolderDto;
+import com.pesupal.server.dto.request.drive.CreateFolderDto;
 import com.pesupal.server.dto.response.ApiResponseDto;
-import com.pesupal.server.dto.response.FileOrFolderDto;
-import com.pesupal.server.dto.response.FolderDto;
+import com.pesupal.server.dto.response.drive.FileOrFolderDto;
+import com.pesupal.server.dto.response.drive.FolderDto;
 import com.pesupal.server.enums.Workspace;
 import com.pesupal.server.helpers.CurrentValueRetriever;
 import com.pesupal.server.service.interfaces.FolderService;

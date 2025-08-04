@@ -1,7 +1,7 @@
 package com.pesupal.server.service.interfaces;
 
-import com.pesupal.server.dto.request.CreateReplyCommentDto;
-import com.pesupal.server.dto.response.ReplyCommentDto;
+import com.pesupal.server.dto.request.post.CreateReplyCommentDto;
+import com.pesupal.server.dto.response.post.ReplyCommentDto;
 
 import java.util.List;
 

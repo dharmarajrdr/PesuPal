@@ -1,7 +1,7 @@
 package com.pesupal.server.service.implementations;
 
-import com.pesupal.server.dto.request.CreateDepartmentDto;
-import com.pesupal.server.dto.response.DepartmentDto;
+import com.pesupal.server.dto.request.org.CreateDepartmentDto;
+import com.pesupal.server.dto.response.org.DepartmentDto;
 import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.helpers.CurrentValueRetriever;
 import com.pesupal.server.model.department.Department;

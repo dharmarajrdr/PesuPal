@@ -1,8 +1,8 @@
 package com.pesupal.server.controller.post;
 
-import com.pesupal.server.dto.request.CreateReplyCommentDto;
+import com.pesupal.server.dto.request.post.CreateReplyCommentDto;
 import com.pesupal.server.dto.response.ApiResponseDto;
-import com.pesupal.server.dto.response.ReplyCommentDto;
+import com.pesupal.server.dto.response.post.ReplyCommentDto;
 import com.pesupal.server.service.interfaces.PostReplyService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;

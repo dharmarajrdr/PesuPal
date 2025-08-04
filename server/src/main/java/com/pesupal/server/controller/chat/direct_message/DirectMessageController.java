@@ -1,9 +1,13 @@
 package com.pesupal.server.controller.chat.direct_message;
 
-import com.pesupal.server.dto.request.AddReactionDto;
-import com.pesupal.server.dto.request.ChatMessageDto;
-import com.pesupal.server.dto.request.GetConversationBetweenUsers;
-import com.pesupal.server.dto.response.*;
+import com.pesupal.server.dto.request.chat.direct_message.ChatMessageDto;
+import com.pesupal.server.dto.request.chat.direct_message.GetConversationBetweenUsers;
+import com.pesupal.server.dto.request.post.AddReactionDto;
+import com.pesupal.server.dto.response.ApiResponseDto;
+import com.pesupal.server.dto.response.MessageDto;
+import com.pesupal.server.dto.response.chat.ChatPreviewDto;
+import com.pesupal.server.dto.response.chat.ReactMessageResponseDto;
+import com.pesupal.server.dto.response.chat.RecentChatPagedDto;
 import com.pesupal.server.helpers.CurrentValueRetriever;
 import com.pesupal.server.service.interfaces.DirectMessageReactionService;
 import com.pesupal.server.service.interfaces.DirectMessageService;

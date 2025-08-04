@@ -1,7 +1,7 @@
 package com.pesupal.server.service.implementations;
 
-import com.pesupal.server.dto.request.CreatePollVoterDto;
-import com.pesupal.server.dto.response.PollDto;
+import com.pesupal.server.dto.request.post.CreatePollVoterDto;
+import com.pesupal.server.dto.response.post.PollDto;
 import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.helpers.CurrentValueRetriever;
 import com.pesupal.server.model.post.Poll;

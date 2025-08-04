@@ -1,6 +1,6 @@
 package com.pesupal.server.service.implementations.group;
 
-import com.pesupal.server.dto.request.group.UpdateGroupChatConfigurationDto;
+import com.pesupal.server.dto.request.chat.group_message.UpdateGroupChatConfigurationDto;
 import com.pesupal.server.enums.Role;
 import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.exceptions.PermissionDeniedException;

@@ -1,8 +1,8 @@
 package com.pesupal.server.service.implementations;
 
-import com.pesupal.server.dto.request.CreateFileDto;
-import com.pesupal.server.dto.response.FileDto;
-import com.pesupal.server.dto.response.FileOrFolderDto;
+import com.pesupal.server.dto.request.drive.CreateFileDto;
+import com.pesupal.server.dto.response.drive.FileDto;
+import com.pesupal.server.dto.response.drive.FileOrFolderDto;
 import com.pesupal.server.enums.Arithmetic;
 import com.pesupal.server.enums.FileOrFolder;
 import com.pesupal.server.exceptions.DataNotFoundException;

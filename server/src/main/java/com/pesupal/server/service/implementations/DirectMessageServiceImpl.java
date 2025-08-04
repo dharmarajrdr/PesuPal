@@ -1,8 +1,10 @@
 package com.pesupal.server.service.implementations;
 
-import com.pesupal.server.dto.request.ChatMessageDto;
-import com.pesupal.server.dto.request.GetConversationBetweenUsers;
-import com.pesupal.server.dto.response.*;
+import com.pesupal.server.dto.request.chat.direct_message.ChatMessageDto;
+import com.pesupal.server.dto.request.chat.direct_message.GetConversationBetweenUsers;
+import com.pesupal.server.dto.response.MessageDto;
+import com.pesupal.server.dto.response.UserPreviewDto;
+import com.pesupal.server.dto.response.chat.*;
 import com.pesupal.server.enums.ReadReceipt;
 import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.exceptions.DataNotFoundException;

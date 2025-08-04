@@ -1,6 +1,6 @@
 package com.pesupal.server.service.implementations;
 
-import com.pesupal.server.dto.response.FileDto;
+import com.pesupal.server.dto.response.drive.FileDto;
 import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.helpers.CurrentValueRetriever;
 import com.pesupal.server.model.user.OrgMember;
