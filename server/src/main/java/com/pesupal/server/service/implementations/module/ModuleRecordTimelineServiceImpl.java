@@ -3,7 +3,7 @@ package com.pesupal.server.service.implementations.module;
 import com.pesupal.server.model.module.Module;
 import com.pesupal.server.model.module.ModuleRecord;
 import com.pesupal.server.model.module.ModuleRecordTimeline;
-import com.pesupal.server.repository.ModuleRecordTimelineRepository;
+import com.pesupal.server.repository.module.ModuleRecordTimelineRepository;
 import com.pesupal.server.service.interfaces.module.ModuleRecordTimelineService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;

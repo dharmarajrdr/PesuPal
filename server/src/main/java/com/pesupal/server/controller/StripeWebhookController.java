@@ -3,7 +3,7 @@ package com.pesupal.server.controller;
 import com.pesupal.server.dto.request.CreateWebhookDto;
 import com.pesupal.server.dto.response.ApiResponseDto;
 import com.pesupal.server.dto.response.WebhookDto;
-import com.pesupal.server.service.interfaces.WebhookService;
+import com.pesupal.server.service.interfaces.chat.WebhookService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

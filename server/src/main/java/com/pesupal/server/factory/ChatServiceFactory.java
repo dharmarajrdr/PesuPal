@@ -1,9 +1,9 @@
 package com.pesupal.server.factory;
 
 import com.pesupal.server.enums.ChatMode;
-import com.pesupal.server.service.interfaces.ChatService;
-import com.pesupal.server.service.interfaces.DirectMessageService;
-import com.pesupal.server.service.interfaces.group.GroupChatMessageService;
+import com.pesupal.server.service.interfaces.chat.ChatService;
+import com.pesupal.server.service.interfaces.chat.direct_message.DirectMessageService;
+import com.pesupal.server.service.interfaces.chat.group_message.GroupChatMessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;

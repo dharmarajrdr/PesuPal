@@ -11,7 +11,7 @@ import com.pesupal.server.model.module.ModuleField;
 import com.pesupal.server.model.module.ModuleRecord;
 import com.pesupal.server.model.module.Transition;
 import com.pesupal.server.model.module.relation.RecordTransitionRelation;
-import com.pesupal.server.repository.RecordTransitionRelationRepository;
+import com.pesupal.server.repository.module.relation.RecordTransitionRelationRepository;
 import com.pesupal.server.service.implementations.module.RecordRelationServiceImpl;
 import com.pesupal.server.service.interfaces.module.ModuleFieldService;
 import com.pesupal.server.service.interfaces.module.TransitionService;

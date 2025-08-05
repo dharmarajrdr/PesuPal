@@ -3,7 +3,7 @@ package com.pesupal.server.service.implementations.module;
 import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.model.module.ModuleField;
 import com.pesupal.server.model.module.ModuleSelectOption;
-import com.pesupal.server.repository.ModuleSelectOptionRepository;
+import com.pesupal.server.repository.module.ModuleSelectOptionRepository;
 import com.pesupal.server.service.interfaces.module.ModuleSelectOptionService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;

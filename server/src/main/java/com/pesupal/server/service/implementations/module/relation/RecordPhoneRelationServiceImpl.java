@@ -8,7 +8,7 @@ import com.pesupal.server.model.module.Module;
 import com.pesupal.server.model.module.ModuleField;
 import com.pesupal.server.model.module.ModuleRecord;
 import com.pesupal.server.model.module.relation.RecordPhoneRelation;
-import com.pesupal.server.repository.RecordPhoneRelationRepository;
+import com.pesupal.server.repository.module.relation.RecordPhoneRelationRepository;
 import com.pesupal.server.service.implementations.module.RecordRelationServiceImpl;
 import com.pesupal.server.service.interfaces.module.relation.RecordPhoneRelationService;
 import lombok.AllArgsConstructor;
