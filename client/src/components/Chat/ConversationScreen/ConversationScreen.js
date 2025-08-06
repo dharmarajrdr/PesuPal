@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import './ConversationScreen.css';
 import ChatHeader from './ChatHeader';
 import ChatMessages from './ChatMessages';
@@ -24,6 +24,15 @@ const ConversationScreen = ({ activeTabName }) => {
 	const dispatch = useDispatch();
 
 	dispatch(setActiveChatTab(activeTabName));
+
+	const audioRef = useRef(null);
+
+	const playNotificationSound = () => {
+		if (audioRef.current) {
+			audioRef.current.currentTime = 0;
+			audioRef.current.play();
+		}
+	}
 
 	const [page, setPage] = useState(0);
 	const [size, setSize] = useState(25);
@@ -86,10 +95,12 @@ const ConversationScreen = ({ activeTabName }) => {
 		onPrivateMessage: (msg) => {
 
 			updateRecentChat(msg);
+			playNotificationSound();
 		},
 		onGroupMessage: (msg) => {
 
 			updateRecentChat(msg);
+			playNotificationSound();
 		},
 		onError: ({ message }) => {
 			dispatch(showPopup({ message, type: 'error' }));
@@ -193,6 +204,7 @@ const ConversationScreen = ({ activeTabName }) => {
 					permissionDenied ? <PermissionDenied />
 						: currentChatPreview ? <>
 							<ChatHeader />
+							<audio ref={audioRef} src="/audio/on-message.mp3" preload="auto" />
 							<ChatMessages showStartNewConversation={showStartNewConversation} retrievingChat={retrievingChat} messages={messages} chatId={chatId} clickSendMessageHandler={clickSendMessageHandler} />
 							<ChatFooter active={active} groupActive={groupActive} currentTab={activeChatTab.name} displayName={displayName} clickSendMessageHandler={clickSendMessageHandler} />
 						</>
