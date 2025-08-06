@@ -13,6 +13,7 @@ import CurrentOrgSlice from './store/reducers/CurrentOrgSlice';
 import ModuleFilterSlice from './store/reducers/ModuleFilterSlice';
 import ActiveChatTabSlice from './store/reducers/ActiveChatTabSlice';
 import LeftNavigationSlice from './store/reducers/LeftNavigationSlice';
+import ConfirmationPopupSlice from './store/reducers/ConfirmationPopupSlice';
 import CurrentModuleSlice from './store/reducers/CurrentModuleSlice';
 import CurrentChatPreviewSlice from './store/reducers/CurrentChatPreviewSlice';
 import ShowChatHeaderOptionsModalSlice from './store/reducers/ShowChatHeaderOptionsModalSlice';
@@ -32,6 +33,7 @@ const store = configureStore({
         currentModule: CurrentModuleSlice,
         leftNavigation: LeftNavigationSlice,
         activeRecentChat: ActiveRecentChatSlice,
+        confirmationPopup: ConfirmationPopupSlice,
         pinnedDirectMessage: PinnedDirectMessageSlice,
         showChatHeaderOptionsModalSlice: ShowChatHeaderOptionsModalSlice,
         currentChatPreviewSlice: CurrentChatPreviewSlice
