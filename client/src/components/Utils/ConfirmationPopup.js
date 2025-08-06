@@ -1,6 +1,17 @@
+import { useDispatch, useSelector } from 'react-redux';
 import './ConfirmationPopup.css';
+import { hideConfirmationPopup } from '../../store/reducers/ConfirmationPopupSlice';
 
-const ConfirmationPopup = ({ message, options, onClose }) => {
+const ConfirmationPopup = () => {
+
+    const { popupData } = useSelector(state => state.confirmationPopup);
+    const { message, options } = popupData || {};
+    const dispatch = useDispatch();
+
+    const onClose = () => {
+        dispatch(hideConfirmationPopup());
+    }
+
     const handleClick = (customClickHandler) => {
         if (typeof customClickHandler === 'function') {
             customClickHandler();
@@ -8,7 +19,7 @@ const ConfirmationPopup = ({ message, options, onClose }) => {
         onClose(); // close the popup after handling
     };
 
-    return (
+    return (message && options) ? (
         <div className="confirmation-overlay">
             <div className="confirmation-popup">
                 <p className="confirmation-message">{message}</p>
@@ -19,7 +30,7 @@ const ConfirmationPopup = ({ message, options, onClose }) => {
                 </div>
             </div>
         </div>
-    );
+    ) : null;
 };
 
 export default ConfirmationPopup;
