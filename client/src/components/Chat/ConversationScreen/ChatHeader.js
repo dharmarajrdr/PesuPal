@@ -48,6 +48,10 @@ const ChatHeader = () => {
         setPinnedIdState(currentChatPreview?.pinnedId);
     }, [currentChatPreview]);
 
+    const deleteGroupHandler = () => {
+        
+    };
+
     const options = [
         {
             name: `${pinnedId ? 'Unpin' : 'Pin'} Conversation`,
@@ -127,6 +131,7 @@ const ChatHeader = () => {
             name: activeChatTab.name == 'groupMessage' ? 'Delete Group' : null,
             icon: 'fa fa-trash',
             onClick: () => {
+                deleteGroupHandler();
                 dispatch(setShowChatHeaderOptionsModal(false));
             }
         }

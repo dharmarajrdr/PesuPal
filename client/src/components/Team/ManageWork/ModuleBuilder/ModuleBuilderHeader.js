@@ -3,10 +3,10 @@ import OptionsModal from '../../../Utils/OptionsModal'
 import { useDispatch, useSelector } from 'react-redux';
 import './ModuleBuilderHeader.css'
 import MyModulesListOverlay from '../CreateModule/MyModulesListOverlay'
-import ConfirmationPopup from '../../../Utils/ConfirmationPopup';
 import { useNavigate } from 'react-router-dom';
 import { apiRequest } from '../../../../http_request';
 import { showPopup } from '../../../../store/reducers/PopupSlice';
+import { hideConfirmationPopup, showConfirmationPopup } from '../../../../store/reducers/ConfirmationPopupSlice';
 
 const PublishButton = () => {
     return (
@@ -20,7 +20,7 @@ const MoreOptionsButton = ({ moduleId }) => {
     const dispatch = useDispatch();
 
     const deleteModuleHandler = () => {
-        setConfirmationData({
+        dispatch(showConfirmationPopup({
             message: 'Are you sure you want to delete this module? This action cannot be undone.',
             options: [
                 {
@@ -28,7 +28,7 @@ const MoreOptionsButton = ({ moduleId }) => {
                     color: 'red',
                     onClick: () => {
                         apiRequest(`/api/v1/module/${moduleId}`, 'DELETE').then(({ message }) => {
-                            setShowConfirmationPopup(false);
+                            dispatch(hideConfirmationPopup());
                             dispatch(showPopup({ message, type: 'success' }));
                             navigate("/manage/module");
                         }).catch(({ message }) => {
@@ -39,11 +39,10 @@ const MoreOptionsButton = ({ moduleId }) => {
                 {
                     title: 'Cancel',
                     color: 'gray',
-                    onClick: () => setShowConfirmationPopup(false)
+                    onClick: () => dispatch(hideConfirmationPopup())
                 }
             ]
-        });
-        setShowConfirmationPopup(true);
+        }));
     }
 
     const options = [
@@ -73,8 +72,6 @@ const MoreOptionsButton = ({ moduleId }) => {
         setShowOptions(false);
     }
 
-    const [showConfirmationPopup, setShowConfirmationPopup] = useState(false);
-    const [confirmationData, setConfirmationData] = useState({ 'message': null, 'options': [] });
     const [showOptions, setShowOptions] = useState(false);
     const [showMyModulesList, setShowMyModulesList] = useState(false);
 
@@ -83,7 +80,6 @@ const MoreOptionsButton = ({ moduleId }) => {
             <i className='fa fa-ellipsis-vertical fs16'></i>
             {showOptions && <OptionsModal options={options} style={{ position: 'relative', top: '10px', right: '160px', width: '200px' }} />}
             {showMyModulesList && <MyModulesListOverlay onCloseModal={() => setShowMyModulesList(false)} />}
-            {showConfirmationPopup && <ConfirmationPopup onClose={() => setShowConfirmationPopup(false)} message={confirmationData.message} options={confirmationData.options} />}
         </div>
     )
 }

@@ -5,7 +5,8 @@ import Loader from '../../Loader';
 import ErrorMessage from '../../ErrorMessage';
 import utils from '../../../utils';
 import Profile from '../../OthersProfile/Profile';
-import ConfirmationPopup from '../../Utils/ConfirmationPopup';
+import { useDispatch } from 'react-redux';
+import { showConfirmationPopup } from '../../../store/reducers/ConfirmationPopupSlice';
 
 const NoCommentsFound = () => {
     return (
@@ -48,12 +49,13 @@ const CommentContent = ({ html }) => <div className="comment-content html-conten
 
 const Comment = ({ comment, setComments, setCommentsCount }) => {
 
+    const dispatch = useDispatch();
+
     const { id, userId, displayName, displayPicture, message, createdAt, replyCount, deletable } = comment;
 
     const [showReplies, setShowReplies] = useState(false);
     const [showProfile, setShowProfile] = useState(false);
     const [showDeleteIcon, setShowDeleteIcon] = useState(false);
-    const [clickedDelete, setClickedDelete] = useState(false);
 
     const deleteCommentHandler = () => {
         apiRequest(`/api/v1/post/comment/${id}`, 'DELETE').then(() => {
@@ -72,6 +74,10 @@ const Comment = ({ comment, setComments, setCommentsCount }) => {
         "title": "No",
         "color": "#4CAF50",
     }];
+
+    const clickedDeletePostHandler = () => {
+        dispatch(showConfirmationPopup({ message: "Are you sure you want to delete this comment?", options: deletePopupOptions }));
+    }
 
     return (
         <div className='comment-item FRSS w100' onMouseEnter={() => setShowDeleteIcon(true)} onMouseLeave={() => setShowDeleteIcon(false)}>
@@ -98,8 +104,7 @@ const Comment = ({ comment, setComments, setCommentsCount }) => {
                             {showReplies && <CommentReply commentId={id} />}
                         </>}
                     </div>
-                    {deletable && showDeleteIcon && <p className='fs12 cursP delete-comment color555' onClick={() => setClickedDelete(true)}><i className='fa fa-trash mR5 fs10 color777' />Delete</p>}
-                    {clickedDelete && <ConfirmationPopup message={"Are you sure you want to delete this comment?"} onClose={() => setClickedDelete(false)} options={deletePopupOptions} />}
+                    {deletable && showDeleteIcon && <p className='fs12 cursP delete-comment color555' onClick={clickedDeletePostHandler}><i className='fa fa-trash mR5 fs10 color777' />Delete</p>}
                 </div>
             </div>
         </div>

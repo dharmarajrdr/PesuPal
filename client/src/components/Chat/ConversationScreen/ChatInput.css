@@ -16,6 +16,11 @@
     max-height: 200px;
 }
 
+.chat-input:has(textarea:focus) {
+    border-top: 2px solid var(--primary-color);
+    transition-duration: 0.25s;
+}
+
 .file-upload {
     margin-left: 10px;
 }
