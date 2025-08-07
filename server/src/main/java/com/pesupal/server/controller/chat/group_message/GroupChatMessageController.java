@@ -26,9 +26,9 @@ public class GroupChatMessageController extends CurrentValueRetriever {
     }
 
     @DeleteMapping("/clear/{groupId}")
-    public ResponseEntity<ApiResponseDto> clearGroupChatMessages(@PathVariable Long groupId) {
+    public ResponseEntity<ApiResponseDto> clearGroupChatMessages(@PathVariable String groupId) {
 
-        groupChatMessageService.clearGroupChatMessages(groupId, getCurrentUserId(), getCurrentOrgId());
+        groupChatMessageService.clearGroupChatMessages(groupId);
         return ResponseEntity.ok().body(new ApiResponseDto("Group chat messages cleared successfully"));
     }
 

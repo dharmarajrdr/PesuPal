@@ -18,8 +18,8 @@ import com.pesupal.server.repository.chat.group_message.GroupChatMemberRepositor
 import com.pesupal.server.repository.chat.group_message.GroupChatMessageRepository;
 import com.pesupal.server.repository.chat.group_message.GroupMessageMediaFileRepository;
 import com.pesupal.server.security.JwtUtil;
-import com.pesupal.server.service.interfaces.org.OrgMemberService;
 import com.pesupal.server.service.interfaces.chat.group_message.*;
+import com.pesupal.server.service.interfaces.org.OrgMemberService;
 import com.pesupal.server.strategies.media_storage.S3Service;
 import io.jsonwebtoken.Claims;
 import lombok.AllArgsConstructor;
@@ -30,6 +30,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
@@ -104,44 +105,6 @@ public class GroupChatMessageServiceImpl extends CurrentValueRetriever implement
     }
 
     /**
-     * Clears all messages in a group chat.
-     *
-     * @param groupId
-     * @param userId
-     * @param orgId
-     */
-    @Override
-    public void clearGroupChatMessages(Long groupId, Long userId, Long orgId) {
-
-        GroupChatMember groupChatMember = groupChatMemberService.getGroupMemberByGroupIdAndUserId(groupId, userId);
-        Group group = groupChatMember.getGroup();
-
-        if (group.getOrg().getId().equals(orgId)) {
-            throw new DataNotFoundException("Group with ID " + groupId + " does not exist.");
-        }
-
-        if (!groupChatMember.isActive()) {
-            throw new PermissionDeniedException("You're not part of this group anymore.");
-        }
-
-        if (!group.isActive()) {
-            throw new ActionProhibitedException("This group is no longer active.");
-        }
-
-        Role role = groupChatMember.getRole();
-
-        if (!role.equals(Role.SUPER_ADMIN)) {
-
-            GroupChatConfiguration groupChatConfiguration = groupChatConfigurationService.getConfigurationByGroupAndRole(group, role);
-            if (!groupChatConfiguration.isClearChat()) {
-                throw new PermissionDeniedException("You do not have permission to clear messages in this group.");
-            }
-        }
-
-        groupChatMessageRepository.deleteAllByGroup(group);
-    }
-
-    /**
      * Retrieves messages from a group chat based on the provided criteria.
      *
      * @param getGroupConversationDto
@@ -184,6 +147,47 @@ public class GroupChatMessageServiceImpl extends CurrentValueRetriever implement
             messageDto.setReactions(groupChatReactionService.getReactionsCountForMessage(gm));
             return messageDto;
         }).sorted(Comparator.comparing(MessageDto::getCreatedAt)).toList();
+    }
+
+    /**
+     * Clears all messages in a group chat.
+     *
+     * @param groupId
+     */
+    @Transactional
+    @Override
+    public void clearGroupChatMessages(String groupId) {
+
+        OrgMember orgMember = getCurrentOrgMember();
+        Long userId = orgMember.getId();
+        Long orgId = orgMember.getOrg().getId();
+
+        GroupChatMember groupChatMember = groupChatMemberService.getGroupMemberByGroupIdAndUserId(groupId, userId);
+        Group group = groupChatMember.getGroup();
+
+        if (!group.getOrg().getId().equals(orgId)) {
+            throw new DataNotFoundException("Group with ID " + groupId + " does not exist.");
+        }
+
+        if (!groupChatMember.isActive()) {
+            throw new PermissionDeniedException("You're not part of this group anymore.");
+        }
+
+        if (!group.isActive()) {
+            throw new ActionProhibitedException("This group is no longer active.");
+        }
+
+        Role role = groupChatMember.getRole();
+
+        if (!role.equals(Role.SUPER_ADMIN)) {
+
+            GroupChatConfiguration groupChatConfiguration = groupChatConfigurationService.getConfigurationByGroupAndRole(group, role);
+            if (!groupChatConfiguration.isClearChat()) {
+                throw new PermissionDeniedException("You do not have permission to clear messages in this group.");
+            }
+        }
+
+        groupChatMessageRepository.deleteAllByGroup(group);
     }
 
     /**
