@@ -16,6 +16,7 @@ import { moveRecentChatToTop, updateOrAddRecentChat } from '../../../store/reduc
 import utils from '../../../utils';
 import ChatFooter from './ChatFooter';
 import PageNotFound from '../../Auth/PageNotFound';
+import { addMessage, setMessages } from '../../../store/reducers/ConversationSlice';
 
 const ConversationScreen = ({ activeTabName }) => {
 
@@ -38,9 +39,9 @@ const ConversationScreen = ({ activeTabName }) => {
 	const [size, setSize] = useState(25);
 	const [permissionDenied, setPermissionDenied] = useState(false);
 	const [chatNotFound, setChatNotFound] = useState(false);
-	const [messages, setMessages] = useState([]);
 	const [retrievingChat, setRetrievingChat] = useState(true);
 	const [pivotMessageId, setPivotMessageId] = useState(null);
+	const { messages } = useSelector(state => state.conversation) || [];
 
 	const currentChatPreview = useSelector(state => state.currentChatPreviewSlice);
 	const activeChatTab = useSelector(state => state.activeChatTab);
@@ -71,7 +72,7 @@ const ConversationScreen = ({ activeTabName }) => {
 
 			console.log(`Since user is in the chat, rendering the message in the chat`);
 
-			setMessages((prev) => [...prev, msg]);
+			dispatch(addMessage(msg));
 
 		} else {	// If the chat is not open, then show the number of unread messages
 
@@ -154,7 +155,7 @@ const ConversationScreen = ({ activeTabName }) => {
 			dispatch(setCurrentChatPreview(data));
 
 			apiRequest(`${retrieveConversationApi}/${chatId}?page=${page}&size=${size}${pivot ? `&pivot_message_id=${pivot}` : ''}`, "GET").then(({ data }) => {
-				setMessages(data);
+				dispatch(setMessages(data));
 				setRetrievingChat(false);
 
 				// Update pivot to the last message’s ID
