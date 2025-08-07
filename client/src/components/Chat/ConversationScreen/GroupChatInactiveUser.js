@@ -16,7 +16,7 @@ const GroupChatInactiveUser = () => {
             message: 'Are you sure you want to join this group?',
             options: [
                 {
-                    "title": "Yes",
+                    "title": "Join",
                     "color": "#00a434ff",
                     "onClick": () => {
                         apiRequest(`/api/v1/group-chat-member/join/${groupId}`, 'POST').then(({ message }) => {
@@ -30,8 +30,8 @@ const GroupChatInactiveUser = () => {
                     }
                 },
                 {
-                    "title": "No",
-                    "color": "#ff0000ff",
+                    "title": "Cancel",
+                    "color": "gray",
                     "onClick": () => dispatch(hideConfirmationPopup())
                 }
             ]
