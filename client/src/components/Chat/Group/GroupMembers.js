@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import './GroupMembers.css';
 import UserPreview from '../../User/UserPreview';
 import { apiRequest } from '../../../http_request';
-import { useDispatch } from 'react-redux'
 
 const RoleComponent = ({ role, members }) => {
 
