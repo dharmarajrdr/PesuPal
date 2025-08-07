@@ -41,7 +41,6 @@ const ConversationScreen = ({ activeTabName }) => {
 	const [chatNotFound, setChatNotFound] = useState(false);
 	const [retrievingChat, setRetrievingChat] = useState(true);
 	const [pivotMessageId, setPivotMessageId] = useState(null);
-	const { messages } = useSelector(state => state.conversation) || [];
 
 	const currentChatPreview = useSelector(state => state.currentChatPreviewSlice);
 	const activeChatTab = useSelector(state => state.activeChatTab);
@@ -206,7 +205,7 @@ const ConversationScreen = ({ activeTabName }) => {
 						: currentChatPreview ? <>
 							<ChatHeader />
 							<audio ref={audioRef} src="/audio/on-message.mp3" preload="auto" />
-							<ChatMessages showStartNewConversation={showStartNewConversation} retrievingChat={retrievingChat} messages={messages} chatId={chatId} clickSendMessageHandler={clickSendMessageHandler} />
+							<ChatMessages showStartNewConversation={showStartNewConversation} retrievingChat={retrievingChat} chatId={chatId} clickSendMessageHandler={clickSendMessageHandler} />
 							<ChatFooter active={active} groupActive={groupActive} currentTab={activeChatTab.name} displayName={displayName} clickSendMessageHandler={clickSendMessageHandler} />
 						</>
 							: null
