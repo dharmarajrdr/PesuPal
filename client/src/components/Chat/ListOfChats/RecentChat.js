@@ -3,6 +3,7 @@ import { StatusIndicator } from '../../Auth/utils';
 import { setActiveRecentChat } from '../../../store/reducers/ActiveRecentChatSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import UserAvatar from '../../User/UserAvatar';
+import { useEffect } from 'react';
 
 const RecentChat = ({ recentChat, openChatHandler }) => {
 
@@ -13,9 +14,10 @@ const RecentChat = ({ recentChat, openChatHandler }) => {
     const activeChatTab = useSelector(state => state.activeChatTab);
 
     const isActive = currentChatId == chatId;
-    if (isActive) {
+
+    useEffect(() => {
         dispatch(setActiveRecentChat(recentChat));
-    }
+    }, [isActive]);
 
     return (
         <div className={`RecentChatContainer cursP FRCS w100 ${isActive ? 'active' : ''}`} onClick={() => openChatHandler(recentChat)}>
