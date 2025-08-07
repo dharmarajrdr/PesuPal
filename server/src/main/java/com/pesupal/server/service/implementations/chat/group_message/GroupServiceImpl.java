@@ -11,6 +11,7 @@ import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.exceptions.PermissionDeniedException;
 import com.pesupal.server.helpers.CurrentValueRetriever;
+import com.pesupal.server.helpers.GroupHelper;
 import com.pesupal.server.helpers.TimeFormatterUtil;
 import com.pesupal.server.model.group.Group;
 import com.pesupal.server.model.group.GroupChatConfiguration;
@@ -22,12 +23,12 @@ import com.pesupal.server.model.user.User;
 import com.pesupal.server.projections.RecentGroupChatProjection;
 import com.pesupal.server.repository.chat.group_message.GroupChatMemberRepository;
 import com.pesupal.server.repository.chat.group_message.GroupRepository;
-import com.pesupal.server.service.interfaces.org.OrgMemberService;
 import com.pesupal.server.service.interfaces.UserService;
 import com.pesupal.server.service.interfaces.chat.group_message.GroupChatConfigurationService;
 import com.pesupal.server.service.interfaces.chat.group_message.GroupChatMemberService;
 import com.pesupal.server.service.interfaces.chat.group_message.GroupChatPinnedService;
 import com.pesupal.server.service.interfaces.chat.group_message.GroupService;
+import com.pesupal.server.service.interfaces.org.OrgMemberService;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -44,8 +45,8 @@ public class GroupServiceImpl extends CurrentValueRetriever implements GroupServ
     private final GroupRepository groupRepository;
     private final OrgMemberService orgMemberService;
     private final GroupChatMemberService groupChatMemberService;
-    private final GroupChatMemberRepository groupChatMemberRepository;
     private final GroupChatPinnedService groupchatPinnedService;
+    private final GroupChatMemberRepository groupChatMemberRepository;
     private final GroupChatConfigurationService groupChatConfigurationService;
 
     /**
@@ -191,17 +192,41 @@ public class GroupServiceImpl extends CurrentValueRetriever implements GroupServ
             throw new PermissionDeniedException("You don't have permission to access this chat.");
         }
 
+        boolean groupActive = group.isActive();
         ChatPreviewDto chatPreviewDto = new ChatPreviewDto();
         chatPreviewDto.setChatId(groupId);
+        chatPreviewDto.setGroupActive(groupActive);
+        chatPreviewDto.setReopenable(!groupActive && GroupHelper.isGroupOwner(group, orgMember));
         chatPreviewDto.setActive(groupChatMember.isActive());
         chatPreviewDto.setDisplayName(group.getName());
-        chatPreviewDto.setGroupActive(group.isActive());
         chatPreviewDto.setDisplayPicture(group.getDisplayPicture());
         chatPreviewDto.setParticipantsCount(group.getMembers().stream().filter(GroupChatMember::isActive).toList().size());
         Optional<GroupChatPinned> pinnedGroupChat = groupchatPinnedService.getPinnedGroupByPinnedByAndGroup(orgMember, group);
-        if (pinnedGroupChat.isPresent()) {
-            chatPreviewDto.setPinnedId(pinnedGroupChat.get().getId());
-        }
+        pinnedGroupChat.ifPresent(groupChatPinned -> chatPreviewDto.setPinnedId(groupChatPinned.getId()));
         return chatPreviewDto;
+    }
+
+    /**
+     * Reopens a group by its ID if the current user is the owner of the group.
+     *
+     * @param groupId
+     */
+    @Override
+    public void reopenGroup(String groupId) {
+
+        OrgMember orgMember = getCurrentOrgMember();
+
+        Group group = getGroupByPublicId(groupId);
+        if (!GroupHelper.isGroupOwner(group, orgMember)) {
+            throw new PermissionDeniedException("You do not have permission to reopen this group.");
+        }
+
+        if (group.isActive()) {
+            throw new ActionProhibitedException("This group is already active.");
+        }
+
+        group.setActive(true);
+        groupRepository.save(group);
+        // initializeGroupChatMember(group, orgMember);
     }
 }

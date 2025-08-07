@@ -41,9 +41,16 @@ public class GroupController {
     }
 
     @GetMapping("/preview/{groupId}")
-    public ResponseEntity<ApiResponseDto> getgroupChatPreview(@PathVariable String groupId) {
+    public ResponseEntity<ApiResponseDto> getGroupChatPreview(@PathVariable String groupId) {
 
         ChatPreviewDto chatPreviewDto = groupService.getGroupChatPreviewByChatId(groupId);
         return ResponseEntity.ok(new ApiResponseDto("Group chat preview retrieved successfully", chatPreviewDto));
+    }
+
+    @PutMapping("/reopen/{groupId}")
+    public ResponseEntity<ApiResponseDto> reopenGroup(@PathVariable String groupId) {
+
+        groupService.reopenGroup(groupId);
+        return ResponseEntity.ok(new ApiResponseDto("Group reopened successfully"));
     }
 }

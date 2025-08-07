@@ -13,7 +13,7 @@ public interface GroupChatMessageService extends ChatService {
 
     void deleteGroupMessage(Long messageId, Long userId, Long orgId);
 
-    void clearGroupChatMessages(Long groupId, Long userId, Long orgId);
+    void clearGroupChatMessages(String groupId);
 
     List<MessageDto> getGroupChatMessages(GetGroupConversationDto getGroupConversationDto);
 

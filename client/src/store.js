@@ -13,6 +13,7 @@ import CurrentOrgSlice from './store/reducers/CurrentOrgSlice';
 import ModuleFilterSlice from './store/reducers/ModuleFilterSlice';
 import ActiveChatTabSlice from './store/reducers/ActiveChatTabSlice';
 import LeftNavigationSlice from './store/reducers/LeftNavigationSlice';
+import ConversationSlice from './store/reducers/ConversationSlice';
 import ConfirmationPopupSlice from './store/reducers/ConfirmationPopupSlice';
 import CurrentModuleSlice from './store/reducers/CurrentModuleSlice';
 import CurrentChatPreviewSlice from './store/reducers/CurrentChatPreviewSlice';
@@ -20,23 +21,24 @@ import ShowChatHeaderOptionsModalSlice from './store/reducers/ShowChatHeaderOpti
 
 const store = configureStore({
     reducer: combineReducers({
-        Navigation: NavigationReducers,
-        recentChats: RecentChatsSlice,
-        VerticalLoader: VerticalLoaderReducer,
-        posts: PostReducer,
         popup: PopupSlice,
+        posts: PostReducer,
         chatId: ChatIdSlice,
         myProfile: MyProfileSlice,
         currentOrg: CurrentOrgSlice, 
+        recentChats: RecentChatsSlice,
+        Navigation: NavigationReducers,
         moduleFilter: ModuleFilterSlice,
+        conversation: ConversationSlice,
         activeChatTab: ActiveChatTabSlice,
         currentModule: CurrentModuleSlice,
         leftNavigation: LeftNavigationSlice,
+        VerticalLoader: VerticalLoaderReducer,
         activeRecentChat: ActiveRecentChatSlice,
         confirmationPopup: ConfirmationPopupSlice,
         pinnedDirectMessage: PinnedDirectMessageSlice,
-        showChatHeaderOptionsModalSlice: ShowChatHeaderOptionsModalSlice,
-        currentChatPreviewSlice: CurrentChatPreviewSlice
+        currentChatPreviewSlice: CurrentChatPreviewSlice,
+        showChatHeaderOptionsModalSlice: ShowChatHeaderOptionsModalSlice
     }),
     devTools: true
 });

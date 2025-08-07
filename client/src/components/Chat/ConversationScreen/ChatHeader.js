@@ -14,6 +14,7 @@ import { setChatId } from '../../../store/reducers/ChatIdSlice';
 import GroupMembers from '../Group/GroupMembers';
 import { hideConfirmationPopup, showConfirmationPopup } from '../../../store/reducers/ConfirmationPopupSlice';
 import { showPopup } from '../../../store/reducers/PopupSlice';
+import { clearMessages } from '../../../store/reducers/ConversationSlice';
 
 const ParticipantsCount = ({ count }) => {
     return (
@@ -88,6 +89,29 @@ const ChatHeader = () => {
 
     const clearChatHandler = () => {
 
+        dispatch(showConfirmationPopup({
+            message: 'Are you sure you want to clear this chat?',
+            options: [
+                {
+                    title: 'Clear',
+                    color: 'red',
+                    onClick: () => {
+                        apiRequest(`/api/v1/group-chat-message/clear/${chatId}`, 'DELETE').then(({ message }) => {
+                            dispatch(hideConfirmationPopup());
+                            dispatch(showPopup({ message, type: 'success' }));
+                            dispatch(clearMessages());
+                        }).catch(({ message }) => {
+                            dispatch(showPopup({ message, type: 'error' }));
+                        });
+                    }
+                },
+                {
+                    title: 'Cancel',
+                    color: 'gray',
+                    onClick: () => dispatch(hideConfirmationPopup())
+                }
+            ]
+        }));
     };
 
     const leaveGroupHandler = () => {
