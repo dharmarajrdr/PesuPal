@@ -35,7 +35,7 @@ const ChatHeader = () => {
     const currentChatPreview = useSelector(state => state.currentChatPreviewSlice);
     const [pinnedId, setPinnedIdState] = useState(null);
     const activeChatTab = useSelector(state => state.activeChatTab);
-    const { chatId, displayName, displayPicture, userId, participantsCount } = currentChatPreview || {};
+    const { chatId, displayName, displayPicture, userId, participantsCount, groupActive, active } = currentChatPreview || {};
 
     const closeChatHandler = () => {
         dispatch(setActiveRecentChat(null));
@@ -149,22 +149,22 @@ const ChatHeader = () => {
             }
         },
         {
-            name: activeChatTab.name == 'groupMessage' ? 'Group Info' : null,
+            name: activeChatTab.name == 'groupMessage' && active && groupActive ? 'Group Info' : null,
             icon: 'fa fa-info-circle',
             onClick: () => {
-                setShowProfile(true);
+
                 dispatch(setShowChatHeaderOptionsModal(false));
             }
         },
         {
-            name: activeChatTab.name == 'groupMessage' ? 'Add Participant' : null,
+            name: activeChatTab.name == 'groupMessage' && active && groupActive ? 'Add Participant' : null,
             icon: 'fa fa-user-plus',
             onClick: () => {
                 dispatch(setShowChatHeaderOptionsModal(false));
             }
         },
         {
-            name: activeChatTab.name == 'groupMessage' ? 'View Participants' : null,
+            name: activeChatTab.name == 'groupMessage' && active && groupActive ? 'View Participants' : null,
             icon: 'fa fa-users',
             onClick: () => {
                 setShowGroupMembers(true);
@@ -172,7 +172,7 @@ const ChatHeader = () => {
             }
         },
         {
-            name: activeChatTab.name == 'groupMessage' ? 'Permissions' : null,
+            name: activeChatTab.name == 'groupMessage' && active && groupActive ? 'Permissions' : null,
             icon: 'fa fa-lock',
             onClick: () => {
                 dispatch(setShowChatHeaderOptionsModal(false));
@@ -180,7 +180,7 @@ const ChatHeader = () => {
         },
         { name: 'View Media', icon: 'fa fa-image' },
         {
-            name: activeChatTab.name == 'groupMessage' ? 'Clear Chat' : null,
+            name: activeChatTab.name == 'groupMessage' && active && groupActive ? 'Clear Chat' : null,
             icon: 'fa fa-delete-left',
             onClick: () => {
                 clearChatHandler();
@@ -188,7 +188,7 @@ const ChatHeader = () => {
             }
         },
         {
-            name: activeChatTab.name == 'groupMessage' ? 'Leave Group' : null,
+            name: activeChatTab.name == 'groupMessage' && active && groupActive ? 'Leave Group' : null,
             icon: 'fa fa-sign-out-alt',
             onClick: () => {
                 leaveGroupHandler();
@@ -196,7 +196,7 @@ const ChatHeader = () => {
             }
         },
         {
-            name: activeChatTab.name == 'groupMessage' ? 'Delete Group' : null,
+            name: activeChatTab.name == 'groupMessage' && active && groupActive ? 'Delete Group' : null,
             icon: 'fa fa-trash',
             onClick: () => {
                 deleteGroupHandler();
