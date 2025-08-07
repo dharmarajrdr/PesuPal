@@ -207,7 +207,7 @@ const ConversationScreen = ({ activeTabName }) => {
 							<ChatHeader />
 							<audio ref={audioRef} src="/audio/on-message.mp3" preload="auto" />
 							<ChatMessages showStartNewConversation={showStartNewConversation} retrievingChat={retrievingChat} messages={messages} chatId={chatId} clickSendMessageHandler={clickSendMessageHandler} />
-							<ChatFooter groupId={chatId} active={active} groupActive={groupActive} currentTab={activeChatTab.name} displayName={displayName} clickSendMessageHandler={clickSendMessageHandler} />
+							<ChatFooter active={active} groupActive={groupActive} currentTab={activeChatTab.name} displayName={displayName} clickSendMessageHandler={clickSendMessageHandler} />
 						</>
 							: null
 			}

@@ -1,8 +1,6 @@
 import { useState } from 'react';
 import './ChatInput.css'
 import { useDispatch, useSelector } from 'react-redux';
-import { moveRecentChatToTop, updateRecentChat } from '../../../store/reducers/RecentChatsSlice';
-import utils from '../../../utils';
 
 const ChatInput = ({ clickSendMessageHandler }) => {
 
