@@ -1,7 +1,7 @@
 package com.pesupal.server.repository.chat.direct_message;
 
 import com.pesupal.server.enums.ReadReceipt;
-import com.pesupal.server.model.chat.DirectMessage;
+import com.pesupal.server.model.chat.direct_message.DirectMessage;
 import com.pesupal.server.projections.RecentPrivateChatProjection;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;

@@ -1,13 +1,14 @@
-package com.pesupal.server.dto.response;
+package com.pesupal.server.dto.response.chat;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.pesupal.server.dto.response.chat.MediaFileDto;
+import com.pesupal.server.dto.response.UserPreviewDto;
 import com.pesupal.server.enums.ChatMode;
+import com.pesupal.server.enums.MessageType;
 import com.pesupal.server.enums.Reaction;
 import com.pesupal.server.enums.ReadReceipt;
-import com.pesupal.server.model.chat.DirectMessage;
-import com.pesupal.server.model.chat.DirectMessageChat;
-import com.pesupal.server.model.group.GroupChatMessage;
+import com.pesupal.server.model.chat.direct_message.DirectMessage;
+import com.pesupal.server.model.chat.direct_message.DirectMessageChat;
+import com.pesupal.server.model.chat.group_message.GroupChatMessage;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -41,6 +42,8 @@ public class MessageDto {
 
     private ChatMode chatMode;
 
+    private MessageType messageType;
+
     public static MessageDto fromDirectMessage(DirectMessage directMessage) {
 
         MessageDto responseDto = new MessageDto();
@@ -55,6 +58,7 @@ public class MessageDto {
         responseDto.setDeleted(directMessage.isDeleted());
         responseDto.setReadReceipt(directMessage.getReadReceipt());
         responseDto.setChatMode(ChatMode.DIRECT_MESSAGE);
+        responseDto.setMessageType(directMessage.getMessageType());
         responseDto.setReceiverId(directMessageChat.getAnotherUser(directMessage.getSender()).getPublicId());
         return responseDto;
     }
@@ -71,6 +75,7 @@ public class MessageDto {
         responseDto.setChatId(groupChatMessage.getGroup().getPublicId());
         responseDto.setDeleted(groupChatMessage.isDeleted());
         responseDto.setChatMode(ChatMode.GROUP_MESSAGE);
+        responseDto.setMessageType(groupChatMessage.getMessageType());
         return responseDto;
     }
 }

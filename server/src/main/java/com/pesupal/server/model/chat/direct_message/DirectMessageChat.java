@@ -1,4 +1,4 @@
-package com.pesupal.server.model.chat;
+package com.pesupal.server.model.chat.direct_message;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.pesupal.server.model.PublicAccessModel;

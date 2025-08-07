@@ -1,5 +1,6 @@
-package com.pesupal.server.model.chat;
+package com.pesupal.server.model.chat.direct_message;
 
+import com.pesupal.server.enums.MessageType;
 import com.pesupal.server.enums.ReadReceipt;
 import com.pesupal.server.model.CreationTimeAuditable;
 import com.pesupal.server.model.org.Org;
@@ -31,6 +32,9 @@ public class DirectMessage extends CreationTimeAuditable {
     private Boolean containsMedia;
 
     private boolean deleted;
+
+    @Enumerated(EnumType.STRING)
+    private MessageType messageType = MessageType.USER_MESSAGE;
 
     @Enumerated(EnumType.STRING)
     private ReadReceipt readReceipt;

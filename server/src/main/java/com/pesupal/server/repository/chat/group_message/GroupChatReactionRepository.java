@@ -1,6 +1,6 @@
 package com.pesupal.server.repository.chat.group_message;
 
-import com.pesupal.server.model.group.GroupChatReaction;
+import com.pesupal.server.model.chat.group_message.GroupChatReaction;
 import com.pesupal.server.projections.ReactionCountProjection;
 import io.lettuce.core.dynamic.annotation.Param;
 import org.springframework.data.jpa.repository.JpaRepository;

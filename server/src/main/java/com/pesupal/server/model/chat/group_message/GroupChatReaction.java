@@ -1,4 +1,4 @@
-package com.pesupal.server.model.chat;
+package com.pesupal.server.model.chat.group_message;
 
 import com.pesupal.server.enums.Reaction;
 import com.pesupal.server.model.CreationTimeAuditable;
@@ -11,13 +11,13 @@ import lombok.Data;
 
 @Data
 @Entity
-public class DirectMessageReaction extends CreationTimeAuditable {
+public class GroupChatReaction extends CreationTimeAuditable {
 
     @ManyToOne
-    private DirectMessage directMessage;
+    private GroupChatMessage groupChatMessage;
 
     @ManyToOne
-    private OrgMember reactor;
+    private OrgMember reactedBy;
 
     @Enumerated(EnumType.STRING)
     private Reaction reaction;

@@ -9,15 +9,15 @@ import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.exceptions.PermissionDeniedException;
 import com.pesupal.server.helpers.CurrentValueRetriever;
-import com.pesupal.server.model.group.Group;
-import com.pesupal.server.model.group.GroupChatConfiguration;
-import com.pesupal.server.model.group.GroupChatMember;
+import com.pesupal.server.model.chat.group_message.Group;
+import com.pesupal.server.model.chat.group_message.GroupChatConfiguration;
+import com.pesupal.server.model.chat.group_message.GroupChatMember;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.repository.chat.group_message.GroupChatMemberRepository;
-import com.pesupal.server.service.interfaces.org.OrgMemberService;
 import com.pesupal.server.service.interfaces.chat.group_message.GroupChatConfigurationService;
 import com.pesupal.server.service.interfaces.chat.group_message.GroupChatMemberService;
 import com.pesupal.server.service.interfaces.chat.group_message.GroupService;
+import com.pesupal.server.service.interfaces.org.OrgMemberService;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
@@ -180,5 +180,5 @@ public class GroupChatMemberServiceImpl extends CurrentValueRetriever implements
         ));
 
     }
-
+    
 }

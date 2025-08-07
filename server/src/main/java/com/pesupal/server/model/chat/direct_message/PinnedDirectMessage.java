@@ -1,4 +1,4 @@
-package com.pesupal.server.model.chat;
+package com.pesupal.server.model.chat.direct_message;
 
 import com.pesupal.server.model.BaseModel;
 import com.pesupal.server.model.user.OrgMember;

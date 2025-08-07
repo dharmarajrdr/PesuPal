@@ -2,8 +2,8 @@ package com.pesupal.server.service.interfaces.chat.group_message;
 
 import com.pesupal.server.dto.request.chat.direct_message.PinnedChatDto;
 import com.pesupal.server.dto.request.chat.group_message.CreatePinGroupChatMessageDto;
-import com.pesupal.server.model.group.Group;
-import com.pesupal.server.model.group.GroupChatPinned;
+import com.pesupal.server.model.chat.group_message.Group;
+import com.pesupal.server.model.chat.group_message.GroupChatPinned;
 import com.pesupal.server.model.user.OrgMember;
 
 import java.util.List;

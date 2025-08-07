@@ -5,8 +5,8 @@ import com.pesupal.server.dto.request.chat.group_message.CreatePinGroupChatMessa
 import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.helpers.CurrentValueRetriever;
-import com.pesupal.server.model.group.Group;
-import com.pesupal.server.model.group.GroupChatPinned;
+import com.pesupal.server.model.chat.group_message.Group;
+import com.pesupal.server.model.chat.group_message.GroupChatPinned;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.repository.chat.group_message.GroupChatPinnedRepository;
 import com.pesupal.server.service.interfaces.chat.group_message.GroupChatPinnedService;

@@ -4,9 +4,9 @@ import com.pesupal.server.dto.request.chat.group_message.UpdateGroupChatConfigur
 import com.pesupal.server.enums.Role;
 import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.exceptions.PermissionDeniedException;
-import com.pesupal.server.model.group.Group;
-import com.pesupal.server.model.group.GroupChatConfiguration;
-import com.pesupal.server.model.group.GroupChatMember;
+import com.pesupal.server.model.chat.group_message.Group;
+import com.pesupal.server.model.chat.group_message.GroupChatConfiguration;
+import com.pesupal.server.model.chat.group_message.GroupChatMember;
 import com.pesupal.server.repository.chat.group_message.GroupChatConfigurationRepository;
 import com.pesupal.server.service.interfaces.chat.group_message.GroupChatConfigurationService;
 import com.pesupal.server.service.interfaces.chat.group_message.GroupChatMemberService;

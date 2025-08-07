@@ -4,7 +4,7 @@ import com.pesupal.server.dto.request.chat.group_message.AddGroupMemberDto;
 import com.pesupal.server.dto.response.UserPreviewDto;
 import com.pesupal.server.dto.response.chat.group_message.GroupDto;
 import com.pesupal.server.enums.Role;
-import com.pesupal.server.model.group.GroupChatMember;
+import com.pesupal.server.model.chat.group_message.GroupChatMember;
 
 import java.util.List;
 import java.util.Map;

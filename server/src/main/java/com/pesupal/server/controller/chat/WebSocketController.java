@@ -1,7 +1,7 @@
 package com.pesupal.server.controller.chat;
 
 import com.pesupal.server.dto.request.chat.direct_message.ChatMessageDto;
-import com.pesupal.server.dto.response.MessageDto;
+import com.pesupal.server.dto.response.chat.MessageDto;
 import com.pesupal.server.enums.ChatMode;
 import com.pesupal.server.exceptions.WebsocketException;
 import com.pesupal.server.factory.ChatServiceFactory;

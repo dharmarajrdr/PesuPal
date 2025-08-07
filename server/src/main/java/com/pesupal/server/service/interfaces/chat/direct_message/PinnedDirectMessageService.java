@@ -2,8 +2,8 @@ package com.pesupal.server.service.interfaces.chat.direct_message;
 
 import com.pesupal.server.dto.request.chat.direct_message.CreatePinDirectMessageDto;
 import com.pesupal.server.dto.request.chat.direct_message.PinnedChatDto;
-import com.pesupal.server.model.chat.DirectMessageChat;
-import com.pesupal.server.model.chat.PinnedDirectMessage;
+import com.pesupal.server.model.chat.direct_message.DirectMessageChat;
+import com.pesupal.server.model.chat.direct_message.PinnedDirectMessage;
 import com.pesupal.server.model.user.OrgMember;
 
 import java.util.List;
