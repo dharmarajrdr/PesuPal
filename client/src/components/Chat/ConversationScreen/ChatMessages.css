@@ -141,6 +141,7 @@
     font-size: 12px;
     color: #888;
     cursor: default;
+    box-shadow: 0 1px 8px var(--box-shadow-color);
     border-left: 3px solid var(--primary-color);
     border-right: 3px solid var(--primary-color);
     border-top: 1px solid #ddd;
