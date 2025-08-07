@@ -204,7 +204,7 @@ const ChatHeader = () => {
             <div className='FRCS'>
                 <UserAvatar displayPicture={displayPicture} displayName={displayName} setShowProfile={setShowProfile} />
                 <p className="name mL10">{displayName}</p>
-                {participantsCount && <ParticipantsCount count={participantsCount} setShowGroupMembers={setShowGroupMembers} />}
+                {participantsCount && active && <ParticipantsCount count={participantsCount} setShowGroupMembers={setShowGroupMembers} />}
             </div>
             <div className='FRCE'>
                 <i className='header-icons fa fa-phone' id='chat-header-options' />
