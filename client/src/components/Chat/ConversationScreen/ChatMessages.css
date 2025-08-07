@@ -130,7 +130,7 @@
     align-items: flex-start;
 }
 
-.system-message  {
+.system-message {
     height: 40px;
 }
 
@@ -220,6 +220,8 @@
 
 .message-reacted p i {
     font-size: 10px;
+    width: 13px;
+    text-align: center;
     margin-right: 2px;
 }
 

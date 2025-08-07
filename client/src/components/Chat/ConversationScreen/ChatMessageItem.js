@@ -69,7 +69,7 @@ const SenderName = ({ displayName, sent_or_received, is_super_admin }) => {
 
 const ChatMessageItem = ({ msg, isSameSender }) => {
 
-    const { sender, deleted, createdAt, readReceipt, message, media, chatMode, reactions } = msg;
+    const { id, sender, deleted, createdAt, readReceipt, message, media, chatMode, reactions } = msg;
     const { id: senderId, displayName, displayPicture, is_super_admin } = sender || {};
 
     const showUserMeta = chatMode == 'GROUP_MESSAGE';
@@ -90,12 +90,12 @@ const ChatMessageItem = ({ msg, isSameSender }) => {
                 {showUserMeta && !isSameSender && <SenderName displayName={displayName} sent_or_received={sent_or_received} is_super_admin={is_super_admin} />}
                 <div className={`message ${sent_or_received}`}>
                     {deleted ? <MessageDeleted /> : <>
-                        <MessageActions isCurrentUser={isCurrentUser} />
+                        <MessageActions id={id} isCurrentUser={isCurrentUser} />
                         <MediaDisplayer media={media} />
                         <div className="message-content">
                             <Message html={message} />
                         </div>
-                        <MessageMeta createdAt={createdAt} readReceipt={readReceipt} isCurrentUser={isCurrentUser} reactions={reactions} />
+                        <MessageMeta id={id} createdAt={createdAt} readReceipt={readReceipt} isCurrentUser={isCurrentUser} reactions={reactions} />
                     </>}
                 </div>
             </div>
