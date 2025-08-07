@@ -51,7 +51,7 @@ public class GroupChatMemberServiceImpl extends CurrentValueRetriever implements
     @Override
     public GroupChatMember getGroupMemberByGroupIdAndUserId(String groupId, Long userId) {
 
-        return groupChatMemberRepository.findByGroup_PublicIdAndParticipantId(groupId, userId).orElseThrow(() -> new DataNotFoundException("User with ID " + userId + " is not a member of group with ID " + groupId + "."));
+        return groupChatMemberRepository.findByGroup_PublicIdAndParticipantId(groupId, userId).orElseThrow(() -> new DataNotFoundException("User with ID " + userId + " is not a member of this group."));
     }
 
     /**
@@ -64,7 +64,7 @@ public class GroupChatMemberServiceImpl extends CurrentValueRetriever implements
     @Override
     public GroupChatMember getGroupMemberByGroupIdAndUserId(Long groupId, Long userId) {
 
-        return groupChatMemberRepository.findByGroupIdAndParticipantId(groupId, userId).orElseThrow(() -> new DataNotFoundException("User with ID " + userId + " is not a member of group with ID " + groupId + "."));
+        return groupChatMemberRepository.findByGroupIdAndParticipantId(groupId, userId).orElseThrow(() -> new DataNotFoundException("User with ID " + userId + " is not a member of this group."));
     }
 
     /**

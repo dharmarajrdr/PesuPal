@@ -7,6 +7,7 @@ import com.pesupal.server.dto.response.chat.RecentChatDto;
 import com.pesupal.server.dto.response.chat.RecentChatPagedDto;
 import com.pesupal.server.dto.response.chat.group_message.GroupDto;
 import com.pesupal.server.enums.Role;
+import com.pesupal.server.enums.Visibility;
 import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.exceptions.PermissionDeniedException;
@@ -197,8 +198,18 @@ public class GroupServiceImpl extends CurrentValueRetriever implements GroupServ
             throw new DataNotFoundException("Group with ID " + groupId + " does not exist");
         }
 
-        GroupChatMember groupChatMember = groupChatMemberService.getGroupMemberByGroupIdAndUserId(groupId, userId);
-        if (!groupChatMember.isActive() && !group.isInactiveMemberAccessChat()) {
+        Optional<GroupChatMember> optionalGroupChatMember = group.getMembers().stream().filter(gcm -> gcm.getParticipant().getId().equals(userId)).findFirst();
+        boolean isActiveGroupMember;
+        if (optionalGroupChatMember.isEmpty()) {
+            if (!group.getVisibility().equals(Visibility.PUBLIC)) {
+                throw new PermissionDeniedException("You do not have permission to access this chat.");
+            }
+            isActiveGroupMember = true;
+        } else {
+            isActiveGroupMember = optionalGroupChatMember.get().isActive();
+        }
+
+        if (!isActiveGroupMember && !group.isInactiveMemberAccessChat()) {
             throw new PermissionDeniedException("You don't have permission to access this chat.");
         }
 
@@ -207,7 +218,7 @@ public class GroupServiceImpl extends CurrentValueRetriever implements GroupServ
         chatPreviewDto.setChatId(groupId);
         chatPreviewDto.setGroupActive(groupActive);
         chatPreviewDto.setReopenable(!groupActive && GroupHelper.isGroupOwner(group, orgMember));
-        chatPreviewDto.setActive(groupChatMember.isActive());
+        chatPreviewDto.setActive(isActiveGroupMember && optionalGroupChatMember.isPresent());
         chatPreviewDto.setDisplayName(group.getName());
         chatPreviewDto.setDisplayPicture(group.getDisplayPicture());
         chatPreviewDto.setParticipantsCount(group.getMembers().stream().filter(GroupChatMember::isActive).toList().size());
