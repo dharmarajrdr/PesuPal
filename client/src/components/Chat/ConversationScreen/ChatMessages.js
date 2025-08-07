@@ -3,8 +3,9 @@ import './ChatMessages.css'
 import Loader from '../../Loader';
 import StartNewConversation from './StartNewConversation';
 import ChatMessageItem from './ChatMessageItem';
+import { useSelector } from 'react-redux';
 
-const ChatMessages = ({ messages, showStartNewConversation, chatId, retrievingChat, clickSendMessageHandler }) => {
+const ChatMessages = ({ showStartNewConversation, chatId, retrievingChat, clickSendMessageHandler }) => {
 
     const formatDate = (iso) => new Date(iso).toDateString();
 
@@ -12,6 +13,7 @@ const ChatMessages = ({ messages, showStartNewConversation, chatId, retrievingCh
     let previousMessageSenderId = null;
 
     const chatContainerRef = useRef(null);
+    const { messages } = useSelector(state => state.conversation) || { 'messages': [] };
 
     useEffect(() => {
         if (chatContainerRef.current) {

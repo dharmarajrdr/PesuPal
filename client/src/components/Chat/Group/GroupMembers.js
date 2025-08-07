@@ -33,7 +33,6 @@ const NoMembersFound = ({ message = "No members found." }) => {
 
 const GroupMembers = ({ groupId, setShowGroupMembers }) => {
 
-    const dispatch = useDispatch();
     const [members, setMembers] = useState({});
     const [error, setError] = useState(null);
     const roleOrder = ["SUPER_ADMIN", "ADMIN", "USER"];

@@ -16,9 +16,9 @@ import { hideConfirmationPopup, showConfirmationPopup } from '../../../store/red
 import { showPopup } from '../../../store/reducers/PopupSlice';
 import { clearMessages } from '../../../store/reducers/ConversationSlice';
 
-const ParticipantsCount = ({ count }) => {
+const ParticipantsCount = ({ count, setShowGroupMembers }) => {
     return (
-        <div id="participants-count" className='FRCC pY5 pX10 mL10 borderRadius5'>
+        <div id="participants-count" className='FRCC pY5 pX10 mL10 borderRadius5' onClick={() => setShowGroupMembers(true)}>
             <i className="fa fa-users pR5 fs12"></i>
             <span className="count fs14">{count}</span>
         </div>
@@ -35,7 +35,7 @@ const ChatHeader = () => {
     const currentChatPreview = useSelector(state => state.currentChatPreviewSlice);
     const [pinnedId, setPinnedIdState] = useState(null);
     const activeChatTab = useSelector(state => state.activeChatTab);
-    const { chatId, displayName, displayPicture, userId, participantsCount } = currentChatPreview || {};
+    const { chatId, displayName, displayPicture, userId, participantsCount, groupActive, active } = currentChatPreview || {};
 
     const closeChatHandler = () => {
         dispatch(setActiveRecentChat(null));
@@ -149,30 +149,22 @@ const ChatHeader = () => {
             }
         },
         {
-            name: activeChatTab.name == 'groupMessage' ? 'Group Info' : null,
+            name: activeChatTab.name == 'groupMessage' && active && groupActive ? 'Group Info' : null,
             icon: 'fa fa-info-circle',
             onClick: () => {
-                setShowProfile(true);
+
                 dispatch(setShowChatHeaderOptionsModal(false));
             }
         },
         {
-            name: activeChatTab.name == 'groupMessage' ? 'Add Participant' : null,
+            name: activeChatTab.name == 'groupMessage' && active && groupActive ? 'Add Participant' : null,
             icon: 'fa fa-user-plus',
             onClick: () => {
                 dispatch(setShowChatHeaderOptionsModal(false));
             }
         },
         {
-            name: activeChatTab.name == 'groupMessage' ? 'View Participants' : null,
-            icon: 'fa fa-users',
-            onClick: () => {
-                setShowGroupMembers(true);
-                dispatch(setShowChatHeaderOptionsModal(false));
-            }
-        },
-        {
-            name: activeChatTab.name == 'groupMessage' ? 'Permissions' : null,
+            name: activeChatTab.name == 'groupMessage' && active && groupActive ? 'Permissions' : null,
             icon: 'fa fa-lock',
             onClick: () => {
                 dispatch(setShowChatHeaderOptionsModal(false));
@@ -180,7 +172,7 @@ const ChatHeader = () => {
         },
         { name: 'View Media', icon: 'fa fa-image' },
         {
-            name: activeChatTab.name == 'groupMessage' ? 'Clear Chat' : null,
+            name: activeChatTab.name == 'groupMessage' && active && groupActive ? 'Clear Chat' : null,
             icon: 'fa fa-delete-left',
             onClick: () => {
                 clearChatHandler();
@@ -188,7 +180,7 @@ const ChatHeader = () => {
             }
         },
         {
-            name: activeChatTab.name == 'groupMessage' ? 'Leave Group' : null,
+            name: activeChatTab.name == 'groupMessage' && active && groupActive ? 'Leave Group' : null,
             icon: 'fa fa-sign-out-alt',
             onClick: () => {
                 leaveGroupHandler();
@@ -196,7 +188,7 @@ const ChatHeader = () => {
             }
         },
         {
-            name: activeChatTab.name == 'groupMessage' ? 'Delete Group' : null,
+            name: activeChatTab.name == 'groupMessage' && active && groupActive ? 'Delete Group' : null,
             icon: 'fa fa-trash',
             onClick: () => {
                 deleteGroupHandler();
@@ -212,11 +204,13 @@ const ChatHeader = () => {
             <div className='FRCS'>
                 <UserAvatar displayPicture={displayPicture} displayName={displayName} setShowProfile={setShowProfile} />
                 <p className="name mL10">{displayName}</p>
-                {participantsCount && <ParticipantsCount count={participantsCount} />}
+                {participantsCount && <ParticipantsCount count={participantsCount} setShowGroupMembers={setShowGroupMembers} />}
             </div>
             <div className='FRCE'>
+                <i className='header-icons fa fa-phone' id='chat-header-options' />
+                <i className='header-icons fa fa-video mL10' id='chat-header-options' />
                 {showChatHeaderOptionsModalSlice && <OptionsModal options={options} />}
-                <i className='header-icons fa fa-ellipsis-v' id='chat-header-options' onClick={chatHeaderOptionsClickHandler} />
+                <i className='header-icons fa fa-ellipsis-v mL10' id='chat-header-options' onClick={chatHeaderOptionsClickHandler} />
                 <i className='header-icons fa fa-close mL10' id='close-chat' onClick={closeChatHandler}></i>
             </div>
         </div>
