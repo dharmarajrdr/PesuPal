@@ -19,7 +19,7 @@ const ChatInputGroupArchived = () => {
                     "title": "Yes",
                     "color": "#00a434ff",
                     "onClick": () => {
-                        apiRequest(`/api/v1/group/${groupId}/reopen`, 'PUT').then(({ message }) => {
+                        apiRequest(`/api/v1/group/reopen/${groupId}`, 'PUT').then(({ message }) => {
                             dispatch(updateCurrentChatPreview({ groupActive: true }));
                             dispatch(hideConfirmationPopup());
                             dispatch(showPopup({ message, type: 'success' }));
