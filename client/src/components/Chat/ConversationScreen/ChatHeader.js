@@ -116,6 +116,29 @@ const ChatHeader = () => {
 
     const leaveGroupHandler = () => {
 
+        dispatch(showConfirmationPopup({
+            message: 'Are you sure you want to leave this group?',
+            options: [
+                {
+                    title: 'Leave',
+                    color: 'red',
+                    onClick: () => {
+                        apiRequest(`/api/v1/group-chat-member/leave/${chatId}`, 'DELETE').then(({ message }) => {
+                            dispatch(hideConfirmationPopup());
+                            dispatch(showPopup({ message, type: 'success' }));
+                            dispatch(updateCurrentChatPreview({ active: false }));
+                        }).catch(({ message }) => {
+                            dispatch(showPopup({ message, type: 'error' }));
+                        });
+                    }
+                },
+                {
+                    title: 'Cancel',
+                    color: 'gray',
+                    onClick: () => dispatch(hideConfirmationPopup())
+                }
+            ]
+        }));
     };
 
     const options = [
