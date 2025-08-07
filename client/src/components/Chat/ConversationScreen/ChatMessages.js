@@ -23,6 +23,7 @@ const ChatMessages = ({ showStartNewConversation, chatId, retrievingChat, clickS
 
     let lastDate = null;
     let previousMessageSenderId = null;
+    let previousMessageType = null;
 
     const chatContainerRef = useRef(null);
     const { messages } = useSelector(state => state.conversation) || { 'messages': [] };
@@ -49,8 +50,9 @@ const ChatMessages = ({ showStartNewConversation, chatId, retrievingChat, clickS
                 lastDate = newDate;
 
                 // compare the msg.sender.id of current and previous message
-                const isSameSender = previousMessageSenderId === msg.sender.id && !showDate;
+                const isSameSender = previousMessageSenderId === msg.sender.id && !showDate && previousMessageType === messageType;
                 previousMessageSenderId = msg.sender.id;
+                previousMessageType = msg.messageType;
 
                 return (
                     <div key={msg.id} className='w100'>
