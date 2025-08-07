@@ -8,10 +8,12 @@ import { setShowChatHeaderOptionsModal } from '../../../store/reducers/ShowChatH
 import OptionsModal from '../../Utils/OptionsModal';
 import { apiRequest } from '../../../http_request';
 import { addPinnedDirectMessage, removePinnedDirectMessage } from '../../../store/reducers/PinnedDirectMessageSlice';
-import { setCurrentChatPreview } from '../../../store/reducers/CurrentChatPreviewSlice';
+import { setCurrentChatPreview, updateCurrentChatPreview } from '../../../store/reducers/CurrentChatPreviewSlice';
 import { setActiveRecentChat } from '../../../store/reducers/ActiveRecentChatSlice';
 import { setChatId } from '../../../store/reducers/ChatIdSlice';
 import GroupMembers from '../Group/GroupMembers';
+import { hideConfirmationPopup, showConfirmationPopup } from '../../../store/reducers/ConfirmationPopupSlice';
+import { showPopup } from '../../../store/reducers/PopupSlice';
 
 const ParticipantsCount = ({ count }) => {
     return (
@@ -49,7 +51,47 @@ const ChatHeader = () => {
     }, [currentChatPreview]);
 
     const deleteGroupHandler = () => {
-        
+
+        const removeAccessToChatHeaderOptions = () => {
+            dispatch(setShowChatHeaderOptionsModal(false));
+        }
+
+        const removeAccessToSendFurtherMessages = () => {
+            dispatch(updateCurrentChatPreview({ groupActive: false }));
+        }
+
+        dispatch(showConfirmationPopup({
+            message: 'Are you sure you want to delete this group?',
+            options: [
+                {
+                    title: 'Delete',
+                    color: 'red',
+                    onClick: () => {
+                        apiRequest(`/api/v1/group/${chatId}`, 'DELETE').then(({ message }) => {
+                            dispatch(hideConfirmationPopup());
+                            dispatch(showPopup({ message, type: 'success' }));
+                            removeAccessToChatHeaderOptions();
+                            removeAccessToSendFurtherMessages();
+                        }).catch(({ message }) => {
+                            dispatch(showPopup({ message, type: 'error' }));
+                        });
+                    }
+                },
+                {
+                    title: 'Cancel',
+                    color: 'gray',
+                    onClick: () => dispatch(hideConfirmationPopup())
+                }
+            ]
+        }));
+    };
+
+    const clearChatHandler = () => {
+
+    };
+
+    const leaveGroupHandler = () => {
+
     };
 
     const options = [
@@ -117,6 +159,7 @@ const ChatHeader = () => {
             name: activeChatTab.name == 'groupMessage' ? 'Clear Chat' : null,
             icon: 'fa fa-delete-left',
             onClick: () => {
+                clearChatHandler();
                 dispatch(setShowChatHeaderOptionsModal(false));
             }
         },
@@ -124,6 +167,7 @@ const ChatHeader = () => {
             name: activeChatTab.name == 'groupMessage' ? 'Leave Group' : null,
             icon: 'fa fa-sign-out-alt',
             onClick: () => {
+                leaveGroupHandler();
                 dispatch(setShowChatHeaderOptionsModal(false));
             }
         },
