@@ -91,6 +91,10 @@ public class GroupChatMemberServiceImpl extends CurrentValueRetriever implements
             throw new ActionProhibitedException("You are already a member of this group.");
         }
 
+        if (!group.isActive()) {
+            throw new ActionProhibitedException("The group you are trying to join is no longer active.");
+        }
+
         if (group.getVisibility().equals(Visibility.PRIVATE)) {
             throw new PermissionDeniedException("The group that you are trying to join is private. Please contact the group owner for access.");
         }
