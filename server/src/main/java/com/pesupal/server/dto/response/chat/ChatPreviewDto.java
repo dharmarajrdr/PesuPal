@@ -22,4 +22,6 @@ public class ChatPreviewDto {
     private boolean groupActive;
 
     private Integer participantsCount;
+
+    private Boolean reopenable;
 }
