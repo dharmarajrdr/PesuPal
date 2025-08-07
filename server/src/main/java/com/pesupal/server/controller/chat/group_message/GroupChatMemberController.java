@@ -24,7 +24,14 @@ public class GroupChatMemberController {
     public ResponseEntity<ApiResponseDto> joinGroup(@PathVariable String groupId) {
 
         GroupDto groupDto = groupChatMemberService.joinGroup(groupId);
-        return ResponseEntity.ok().body(new ApiResponseDto("Group joined successfully", groupDto));
+        return ResponseEntity.ok().body(new ApiResponseDto("Joined group successfully", groupDto));
+    }
+
+    @DeleteMapping("/leave/{groupId}")
+    public ResponseEntity<ApiResponseDto> leaveGroup(@PathVariable String groupId) {
+
+        groupChatMemberService.leaveGroup(groupId);
+        return ResponseEntity.ok().body(new ApiResponseDto("Left group successfully"));
     }
 
     @PostMapping("/add-member")

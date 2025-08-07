@@ -1,10 +1,10 @@
 package com.pesupal.server.dto.request.chat.direct_message;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.pesupal.server.model.chat.DirectMessageChat;
-import com.pesupal.server.model.chat.PinnedDirectMessage;
-import com.pesupal.server.model.group.Group;
-import com.pesupal.server.model.group.GroupChatPinned;
+import com.pesupal.server.model.chat.direct_message.DirectMessageChat;
+import com.pesupal.server.model.chat.direct_message.PinnedDirectMessage;
+import com.pesupal.server.model.chat.group_message.Group;
+import com.pesupal.server.model.chat.group_message.GroupChatPinned;
 import com.pesupal.server.model.user.OrgMember;
 import lombok.Data;
 

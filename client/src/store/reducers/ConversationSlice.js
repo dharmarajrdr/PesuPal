@@ -14,10 +14,17 @@ const ConversationSlice = createSlice({
         },
         'clearMessages': (state) => {
             state.messages = [];
+        },
+        'reactMessage': (state, action) => {
+            const { id, reaction } = action.payload;
+            const message = state.messages.find(msg => msg.id === id);
+            if (message) {
+                message.reactions[reaction] = (message.reactions[reaction] || 0) + 1;
+            }
         }
     }
 });
 
-export const { setMessages, addMessage, clearMessages } = ConversationSlice.actions;
+export const { setMessages, addMessage, clearMessages, reactMessage } = ConversationSlice.actions;
 
 export default ConversationSlice.reducer;

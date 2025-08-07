@@ -1,6 +1,6 @@
 package com.pesupal.server.dto.request.chat.group_message;
 
-import com.pesupal.server.model.group.GroupChatMessage;
+import com.pesupal.server.model.chat.group_message.GroupChatMessage;
 import lombok.Data;
 
 @Data

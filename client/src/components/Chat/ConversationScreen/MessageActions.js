@@ -1,3 +1,8 @@
+import { useDispatch, useSelector } from "react-redux";
+import { apiRequest } from "../../../http_request";
+import { showPopup } from "../../../store/reducers/PopupSlice";
+import { reactMessage } from "../../../store/reducers/ConversationSlice";
+
 const reactionsList = [
     {
         "name": 'LIKE',
@@ -26,13 +31,29 @@ const reactionsList = [
     }
 ];
 
-const MessageActions = ({ isCurrentUser }) => {
-    return (
+const MessageActions = ({ id, isCurrentUser }) => {
+
+    const dispatch = useDispatch();
+    const { reactMessageApi } = useSelector(state => state.activeChatTab) || {};
+
+    const reactMessageHandler = (e) => {
+        const reaction = e.target.getAttribute('title');
+        e.stopPropagation();
+        e.preventDefault();
+        apiRequest(`${reactMessageApi}/${id}/react`, 'POST', { reaction }).then(({ data, message }) => {
+            dispatch(showPopup({ message, type: 'success' }));
+            dispatch(reactMessage({ id, reaction }));
+        }).catch(({ message }) => {
+            dispatch(showPopup({ message, type: 'error' }));
+        });
+    }
+
+    return reactMessageApi && (
         <div className={`message-actions FRCC ${isCurrentUser ? 'sent' : 'received'}`}>
             {isCurrentUser && <i className='fa fa-trash delete-icon' style={{ color: '#ff6c6cff' }} title="Delete" />}
             <div className="reactions">
                 {reactionsList.map(({ name, icon, color }) => (
-                    <i key={name} className={`fa ${icon} reaction-icon`} style={{ color }} title={name} />
+                    <i key={name} className={`fa ${icon} reaction-icon`} style={{ color }} title={name} onClick={reactMessageHandler} />
                 ))}
             </div>
         </div>

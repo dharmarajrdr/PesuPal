@@ -1,6 +1,6 @@
 package com.pesupal.server.service.interfaces.chat.direct_message;
 
-import com.pesupal.server.model.chat.DirectMessageChat;
+import com.pesupal.server.model.chat.direct_message.DirectMessageChat;
 import com.pesupal.server.model.user.OrgMember;
 
 public interface DirectMessageChatService {

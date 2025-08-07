@@ -1,7 +1,7 @@
 package com.pesupal.server.dto.response.chat;
 
-import com.pesupal.server.model.chat.DirectMessageMediaFile;
-import com.pesupal.server.model.group.GroupMessageMediaFile;
+import com.pesupal.server.model.chat.direct_message.DirectMessageMediaFile;
+import com.pesupal.server.model.chat.group_message.GroupMessageMediaFile;
 import lombok.Data;
 
 import java.net.URL;

@@ -130,6 +130,23 @@
     align-items: flex-start;
 }
 
+.system-message {
+    height: 40px;
+}
+
+.system-message span {
+    background-color: #ffffff99;
+    border-radius: 5px;
+    padding: 5px 10px;
+    font-size: 12px;
+    color: #888;
+    cursor: default;
+    border-left: 3px solid var(--primary-color);
+    border-right: 3px solid var(--primary-color);
+    border-top: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+}
+
 .message-content {
     padding: 8px 12px 5px 10px;
     position: relative;
@@ -203,6 +220,8 @@
 
 .message-reacted p i {
     font-size: 10px;
+    width: 13px;
+    text-align: center;
     margin-right: 2px;
 }
 

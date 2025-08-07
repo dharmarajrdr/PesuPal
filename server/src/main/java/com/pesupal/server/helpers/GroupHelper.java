@@ -1,6 +1,6 @@
 package com.pesupal.server.helpers;
 
-import com.pesupal.server.model.group.Group;
+import com.pesupal.server.model.chat.group_message.Group;
 import com.pesupal.server.model.user.OrgMember;
 
 public class GroupHelper {
@@ -13,7 +13,7 @@ public class GroupHelper {
      * @return
      */
     public static boolean isGroupOwner(Group group, OrgMember orgMember) {
-        
+
         if (group == null || orgMember == null) {
             return false;
         }

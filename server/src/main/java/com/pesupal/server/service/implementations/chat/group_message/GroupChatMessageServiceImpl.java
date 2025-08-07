@@ -2,16 +2,17 @@ package com.pesupal.server.service.implementations.chat.group_message;
 
 import com.pesupal.server.dto.request.chat.direct_message.ChatMessageDto;
 import com.pesupal.server.dto.request.chat.group_message.GetGroupConversationDto;
-import com.pesupal.server.dto.response.MessageDto;
 import com.pesupal.server.dto.response.UserPreviewDto;
 import com.pesupal.server.dto.response.chat.MediaFileDto;
+import com.pesupal.server.dto.response.chat.MessageDto;
+import com.pesupal.server.enums.MessageType;
 import com.pesupal.server.enums.Role;
 import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.exceptions.PermissionDeniedException;
 import com.pesupal.server.helpers.CurrentValueRetriever;
 import com.pesupal.server.helpers.InputValidator;
-import com.pesupal.server.model.group.*;
+import com.pesupal.server.model.chat.group_message.*;
 import com.pesupal.server.model.org.Org;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.repository.chat.group_message.GroupChatMemberRepository;
@@ -317,5 +318,24 @@ public class GroupChatMessageServiceImpl extends CurrentValueRetriever implement
             String userId = groupChatMember.getParticipant().getPublicId();
             messagingTemplate.convertAndSend("/topic/group-message." + userId, messageDto);
         }
+    }
+
+    /**
+     * Adds a system message to a group chat.
+     *
+     * @param group
+     * @param message
+     */
+    @Override
+    public void addSystemMessage(Group group, String message) {
+
+        GroupChatMessage groupChatMessage = new GroupChatMessage();
+        groupChatMessage.setGroup(group);
+        groupChatMessage.setSender(getCurrentOrgMember());
+        groupChatMessage.setMessage(message);
+        groupChatMessage.setContainsMedia(false);
+        groupChatMessage.setDeleted(false);
+        groupChatMessage.setMessageType(MessageType.SYSTEM_MESSAGE);
+        groupChatMessageRepository.save(groupChatMessage);
     }
 }

@@ -2,7 +2,7 @@ package com.pesupal.server.dto.request.chat.group_message;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.pesupal.server.enums.Role;
-import com.pesupal.server.model.group.GroupChatConfiguration;
+import com.pesupal.server.model.chat.group_message.GroupChatConfiguration;
 import lombok.Data;
 
 @Data

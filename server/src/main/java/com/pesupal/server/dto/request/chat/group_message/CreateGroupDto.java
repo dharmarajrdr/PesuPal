@@ -1,7 +1,7 @@
 package com.pesupal.server.dto.request.chat.group_message;
 
 import com.pesupal.server.enums.Visibility;
-import com.pesupal.server.model.group.Group;
+import com.pesupal.server.model.chat.group_message.Group;
 import lombok.Data;
 
 @Data

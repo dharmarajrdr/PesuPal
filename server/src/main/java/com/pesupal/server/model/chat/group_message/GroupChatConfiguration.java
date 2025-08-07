@@ -1,4 +1,4 @@
-package com.pesupal.server.model.group;
+package com.pesupal.server.model.chat.group_message;
 
 import com.pesupal.server.enums.Role;
 import com.pesupal.server.model.BaseModel;

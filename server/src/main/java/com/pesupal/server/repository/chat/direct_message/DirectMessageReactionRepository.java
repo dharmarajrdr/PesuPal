@@ -1,7 +1,7 @@
 package com.pesupal.server.repository.chat.direct_message;
 
-import com.pesupal.server.model.chat.DirectMessage;
-import com.pesupal.server.model.chat.DirectMessageReaction;
+import com.pesupal.server.model.chat.direct_message.DirectMessage;
+import com.pesupal.server.model.chat.direct_message.DirectMessageReaction;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.projections.ReactionCountProjection;
 import org.springframework.data.jpa.repository.JpaRepository;

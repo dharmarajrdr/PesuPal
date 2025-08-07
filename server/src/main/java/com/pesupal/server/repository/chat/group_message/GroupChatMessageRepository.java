@@ -1,7 +1,7 @@
 package com.pesupal.server.repository.chat.group_message;
 
-import com.pesupal.server.model.group.Group;
-import com.pesupal.server.model.group.GroupChatMessage;
+import com.pesupal.server.model.chat.group_message.Group;
+import com.pesupal.server.model.chat.group_message.GroupChatMessage;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -4,13 +4,26 @@ import Loader from '../../Loader';
 import StartNewConversation from './StartNewConversation';
 import ChatMessageItem from './ChatMessageItem';
 import { useSelector } from 'react-redux';
+import utils from '../../../utils';
+
+const formatDate = (iso) => new Date(iso).toDateString();
+
+const SystemMessage = ({ msg }) => {
+
+    const { message, createdAt } = msg || {};
+
+    return message && (
+        <div className="system-message w100 FRCC">
+            <span title={utils.convertDateAndTime(createdAt)}>{message}</span>
+        </div>
+    );
+}
 
 const ChatMessages = ({ showStartNewConversation, chatId, retrievingChat, clickSendMessageHandler }) => {
 
-    const formatDate = (iso) => new Date(iso).toDateString();
-
     let lastDate = null;
     let previousMessageSenderId = null;
+    let previousMessageType = null;
 
     const chatContainerRef = useRef(null);
     const { messages } = useSelector(state => state.conversation) || { 'messages': [] };
@@ -31,18 +44,21 @@ const ChatMessages = ({ showStartNewConversation, chatId, retrievingChat, clickS
 
             {retrievingChat ? <Loader /> : messages.length ? messages.map((msg) => {
 
+                const { messageType } = msg || {};
                 const newDate = formatDate(msg.createdAt);
                 const showDate = newDate !== lastDate;
                 lastDate = newDate;
 
                 // compare the msg.sender.id of current and previous message
-                const isSameSender = previousMessageSenderId === msg.sender.id && !showDate;
+                const isSameSender = previousMessageSenderId === msg.sender.id && !showDate && previousMessageType === messageType;
                 previousMessageSenderId = msg.sender.id;
+                previousMessageType = msg.messageType;
 
                 return (
                     <div key={msg.id} className='w100'>
                         {showDate && <div className="date-label">{newDate}</div>}
-                        <ChatMessageItem msg={msg} isSameSender={isSameSender} />
+                        {messageType == 'USER_MESSAGE' && <ChatMessageItem msg={msg} isSameSender={isSameSender} />}
+                        {messageType == 'SYSTEM_MESSAGE' && <SystemMessage msg={msg} />}
                     </div>
                 );
             }) : (showStartNewConversation && <StartNewConversation clickSendMessageHandler={clickSendMessageHandler} />)}

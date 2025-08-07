@@ -7,16 +7,17 @@ import com.pesupal.server.dto.response.chat.RecentChatDto;
 import com.pesupal.server.dto.response.chat.RecentChatPagedDto;
 import com.pesupal.server.dto.response.chat.group_message.GroupDto;
 import com.pesupal.server.enums.Role;
+import com.pesupal.server.enums.Visibility;
 import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.exceptions.PermissionDeniedException;
 import com.pesupal.server.helpers.CurrentValueRetriever;
 import com.pesupal.server.helpers.GroupHelper;
 import com.pesupal.server.helpers.TimeFormatterUtil;
-import com.pesupal.server.model.group.Group;
-import com.pesupal.server.model.group.GroupChatConfiguration;
-import com.pesupal.server.model.group.GroupChatMember;
-import com.pesupal.server.model.group.GroupChatPinned;
+import com.pesupal.server.model.chat.group_message.Group;
+import com.pesupal.server.model.chat.group_message.GroupChatConfiguration;
+import com.pesupal.server.model.chat.group_message.GroupChatMember;
+import com.pesupal.server.model.chat.group_message.GroupChatPinned;
 import com.pesupal.server.model.org.Org;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.model.user.User;
@@ -24,13 +25,10 @@ import com.pesupal.server.projections.RecentGroupChatProjection;
 import com.pesupal.server.repository.chat.group_message.GroupChatMemberRepository;
 import com.pesupal.server.repository.chat.group_message.GroupRepository;
 import com.pesupal.server.service.interfaces.UserService;
-import com.pesupal.server.service.interfaces.chat.group_message.GroupChatConfigurationService;
-import com.pesupal.server.service.interfaces.chat.group_message.GroupChatMemberService;
-import com.pesupal.server.service.interfaces.chat.group_message.GroupChatPinnedService;
-import com.pesupal.server.service.interfaces.chat.group_message.GroupService;
+import com.pesupal.server.service.interfaces.chat.group_message.*;
 import com.pesupal.server.service.interfaces.org.OrgMemberService;
 import jakarta.transaction.Transactional;
-import lombok.AllArgsConstructor;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -38,7 +36,6 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-@AllArgsConstructor
 public class GroupServiceImpl extends CurrentValueRetriever implements GroupService {
 
     private final UserService userService;
@@ -46,8 +43,20 @@ public class GroupServiceImpl extends CurrentValueRetriever implements GroupServ
     private final OrgMemberService orgMemberService;
     private final GroupChatMemberService groupChatMemberService;
     private final GroupChatPinnedService groupchatPinnedService;
+    private final GroupChatMessageService groupChatMessageService;
     private final GroupChatMemberRepository groupChatMemberRepository;
     private final GroupChatConfigurationService groupChatConfigurationService;
+
+    public GroupServiceImpl(UserService userService, GroupRepository groupRepository, OrgMemberService orgMemberService, GroupChatMemberService groupChatMemberService, GroupChatPinnedService groupchatPinnedService, @Lazy GroupChatMessageService groupChatMessageService, GroupChatMemberRepository groupChatMemberRepository, GroupChatConfigurationService groupChatConfigurationService) {
+        this.userService = userService;
+        this.groupRepository = groupRepository;
+        this.orgMemberService = orgMemberService;
+        this.groupChatMemberService = groupChatMemberService;
+        this.groupchatPinnedService = groupchatPinnedService;
+        this.groupChatMessageService = groupChatMessageService;
+        this.groupChatMemberRepository = groupChatMemberRepository;
+        this.groupChatConfigurationService = groupChatConfigurationService;
+    }
 
     /**
      * Initializes the group chat member for a given group and organization member.
@@ -82,6 +91,7 @@ public class GroupServiceImpl extends CurrentValueRetriever implements GroupServ
         groupRepository.save(group);
         groupChatConfigurationService.initializeGroupChatConfiguration(group);
         initializeGroupChatMember(group, owner);
+        groupChatMessageService.addSystemMessage(group, owner.getDisplayName() + " has created the group.");
         return GroupDto.fromGroupAndOrgMember(group, owner);
     }
 
@@ -123,6 +133,7 @@ public class GroupServiceImpl extends CurrentValueRetriever implements GroupServ
 
         group.setActive(false);
         groupRepository.save(group);
+        groupChatMessageService.addSystemMessage(group, orgMember.getDisplayName() + " has deleted the group.");
     }
 
     /**
@@ -187,8 +198,18 @@ public class GroupServiceImpl extends CurrentValueRetriever implements GroupServ
             throw new DataNotFoundException("Group with ID " + groupId + " does not exist");
         }
 
-        GroupChatMember groupChatMember = groupChatMemberService.getGroupMemberByGroupIdAndUserId(groupId, userId);
-        if (!groupChatMember.isActive() && !group.isInactiveMemberAccessChat()) {
+        Optional<GroupChatMember> optionalGroupChatMember = group.getMembers().stream().filter(gcm -> gcm.getParticipant().getId().equals(userId)).findFirst();
+        boolean isActiveGroupMember;
+        if (optionalGroupChatMember.isEmpty()) {
+            if (!group.getVisibility().equals(Visibility.PUBLIC)) {
+                throw new PermissionDeniedException("You do not have permission to access this chat.");
+            }
+            isActiveGroupMember = true;
+        } else {
+            isActiveGroupMember = optionalGroupChatMember.get().isActive();
+        }
+
+        if (!group.getVisibility().equals(Visibility.PUBLIC) && !isActiveGroupMember && !group.isInactiveMemberAccessChat()) {
             throw new PermissionDeniedException("You don't have permission to access this chat.");
         }
 
@@ -197,7 +218,7 @@ public class GroupServiceImpl extends CurrentValueRetriever implements GroupServ
         chatPreviewDto.setChatId(groupId);
         chatPreviewDto.setGroupActive(groupActive);
         chatPreviewDto.setReopenable(!groupActive && GroupHelper.isGroupOwner(group, orgMember));
-        chatPreviewDto.setActive(groupChatMember.isActive());
+        chatPreviewDto.setActive(isActiveGroupMember && optionalGroupChatMember.isPresent());
         chatPreviewDto.setDisplayName(group.getName());
         chatPreviewDto.setDisplayPicture(group.getDisplayPicture());
         chatPreviewDto.setParticipantsCount(group.getMembers().stream().filter(GroupChatMember::isActive).toList().size());
@@ -228,5 +249,6 @@ public class GroupServiceImpl extends CurrentValueRetriever implements GroupServ
         group.setActive(true);
         groupRepository.save(group);
         // initializeGroupChatMember(group, orgMember);
+        groupChatMessageService.addSystemMessage(group, orgMember.getDisplayName() + " has reopened the group.");
     }
 }

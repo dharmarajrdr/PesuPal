@@ -1,6 +1,6 @@
 package com.pesupal.server.repository.chat.group_message;
 
-import com.pesupal.server.model.group.GroupChatMember;
+import com.pesupal.server.model.chat.group_message.GroupChatMember;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

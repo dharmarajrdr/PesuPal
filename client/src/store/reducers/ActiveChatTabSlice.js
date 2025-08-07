@@ -10,6 +10,7 @@ const details = {
         'chatPreviewApi': '/api/v1/direct-messages/preview',
         'retrieveConversationApi': '/api/v1/direct-messages',
         'readAllMessagesApi': '/api/v1/direct-messages',
+        'reactMessageApi': '/api/v1/direct-messages',
         'showStatusIndicator': true
     },
     'groupMessage': {

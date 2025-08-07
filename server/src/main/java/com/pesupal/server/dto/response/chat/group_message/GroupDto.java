@@ -3,7 +3,7 @@ package com.pesupal.server.dto.response.chat.group_message;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.pesupal.server.dto.response.UserPreviewDto;
 import com.pesupal.server.enums.Visibility;
-import com.pesupal.server.model.group.Group;
+import com.pesupal.server.model.chat.group_message.Group;
 import com.pesupal.server.model.user.OrgMember;
 import lombok.Data;
 

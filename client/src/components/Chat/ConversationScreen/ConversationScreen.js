@@ -114,9 +114,14 @@ const ConversationScreen = ({ activeTabName }) => {
 		}
 	});
 
-	const readAllMessages = ({ chatId }) => {
+	const readAllMessages = ({ chatId, chatPreview }) => {
 
 		const { readAllMessagesApi } = activeChatTab || {};
+		const { active } = chatPreview || {};
+
+		if (!active) {
+			return;
+		}
 
 		apiRequest(`${readAllMessagesApi}/${chatId}/read-all`, "PUT").then(() => {
 
@@ -149,6 +154,8 @@ const ConversationScreen = ({ activeTabName }) => {
 
 		apiRequest(`${chatPreviewApi}/${chatId}`, "GET").then(({ data }) => {
 
+			const chatPreview = data || {};
+
 			setPermissionDenied(false);
 			setChatNotFound(false);
 			dispatch(setCurrentChatPreview(data));
@@ -162,7 +169,7 @@ const ConversationScreen = ({ activeTabName }) => {
 					setPivotMessageId(data.at(-1)?.id);
 				}
 
-				successCallback && successCallback({ chatId });	// read all messages
+				successCallback && successCallback({ chatId, chatPreview });	// read all messages
 
 			}).catch(({ message }) => {
 				console.error(message);

@@ -1,4 +1,4 @@
-package com.pesupal.server.model.chat;
+package com.pesupal.server.model.chat.group_message;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -14,11 +14,11 @@ import java.util.UUID;
 @Data
 @Entity
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class DirectMessageMediaFile extends PublicAccessModel {
+public class GroupMessageMediaFile extends PublicAccessModel {
 
     @OneToOne
     @JsonIgnore
-    private DirectMessage directMessage;
+    private GroupChatMessage groupChatMessage;
 
     @Column(nullable = false, unique = true)
     private UUID mediaId;
@@ -29,11 +29,12 @@ public class DirectMessageMediaFile extends PublicAccessModel {
     @Column(nullable = false)
     private Long size;
 
-    public static DirectMessageMediaFile fromMediaUploadDto(MediaUploadDto mediaUploadDto) {
-        DirectMessageMediaFile mediaFile = new DirectMessageMediaFile();
-        mediaFile.setMediaId(mediaUploadDto.getName());
-        mediaFile.setExtension(mediaUploadDto.getExtension());
-        mediaFile.setSize(mediaUploadDto.getSize());
-        return mediaFile;
+    public static GroupMessageMediaFile fromMediaUploadDto(MediaUploadDto media) {
+
+        GroupMessageMediaFile groupMessageMediaFile = new GroupMessageMediaFile();
+        groupMessageMediaFile.setMediaId(media.getName());
+        groupMessageMediaFile.setExtension(media.getExtension());
+        groupMessageMediaFile.setSize(media.getSize());
+        return groupMessageMediaFile;
     }
 }

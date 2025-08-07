@@ -2,7 +2,7 @@ package com.pesupal.server.service.implementations.chat.direct_message;
 
 import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.exceptions.DataNotFoundException;
-import com.pesupal.server.model.chat.DirectMessageChat;
+import com.pesupal.server.model.chat.direct_message.DirectMessageChat;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.repository.chat.direct_message.DirectMessageChatRepository;
 import com.pesupal.server.service.interfaces.chat.direct_message.DirectMessageChatService;
