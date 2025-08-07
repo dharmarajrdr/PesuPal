@@ -3,6 +3,7 @@ import './ChatInputUserArchived.css';
 import { hideConfirmationPopup, showConfirmationPopup } from '../../../store/reducers/ConfirmationPopupSlice';
 import { showPopup } from '../../../store/reducers/PopupSlice';
 import { apiRequest } from '../../../http_request';
+import { updateCurrentChatPreview } from '../../../store/reducers/CurrentChatPreviewSlice';
 
 const GroupChatInactiveUser = () => {
 
@@ -18,7 +19,8 @@ const GroupChatInactiveUser = () => {
                     "title": "Yes",
                     "color": "#00a434ff",
                     "onClick": () => {
-                        apiRequest(`/api/v1/group/join/${groupId}`, 'POST').then(({ message }) => {
+                        apiRequest(`/api/v1/group-chat-member/join/${groupId}`, 'POST').then(({ message }) => {
+                            dispatch(updateCurrentChatPreview({ active: true }));
                             dispatch(hideConfirmationPopup());
                             dispatch(showPopup({ message, type: 'success' }));
                         }).catch(({ message }) => {

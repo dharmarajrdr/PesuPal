@@ -24,7 +24,7 @@ public class GroupChatMemberController {
     public ResponseEntity<ApiResponseDto> joinGroup(@PathVariable String groupId) {
 
         GroupDto groupDto = groupChatMemberService.joinGroup(groupId);
-        return ResponseEntity.ok().body(new ApiResponseDto("Group joined successfully", groupDto));
+        return ResponseEntity.ok().body(new ApiResponseDto("Joined group successfully", groupDto));
     }
 
     @PostMapping("/add-member")
