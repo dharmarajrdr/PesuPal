@@ -45,8 +45,8 @@ public class GroupServiceImpl extends CurrentValueRetriever implements GroupServ
     private final GroupRepository groupRepository;
     private final OrgMemberService orgMemberService;
     private final GroupChatMemberService groupChatMemberService;
-    private final GroupChatMemberRepository groupChatMemberRepository;
     private final GroupChatPinnedService groupchatPinnedService;
+    private final GroupChatMemberRepository groupChatMemberRepository;
     private final GroupChatConfigurationService groupChatConfigurationService;
 
     /**
@@ -204,5 +204,29 @@ public class GroupServiceImpl extends CurrentValueRetriever implements GroupServ
         Optional<GroupChatPinned> pinnedGroupChat = groupchatPinnedService.getPinnedGroupByPinnedByAndGroup(orgMember, group);
         pinnedGroupChat.ifPresent(groupChatPinned -> chatPreviewDto.setPinnedId(groupChatPinned.getId()));
         return chatPreviewDto;
+    }
+
+    /**
+     * Reopens a group by its ID if the current user is the owner of the group.
+     *
+     * @param groupId
+     */
+    @Override
+    public void reopenGroup(String groupId) {
+
+        OrgMember orgMember = getCurrentOrgMember();
+
+        Group group = getGroupByPublicId(groupId);
+        if (!GroupHelper.isGroupOwner(group, orgMember)) {
+            throw new PermissionDeniedException("You do not have permission to reopen this group.");
+        }
+
+        if (group.isActive()) {
+            throw new ActionProhibitedException("This group is already active.");
+        }
+
+        group.setActive(true);
+        groupRepository.save(group);
+        // initializeGroupChatMember(group, orgMember);
     }
 }

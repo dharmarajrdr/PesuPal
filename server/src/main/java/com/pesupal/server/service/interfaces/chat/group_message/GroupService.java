@@ -18,4 +18,6 @@ public interface GroupService {
     RecentChatPagedDto getAllGroups(Pageable pageable);
 
     ChatPreviewDto getGroupChatPreviewByChatId(String groupId);
+
+    void reopenGroup(String groupId);
 }
