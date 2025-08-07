@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -80,36 +81,73 @@ public class GroupChatMemberServiceImpl extends CurrentValueRetriever implements
 
         OrgMember orgMember = getCurrentOrgMember();
         Long orgId = orgMember.getOrg().getId();
+        Long userId = orgMember.getId();
 
         Group group = groupService.getGroupByPublicId(groupId);
         if (!group.getOrg().getId().equals(orgId)) {
             throw new DataNotFoundException("Group with ID " + groupId + " does not belong to organization with ID " + orgId + ".");
         }
 
-        boolean alreadyMember = groupChatMemberRepository.existsByGroup_PublicIdAndParticipant_PublicId(groupId, orgMember.getPublicId());
-        if (alreadyMember) {
-            throw new ActionProhibitedException("You are already a member of this group.");
-        }
-
-        if (!group.isActive()) {
-            throw new ActionProhibitedException("The group you are trying to join is no longer active.");
+        Optional<GroupChatMember> optionalGroupChatMember = group.getMembers().stream().filter(gcm -> gcm.getParticipant().getId().equals(userId)).findFirst();
+        GroupChatMember groupChatMember;
+        if (optionalGroupChatMember.isEmpty()) {
+            groupChatMember = new GroupChatMember();
+            groupChatMember.setRole(Role.USER);
+            groupChatMember.setParticipant(orgMember);
+            groupChatMember.setGroup(group);
+        } else {
+            groupChatMember = optionalGroupChatMember.get();
+            if (groupChatMember.isActive()) {
+                throw new ActionProhibitedException("You are already a member of this group.");
+            }
         }
 
         if (group.getVisibility().equals(Visibility.PRIVATE)) {
             throw new PermissionDeniedException("The group that you are trying to join is private. Please contact the group owner for access.");
         }
 
-        GroupChatMember groupChatMember = new GroupChatMember();
-        groupChatMember.setRole(Role.USER);
-        groupChatMember.setActive(true);
-        groupChatMember.setParticipant(orgMember);
-        groupChatMember.setGroup(group);
+        if (!group.isActive()) {
+            throw new ActionProhibitedException("The group you are trying to join is no longer active.");
+        }
+
         // groupChatMember.setLastReadMessage(latestMessage);
+        groupChatMember.setActive(true);
         groupChatMemberRepository.save(groupChatMember);
 
         groupChatMessageService.addSystemMessage(group, orgMember.getDisplayName() + " has joined the group.");
 
         return GroupDto.fromGroup(group);
+    }
+
+
+    /**
+     * Allows a user to leave a group by group ID.
+     *
+     * @param groupId
+     */
+    @Override
+    public void leaveGroup(String groupId) {
+
+        OrgMember orgMember = getCurrentOrgMember();
+        Long userId = orgMember.getId();
+        Long orgId = orgMember.getOrg().getId();
+
+        GroupChatMember groupChatMember = getGroupMemberByGroupIdAndUserId(groupId, userId);
+        Group group = groupChatMember.getGroup();
+        if (!group.getOrg().getId().equals(orgId)) {
+            throw new DataNotFoundException("Group with ID " + groupId + " does not exist.");
+        }
+
+        Role role = groupChatMember.getRole();
+        GroupChatConfiguration groupChatConfiguration = groupChatConfigurationService.getConfigurationByGroupAndRole(group, role);
+        if (!groupChatConfiguration.isLeaveGroup()) {
+            throw new PermissionDeniedException("You do not have permission to leave from this group.");
+        }
+
+        groupChatMember.setActive(false);
+        groupChatMemberRepository.save(groupChatMember);
+
+        groupChatMessageService.addSystemMessage(group, orgMember.getDisplayName() + " has left the group.");
     }
 
     /**

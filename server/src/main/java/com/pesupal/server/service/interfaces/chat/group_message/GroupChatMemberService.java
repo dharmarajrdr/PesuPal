@@ -20,4 +20,6 @@ public interface GroupChatMemberService {
     UserPreviewDto addMemberToGroup(AddGroupMemberDto addGroupMemberDto);
 
     Map<Role, List<UserPreviewDto>> getGroupMembers(String groupId);
+
+    void leaveGroup(String groupId);
 }
