@@ -1,16 +1,16 @@
 package com.pesupal.server.strategies.workspace;
 
-import com.pesupal.server.dto.request.CreateFolderDto;
-import com.pesupal.server.dto.response.FileOrFolderDto;
-import com.pesupal.server.dto.response.FolderDto;
+import com.pesupal.server.dto.request.drive.CreateFolderDto;
+import com.pesupal.server.dto.response.drive.FileOrFolderDto;
+import com.pesupal.server.dto.response.drive.FolderDto;
 import com.pesupal.server.enums.FileOrFolder;
 import com.pesupal.server.enums.Security;
 import com.pesupal.server.enums.Workspace;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.model.workdrive.Folder;
-import com.pesupal.server.repository.FolderRepository;
-import com.pesupal.server.service.interfaces.FileService;
-import com.pesupal.server.service.interfaces.WorkdriveSpace;
+import com.pesupal.server.repository.drive.FolderRepository;
+import com.pesupal.server.service.interfaces.drive.FileService;
+import com.pesupal.server.service.interfaces.drive.WorkdriveSpace;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -47,7 +47,7 @@ public class PersonalSpace implements WorkdriveSpace {
 
         // 1. Retrieve all subfolders in the given folder in the personal space
 
-        List<FileOrFolderDto> filesAndFolders = folderRepository.findAllByOrgAndOwnerAndSpaceAndParentFolder(orgMember.getOrg(), orgMember.getUser(), Workspace.PERSONAL_SPACE, parentFolder)
+        List<FileOrFolderDto> filesAndFolders = folderRepository.findAllByCreatedByAndSpaceAndParentFolder(orgMember, Workspace.PERSONAL_SPACE, parentFolder)
                 .stream()
                 .map(folder -> {
                     FolderDto folderDto = FolderDto.fromFolderAndOrgMember(folder, orgMember);

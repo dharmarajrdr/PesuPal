@@ -1,4 +1,5 @@
 export default {
+    "serverDomain": 'http://localhost:8080',
     "getIconBasedOnCategory": function (category) {
         const icon = {};
         switch (category) {
@@ -108,5 +109,107 @@ export default {
             default:
                 return { icon_color: 'black', icon: 'fa-solid fa-question' }
         }
+    },
+    "agoTimeCalculator": (date) => {
+        const now = new Date();
+        const diff = now - new Date(date);
+        const seconds = Math.floor(diff / 1000);
+        const minutes = Math.floor(seconds / 60);
+        const hours = Math.floor(minutes / 60);
+        const days = Math.floor(hours / 24);
+        const months = Math.floor(days / 30);
+        const years = Math.floor(months / 12);
+        if (years > 0) return `${years} yr${years > 1 ? 's' : ''} ago`;
+        if (months > 0) return `${months} mnt${months > 1 ? 's' : ''} ago`;
+        if (days > 0) return `${days} day${days > 1 ? 's' : ''} ago`;
+        if (hours > 0) return `${hours} hr${hours > 1 ? 's' : ''} ago`;
+        if (minutes > 0) return `${minutes} min${minutes > 1 ? 's' : ''} ago`;
+        return `${seconds} sec${seconds > 1 ? 's' : ''} ago`;
+    },
+    "parseCookie": () => {
+        const cookies = document.cookie
+            .split(';')
+            .map(cookie => cookie.trim().split('='))
+            .reduce((acc, [key, value]) => {
+                acc[key] = decodeURIComponent(value);
+                return acc;
+            }, {});
+
+        return {
+            get: (name) => cookies[name] || null
+        };
+    },
+    "convertDateAndTime": (str) => {
+        try {
+            const toTwoDigits = function (str) {
+                str = str + '';
+                return str.length == 2 ? str : '0' + str;
+            }
+            let d = new Date(str);
+            if (d) {
+                let hours = d.getHours();
+                let am_pm = hours >= 12 ? 'PM' : 'AM';
+                hours = hours > 12 ? hours - 12 : hours;
+                return toTwoDigits(d.getDate()) + "/" + toTwoDigits(d.getMonth() + 1) + "/" + d.getFullYear() + " " + toTwoDigits(hours) + ":" + toTwoDigits(d.getMinutes()) + " " + am_pm;
+            }
+        } catch (error) {
+            console.error({ error, str });  //eslint-disable-line no-console
+        }
+    },
+    "convertTime": (str, hoursMode) => {
+        try {
+            const toTwoDigits = function (str) {
+                str = str + '';
+                return str.length == 2 ? str : '0' + str;
+            }
+            let d = new Date(str);
+            if (d) {
+                let hours = d.getHours();
+                let am_pm = hours >= 12 ? 'PM' : 'AM';
+                if (hoursMode === 12) {
+                    hours = hours > 12 ? hours - 12 : hours;
+                    return toTwoDigits(hours || 12) + ":" + toTwoDigits(d.getMinutes()) + " " + am_pm;
+                } else {
+                    return toTwoDigits(d.getHours()) + ":" + toTwoDigits(d.getMinutes());
+                }
+            }
+        } catch (error) {
+            console.error({ error, str });  //eslint-disable-line no-console
+        }
+    },
+    "parseCookie": () => {
+        const cookies = document.cookie
+            .split(';')
+            .map(cookie => cookie.trim().split('='))
+            .reduce((acc, [key, value]) => {
+                acc[key] = decodeURIComponent(value);
+                return acc;
+            }, {});
+
+        return {
+            get: (name) => cookies[name] || null
+        };
+    },
+    "getCurrentOrgId": () => {
+
+        return sessionStorage.getItem('org-id');
+    },
+    "uniqueColorGenerator": (name) => {
+
+        const colors = [
+            '#7f8c8d', '#2ecc71', '#3498db', '#9b59b6',
+            '#e67e22', '#e74c3c', '#34495e', '#f39c12',
+            '#16a085', '#8e44ad', '#2980b9', '#d35400',
+            '#c0392b', '#1abc9c', '#27ae60', '#d2aa0cff',
+            '#95a5a6', '#bdc3c7', '#5dade2', '#a569bd',
+        ];
+
+        let hash = 0;
+        for (let i = 0; i < name.length; i++) {
+            hash = name.charCodeAt(i) + ((hash << 5) - hash);
+        }
+
+        const index = Math.abs(hash) % colors.length;
+        return colors[index];
     }
 }

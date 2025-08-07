@@ -13,7 +13,7 @@
   border: none;
   margin-right: 10px;
   color: #555;
-  background-color: #fff;
+  background-color: var(--pure-white);
 }
 
 #searchDiv {

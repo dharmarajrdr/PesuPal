@@ -1,29 +1,73 @@
-import React from 'react'
 import utils from '../../../../utils';
 import { Link } from 'react-router-dom';
 import './ListView.css'
-import Profile from '../../../OthersProfile/Profile';
-import SomeProfile from '../../../OthersProfile/SomeProfile';
+import { useDispatch } from 'react-redux';
+import { showPopup } from '../../../../store/reducers/PopupSlice';
 
-const ListviewTopHeader = ({ item }) => {
-    const { totalRecords, currentPage, totalPages } = item;
+const ListviewTopHeader = ({ item, searchParams, setSearchParams }) => {
+
+    const { totalRecords, page, hasMoreRecords, size } = item || {};
+    const totalPagesCount = Math.ceil(totalRecords / size);
+    const dispatch = useDispatch();
+
+    const pageSelected = (pageNumber) => {
+
+        if (pageNumber < 1) {
+            return dispatch(showPopup({ message: 'Invalid page number', type: 'error' }));
+        }
+
+        // Update just the page param (preserving others if needed)
+        const updatedParams = new URLSearchParams(searchParams);
+        updatedParams.set('page', pageNumber);
+        setSearchParams(updatedParams);
+    };
+
+    const leftArrowClicked = () => {
+        if (page >= 1) {
+            pageSelected(page);
+        } else {
+            return dispatch(showPopup({ message: 'No previous pages available', type: 'error' }));
+        }
+    }
+
+    const rightArrawClicked = () => {
+        if (hasMoreRecords) {
+            pageSelected(page + 2);
+        } else {
+            return dispatch(showPopup({ message: 'No more pages available', type: 'error' }));
+        }
+    };
+
+
     return <div className='FRCB w100 pB10' id='ListviewHeader'>
-        <p className='FRCS' id='total_records'>Total Records <b>{totalRecords}</b></p>
+        <div className='FRCS'>
+            <p className='FRCS' id='total_records'>Total Records <b>{totalRecords}</b></p>
+            <p className='FRCS mL10 pL10' id='records_per_page'>Records Per Page: <b>{size}</b></p>
+        </div>
         <div className='FRCE' id='pagination'>
-            <i className='img_30_30 paginationIcon fa fa-chevron-left'></i>
-            <select id='select_pages' defaultValue={currentPage}>
-                {Array.from({ length: totalPages }, (_, i) => <option key={i} value={i + 1}>Page {i + 1}</option>)}
+            <i className='img_30_30 paginationIcon fa fa-chevron-left' onClick={leftArrowClicked}></i>
+            <select id='select_pages' value={page + 1} onChange={(e) => pageSelected(e.target.value)}>
+                {Array.from({ length: totalPagesCount }, (_, i) => <option key={i} value={i + 1}>Page {i + 1}</option>)}
             </select>
-            <i className='img_30_30 paginationIcon fa fa-chevron-right'></i>
+            <i className='img_30_30 paginationIcon fa fa-chevron-right' onClick={rightArrawClicked}></i>
         </div>
     </div>
 }
 
+const widthChart = {
+    "STRING": "350px",
+    "DATE_TIME": "225px",
+    "USER": "225px",
+    "SELECT": "250px",
+    "TEXT": "350px",
+    "LINK": "250px"
+}
+
 const ListviewHeader = ({ header }) => {
     return <div className='rows FRCS' id='listview_table_header'>
-        {header.map(({ title, sort, width }, index) => {
-            return <div className='col FRCS' key={index} style={{ minWidth: width }}>
-                <b>{title.replace(/_/mg, ' ')}</b>
+        {header.map(({ fieldName, fieldType, sort }, index) => {
+            return <div className='col FRCS' key={index} style={{ 'width': widthChart[fieldType] }}>
+                <b>{fieldName}</b>
                 {sort ?
                     <i className='fa fa-sort-down sortIcon'></i> :
                     <i className='fa fa-sort sortIcon'></i>
@@ -33,58 +77,115 @@ const ListviewHeader = ({ header }) => {
     </div>
 }
 
-const ListviewBody = ({ header, data, setShowProfile }) => {
+const Column = ({ fieldType, data, index }) => {
 
-    const handleProfile = (e) => {
-        e.preventDefault();
-        setShowProfile(true);
+    let content = null;
+
+    switch (fieldType) {
+        case 'DATE_TIME': {
+            content = data ? <span>{utils.convertDateAndTime(data)}</span> : null;
+            break;
+        }
+
+        case 'STRING': {
+            content = <span>{data}</span>;
+            break;
+        }
+
+        case 'USER': {
+            const { displayName, displayPicture } = data || {};
+            content = <>
+                {displayPicture && <img src={displayPicture} className='img_20_20 mR10' />}
+                <span>{displayName}</span>
+            </>;
+            break;
+        }
+
+        case 'SELECT': {
+            if (Array.isArray(data)) {
+                content = data.map(({ value, selected }, idx) => (
+                    selected ? <span key={idx} className="mR5 typeSELECT" style={{ backgroundColor: utils.uniqueColorGenerator(value) }}>{value}</span> : null
+                ));
+            } else {
+                content = <span className="typeSELECT" style={{ backgroundColor: utils.uniqueColorGenerator(data), color: '#fff' }}>{data}</span>;
+            }
+            break;
+        }
+        case 'TEXT': {
+            content = <span>{data}</span>;
+            break;
+        }
+        case 'TRANSITION': {
+            const { name, score } = data || {};
+            content = name ? (
+                <div className='FRCS'>
+                    <i className="fa fa-chart-line fs12 color777 w_30"></i>
+                    <span>{name}</span>
+                </div>
+            ) : null;
+            break;
+        }
+        case 'LINK': {
+            const { url, title } = data || {};
+            content = url && (
+                <p className='FRCS link-wrapper' onClick={(e) => { e.stopPropagation(); window.open(url, '_blank', 'noopener,noreferrer'); }}>
+                    <i className='fa fa-link mR5 colorAAA'></i>
+                    <span>{title}</span>
+                </p>
+            );
+            break;
+        }
+        default: {
+            content = <span>Unable to display</span>;
+        }
     }
 
-    return <>
-        {
-            data.map((item, item_index) => {
-                return <Link to={item.route} className='rows FRCS' key={item_index}>
-                    {header.map(({ title, type, width }, index) => {
-                        const value = item[title.toLowerCase()];
-                        if (type == 'object') {
-                            const { image, name } = value, icon_info = {};
-                            if (title == 'Tag') {
-                                Object.assign(icon_info, utils.getIconForTagWithColor(name) || {});
-                            } else if (title == 'Priority') {
-                                Object.assign(icon_info, utils.getPriortyColorAndIcon(name) || {});
-                            }
-                            const { icon, icon_color } = icon_info;
-                            return <div className='col FRCS' key={index} style={{ minWidth: width }}>
-                                {image && <img src={image} className='img_20_20 mR10' onClick={handleProfile} />}
-                                {icon && <i className={icon + ' img_20_20 mR5 alignCenter'} style={{ color: icon_color }}></i>}
-                                <span>{name}</span>
-                            </div>
-                        }
-                        return <div className='col FRCS' key={index} style={{ minWidth: width }}>
-                            <span>{value}</span>
-                        </div>
-                    })}
-                </Link>
-            })
-        }
-    </>
+    return (
+        <div className='col FRCS' key={index} style={{ 'width': widthChart[fieldType] }}>
+            {content}
+        </div>
+    );
+};
+
+const Row = ({ item, item_index }) => {
+
+    const { moduleId, recordId, fields } = item;
+    const route = `/manage/module/${moduleId}/record/${recordId}`;
+
+    return <Link to={route} className='rows FRCS' key={item_index}>
+        {fields?.map(({ data, fieldType }, index) => {
+            return <Column fieldType={fieldType} data={data} key={index} />
+        })}
+    </Link>
 }
 
-const ListView = ({ ManageWorkList }) => {
-    const item = {
-        totalRecords: 102,
-        currentPage: 2,
-        totalPages: 3
-    }, { header, data } = ManageWorkList,
-        [showProfile, setShowProfile] = React.useState(false);
+
+const ListviewBody = ({ records }) => <>
+    {
+        records.map((item, item_index) => <Row item={item} key={item_index} item_index={item_index} />)
+    }
+</>
+
+
+const generateHeader = ({ fields }) => fields.map(({ fieldName, fieldType }) => ({ fieldName, fieldType }));
+
+
+const ListViewTable = ({ records }) => {
+
+    const header = generateHeader({ fields: records[0]?.fields || [] });
+
+    return <div id='listview_table' className='custom-scrollbar'>
+        <ListviewHeader header={header} />
+        <ListviewBody records={records} />
+    </div>
+}
+
+const ListView = ({ records, info, searchParams, setSearchParams }) => {
+
     return (
         <div id='ListView'>
-            <ListviewTopHeader item={item} />
-            <div id='listview_table' className='custom-scrollbar'>
-                <ListviewHeader header={header} />
-                <ListviewBody header={header} data={data} setShowProfile={setShowProfile} />
-            </div>
-            {showProfile && <Profile Profile={SomeProfile} setShowProfile={setShowProfile} />}
+            <ListviewTopHeader item={info} searchParams={searchParams} setSearchParams={setSearchParams} />
+            <ListViewTable records={records} />
         </div>
     )
 }

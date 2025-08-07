@@ -2,9 +2,8 @@ package com.pesupal.server.model.workdrive;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.pesupal.server.enums.Workspace;
-import com.pesupal.server.model.CreationTimeAuditable;
-import com.pesupal.server.model.org.Org;
-import com.pesupal.server.model.user.User;
+import com.pesupal.server.model.PublicAccessModel;
+import com.pesupal.server.model.user.OrgMember;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.ToString;
@@ -14,16 +13,15 @@ import java.util.List;
 @Data
 @Entity
 @ToString(onlyExplicitlyIncluded = true)
-public class Folder extends CreationTimeAuditable {
+public class Folder extends PublicAccessModel {
 
     @Column(nullable = false)
     private String name;
 
     @ManyToOne
-    private Org org;
+    private OrgMember createdBy;
 
-    @ManyToOne
-    private User owner;
+    private Long size;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

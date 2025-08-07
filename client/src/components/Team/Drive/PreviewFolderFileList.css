@@ -29,7 +29,7 @@
 
 .PreviewFolderFileListItem {
   border: 1px solid #aaa;
-  background-color: #fff;
+  background-color: var(--pure-white);
   border-radius: 10px;
   padding: 15px;
   width: 250px;
@@ -45,7 +45,7 @@
 
 .PreviewFolderFileListItem:hover {
   border-color: #777;
-  background-color: #fafafa;
+  background-color: var(--pure-white-hover);
 }
 
 .icon_foldername {

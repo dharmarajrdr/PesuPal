@@ -1,0 +1,49 @@
+#add-user-footer {
+    padding: 12px 0px;
+    border-top: 1px solid var(--border-color);
+    height: 75px;
+    position: sticky;
+    bottom: 0;
+    box-sizing: border-box;
+}
+
+#add-user-footer #left {
+    width: 45%;
+}
+
+#add-user-footer #right {
+    width: 45%;
+}
+
+#add-user-footer div button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    background-color: #fff;
+}
+
+#add-user-footer div .delete-user {
+    background-color: #ffe6e6;
+}
+
+#add-user-footer div .delete-user,
+#add-user-footer div .delete-user i {
+    color: red;
+}
+
+#add-user-footer div #add-user-button {
+    background-color: #e6ffe6;
+    border: 1px solid rgba(0, 128, 0, 0.329);
+}
+
+#add-user-footer div #add-user-button,
+#add-user-footer div #add-user-button i {
+    color: green;
+}
+
+#add-user-footer div #cancel-button {
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+}
