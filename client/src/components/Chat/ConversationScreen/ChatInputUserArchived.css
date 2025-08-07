@@ -13,3 +13,13 @@
     color: var(--primary-color);
     font-size: 12px;
 }
+
+#reopen-group-button {
+    color: var(--info-color);
+    font-weight: 500;
+    cursor: pointer;
+}
+
+#reopen-group-button:hover {
+    text-decoration: underline;
+}
