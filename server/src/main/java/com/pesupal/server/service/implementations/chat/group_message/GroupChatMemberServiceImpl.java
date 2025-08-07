@@ -31,12 +31,14 @@ public class GroupChatMemberServiceImpl extends CurrentValueRetriever implements
 
     private final GroupService groupService;
     private final OrgMemberService orgMemberService;
+    private final GroupChatMessageServiceImpl groupChatMessageService;
     private final GroupChatMemberRepository groupChatMemberRepository;
     private final GroupChatConfigurationService groupChatConfigurationService;
 
-    public GroupChatMemberServiceImpl(@Lazy GroupService groupService, OrgMemberService orgMemberService, GroupChatMemberRepository groupChatMemberRepository, GroupChatConfigurationService groupChatConfigurationService) {
+    public GroupChatMemberServiceImpl(@Lazy GroupService groupService, OrgMemberService orgMemberService, GroupChatMemberRepository groupChatMemberRepository, GroupChatConfigurationService groupChatConfigurationService, @Lazy GroupChatMessageServiceImpl groupChatMessageService) {
         this.groupService = groupService;
         this.orgMemberService = orgMemberService;
+        this.groupChatMessageService = groupChatMessageService;
         this.groupChatMemberRepository = groupChatMemberRepository;
         this.groupChatConfigurationService = groupChatConfigurationService;
     }
@@ -100,6 +102,9 @@ public class GroupChatMemberServiceImpl extends CurrentValueRetriever implements
         groupChatMember.setGroup(group);
         // groupChatMember.setLastReadMessage(latestMessage);
         groupChatMemberRepository.save(groupChatMember);
+
+        groupChatMessageService.addSystemMessage(group, orgMember.getDisplayName() + " has joined the group.");
+
         return GroupDto.fromGroup(group);
     }
 
@@ -180,5 +185,5 @@ public class GroupChatMemberServiceImpl extends CurrentValueRetriever implements
         ));
 
     }
-    
+
 }
