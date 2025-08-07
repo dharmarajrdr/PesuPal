@@ -12,6 +12,7 @@
 #chat-input-user-archived i {
     color: var(--primary-color);
     font-size: 12px;
+    width: 16px;
 }
 
 #reopen-group-button {
