@@ -1,4 +1,4 @@
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { apiRequest } from "../../../http_request";
 import { showPopup } from "../../../store/reducers/PopupSlice";
 import { reactMessage } from "../../../store/reducers/ConversationSlice";
@@ -34,12 +34,13 @@ const reactionsList = [
 const MessageActions = ({ id, isCurrentUser }) => {
 
     const dispatch = useDispatch();
+    const { reactMessageApi } = useSelector(state => state.activeChatTab) || {};
 
     const reactMessageHandler = (e) => {
         const reaction = e.target.getAttribute('title');
         e.stopPropagation();
         e.preventDefault();
-        apiRequest(`/api/v1/direct-messages/${id}/react`, 'POST', { reaction }).then(({ data, message }) => {
+        apiRequest(`${reactMessageApi}/${id}/react`, 'POST', { reaction }).then(({ data, message }) => {
             dispatch(showPopup({ message, type: 'success' }));
             dispatch(reactMessage({ id, reaction }));
         }).catch(({ message }) => {
@@ -47,7 +48,7 @@ const MessageActions = ({ id, isCurrentUser }) => {
         });
     }
 
-    return (
+    return reactMessageApi && (
         <div className={`message-actions FRCC ${isCurrentUser ? 'sent' : 'received'}`}>
             {isCurrentUser && <i className='fa fa-trash delete-icon' style={{ color: '#ff6c6cff' }} title="Delete" />}
             <div className="reactions">
