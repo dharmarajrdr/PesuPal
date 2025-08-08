@@ -64,6 +64,7 @@ const widthChart = {
     "TRANSITION": "250px",
     "CURRENCY": "250px",
     "FILE": "250px",
+    "GEO_LOCATION": "250px",
 }
 
 const ListviewHeader = ({ header }) => {
@@ -86,7 +87,10 @@ const Column = ({ fieldType, data, index }) => {
 
     switch (fieldType) {
         case 'DATE_TIME': {
-            content = data ? <span>{utils.convertDateAndTime(data)}</span> : null;
+            content = data ? <span>
+                <i className='fa-regular fa-clock mR5 colorAAA'></i>
+                {utils.convertDateAndTime(data)}
+            </span> : null;
             break;
         }
 
@@ -117,6 +121,17 @@ const Column = ({ fieldType, data, index }) => {
 
         case 'TEXT': {
             content = <span>{data}</span>;
+            break;
+        }
+
+        case 'GEO_LOCATION': {
+            const { latitude, longitude } = data || {};
+            content = (latitude && longitude) ? (
+                <p className='FRCS link-wrapper' onClick={(e) => { e.stopPropagation(); window.open(`https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`, '_blank', 'noopener,noreferrer'); }}>
+                    <i className='fa fa-map-marker-alt mR5 colorAAA'></i>
+                    <span>{latitude.toFixed(2)}, {longitude.toFixed(2)}</span>
+                </p>
+            ) : null;
             break;
         }
 
