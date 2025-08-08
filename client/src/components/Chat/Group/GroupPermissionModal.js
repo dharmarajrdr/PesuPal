@@ -6,13 +6,14 @@ import { apiRequest } from '../../../http_request';
 const Checked = () => <i className='fa fa-check checked' />;
 const Crossed = () => <i className='fa fa-times crossed' />;
 
-const PermissionColumn = ({ isChecked }) => {
+const PermissionColumn = ({ isChecked, name, setPermissions, role }) => {
 
     const onClick = (e) => {
         e.stopPropagation();
         e.preventDefault();
-        // change permission state
-
+        setPermissions(prevPermissions =>
+            prevPermissions.map(p => p.name === name ? { ...p, [role]: !isChecked } : p)
+        );
     }
 
     return <td className='checkmark'>
@@ -22,15 +23,15 @@ const PermissionColumn = ({ isChecked }) => {
     </td>
 }
 
-const PermissionRow = ({ permission, key }) => {
+const PermissionRow = ({ permission, setPermissions, key }) => {
 
-    const { name, superAdmin, admin, member } = permission;
+    const { name, superAdmin, admin, user } = permission || {};
 
     return <tr key={key}>
         <td>{name}</td>
-        <PermissionColumn isChecked={superAdmin} />
-        <PermissionColumn isChecked={admin} />
-        <PermissionColumn isChecked={member} />
+        <PermissionColumn role={"superAdmin"} name={name} setPermissions={setPermissions} isChecked={superAdmin} />
+        <PermissionColumn role={"admin"} name={name} setPermissions={setPermissions} isChecked={admin} />
+        <PermissionColumn role={"user"} name={name} setPermissions={setPermissions} isChecked={user} />
     </tr>
 }
 
@@ -90,7 +91,7 @@ const GroupPermissionModal = ({ onClose, groupId }) => {
                                 </thead>
                                 <tbody>
                                     {permissions.map((permission, index) => (
-                                        <PermissionRow key={index} permission={permission} />
+                                        <PermissionRow key={index} permission={permission} setPermissions={setPermissions} />
                                     ))}
                                 </tbody>
                             </table>
