@@ -32,7 +32,7 @@ const ChatHeader = () => {
     const dispatch = useDispatch();
     const showChatHeaderOptionsModalSlice = useSelector(state => state.showChatHeaderOptionsModalSlice);
     const [showProfile, setShowProfile] = useState(false);
-    const [showGroupPermission, setShowGroupPermission] = useState(true);
+    const [showGroupPermission, setShowGroupPermission] = useState(false);
     const [showGroupMembers, setShowGroupMembers] = useState(false);
     const currentChatPreview = useSelector(state => state.currentChatPreviewSlice);
     const [pinnedId, setPinnedIdState] = useState(null);
@@ -229,7 +229,7 @@ const ChatHeader = () => {
         <div className="chat-header FRCB w100">
             {showProfile && <Profile userId={userId} setShowProfile={setShowProfile} />}
             {showGroupMembers && <GroupMembers groupId={chatId} setShowGroupMembers={setShowGroupMembers} />}
-            {showGroupPermission && <GroupPermissionModal onClose={() => setShowGroupPermission(false)} />}
+            {showGroupPermission && <GroupPermissionModal groupId={chatId} onClose={(e) => setShowGroupPermission(false)} />}
             <div className='FRCS'>
                 <UserAvatar displayPicture={displayPicture} displayName={displayName} setShowProfile={setShowProfile} />
                 <p className="name mL10">{displayName}</p>
