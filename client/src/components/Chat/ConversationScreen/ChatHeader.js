@@ -15,6 +15,7 @@ import GroupMembers from '../Group/GroupMembers';
 import { hideConfirmationPopup, showConfirmationPopup } from '../../../store/reducers/ConfirmationPopupSlice';
 import { showPopup } from '../../../store/reducers/PopupSlice';
 import { clearMessages } from '../../../store/reducers/ConversationSlice';
+import GroupPermissionModal from '../Group/GroupPermissionModal';
 
 const ParticipantsCount = ({ count, setShowGroupMembers }) => {
     return (
@@ -31,6 +32,7 @@ const ChatHeader = () => {
     const dispatch = useDispatch();
     const showChatHeaderOptionsModalSlice = useSelector(state => state.showChatHeaderOptionsModalSlice);
     const [showProfile, setShowProfile] = useState(false);
+    const [showGroupPermission, setShowGroupPermission] = useState(true);
     const [showGroupMembers, setShowGroupMembers] = useState(false);
     const currentChatPreview = useSelector(state => state.currentChatPreviewSlice);
     const [pinnedId, setPinnedIdState] = useState(null);
@@ -192,6 +194,7 @@ const ChatHeader = () => {
             name: activeChatTab.name == 'groupMessage' && active && groupActive ? 'Permissions' : null,
             icon: 'fa fa-lock',
             onClick: () => {
+                setShowGroupPermission(true);
                 dispatch(setShowChatHeaderOptionsModal(false));
             }
         },
@@ -226,6 +229,7 @@ const ChatHeader = () => {
         <div className="chat-header FRCB w100">
             {showProfile && <Profile userId={userId} setShowProfile={setShowProfile} />}
             {showGroupMembers && <GroupMembers groupId={chatId} setShowGroupMembers={setShowGroupMembers} />}
+            {showGroupPermission && <GroupPermissionModal onClose={() => setShowGroupPermission(false)} />}
             <div className='FRCS'>
                 <UserAvatar displayPicture={displayPicture} displayName={displayName} setShowProfile={setShowProfile} />
                 <p className="name mL10">{displayName}</p>
