@@ -28,7 +28,7 @@ const StartNewConversation = ({ clickSendMessageHandler }) => {
             <UserAvatar displayPicture={otherUserDisplayPicture} />
         </div>}
         <button id='say-hello-button' className='mT15' onClick={sayHelloButtonClickHandler}>
-            Say Hello <i className="fa fa-hand" id='wave-hands'></i>
+            Say Hello <i className="fa fa-hand w20" id='wave-hands'></i>
         </button>
     </div>) : null;
 };

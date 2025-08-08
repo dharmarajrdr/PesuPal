@@ -20,9 +20,11 @@ const AuthModal = () => {
 
         // 2. If the token is present, check `who am I?` endpoint
         apiRequest(`/api/v1/people/who-am-i`, 'GET').then(({ data }) => {
-            const { orgMemberId, userId } = data || {};
+            const { orgMemberId, userId, orgStatus } = data || {};
             if (userId == null) {
                 throw new Error('Session expired');
+            // } else if (orgStatus === 'Inactive') {
+            //     navigate('/settings/pricing');
             } else if (orgMemberId == null) {
                 navigate('/');
             }

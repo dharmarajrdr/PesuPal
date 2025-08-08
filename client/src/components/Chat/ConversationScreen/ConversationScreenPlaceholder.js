@@ -3,13 +3,17 @@ import { setActiveRecentChat } from '../../../store/reducers/ActiveRecentChatSli
 import './ConversationScreenPlaceholder.css';
 import { setChatId } from '../../../store/reducers/ChatIdSlice';
 import { setActiveChatTab } from '../../../store/reducers/ActiveChatTabSlice';
+import { useEffect } from 'react';
 
 const ConversationScreenPlaceholder = ({ activeTabName }) => {
 
     const dispatch = useDispatch();
-    dispatch(setActiveRecentChat(null));
-    dispatch(setChatId(null));
-    dispatch(setActiveChatTab(activeTabName));
+
+    useEffect(() => {
+        dispatch(setActiveRecentChat(null));
+        dispatch(setChatId(null));
+        dispatch(setActiveChatTab(activeTabName));
+    }, [activeTabName]);
 
     return (
         <div id='conversation-screen-placeholder' className='FCCC h100'>

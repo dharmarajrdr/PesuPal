@@ -28,6 +28,6 @@ public class GroupChatMessage extends CreationTimeAuditable {
     @Enumerated(EnumType.STRING)
     private MessageType messageType = MessageType.USER_MESSAGE;
 
-    @OneToMany(mappedBy = "lastReadMessage", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "lastReadMessage", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private List<GroupChatMember> readBy;
 }

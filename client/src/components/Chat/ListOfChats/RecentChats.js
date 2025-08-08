@@ -52,20 +52,20 @@ const RecentChats = () => {
             'number_of_unread_messages': 0
         };
         dispatch(updateRecentChat({ 'chatId': chat.chatId, recentMessage }));  // Reset unread messages count
-}
+    }
 
-return activeChatTab ? (
-    <div id='RecentChats' className='FCCS w100 pT5'>
-        {
-            loading ? <Loader /> :
-                error ? <ErrorMessage message={error} /> :
-                    recentChats?.length ?
-                        recentChats.map((recentChat, index) =>
-                            <RecentChat key={index} recentChat={recentChat} openChatHandler={openChatHandler} />
-                        ) : <NoChatsFound />
-        }
-    </div>
-) : null;
+    return activeChatTab ? (
+        <div id='RecentChats' className='FCCS w100 pT5'>
+            {
+                loading ? <Loader /> :
+                    error ? <ErrorMessage message={error} /> :
+                        recentChats?.length ?
+                            recentChats.map((recentChat, index) =>
+                                <RecentChat key={index} recentChat={recentChat} openChatHandler={openChatHandler} />
+                            ) : <NoChatsFound />
+            }
+        </div>
+    ) : null;
 }
 
 export default RecentChats

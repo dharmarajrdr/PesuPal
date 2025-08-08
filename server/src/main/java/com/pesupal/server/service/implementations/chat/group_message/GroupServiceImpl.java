@@ -119,12 +119,13 @@ public class GroupServiceImpl extends CurrentValueRetriever implements GroupServ
         GroupChatMember groupChatMember = groupChatMemberService.getGroupMemberByGroupIdAndUserId(groupId, userId);
         Group group = getGroupByPublicId(groupId);
 
-
         Role role = groupChatMember.getRole();
 
-        GroupChatConfiguration groupChatConfiguration = groupChatConfigurationService.getConfigurationByGroupAndRole(group, role);
-        if (!groupChatConfiguration.isDeleteGroup()) {
-            throw new PermissionDeniedException("You do not have permission to delete this group.");
+        if (!group.getOwner().getId().equals(userId)) {
+            GroupChatConfiguration groupChatConfiguration = groupChatConfigurationService.getConfigurationByGroupAndRole(group, role);
+            if (!groupChatConfiguration.isDeleteGroup()) {
+                throw new PermissionDeniedException("You do not have permission to delete this group.");
+            }
         }
 
         if (!group.isActive()) {
