@@ -21,6 +21,9 @@ public class RecordFileRelation extends BaseModel {
     private ModuleField field;
 
     @Column(nullable = false)
+    private String name;
+
+    @Column(nullable = false)
     private UUID mediaId;
 
     @Column(nullable = false)
