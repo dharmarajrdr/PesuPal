@@ -147,12 +147,13 @@ const ChatHeader = () => {
             icon: `fa fa-thumbtack${pinnedId ? '-slash' : ''}`,
             onClick: () => {
                 if (pinnedId) {
-                    apiRequest(`${activeChatTab.pinnedMessagesApi}/pin/${pinnedId}`, 'DELETE').then(() => {
+                    apiRequest(`${activeChatTab.pinnedMessagesApi}/pin/${pinnedId}`, 'DELETE').then(({ message }) => {
+                        dispatch(showPopup({ message, type: 'success' }));
                         dispatch(removePinnedDirectMessage(chatId));
                         dispatch(setShowChatHeaderOptionsModal(false));
                         dispatch(setCurrentChatPreview({ ...currentChatPreview, pinnedId: null }));
                     }).catch(({ message }) => {
-
+                        dispatch(showPopup({ message, type: 'error' }));
                     });
                 } else {
                     const payload = {};
@@ -161,12 +162,13 @@ const ChatHeader = () => {
                     } else if (activeChatTab.name == 'groupMessage') {
                         Object.assign(payload, { 'groupId': chatId, 'orderIndex': 1 });
                     }
-                    apiRequest(`${activeChatTab.pinnedMessagesApi}/pin`, 'POST', payload).then(({ data }) => {
+                    apiRequest(`${activeChatTab.pinnedMessagesApi}/pin`, 'POST', payload).then(({ data, message }) => {
+                        dispatch(showPopup({ message, type: 'success' }));
                         dispatch(addPinnedDirectMessage(data));
                         dispatch(setShowChatHeaderOptionsModal(false));
                         dispatch(setCurrentChatPreview({ ...currentChatPreview, pinnedId: data.id }));
                     }).catch(({ message }) => {
-
+                        dispatch(showPopup({ message, type: 'error' }));
                     });
                 }
             }

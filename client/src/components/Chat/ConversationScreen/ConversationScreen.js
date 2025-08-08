@@ -202,7 +202,7 @@ const ConversationScreen = ({ activeTabName }) => {
 
 	}, [chatId]);
 
-	const showStartNewConversation = active && (groupActive != false);
+	const showStartNewConversation = active && (activeChatTab.chatMode === 'group' ? groupActive != false : true);
 
 	return (
 		<div id='ConversationScreen' className='FCSB'>

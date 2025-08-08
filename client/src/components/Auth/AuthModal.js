@@ -23,8 +23,8 @@ const AuthModal = () => {
             const { orgMemberId, userId, orgStatus } = data || {};
             if (userId == null) {
                 throw new Error('Session expired');
-            } else if (orgStatus === 'Inactive') {
-                navigate('/settings/pricing');
+            // } else if (orgStatus === 'Inactive') {
+            //     navigate('/settings/pricing');
             } else if (orgMemberId == null) {
                 navigate('/');
             }
