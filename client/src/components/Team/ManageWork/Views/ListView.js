@@ -88,7 +88,7 @@ const Column = ({ fieldType, data, index }) => {
     switch (fieldType) {
         case 'DATE_TIME': {
             content = data ? <span>
-                <i className='fa-regular fa-clock mR5 colorAAA'></i>
+                <i className='fa-regular fa-clock mR5 colorAAA w15'></i>
                 {utils.convertDateAndTime(data)}
             </span> : null;
             break;
@@ -128,7 +128,7 @@ const Column = ({ fieldType, data, index }) => {
             const { latitude, longitude } = data || {};
             content = (latitude && longitude) ? (
                 <p className='FRCS link-wrapper' onClick={(e) => { e.stopPropagation(); window.open(`https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`, '_blank', 'noopener,noreferrer'); }}>
-                    <i className='fa fa-map-marker-alt mR5 colorAAA'></i>
+                    <i className='fa fa-map-marker-alt mR5 colorAAA w15'></i>
                     <span>{latitude.toFixed(2)}, {longitude.toFixed(2)}</span>
                 </p>
             ) : null;
