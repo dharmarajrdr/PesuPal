@@ -68,6 +68,7 @@ public class GroupChatMessageServiceImpl extends CurrentValueRetriever implement
      *
      * @param messageId
      */
+    @Transactional
     @Override
     public void deleteGroupMessage(Long messageId) {
 
@@ -109,7 +110,10 @@ public class GroupChatMessageServiceImpl extends CurrentValueRetriever implement
             }
         }
 
-        groupChatMessageRepository.delete(groupChatMessage);
+        groupChatMemberRepository.updateLastReadMessageToNull(groupChatMessage);
+
+        groupChatMessage.setDeleted(true);
+        groupChatMessageRepository.save(groupChatMessage);
     }
 
     /**
