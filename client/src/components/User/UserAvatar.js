@@ -17,7 +17,7 @@ const UserAvatar = ({ displayPicture, displayName, setShowProfile }) => {
             <i className="fa fa-user-circle user-avatar-placeholder" aria-hidden="true" />
         )
     ) : (
-        <img src={displayPicture} alt="User" className="img_40_40 cursP" onError={() => setImageError(true)} onClick={() => setShowProfile ? setShowProfile(true) : null} />
+        <img src={displayPicture} alt="User" className="img_40_40 cursP objectFitCover" onError={() => setImageError(true)} onClick={() => setShowProfile ? setShowProfile(true) : null} />
     );
 };
 

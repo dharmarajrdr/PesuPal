@@ -41,7 +41,6 @@ const MessageActions = ({ id, isCurrentUser }) => {
         e.stopPropagation();
         e.preventDefault();
         apiRequest(`${reactMessageApi}/${id}/react`, 'POST', { reaction }).then(({ data, message }) => {
-            dispatch(showPopup({ message, type: 'success' }));
             dispatch(reactMessage({ id, reaction }));
         }).catch(({ message }) => {
             dispatch(showPopup({ message, type: 'error' }));
@@ -53,7 +52,7 @@ const MessageActions = ({ id, isCurrentUser }) => {
             {isCurrentUser && <i className='fa fa-trash delete-icon' style={{ color: '#ff6c6cff' }} title="Delete" />}
             <div className="reactions">
                 {reactionsList.map(({ name, icon, color }) => (
-                    <i key={name} className={`fa ${icon} reaction-icon`} style={{ color }} title={name} onClick={reactMessageHandler} />
+                    <i key={name} className={`fa ${icon} w20 reaction-icon`} style={{ color }} title={name} onClick={reactMessageHandler} />
                 ))}
             </div>
         </div>
