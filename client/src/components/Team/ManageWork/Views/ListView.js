@@ -62,7 +62,9 @@ const widthChart = {
     "TEXT": "350px",
     "LINK": "250px",
     "TRANSITION": "250px",
-    "CURRENCY": "250px"
+    "CURRENCY": "250px",
+    "FILE": "250px",
+    "GEO_LOCATION": "250px",
 }
 
 const ListviewHeader = ({ header }) => {
@@ -85,7 +87,10 @@ const Column = ({ fieldType, data, index }) => {
 
     switch (fieldType) {
         case 'DATE_TIME': {
-            content = data ? <span>{utils.convertDateAndTime(data)}</span> : null;
+            content = data ? <span>
+                <i className='fa-regular fa-clock mR5 colorAAA'></i>
+                {utils.convertDateAndTime(data)}
+            </span> : null;
             break;
         }
 
@@ -113,25 +118,51 @@ const Column = ({ fieldType, data, index }) => {
             }
             break;
         }
+
         case 'TEXT': {
             content = <span>{data}</span>;
             break;
         }
-        case 'TRANSITION': {
-            const { name, score } = data || {};
-            content = name ? (
-                <div className='FRCS'>
-                    <i className="fa fa-chart-line fs12 color777 w_30"></i>
-                    <span>{name}</span>
-                </div>
+
+        case 'GEO_LOCATION': {
+            const { latitude, longitude } = data || {};
+            content = (latitude && longitude) ? (
+                <p className='FRCS link-wrapper' onClick={(e) => { e.stopPropagation(); window.open(`https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`, '_blank', 'noopener,noreferrer'); }}>
+                    <i className='fa fa-map-marker-alt mR5 colorAAA'></i>
+                    <span>{latitude.toFixed(2)}, {longitude.toFixed(2)}</span>
+                </p>
             ) : null;
             break;
         }
+
+        case 'TRANSITION': {
+            const { name, score } = data || {};
+            content = name ? (
+                <span className='FRCS'>
+                    <i className="fa fa-chart-line fs12 color777 w_30"></i>
+                    <span>{name}</span>
+                </span>
+            ) : null;
+            break;
+        }
+
         case 'CURRENCY': {
             const { currency, amount } = data || {};
             content = amount ? <span>{utils.formatCurrency(amount, currency)}</span> : null;
             break;
         }
+
+        case 'FILE': {
+            const { mediaId, name, extension } = data || {};
+            content = (mediaId && name) ? (
+                <span className='FRCS'>
+                    <i className={`fa ${utils.getIconByFileExtension(extension)} fs12 color777 w_20`}></i>
+                    <span>{name}.{extension}</span>
+                </span>
+            ) : null;
+            break;
+        }
+
         case 'LINK': {
             const { url, title } = data || {};
             content = url && (
@@ -142,6 +173,7 @@ const Column = ({ fieldType, data, index }) => {
             );
             break;
         }
+
         default: {
             content = <span>Unable to display</span>;
         }

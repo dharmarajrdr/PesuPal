@@ -23,6 +23,7 @@ public class RecordRelationFactory {
     private final RecordDateTimeRelationService recordDateTimeRelationService;
     private final RecordCurrencyRelationService recordCurrencyRelationService;
     private final RecordTransitionRelationService recordTransitionRelationService;
+    private final RecordGeoLocationRelationService recordGeoLocationRelationService;
 
     public RecordRelationService getRelationService(FieldType fieldType) {
 
@@ -38,6 +39,9 @@ public class RecordRelationFactory {
             }
             case CURRENCY -> {
                 return recordCurrencyRelationService;
+            }
+            case GEO_LOCATION -> {
+                return recordGeoLocationRelationService;
             }
             case LINK -> {
                 return recordLinkRelationService;

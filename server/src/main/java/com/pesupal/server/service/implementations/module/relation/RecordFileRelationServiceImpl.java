@@ -12,6 +12,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -35,15 +36,22 @@ public class RecordFileRelationServiceImpl extends RecordRelationServiceImpl imp
         }
 
         Map<String, Object> fileData = (Map<String, Object>) data;
+        String name = (String) fileData.get("name");
         UUID mediaId = (UUID) fileData.get("mediaId");
         String extension = (String) fileData.get("extension");
         if (field.isRequired()) {
+            if (name == null || name.isBlank()) {
+                throw new IllegalArgumentException("The field '" + field.getName() + "' is required and must contain a valid file name.");
+            }
             if (mediaId == null) {
                 throw new IllegalArgumentException("The field '" + field.getName() + "' is required and must contain a valid media ID.");
             }
             if (extension == null || extension.isBlank()) {
                 throw new IllegalArgumentException("The field '" + field.getName() + "' is required and must contain a valid file extension.");
             }
+        }
+        if (name == null || name.isBlank()) {
+            throw new IllegalArgumentException("The field '" + field.getName() + "' must contain a valid file name.");
         }
         if (mediaId == null || mediaId.toString().isBlank()) {
             throw new IllegalArgumentException("The field '" + field.getName() + "' must contain a valid media ID.");
@@ -55,6 +63,7 @@ public class RecordFileRelationServiceImpl extends RecordRelationServiceImpl imp
         RecordFileRelation recordFileRelation = new RecordFileRelation();
         recordFileRelation.setRecord(record);
         recordFileRelation.setField(field);
+        recordFileRelation.setName(name);
         recordFileRelation.setMediaId(mediaId);
         recordFileRelation.setExtension(extension);
         recordFileRelationRepository.save(recordFileRelation);
@@ -70,14 +79,24 @@ public class RecordFileRelationServiceImpl extends RecordRelationServiceImpl imp
     @Override
     public ModuleFieldDto getByModuleRecordAndModuleField(ModuleRecord moduleRecord, ModuleField moduleField) {
 
-        RecordFileRelation recordFileRelation = recordFileRelationRepository.findByRecordAndField(moduleRecord, moduleField).orElseThrow(() -> new IllegalArgumentException("No file relation found for record: " + moduleRecord.getId() + " and field: " + moduleField.getId()));
+        Optional<RecordFileRelation> optionalRecordFileRelation = recordFileRelationRepository.findByRecordAndField(moduleRecord, moduleField);
+        ModuleFieldDto moduleFieldDto = ModuleFieldDto.fromModuleField(moduleField);
+        if (optionalRecordFileRelation.isEmpty()) {
+            if (moduleField.isRequired()) {
+                throw new IllegalArgumentException("The field '" + moduleField.getName() + "' is required and must contain a valid file.");
+            }
+        } else {
+            RecordFileRelation recordFileRelation = optionalRecordFileRelation.get();
+            Map<String, Object> fileData = Map.of(
+                    "name", recordFileRelation.getName(),
+                    "mediaId", recordFileRelation.getMediaId(),
+                    "extension", recordFileRelation.getExtension()
+            );
+            moduleFieldDto.setData(fileData);
+        }
 
-        Map<String, Object> data = Map.of(
-                "mediaId", recordFileRelation.getMediaId(),
-                "extension", recordFileRelation.getExtension()
-        );
 
-        return ModuleFieldDto.fromModuleFieldWithData(moduleField, data);
+        return moduleFieldDto;
     }
 
     /**

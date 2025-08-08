@@ -218,5 +218,41 @@ export default {
             style: 'currency',
             currency: currency || 'USD',
         }).format(amount);
+    },
+    "getIconByFileExtension": (extension) => {
+
+        const icons = {
+            'pdf': 'fa-file-pdf',
+            'doc': 'fa-file-word',
+            'docx': 'fa-file-word',
+            'xls': 'fa-file-excel',
+            'xlsx': 'fa-file-excel',
+            'ppt': 'fa-file-powerpoint',
+            'pptx': 'fa-file-powerpoint',
+            'txt': 'fa-file-alt',
+            'jpg': 'fa-file-image',
+            'jpeg': 'fa-file-image',
+            'png': 'fa-file-image',
+            'gif': 'fa-file-image',
+            'zip': 'fa-file-archive',
+            'mp3': 'fa-file-audio',
+            'wav': 'fa-file-audio',
+            'mp4': 'fa-file-video',
+            'avi': 'fa-file-video',
+            'mov': 'fa-file-video',
+            'mkv': 'fa-file-video',
+            'json': 'fa-file-code',
+            'html': 'fa-file-code',
+            'css': 'fa-file-code',
+            'js': 'fa-file-code',
+            'xml': 'fa-file-code',
+            'csv': 'fa-file-csv',
+            'md': 'fa-file-alt',
+            'yaml': 'fa-file-code',
+            'yml': 'fa-file-code'
+            // Add more extensions and icons as needed
+        };
+
+        return icons[extension.toLowerCase()] || 'fa-file';
     }
 }
