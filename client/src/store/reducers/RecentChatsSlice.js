@@ -40,10 +40,8 @@ const RecentChatsSlice = createSlice({
         },
         'updateOrAddRecentChat': (state, action) => {
             const chatIndex = state.findIndex(({ chatId }) => chatId == action.payload.chatId);
-            console.log("payload:", action.payload);
             if (chatIndex !== -1) {
                 const { recentMessage } = action.payload;
-                console.log("Recent message:", recentMessage);
                 const updatedChat = {
                     ...state[chatIndex],
                     ...recentMessage,
@@ -52,7 +50,6 @@ const RecentChatsSlice = createSlice({
                         ...recentMessage.recentMessage,
                     },
                 };
-                console.log("Updated chat:", updatedChat);
                 state[chatIndex] = updatedChat;
             } else {
                 state.push(action.payload.recentMessage);

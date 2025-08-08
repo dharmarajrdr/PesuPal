@@ -11,13 +11,15 @@ import com.pesupal.server.model.module.ModuleMember;
 import com.pesupal.server.model.module.ModulePermission;
 import com.pesupal.server.model.module.ModuleRole;
 import com.pesupal.server.model.user.OrgMember;
-import com.pesupal.server.repository.ModuleMemberRepository;
-import com.pesupal.server.service.interfaces.OrgMemberService;
+import com.pesupal.server.repository.module.ModuleMemberRepository;
+import com.pesupal.server.service.interfaces.org.OrgMemberService;
 import com.pesupal.server.service.interfaces.module.ModuleMemberService;
 import com.pesupal.server.service.interfaces.module.ModulePermissionService;
 import com.pesupal.server.service.interfaces.module.ModuleService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -109,5 +111,28 @@ public class ModuleMemberServiceImpl extends CurrentValueRetriever implements Mo
         moduleMember.setOrgMember(memberToAdd);
         moduleMember.setModule(module);
         moduleMemberRepository.save(moduleMember);
+    }
+
+    /**
+     * Retrieves all modules that an organization member is part of.
+     *
+     * @param orgMember
+     * @return
+     */
+    @Override
+    public List<Module> getAllModulesOfOrgMember(OrgMember orgMember) {
+
+        return moduleMemberRepository.findAllByOrgMember(orgMember).stream().map(ModuleMember::getModule).toList();
+    }
+
+    /**
+     * Deletes all members in a module.
+     *
+     * @param moduleId
+     */
+    @Override
+    public void deleteAllMembersInModule(String moduleId) {
+
+        moduleMemberRepository.deleteAllByModule_PublicId(moduleId);
     }
 }

@@ -8,7 +8,8 @@ import com.pesupal.server.model.module.Module;
 import com.pesupal.server.model.module.ModuleField;
 import com.pesupal.server.model.module.ModuleRecord;
 import com.pesupal.server.model.module.relation.RecordPhoneRelation;
-import com.pesupal.server.repository.RecordPhoneRelationRepository;
+import com.pesupal.server.repository.module.relation.RecordPhoneRelationRepository;
+import com.pesupal.server.service.implementations.module.RecordRelationServiceImpl;
 import com.pesupal.server.service.interfaces.module.relation.RecordPhoneRelationService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,7 +18,7 @@ import java.util.Map;
 
 @Service
 @AllArgsConstructor
-public class RecordPhoneRelationServiceImpl implements RecordPhoneRelationService {
+public class RecordPhoneRelationServiceImpl extends RecordRelationServiceImpl implements RecordPhoneRelationService {
 
     private final RecordPhoneRelationRepository recordPhoneRelationRepository;
 
@@ -115,4 +116,5 @@ public class RecordPhoneRelationServiceImpl implements RecordPhoneRelationServic
 
         recordPhoneRelationRepository.deleteAllByRecord_Module(module);
     }
+
 }

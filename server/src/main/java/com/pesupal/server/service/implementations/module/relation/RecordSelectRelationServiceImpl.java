@@ -1,5 +1,6 @@
 package com.pesupal.server.service.implementations.module.relation;
 
+import com.pesupal.server.dto.request.module.AddModuleFieldDto;
 import com.pesupal.server.dto.response.module.ModuleFieldDto;
 import com.pesupal.server.dto.response.module.ModuleSelectOptionDto;
 import com.pesupal.server.model.module.Module;
@@ -7,7 +8,8 @@ import com.pesupal.server.model.module.ModuleField;
 import com.pesupal.server.model.module.ModuleRecord;
 import com.pesupal.server.model.module.ModuleSelectOption;
 import com.pesupal.server.model.module.relation.RecordSelectRelation;
-import com.pesupal.server.repository.RecordSelectRelationRepository;
+import com.pesupal.server.repository.module.relation.RecordSelectRelationRepository;
+import com.pesupal.server.service.implementations.module.RecordRelationServiceImpl;
 import com.pesupal.server.service.interfaces.module.ModuleSelectOptionService;
 import com.pesupal.server.service.interfaces.module.relation.RecordSelectRelationService;
 import lombok.AllArgsConstructor;
@@ -17,7 +19,7 @@ import java.util.List;
 
 @Service
 @AllArgsConstructor
-public class RecordSelectRelationServiceImpl implements RecordSelectRelationService {
+public class RecordSelectRelationServiceImpl extends RecordRelationServiceImpl implements RecordSelectRelationService {
 
     private final ModuleSelectOptionService moduleSelectOptionService;
     private final RecordSelectRelationRepository recordSelectRelationRepository;
@@ -88,5 +90,21 @@ public class RecordSelectRelationServiceImpl implements RecordSelectRelationServ
     public void deleteAllByModule(Module module) {
 
         recordSelectRelationRepository.deleteAllByRecord_Module(module);
+    }
+
+    /**
+     * Stores initial values for fields when they are created, specifically for select fields.
+     *
+     * @param addModuleFieldDto
+     * @param moduleField
+     * @return
+     */
+    @Override
+    public ModuleFieldDto storeInitialValuesOnFieldsCreation(ModuleField moduleField, AddModuleFieldDto addModuleFieldDto) {
+
+        List<ModuleSelectOption> selectOptions = addModuleFieldDto.getOptions().stream().map(addModuleSelectOptionDto -> addModuleSelectOptionDto.toModuleSelectOption(moduleField)).toList();
+        moduleSelectOptionService.saveAll(selectOptions);
+        List<ModuleSelectOptionDto> moduleSelectOptionDtos = selectOptions.stream().map(ModuleSelectOptionDto::fromModuleSelectOption).toList();
+        return ModuleFieldDto.fromModuleFieldWithData(moduleField, moduleSelectOptionDtos);
     }
 }

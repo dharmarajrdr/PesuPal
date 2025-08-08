@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import './ConversationScreen.css';
 import ChatHeader from './ChatHeader';
 import ChatMessages from './ChatMessages';
@@ -16,6 +16,7 @@ import { moveRecentChatToTop, updateOrAddRecentChat } from '../../../store/reduc
 import utils from '../../../utils';
 import ChatFooter from './ChatFooter';
 import PageNotFound from '../../Auth/PageNotFound';
+import { addMessage, setMessages } from '../../../store/reducers/ConversationSlice';
 
 const ConversationScreen = ({ activeTabName }) => {
 
@@ -25,11 +26,19 @@ const ConversationScreen = ({ activeTabName }) => {
 
 	dispatch(setActiveChatTab(activeTabName));
 
+	const audioRef = useRef(null);
+
+	const playNotificationSound = () => {
+		if (audioRef.current) {
+			audioRef.current.currentTime = 0;
+			audioRef.current.play();
+		}
+	}
+
 	const [page, setPage] = useState(0);
 	const [size, setSize] = useState(25);
 	const [permissionDenied, setPermissionDenied] = useState(false);
 	const [chatNotFound, setChatNotFound] = useState(false);
-	const [messages, setMessages] = useState([]);
 	const [retrievingChat, setRetrievingChat] = useState(true);
 	const [pivotMessageId, setPivotMessageId] = useState(null);
 
@@ -62,7 +71,7 @@ const ConversationScreen = ({ activeTabName }) => {
 
 			console.log(`Since user is in the chat, rendering the message in the chat`);
 
-			setMessages((prev) => [...prev, msg]);
+			dispatch(addMessage(msg));
 
 		} else {	// If the chat is not open, then show the number of unread messages
 
@@ -86,10 +95,12 @@ const ConversationScreen = ({ activeTabName }) => {
 		onPrivateMessage: (msg) => {
 
 			updateRecentChat(msg);
+			playNotificationSound();
 		},
 		onGroupMessage: (msg) => {
 
 			updateRecentChat(msg);
+			playNotificationSound();
 		},
 		onError: ({ message }) => {
 			dispatch(showPopup({ message, type: 'error' }));
@@ -103,9 +114,14 @@ const ConversationScreen = ({ activeTabName }) => {
 		}
 	});
 
-	const readAllMessages = ({ chatId }) => {
+	const readAllMessages = ({ chatId, chatPreview }) => {
 
 		const { readAllMessagesApi } = activeChatTab || {};
+		const { active } = chatPreview || {};
+
+		if (!active) {
+			return;
+		}
 
 		apiRequest(`${readAllMessagesApi}/${chatId}/read-all`, "PUT").then(() => {
 
@@ -138,12 +154,14 @@ const ConversationScreen = ({ activeTabName }) => {
 
 		apiRequest(`${chatPreviewApi}/${chatId}`, "GET").then(({ data }) => {
 
+			const chatPreview = data || {};
+
 			setPermissionDenied(false);
 			setChatNotFound(false);
 			dispatch(setCurrentChatPreview(data));
 
 			apiRequest(`${retrieveConversationApi}/${chatId}?page=${page}&size=${size}${pivot ? `&pivot_message_id=${pivot}` : ''}`, "GET").then(({ data }) => {
-				setMessages(data);
+				dispatch(setMessages(data));
 				setRetrievingChat(false);
 
 				// Update pivot to the last message’s ID
@@ -151,7 +169,7 @@ const ConversationScreen = ({ activeTabName }) => {
 					setPivotMessageId(data.at(-1)?.id);
 				}
 
-				successCallback && successCallback({ chatId });	// read all messages
+				successCallback && successCallback({ chatId, chatPreview });	// read all messages
 
 			}).catch(({ message }) => {
 				console.error(message);
@@ -184,7 +202,7 @@ const ConversationScreen = ({ activeTabName }) => {
 
 	}, [chatId]);
 
-	const showStartNewConversation = active && (groupActive != false);
+	const showStartNewConversation = active && (activeChatTab.chatMode === 'group' ? groupActive != false : true);
 
 	return (
 		<div id='ConversationScreen' className='FCSB'>
@@ -193,7 +211,8 @@ const ConversationScreen = ({ activeTabName }) => {
 					permissionDenied ? <PermissionDenied />
 						: currentChatPreview ? <>
 							<ChatHeader />
-							<ChatMessages showStartNewConversation={showStartNewConversation} retrievingChat={retrievingChat} messages={messages} chatId={chatId} clickSendMessageHandler={clickSendMessageHandler} />
+							<audio ref={audioRef} src="/audio/on-message.mp3" preload="auto" />
+							<ChatMessages showStartNewConversation={showStartNewConversation} retrievingChat={retrievingChat} chatId={chatId} clickSendMessageHandler={clickSendMessageHandler} />
 							<ChatFooter active={active} groupActive={groupActive} currentTab={activeChatTab.name} displayName={displayName} clickSendMessageHandler={clickSendMessageHandler} />
 						</>
 							: null

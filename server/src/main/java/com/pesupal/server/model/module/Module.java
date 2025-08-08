@@ -3,9 +3,7 @@ package com.pesupal.server.model.module;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.pesupal.server.model.PublicAccessModel;
 import com.pesupal.server.model.user.OrgMember;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.Data;
 
 @Entity
@@ -20,6 +18,10 @@ public class Module extends PublicAccessModel {
     @ManyToOne
     @JsonIgnore
     private OrgMember createdBy;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private ModuleAccessibility accessibility;
 
     private boolean allowDuplicateSubject;
 

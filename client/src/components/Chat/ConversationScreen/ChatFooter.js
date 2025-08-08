@@ -1,6 +1,7 @@
 import ChatInputGroupArchived from './ChatInputGroupArchived'
 import ChatInputUserArchived from './ChatInputUserArchived'
 import ChatInput from './ChatInput'
+import GroupChatInactiveUser from './GroupChatInactiveUser'
 
 const ChatFooter = ({ active, groupActive, currentTab, displayName, clickSendMessageHandler }) => {
 
@@ -10,7 +11,7 @@ const ChatFooter = ({ active, groupActive, currentTab, displayName, clickSendMes
                 return <ChatInputGroupArchived />
             }
         } else {
-            return <ChatInputUserArchived message="You are no longer part of this conversation." />
+            return <GroupChatInactiveUser />
         }
     } else {
         if (!active) {

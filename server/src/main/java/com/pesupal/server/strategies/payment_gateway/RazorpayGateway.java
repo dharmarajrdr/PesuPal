@@ -1,7 +1,7 @@
 package com.pesupal.server.strategies.payment_gateway;
 
 import com.pesupal.server.dto.request.PaymentDto;
-import com.pesupal.server.service.interfaces.PaymentGateway;
+import com.pesupal.server.service.interfaces.payment.PaymentGateway;
 import org.springframework.stereotype.Service;
 
 @Service

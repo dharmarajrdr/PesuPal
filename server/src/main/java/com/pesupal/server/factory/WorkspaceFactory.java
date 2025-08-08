@@ -1,7 +1,7 @@
 package com.pesupal.server.factory;
 
 import com.pesupal.server.enums.Workspace;
-import com.pesupal.server.service.interfaces.WorkdriveSpace;
+import com.pesupal.server.service.interfaces.drive.WorkdriveSpace;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 

@@ -193,5 +193,30 @@ export default {
     "getCurrentOrgId": () => {
 
         return sessionStorage.getItem('org-id');
+    },
+    "uniqueColorGenerator": (name) => {
+
+        const colors = [
+            '#7f8c8d', '#2ecc71', '#3498db', '#9b59b6',
+            '#e67e22', '#e74c3c', '#34495e', '#f39c12',
+            '#16a085', '#8e44ad', '#2980b9', '#d35400',
+            '#c0392b', '#1abc9c', '#27ae60', '#d2aa0cff',
+            '#95a5a6', '#bdc3c7', '#5dade2', '#a569bd',
+        ];
+
+        let hash = 0;
+        for (let i = 0; i < name.length; i++) {
+            hash = name.charCodeAt(i) + ((hash << 5) - hash);
+        }
+
+        const index = Math.abs(hash) % colors.length;
+        return colors[index];
+    },
+    "formatCurrency": (amount, currency) => {
+        if (typeof amount !== 'number') return '';
+        return new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: currency || 'USD',
+        }).format(amount);
     }
 }

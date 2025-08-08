@@ -22,11 +22,17 @@ public class ModuleField extends BaseModel {
     @Enumerated(EnumType.STRING)
     private FieldType fieldType;
 
+    @Enumerated(EnumType.STRING)
+    private FieldClassification classification = FieldClassification.USER_DEFINED_FIELD;
+
     @ElementCollection
     @CollectionTable(name = "module_field_restrict_from", joinColumns = @JoinColumn(name = "module_field_id"))
     @Column(name = "role")
     @Enumerated(EnumType.STRING)
     private List<ModuleRole> restrictFrom;
+
+    @OneToMany(mappedBy = "field", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Transition> transitions;
 
     private boolean required;
 

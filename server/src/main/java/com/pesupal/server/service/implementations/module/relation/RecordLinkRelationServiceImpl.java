@@ -6,16 +6,18 @@ import com.pesupal.server.model.module.Module;
 import com.pesupal.server.model.module.ModuleField;
 import com.pesupal.server.model.module.ModuleRecord;
 import com.pesupal.server.model.module.relation.RecordLinkRelation;
-import com.pesupal.server.repository.RecordLinkRelationRepository;
+import com.pesupal.server.repository.module.relation.RecordLinkRelationRepository;
+import com.pesupal.server.service.implementations.module.RecordRelationServiceImpl;
 import com.pesupal.server.service.interfaces.module.relation.RecordLinkRelationService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
-public class RecordLinkRelationServiceImpl implements RecordLinkRelationService {
+public class RecordLinkRelationServiceImpl extends RecordRelationServiceImpl implements RecordLinkRelationService {
 
     private final RecordLinkRelationRepository recordLinkRelationRepository;
 
@@ -64,12 +66,21 @@ public class RecordLinkRelationServiceImpl implements RecordLinkRelationService 
     @Override
     public ModuleFieldDto getByModuleRecordAndModuleField(ModuleRecord moduleRecord, ModuleField moduleField) {
 
-        RecordLinkRelation recordLinkRelation = recordLinkRelationRepository.findByRecordAndField(moduleRecord, moduleField).orElseThrow(() -> new DataNotFoundException("No link relation found for record: " + moduleRecord.getId() + " and field: " + moduleField.getId()));
-        Map<String, Object> data = Map.of(
-                "title", recordLinkRelation.getTitle(),
-                "url", recordLinkRelation.getUrl()
-        );
-        return ModuleFieldDto.fromModuleFieldWithData(moduleField, data);
+        Optional<RecordLinkRelation> optionalRecordLinkRelation = recordLinkRelationRepository.findByRecordAndField(moduleRecord, moduleField);
+        ModuleFieldDto moduleFieldDto = ModuleFieldDto.fromModuleField(moduleField);
+        if (optionalRecordLinkRelation.isEmpty()) {
+            if (moduleField.isRequired()) {
+                throw new DataNotFoundException("No link relation found for record: " + moduleRecord.getId() + " and field: " + moduleField.getId());
+            }
+        } else {
+            RecordLinkRelation recordLinkRelation = optionalRecordLinkRelation.get();
+            Map<String, Object> data = Map.of(
+                    "title", recordLinkRelation.getTitle(),
+                    "url", recordLinkRelation.getUrl()
+            );
+            moduleFieldDto.setData(data);
+        }
+        return moduleFieldDto;
     }
 
     /**
@@ -94,4 +105,5 @@ public class RecordLinkRelationServiceImpl implements RecordLinkRelationService 
 
         recordLinkRelationRepository.deleteAllByRecord_Module(module);
     }
+
 }

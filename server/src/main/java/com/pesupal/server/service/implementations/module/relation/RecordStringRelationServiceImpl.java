@@ -5,7 +5,8 @@ import com.pesupal.server.model.module.Module;
 import com.pesupal.server.model.module.ModuleField;
 import com.pesupal.server.model.module.ModuleRecord;
 import com.pesupal.server.model.module.relation.RecordStringRelation;
-import com.pesupal.server.repository.RecordStringRelationRepository;
+import com.pesupal.server.repository.module.relation.RecordStringRelationRepository;
+import com.pesupal.server.service.implementations.module.RecordRelationServiceImpl;
 import com.pesupal.server.service.interfaces.module.relation.RecordStringRelationService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,7 +15,7 @@ import java.util.Optional;
 
 @Service
 @AllArgsConstructor
-public class RecordStringRelationServiceImpl implements RecordStringRelationService {
+public class RecordStringRelationServiceImpl extends RecordRelationServiceImpl implements RecordStringRelationService {
 
     private final RecordStringRelationRepository recordStringRelationRepository;
 
@@ -74,4 +75,5 @@ public class RecordStringRelationServiceImpl implements RecordStringRelationServ
 
         recordStringRelationRepository.deleteAllByRecord_Module(module);
     }
+
 }

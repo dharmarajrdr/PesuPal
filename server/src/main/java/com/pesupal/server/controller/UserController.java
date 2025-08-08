@@ -2,8 +2,8 @@ package com.pesupal.server.controller;
 
 import com.pesupal.server.dto.request.CreateUserDto;
 import com.pesupal.server.dto.response.ApiResponseDto;
-import com.pesupal.server.service.interfaces.UserOnboardingService;
 import com.pesupal.server.service.interfaces.UserService;
+import com.pesupal.server.service.interfaces.org.UserOnboardingService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

@@ -24,14 +24,6 @@ export default [
         has_access: true
     },
     {
-        title: 'Tasks',
-        route: '/team/manage_work',
-        icon: 'fa fa-tasks',
-        active: false,
-        notify_count: 1,
-        has_access: true
-    },
-    {
         title: 'Attendance (people)',
         route: '/team/attendance',
         icon: 'fa fa-calendar-check',

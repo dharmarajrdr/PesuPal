@@ -2,29 +2,36 @@ package com.pesupal.server.service.implementations.module;
 
 import com.pesupal.server.dto.request.SortColumnDto;
 import com.pesupal.server.dto.request.module.CreateModuleRecordDto;
+import com.pesupal.server.dto.response.KanbanViewDto;
 import com.pesupal.server.dto.response.PaginatedData;
 import com.pesupal.server.dto.response.module.ModuleFieldDto;
 import com.pesupal.server.dto.response.module.ModuleRecordDto;
+import com.pesupal.server.dto.response.module.TransitionDto;
 import com.pesupal.server.enums.FieldType;
-import com.pesupal.server.exceptions.*;
+import com.pesupal.server.exceptions.ActionProhibitedException;
+import com.pesupal.server.exceptions.DataNotFoundException;
+import com.pesupal.server.exceptions.MandatoryDataMissingException;
+import com.pesupal.server.exceptions.PermissionDeniedException;
 import com.pesupal.server.factory.RecordRelationFactory;
 import com.pesupal.server.helpers.CurrentValueRetriever;
 import com.pesupal.server.helpers.ModuleHelper;
 import com.pesupal.server.model.module.*;
 import com.pesupal.server.model.module.Module;
+import com.pesupal.server.model.module.relation.RecordTransitionRelation;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.projections.PublicIdProjection;
-import com.pesupal.server.repository.ModuleRecordRepository;
+import com.pesupal.server.repository.module.ModuleRecordRepository;
+import com.pesupal.server.repository.module.relation.RecordTransitionRelationRepository;
 import com.pesupal.server.service.interfaces.module.*;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 @AllArgsConstructor
@@ -37,6 +44,7 @@ public class ModuleRecordServiceImpl extends CurrentValueRetriever implements Mo
     private final ModuleRecordRepository moduleRecordRepository;
     private final ModulePermissionService modulePermissionService;
     private final ModuleRecordTimelineService moduleRecordTimelineService;
+    private final RecordTransitionRelationRepository recordTransitionRelationRepository;
 
     /**
      * Creates a new record in a module.
@@ -79,15 +87,13 @@ public class ModuleRecordServiceImpl extends CurrentValueRetriever implements Mo
         }
 
         // 4. Check if the subject is unique if duplicates are not allowed
-        if (!module.isAllowDuplicateSubject() && moduleRecordRepository.existsByModuleAndSubject(module, subject)) {
-            throw new DuplicateDataReceivedException("Record with subject '" + subject + "' already exists in this module.");
-        }
+//        if (!module.isAllowDuplicateSubject()  && moduleRecordRepository.existsByModuleAndSubject(module, subject)) {
+//            throw new DuplicateDataReceivedException("Record with subject '" + subject + "' already exists in this module.");
+//        }
 
         // 5. Create the module record with basic information
         ModuleRecord moduleRecord = new ModuleRecord();
         moduleRecord.setModule(module);
-        moduleRecord.setCreatedBy(orgMember);
-        moduleRecord.setSubject(subject);
         moduleRecordRepository.save(moduleRecord);
 
         // 6. Retrieve all module fields for the module
@@ -96,8 +102,18 @@ public class ModuleRecordServiceImpl extends CurrentValueRetriever implements Mo
 
             String attribute = ModuleHelper.getAttributeName(moduleField);
             Object value = data.get(attribute);
+            FieldClassification fieldClassification = moduleField.getClassification();
 
-            // 7. If the value is null, check if the field is required
+            // 7. If the field is SYSTEM_FIELD, get the system value if applicable
+            if (fieldClassification.equals(FieldClassification.SYSTEM_FIELD)) {
+
+                Optional<Object> systemValue = moduleFieldService.getSystemValueIfApplicable(moduleRecord, moduleField, value);
+                if (systemValue.isPresent()) {
+                    value = systemValue.get();
+                }
+            }
+
+            // 8. If the value is null, check if the field is required
             if (value == null) {
                 if (moduleField.isRequired()) {
                     throw new MandatoryDataMissingException("The field '" + moduleField.getName() + "' is required but not provided.");
@@ -107,12 +123,12 @@ public class ModuleRecordServiceImpl extends CurrentValueRetriever implements Mo
 
             FieldType fieldType = moduleField.getFieldType();
 
-            // 8. Get the appropriate RecordRelationService based on the field type to save the value
+            // 9. Get the appropriate RecordRelationService based on the field type to save the value
             RecordRelationService recordRelationService = recordRelationFactory.getRelationService(fieldType);
             recordRelationService.save(moduleRecord, moduleField, value);
         }
 
-        // 9. Log the creation of the record in the timeline
+        // 10. Log the creation of the record in the timeline
         moduleRecordTimelineService.createTimeLine(ModuleRecordTimeline.builder().record(moduleRecord).actionPerformedBy(orgMember).action("Created a new record.").build());
 
         return ModuleRecordDto.fromModuleRecord(moduleRecord);
@@ -147,26 +163,21 @@ public class ModuleRecordServiceImpl extends CurrentValueRetriever implements Mo
             throw new PermissionDeniedException("You do not have permission to delete this record.");
         }
 
-        // 3. Check if the module is active
-        if (!module.isActive()) {
-            throw new ActionProhibitedException("This record cannot be deleted because the module is no longer active.");
-        }
-
-        // 4. Retrieve all module fields for the module
+        // 3. Retrieve all module fields for the module
         List<ModuleField> moduleFields = moduleFieldService.getModuleFieldsByModuleId(moduleId);
         for (ModuleField moduleField : moduleFields) {
 
             FieldType fieldType = moduleField.getFieldType();
 
-            // 5. Get the appropriate RecordRelationService based on the field type to delete the value
+            // 4. Get the appropriate RecordRelationService based on the field type to delete the value
             RecordRelationService recordRelationService = recordRelationFactory.getRelationService(fieldType);
             recordRelationService.delete(moduleRecord, moduleField);
         }
 
-        // 6. Delete timeline entries related to this record
+        // 5. Delete timeline entries related to this record
         moduleRecordTimelineService.deleteByModuleRecord(moduleRecord);
 
-        // 7. Finally, delete the module record
+        // 6. Finally, delete the module record
         moduleRecordRepository.delete(moduleRecord);
     }
 
@@ -197,6 +208,8 @@ public class ModuleRecordServiceImpl extends CurrentValueRetriever implements Mo
         Module module = moduleRecord.getModule();
         String moduleId = module.getPublicId();
 
+        validateRecordsReadAccessibility(module, orgMember);
+
         ModuleMember moduleMember = moduleMemberService.getModuleMemberByOrgMemberAndModule(orgMember, module);
         ModuleRole moduleRole = moduleMember.getRole();
         ModulePermission modulePermission = modulePermissionService.getModulePermissionByModuleAndRole(module, moduleRole);
@@ -223,11 +236,17 @@ public class ModuleRecordServiceImpl extends CurrentValueRetriever implements Mo
 
             RecordRelationService recordRelationService = recordRelationFactory.getRelationService(fieldType);
             ModuleFieldDto moduleFieldDto = recordRelationService.getByModuleRecordAndModuleField(moduleRecord, moduleField);
-            if (moduleFieldDto != null) {
-                fields.add(moduleFieldDto);
-            }
+            fields.add(moduleFieldDto);
         }
         return moduleRecordDto;
+    }
+
+    private void validateRecordsReadAccessibility(Module module, OrgMember orgMember) {
+
+        ModulePermission modulePermission = modulePermissionService.verifyModuleAccessibility(module, orgMember);
+        if (!modulePermission.isReadRecord()) {
+            throw new PermissionDeniedException("You do not have permission to read records in this module.");
+        }
     }
 
     /**
@@ -241,27 +260,24 @@ public class ModuleRecordServiceImpl extends CurrentValueRetriever implements Mo
     @Override
     public PaginatedData<List<ModuleRecordDto>> getAllRecords(String moduleId, int page, int size, SortColumnDto sortColumnDto) {
 
-        Sort sort = null;
+        Sort sort;
         if (sortColumnDto == null) {
-            sort = Sort.by(Sort.Direction.fromString("DESC"), "createdAt");
+            sort = Sort.by("createdAt").descending();
         } else {
-            sort = Sort.by(Sort.Direction.fromString(sortColumnDto.getOrder().toString()), sortColumnDto.getColumn());
+            sort = sortColumnDto.getOrder().isAscending() ? Sort.by(sortColumnDto.getColumn()).ascending() : Sort.by(sortColumnDto.getColumn()).descending();
         }
 
-        PageRequest pageRequest = PageRequest.of(page, size + 1, sort);
+        Pageable pageable = PageRequest.of(page, size, sort);
 
-        List<String> recordsIds = new ArrayList<>(moduleRecordRepository.findAllPublicIdByModule_PublicId(moduleId, pageRequest).getContent().stream().map(PublicIdProjection::getPublicId).toList());
+        OrgMember orgMember = getCurrentOrgMember();
+        Module module = moduleService.getModuleById(moduleId);
 
-        boolean hasMoreRecords = recordsIds.size() == size + 1;
-        Map<String, Object> info = Map.of(
-                "hasMoreRecords", hasMoreRecords,
-                "page", page,
-                "size", size
-        );
+        validateRecordsReadAccessibility(module, orgMember);
 
-        if (!recordsIds.isEmpty() && recordsIds.size() > size) {
-            recordsIds.remove(recordsIds.size() - 1); // safely remove the last element
-        }
+        Page<PublicIdProjection> recordsPage = moduleRecordRepository.findAllPublicIdByModule(module, pageable);
+        Map<String, Object> info = Map.of("hasMoreRecords", recordsPage.hasNext(), "page", page, "size", size, "totalRecords", recordsPage.getTotalElements());
+
+        List<String> recordsIds = new ArrayList<>(recordsPage.stream().map(PublicIdProjection::getPublicId).toList());
 
         List<ModuleRecordDto> moduleRecordDtos = new ArrayList<>();
         for (String recordId : recordsIds) {
@@ -283,11 +299,14 @@ public class ModuleRecordServiceImpl extends CurrentValueRetriever implements Mo
 
         Module module = moduleService.getModuleById(moduleId);
 
-        ModuleMember moduleMember = moduleMemberService.getModuleMemberByOrgMemberAndModule(orgMember, module);
-        ModulePermission modulePermission = modulePermissionService.getModulePermissionByModuleAndRole(module, moduleMember.getRole());
 
-        if (!module.getCreatedBy().getPublicId().equals(orgMember.getPublicId()) && !modulePermission.isClearRecords()) {
-            throw new PermissionDeniedException("You do not have permission to clear records of this module.");
+        if (!ModuleHelper.isModuleOwner(module, orgMember)) {
+
+            ModuleMember moduleMember = moduleMemberService.getModuleMemberByOrgMemberAndModule(orgMember, module);
+            ModulePermission modulePermission = modulePermissionService.getModulePermissionByModuleAndRole(module, moduleMember.getRole());
+            if (!modulePermission.isClearRecords()) {
+                throw new PermissionDeniedException("You do not have permission to clear records of this module.");
+            }
         }
 
         List<ModuleField> moduleFields = moduleFieldService.getModuleFieldsByModuleId(moduleId);
@@ -302,5 +321,55 @@ public class ModuleRecordServiceImpl extends CurrentValueRetriever implements Mo
         moduleRecordTimelineService.deleteAllByModule(module);
 
         moduleRecordRepository.deleteAllByModule(module);
+    }
+
+    /**
+     * Retrieves records grouped by transition for a module.
+     *
+     * @param moduleId
+     * @param size
+     * @param sortColumnDto
+     * @return
+     * @view <b>Kanban view</b> of records grouped by transitions
+     */
+    @Override
+    public List<KanbanViewDto<TransitionDto, PaginatedData<List<ModuleRecordDto>>>> getRecordsGroupedByTransition(String moduleId, Integer size, SortColumnDto sortColumnDto) {
+
+        Sort sort;
+        if (sortColumnDto == null) {
+            sort = Sort.by("record.createdAt").descending();
+        } else {
+            sort = sortColumnDto.getOrder().isAscending() ? Sort.by(sortColumnDto.getColumn()).ascending() : Sort.by(sortColumnDto.getColumn()).descending();
+        }
+
+        Pageable pageable = PageRequest.of(0, size, sort);
+
+        OrgMember orgMember = getCurrentOrgMember();
+        Module module = moduleService.getModuleById(moduleId);
+
+        validateRecordsReadAccessibility(module, orgMember);
+
+        ModuleField moduleField = moduleFieldService.getFieldByModuleAndType(module, FieldType.TRANSITION).orElseThrow(() -> new ActionProhibitedException("Kanban view is not supported as no field with type TRANSITION found in this module."));
+
+        List<Transition> transitions = moduleField.getTransitions();
+        transitions.sort(Comparator.comparing(Transition::getScore));
+
+        List<KanbanViewDto<TransitionDto, PaginatedData<List<ModuleRecordDto>>>> kanbanViewDtos = new ArrayList<>();
+
+        for (Transition transition : transitions) {
+            KanbanViewDto<TransitionDto, PaginatedData<List<ModuleRecordDto>>> kanbanViewDto = new KanbanViewDto<>();
+            List<ModuleRecordDto> moduleRecordDtos = new ArrayList<>();
+            Page<RecordTransitionRelation> recordTransitionRelations = recordTransitionRelationRepository.findAllByTransition(transition, pageable);
+            List<String> recordIds = recordTransitionRelations.getContent().stream().map(relation -> relation.getRecord().getPublicId()).toList();
+            Map<String, Object> info = Map.of("hasMoreRecords", recordTransitionRelations.hasNext(), "page", 0, "size", size, "totalRecords", recordTransitionRelations.getTotalElements());
+            for (String recordId : recordIds) {
+                moduleRecordDtos.add(getRecordById(recordId, ModuleView.LIST_VIEW));
+            }
+            kanbanViewDto.setKey(TransitionDto.fromTransition(transition));
+            kanbanViewDto.setValue(new PaginatedData<>(moduleRecordDtos, info));
+            kanbanViewDtos.add(kanbanViewDto);
+        }
+
+        return kanbanViewDtos;
     }
 }

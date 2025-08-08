@@ -1,14 +1,12 @@
-import { useState } from 'react';
 import './PostOptions.css';
 import { apiRequest } from '../../../http_request';
-import ConfirmationPopup from '../../Utils/ConfirmationPopup';
 import { showPopup } from '../../../store/reducers/PopupSlice';
 import { useDispatch } from 'react-redux';
+import { hideConfirmationPopup, showConfirmationPopup } from '../../../store/reducers/ConfirmationPopupSlice';
 
 const PostOptions = ({ postId, commentable, setCommentable, isCreator, poll, pollUpdatable, setPollUpdatable, setShowLikesList }) => {
 
     const dispatch = useDispatch();
-    const [deletePostClicked, setDeletePostClicked] = useState(false);
 
     const closeOptionsModal = () => {
         const postsLayout = document.getElementsByClassName('posts-layout');
@@ -45,7 +43,7 @@ const PostOptions = ({ postId, commentable, setCommentable, isCreator, poll, pol
             color: "green",
             onClick: () => {
                 apiRequest(`/api/v1/post/${postId}`, "DELETE").then(() => {
-                    setDeletePostClicked(false);
+                    dispatch(hideConfirmationPopup());
                     closeOptionsModal();
                     window.location.reload();
                 }).catch(({ message }) => {
@@ -57,7 +55,7 @@ const PostOptions = ({ postId, commentable, setCommentable, isCreator, poll, pol
         {
             title: "No",
             color: "red",
-            onClick: () => setDeletePostClicked(false)
+            onClick: () => dispatch(hideConfirmationPopup())
         }
     ];
 
@@ -65,6 +63,13 @@ const PostOptions = ({ postId, commentable, setCommentable, isCreator, poll, pol
         navigator.clipboard.writeText(`${window.location.origin}/post/${postId}`);
         closeOptionsModal();
         dispatch(showPopup({ message: 'Post link copied to clipboard', type: 'success' }));
+    }
+
+    const deletePostHandler = () => {
+        dispatch(showConfirmationPopup({
+            message: 'Are you sure you want to delete this post? This action cannot be undone.',
+            options: deletePopupOptions
+        }));
     }
 
     return (
@@ -81,8 +86,7 @@ const PostOptions = ({ postId, commentable, setCommentable, isCreator, poll, pol
 
                     <div className='option' onClick={toggleCommentSectionHandler} >{commentable ? 'Disable' : 'Enable'} Post Comments</div>
 
-                    <div className='option' onClick={() => setDeletePostClicked(true)}>Delete Post</div>
-                    {deletePostClicked && <ConfirmationPopup message={"Are you sure you want to delete this post?"} onClose={() => setDeletePostClicked(false)} options={deletePopupOptions} />}
+                    <div className='option' onClick={deletePostHandler}>Delete Post</div>
 
                 </>
             }

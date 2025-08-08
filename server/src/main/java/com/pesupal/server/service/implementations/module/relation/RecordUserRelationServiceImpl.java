@@ -8,15 +8,18 @@ import com.pesupal.server.model.module.ModuleField;
 import com.pesupal.server.model.module.ModuleRecord;
 import com.pesupal.server.model.module.relation.RecordUserRelation;
 import com.pesupal.server.model.user.OrgMember;
-import com.pesupal.server.repository.RecordUserRelationRepository;
-import com.pesupal.server.service.interfaces.OrgMemberService;
+import com.pesupal.server.repository.module.relation.RecordUserRelationRepository;
+import com.pesupal.server.service.implementations.module.RecordRelationServiceImpl;
+import com.pesupal.server.service.interfaces.org.OrgMemberService;
 import com.pesupal.server.service.interfaces.module.relation.RecordUserRelationService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @AllArgsConstructor
-public class RecordUserRelationServiceImpl implements RecordUserRelationService {
+public class RecordUserRelationServiceImpl extends RecordRelationServiceImpl implements RecordUserRelationService {
 
     private final OrgMemberService orgMemberService;
     private final RecordUserRelationRepository recordUserRelationRepository;
@@ -46,7 +49,14 @@ public class RecordUserRelationServiceImpl implements RecordUserRelationService 
     @Override
     public RecordUserRelation getRecordSelectRelation(ModuleRecord record, ModuleField field) {
 
-        return recordUserRelationRepository.findByRecordAndField(record, field).orElseThrow(() -> new DataNotFoundException("No user relation found for the given field."));
+        Optional<RecordUserRelation> recordUserRelation = recordUserRelationRepository.findByRecordAndField(record, field);
+        if (recordUserRelation.isEmpty()) {
+            if (field.isRequired()) {
+                throw new DataNotFoundException("No user relation found for the given record and field.");
+            }
+            return null;
+        }
+        return recordUserRelation.get();
     }
 
     /**
@@ -62,7 +72,9 @@ public class RecordUserRelationServiceImpl implements RecordUserRelationService 
         ModuleFieldDto<UserPreviewDto> moduleFieldDto = ModuleFieldDto.fromModuleField(moduleField);
 
         RecordUserRelation recordUserRelation = getRecordSelectRelation(moduleRecord, moduleField);
-        moduleFieldDto.setData(UserPreviewDto.fromOrgMember(recordUserRelation.getUser()));
+        if (recordUserRelation != null) {
+            moduleFieldDto.setData(UserPreviewDto.fromOrgMember(recordUserRelation.getUser()));
+        }
         return moduleFieldDto;
     }
 

@@ -1,7 +1,7 @@
 package com.pesupal.server.factory;
 
 import com.pesupal.server.enums.SupportedGateway;
-import com.pesupal.server.service.interfaces.PaymentGateway;
+import com.pesupal.server.service.interfaces.payment.PaymentGateway;
 import com.pesupal.server.strategies.payment_gateway.RazorpayGateway;
 import com.pesupal.server.strategies.payment_gateway.StripeGateway;
 import lombok.AllArgsConstructor;

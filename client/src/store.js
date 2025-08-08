@@ -10,27 +10,35 @@ import PopupSlice from './store/reducers/PopupSlice';
 import { configureStore } from '@reduxjs/toolkit';
 import { combineReducers } from 'redux';
 import CurrentOrgSlice from './store/reducers/CurrentOrgSlice';
-import LeftNavigationSlice from './store/reducers/LeftNavigationSlice';
+import ModuleFilterSlice from './store/reducers/ModuleFilterSlice';
 import ActiveChatTabSlice from './store/reducers/ActiveChatTabSlice';
-import ShowChatHeaderOptionsModalSlice from './store/reducers/ShowChatHeaderOptionsModalSlice';
+import LeftNavigationSlice from './store/reducers/LeftNavigationSlice';
+import ConversationSlice from './store/reducers/ConversationSlice';
+import ConfirmationPopupSlice from './store/reducers/ConfirmationPopupSlice';
+import CurrentModuleSlice from './store/reducers/CurrentModuleSlice';
 import CurrentChatPreviewSlice from './store/reducers/CurrentChatPreviewSlice';
+import ShowChatHeaderOptionsModalSlice from './store/reducers/ShowChatHeaderOptionsModalSlice';
 
 const store = configureStore({
     reducer: combineReducers({
-        Navigation: NavigationReducers,
-        recentChats: RecentChatsSlice,
-        VerticalLoader: VerticalLoaderReducer,
-        posts: PostReducer,
         popup: PopupSlice,
+        posts: PostReducer,
         chatId: ChatIdSlice,
         myProfile: MyProfileSlice,
         currentOrg: CurrentOrgSlice, 
+        recentChats: RecentChatsSlice,
+        Navigation: NavigationReducers,
+        moduleFilter: ModuleFilterSlice,
+        conversation: ConversationSlice,
         activeChatTab: ActiveChatTabSlice,
+        currentModule: CurrentModuleSlice,
         leftNavigation: LeftNavigationSlice,
+        VerticalLoader: VerticalLoaderReducer,
         activeRecentChat: ActiveRecentChatSlice,
+        confirmationPopup: ConfirmationPopupSlice,
         pinnedDirectMessage: PinnedDirectMessageSlice,
-        showChatHeaderOptionsModalSlice: ShowChatHeaderOptionsModalSlice,
-        currentChatPreviewSlice: CurrentChatPreviewSlice
+        currentChatPreviewSlice: CurrentChatPreviewSlice,
+        showChatHeaderOptionsModalSlice: ShowChatHeaderOptionsModalSlice
     }),
     devTools: true
 });

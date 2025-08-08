@@ -14,7 +14,6 @@ const TeamMainContainer = ({ width }) => {
                 <Route path="" element={<Navigate to="/team/drive" />} />
                 <Route path="/dashboard/*" element={<DepartmentLayout />} />
                 <Route path="/drive/*" element={<DriveLayout />} />
-                <Route path="/manage_work/*" element={<ManageWorkLayout />} />
                 <Route path="/recruit/*" element={<RecruitLayout />} />
                 <Route path="*" element={<PageNotFound />} />
             </Routes>

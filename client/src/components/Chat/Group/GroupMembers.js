@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import './GroupMembers.css';
 import UserPreview from '../../User/UserPreview';
 import { apiRequest } from '../../../http_request';
-import { useDispatch } from 'react-redux'
 
 const RoleComponent = ({ role, members }) => {
 
@@ -33,7 +32,6 @@ const NoMembersFound = ({ message = "No members found." }) => {
 
 const GroupMembers = ({ groupId, setShowGroupMembers }) => {
 
-    const dispatch = useDispatch();
     const [members, setMembers] = useState({});
     const [error, setError] = useState(null);
     const roleOrder = ["SUPER_ADMIN", "ADMIN", "USER"];
