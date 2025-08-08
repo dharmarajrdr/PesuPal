@@ -2,6 +2,7 @@ package com.pesupal.server.service.implementations.chat.group_message;
 
 import com.pesupal.server.dto.request.chat.group_message.UpdateGroupChatConfigurationDto;
 import com.pesupal.server.dto.response.chat.group_message.GroupChatPermissionDto;
+import com.pesupal.server.dto.response.chat.group_message.GroupConfigurationUpdateDto;
 import com.pesupal.server.enums.Role;
 import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.exceptions.PermissionDeniedException;
@@ -118,6 +119,39 @@ public class GroupChatConfigurationServiceImpl extends CurrentValueRetriever imp
         GroupChatConfiguration groupChatConfiguration = getConfigurationByGroupAndRole(group, role);
         updateGroupChatConfigurationDto.applyToGroupChatConfiguration(groupChatConfiguration);
         groupChatConfigurationRepository.save(groupChatConfiguration);
+    }
+
+    /**
+     * Updates the group chat configuration based on the provided DTO.
+     *
+     * @param groupConfigurationUpdateDto
+     */
+    @Override
+    public void updateGroupChatConfiguration(GroupConfigurationUpdateDto groupConfigurationUpdateDto) throws IllegalAccessException {
+
+        OrgMember orgMember = getCurrentOrgMember();
+        Group group = groupService.getGroupByPublicId(groupConfigurationUpdateDto.getGroupId());
+
+        if (!GroupHelper.isGroupOwner(group, orgMember)) {
+            throw new PermissionDeniedException("You do not have permission to update this group configuration.");
+        }
+
+        String fieldName = StringHelper.toCamelCase(groupConfigurationUpdateDto.getName());
+        boolean isEnabled = groupConfigurationUpdateDto.isEnable();
+        Role role = groupConfigurationUpdateDto.getRole();
+
+        GroupChatConfiguration groupChatConfiguration = getConfigurationByGroupAndRole(group, role);
+
+        for (Field field : GroupChatConfiguration.class.getDeclaredFields()) {
+            if (field.getType().equals(boolean.class) && field.getName().equals(fieldName)) {
+                field.setAccessible(true); // allow access to private fields
+                field.setBoolean(groupChatConfiguration, isEnabled);
+                groupChatConfigurationRepository.save(groupChatConfiguration);
+                return;
+            }
+        }
+
+        throw new DataNotFoundException("Field " + fieldName + " not found in GroupChatConfiguration.");
     }
 
     /**
