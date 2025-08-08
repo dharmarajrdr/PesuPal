@@ -1,10 +1,10 @@
 .chat-input {
     padding: 10px;
     background-color: var(--pure-white);
-    border-top: 1px solid #ddd;
     min-height: 90px;
     max-height: 200px;
     width: 100%;
+    border-top: 2px solid #ddd;
 }
 
 .chat-input textarea {
