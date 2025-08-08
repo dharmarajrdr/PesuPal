@@ -60,7 +60,9 @@ const widthChart = {
     "USER": "225px",
     "SELECT": "250px",
     "TEXT": "350px",
-    "LINK": "250px"
+    "LINK": "250px",
+    "TRANSITION": "250px",
+    "CURRENCY": "250px"
 }
 
 const ListviewHeader = ({ header }) => {
@@ -123,6 +125,11 @@ const Column = ({ fieldType, data, index }) => {
                     <span>{name}</span>
                 </div>
             ) : null;
+            break;
+        }
+        case 'CURRENCY': {
+            const { currency, amount } = data || {};
+            content = amount ? <span>{utils.formatCurrency(amount, currency)}</span> : null;
             break;
         }
         case 'LINK': {
