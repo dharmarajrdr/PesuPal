@@ -199,7 +199,12 @@ public class GroupChatMessageServiceImpl extends CurrentValueRetriever implement
             }
         }
 
+        // Set last read message to null for all members in the group to ensure that the members are not removed from the group
+        groupChatMemberRepository.updateAllLastReadMessageToNullByGroup(group);
+
         groupChatMessageRepository.deleteAllByGroup(group);
+
+        addSystemMessage(group, orgMember.getDisplayName() + " has cleared the group chat messages.");
     }
 
     /**

@@ -1,5 +1,6 @@
 package com.pesupal.server.repository.chat.group_message;
 
+import com.pesupal.server.model.chat.group_message.Group;
 import com.pesupal.server.model.chat.group_message.GroupChatMember;
 import com.pesupal.server.model.chat.group_message.GroupChatMessage;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -25,4 +26,8 @@ public interface GroupChatMemberRepository extends JpaRepository<GroupChatMember
     @Modifying
     @Query("UPDATE GroupChatMember gcm SET gcm.lastReadMessage = NULL WHERE gcm.lastReadMessage = :message")
     void updateLastReadMessageToNull(@Param("message") GroupChatMessage message);
+
+    @Modifying
+    @Query("UPDATE GroupChatMember m SET m.lastReadMessage = NULL WHERE m.group = :group")
+    void updateAllLastReadMessageToNullByGroup(@Param("group") Group group);
 }
