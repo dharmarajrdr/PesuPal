@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import './ChatMessages.css'
 import Loader from '../../Loader';
 import StartNewConversation from './StartNewConversation';
@@ -26,13 +26,18 @@ const ChatMessages = ({ showStartNewConversation, chatId, retrievingChat, clickS
     let previousMessageType = null;
 
     const chatContainerRef = useRef(null);
-    const { messages } = useSelector(state => state.conversation) || { 'messages': [] };
+    const conversationInRedux = useSelector(state => state.conversation?.messages || []);
+    const [messages, setMessages] = useState(conversationInRedux || []);
+
+    useEffect(() => {
+        setMessages(conversationInRedux || []);
+    }, [conversationInRedux]);
 
     useEffect(() => {
         if (chatContainerRef.current) {
             chatContainerRef.current.scrollTo({
                 top: chatContainerRef.current.scrollHeight,
-                behavior: 'auto' // or 'smooth'
+                behavior: 'auto'
             });
         }
     }, [chatId, messages]);
