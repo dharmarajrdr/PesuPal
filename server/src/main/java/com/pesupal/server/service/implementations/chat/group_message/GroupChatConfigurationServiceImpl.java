@@ -1,25 +1,39 @@
 package com.pesupal.server.service.implementations.chat.group_message;
 
 import com.pesupal.server.dto.request.chat.group_message.UpdateGroupChatConfigurationDto;
+import com.pesupal.server.dto.response.chat.group_message.GroupChatPermissionDto;
 import com.pesupal.server.enums.Role;
 import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.exceptions.PermissionDeniedException;
+import com.pesupal.server.helpers.CurrentValueRetriever;
+import com.pesupal.server.helpers.GroupHelper;
+import com.pesupal.server.helpers.StringHelper;
 import com.pesupal.server.model.chat.group_message.Group;
 import com.pesupal.server.model.chat.group_message.GroupChatConfiguration;
 import com.pesupal.server.model.chat.group_message.GroupChatMember;
+import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.repository.chat.group_message.GroupChatConfigurationRepository;
 import com.pesupal.server.service.interfaces.chat.group_message.GroupChatConfigurationService;
 import com.pesupal.server.service.interfaces.chat.group_message.GroupChatMemberService;
+import com.pesupal.server.service.interfaces.chat.group_message.GroupService;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-@Service
-public class GroupChatConfigurationServiceImpl implements GroupChatConfigurationService {
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
+@Service
+public class GroupChatConfigurationServiceImpl extends CurrentValueRetriever implements GroupChatConfigurationService {
+
+    private final GroupService groupService;
     private final GroupChatMemberService groupChatMemberService;
     private final GroupChatConfigurationRepository groupChatConfigurationRepository;
 
-    public GroupChatConfigurationServiceImpl(@Lazy GroupChatMemberService groupChatMemberService, GroupChatConfigurationRepository groupChatConfigurationRepository) {
+    public GroupChatConfigurationServiceImpl(@Lazy GroupChatMemberService groupChatMemberService, GroupChatConfigurationRepository groupChatConfigurationRepository, @Lazy GroupService groupService) {
+        this.groupService = groupService;
         this.groupChatMemberService = groupChatMemberService;
         this.groupChatConfigurationRepository = groupChatConfigurationRepository;
     }
@@ -77,12 +91,14 @@ public class GroupChatConfigurationServiceImpl implements GroupChatConfiguration
      * Updates the group chat configuration for a specific group, role, user, and organization.
      *
      * @param updateGroupChatConfigurationDto
-     * @param userId
-     * @param orgId
      * @return
      */
     @Override
-    public void updateGroupChatConfiguration(UpdateGroupChatConfigurationDto updateGroupChatConfigurationDto, Long userId, Long orgId) {
+    public void updateGroupChatConfiguration(UpdateGroupChatConfigurationDto updateGroupChatConfigurationDto) {
+
+        OrgMember orgMember = getCurrentOrgMember();
+        Long orgId = orgMember.getOrg().getId();
+        Long userId = orgMember.getUser().getId();
 
         Long groupId = updateGroupChatConfigurationDto.getGroupId();
         Role role = updateGroupChatConfigurationDto.getRole();
@@ -103,4 +119,67 @@ public class GroupChatConfigurationServiceImpl implements GroupChatConfiguration
         updateGroupChatConfigurationDto.applyToGroupChatConfiguration(groupChatConfiguration);
         groupChatConfigurationRepository.save(groupChatConfiguration);
     }
+
+    /**
+     * Retrieves all group chat configurations for a specific group.
+     *
+     * @param group
+     * @return
+     */
+    @Override
+    public List<GroupChatConfiguration> getConfigurationsByGroup(Group group) {
+
+        return groupChatConfigurationRepository.findAllByGroup(group);
+    }
+
+    /**
+     * Retrieves the permissions for a group by its ID.
+     *
+     * @param groupId
+     * @return
+     */
+    @Override
+    public List<GroupChatPermissionDto> getGroupPermissions(String groupId) {
+
+        OrgMember orgMember = getCurrentOrgMember();
+        Group group = groupService.getGroupByPublicId(groupId);
+        if (!GroupHelper.isGroupOwner(group, orgMember)) {
+            throw new PermissionDeniedException("You do not have permission to access this group.");
+        }
+
+        List<GroupChatConfiguration> configurations = getConfigurationsByGroup(group);
+        Map<String, GroupChatPermissionDto> permissions = new HashMap<>();
+        for (GroupChatConfiguration configuration : configurations) {
+            Role role = configuration.getRole();
+            for (Field field : GroupChatConfiguration.class.getDeclaredFields()) {
+                if (field.getType().equals(boolean.class) || field.getType().equals(Boolean.class)) {
+                    field.setAccessible(true); // allow access to private fields
+                    try {
+                        String fieldName = StringHelper.camelCaseToTitle(field.getName());
+                        boolean fieldValue = field.getBoolean(configuration);
+                        GroupChatPermissionDto groupChatPermissionDto = permissions.computeIfAbsent(fieldName, k -> new GroupChatPermissionDto(fieldName));
+                        switch (role) {
+                            case SUPER_ADMIN -> {
+                                groupChatPermissionDto.setSuperAdmin(fieldValue);
+                            }
+                            case ADMIN -> {
+                                groupChatPermissionDto.setAdmin(fieldValue);
+                            }
+                            case USER -> {
+                                groupChatPermissionDto.setUser(fieldValue);
+                            }
+                        }
+                    } catch (IllegalAccessException ignored) {
+                    }
+                }
+            }
+        }
+
+        List<GroupChatPermissionDto> permissionDtos = new ArrayList<>();
+        for (Map.Entry<String, GroupChatPermissionDto> entry : permissions.entrySet()) {
+            permissionDtos.add(entry.getValue());
+        }
+        return permissionDtos;
+    }
+
 }
