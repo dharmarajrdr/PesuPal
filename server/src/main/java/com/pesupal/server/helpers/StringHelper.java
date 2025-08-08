@@ -27,4 +27,28 @@ public class StringHelper {
         return title.toString().trim();
     }
 
+    public static String toCamelCase(String input) {
+        if (input == null || input.isEmpty()) {
+            return input;
+        }
+
+        StringBuilder camelCaseString = new StringBuilder();
+        boolean nextUpperCase = false;
+
+        for (char c : input.toCharArray()) {
+            if (c == ' ') {
+                nextUpperCase = true;
+            } else {
+                if (nextUpperCase) {
+                    camelCaseString.append(Character.toUpperCase(c));
+                    nextUpperCase = false;
+                } else {
+                    camelCaseString.append(Character.toLowerCase(c));
+                }
+            }
+        }
+
+        return camelCaseString.toString();
+    }
+
 }

@@ -1,19 +1,30 @@
 import { useEffect, useState } from 'react';
 import Loader from '../../Loader';
 import './GroupPermissionModal.css';
+import { useDispatch } from 'react-redux';
 import { apiRequest } from '../../../http_request';
+import { showPopup } from '../../../store/reducers/PopupSlice';
 
 const Checked = () => <i className='fa fa-check checked' />;
 const Crossed = () => <i className='fa fa-times crossed' />;
 
-const PermissionColumn = ({ isChecked, name, setPermissions, role }) => {
+const PermissionColumn = ({ groupId, isChecked, name, setPermissions, role, roleName }) => {
+
+    const dispatch = useDispatch();
 
     const onClick = (e) => {
         e.stopPropagation();
         e.preventDefault();
-        setPermissions(prevPermissions =>
-            prevPermissions.map(p => p.name === name ? { ...p, [role]: !isChecked } : p)
-        );
+        apiRequest(`/api/v1/group-chat-configuration`, 'PATCH', {
+            groupId, role, name, enable: !isChecked
+        }).then(({ message }) => {
+            setPermissions(prevPermissions =>
+                prevPermissions.map(p => p.name === name ? { ...p, [roleName]: !isChecked } : p)
+            );
+            dispatch(showPopup({ message, type: 'success' }));
+        }).catch(({ message }) => {
+            dispatch(showPopup({ message, type: 'error' }));
+        });
     }
 
     return <td className='checkmark'>
@@ -23,15 +34,15 @@ const PermissionColumn = ({ isChecked, name, setPermissions, role }) => {
     </td>
 }
 
-const PermissionRow = ({ permission, setPermissions, key }) => {
+const PermissionRow = ({ groupId, permission, setPermissions, key }) => {
 
     const { name, superAdmin, admin, user } = permission || {};
 
     return <tr key={key}>
         <td>{name}</td>
-        <PermissionColumn role={"superAdmin"} name={name} setPermissions={setPermissions} isChecked={superAdmin} />
-        <PermissionColumn role={"admin"} name={name} setPermissions={setPermissions} isChecked={admin} />
-        <PermissionColumn role={"user"} name={name} setPermissions={setPermissions} isChecked={user} />
+        <PermissionColumn groupId={groupId} role={"SUPER_ADMIN"} roleName={"superAdmin"} name={name} setPermissions={setPermissions} isChecked={superAdmin} />
+        <PermissionColumn groupId={groupId} role={"ADMIN"} roleName={"admin"} name={name} setPermissions={setPermissions} isChecked={admin} />
+        <PermissionColumn groupId={groupId} role={"USER"} roleName={"user"} name={name} setPermissions={setPermissions} isChecked={user} />
     </tr>
 }
 
@@ -91,11 +102,12 @@ const GroupPermissionModal = ({ onClose, groupId }) => {
                                 </thead>
                                 <tbody>
                                     {permissions.map((permission, index) => (
-                                        <PermissionRow key={index} permission={permission} setPermissions={setPermissions} />
+                                        <PermissionRow groupId={groupId} key={index} permission={permission} setPermissions={setPermissions} />
                                     ))}
                                 </tbody>
                             </table>
-                        </div> : null}
+                        </div>
+                            : null}
             </div>
         </div >
     )
