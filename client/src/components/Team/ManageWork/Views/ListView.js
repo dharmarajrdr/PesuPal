@@ -62,7 +62,8 @@ const widthChart = {
     "TEXT": "350px",
     "LINK": "250px",
     "TRANSITION": "250px",
-    "CURRENCY": "250px"
+    "CURRENCY": "250px",
+    "FILE": "250px",
 }
 
 const ListviewHeader = ({ header }) => {
@@ -113,25 +114,40 @@ const Column = ({ fieldType, data, index }) => {
             }
             break;
         }
+
         case 'TEXT': {
             content = <span>{data}</span>;
             break;
         }
+
         case 'TRANSITION': {
             const { name, score } = data || {};
             content = name ? (
-                <div className='FRCS'>
+                <span className='FRCS'>
                     <i className="fa fa-chart-line fs12 color777 w_30"></i>
                     <span>{name}</span>
-                </div>
+                </span>
             ) : null;
             break;
         }
+
         case 'CURRENCY': {
             const { currency, amount } = data || {};
             content = amount ? <span>{utils.formatCurrency(amount, currency)}</span> : null;
             break;
         }
+
+        case 'FILE': {
+            const { mediaId, name, extension } = data || {};
+            content = (mediaId && name) ? (
+                <span className='FRCS'>
+                    <i className={`fa ${utils.getIconByFileExtension(extension)} fs12 color777 w_20`}></i>
+                    <span>{name}.{extension}</span>
+                </span>
+            ) : null;
+            break;
+        }
+
         case 'LINK': {
             const { url, title } = data || {};
             content = url && (
@@ -142,6 +158,7 @@ const Column = ({ fieldType, data, index }) => {
             );
             break;
         }
+
         default: {
             content = <span>Unable to display</span>;
         }
