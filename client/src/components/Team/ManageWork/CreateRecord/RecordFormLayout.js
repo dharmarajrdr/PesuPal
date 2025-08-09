@@ -29,7 +29,7 @@ const FieldValue = ({ field }) => {
     switch (fieldType) {
 
         case 'STRING': {
-            return <input type='text' className='field-value' value={data} readOnly={!editable} />;
+            return <input type='text' className='field-value' value={data} readOnly={!editable} placeholder='Enter text' />;
         }
         case 'USER': {
             return <p className='field-value'>User select box will come here...</p>
@@ -46,6 +46,7 @@ const FieldValue = ({ field }) => {
         case 'SELECT': {
             return (
                 <select className='field-value' disabled={!editable}>
+                    <option value='' disabled>Select an option</option>
                     {data?.map(({ value, selected }, index) => (
                         <option key={index} value={value} selected={selected}>
                             {value}
@@ -56,24 +57,25 @@ const FieldValue = ({ field }) => {
         }
         case 'TRANSITION': {
             const { name, score } = data || {};
-            return <p className='field-value transition-value' title={`Score: ${score}`}>{name}</p>
+            return name && <p className='field-value transition-value' title={`Score: ${score}`}>{name}</p>
         }
         case 'CURRENCY': {
             const { currency, amount } = data || {};
             return <div className='field-value currency-field FRCS'>
-                <select className='field-value'>
+                <select className='field-value' placeholder='Select Currency'>
+                    <option value='' disabled selected>Select a Currency</option>
                     {currency?.map(({ code, selected, name }, index) => (
                         <option key={index} value={code} selected={selected} title={name}>{code}</option>
                     ))}
                 </select>
-                <input type='number' className='field-value' value={amount} readOnly={!editable} />
+                <input type='number' className='field-value' value={amount} readOnly={!editable} placeholder='Enter Amount' />
             </div>
         }
         case 'GEO_LOCATION': {
             return <p className='field-value'>Geo location select box will come here...</p>
         }
         case 'FILE': {
-            return <input type='file' className='field-value' disabled={!editable} />
+            return <input type='file' className='field-value' disabled={!editable} placeholder='Upload File' />
         }
         case 'LINK': {
             return <input type='url' className='field-value' placeholder='Enter URL' disabled={!editable} />;

@@ -1,8 +1,9 @@
 import utils from '../../../../utils';
-import { Link } from 'react-router-dom';
 import './ListView.css'
 import { useDispatch } from 'react-redux';
 import { showPopup } from '../../../../store/reducers/PopupSlice';
+import { useState } from 'react';
+import DetailView from './DetailView';
 
 const ListviewTopHeader = ({ item, searchParams, setSearchParams }) => {
 
@@ -190,13 +191,26 @@ const Column = ({ fieldType, data, index }) => {
 const Row = ({ item, item_index }) => {
 
     const { moduleId, recordId, fields } = item;
-    const route = `/manage/module/${moduleId}/record/${recordId}`;
+    const [showQuickDetailView, setShowQuickDetailView] = useState(false);
+    // const route = `/manage/module/${moduleId}/record/${recordId}`;
 
-    return <Link to={route} className='rows FRCS' key={item_index}>
+    const showQuickDetailViewHandler = () => {
+        setShowQuickDetailView(true);
+    }
+
+    const QuickDetailViewRecord = ({ subject }) => {
+
+        return <div id='quick-create-record' className='entire-screen-overlay FRCE'>
+            <DetailView recordId={recordId} subject={subject} moduleId={moduleId} setShowQuickDetailView={setShowQuickDetailView} view='list' fieldsList={fields} />
+        </div>
+    }
+
+    return <div className='rows FRCS' key={item_index} onClick={showQuickDetailViewHandler}>
+        {showQuickDetailView && <QuickDetailViewRecord subject={fields[0].data} />}
         {fields?.map(({ data, fieldType }, index) => {
             return <Column fieldType={fieldType} data={data} key={index} />
         })}
-    </Link>
+    </div>
 }
 
 

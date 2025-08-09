@@ -2,10 +2,14 @@
     background-color: var(--pure-white);
 }
 
+#subject-as-header,
 #new-record-title {
     margin: 0;
     font-size: 20px;
     font-family: 'system-ui';
+    text-wrap: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
 }
 
 #new-record-actions button {
