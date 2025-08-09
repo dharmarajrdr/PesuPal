@@ -63,11 +63,12 @@
 #quick-create-record #create-new-record {
   width: 50%;
   position: absolute;
-  right: 0;
+  right: -50%;
   height: 100vh;
   border-top-left-radius: 5px;
   border-bottom-left-radius: 5px;
   padding-top: 10px;
+  animation: slideIn 0.25s ease-in-out forwards;
 }
 
 #quick-create-record #create-new-record #record-form-layout #slider {
@@ -80,4 +81,14 @@
 
 #quick-create-record #create-new-record #create-new-record-header {
   padding: 10px 25px;
+}
+
+@keyframes slideIn {
+  from {
+    right: -50%;
+  }
+
+  to {
+    right: 0;
+  }
 }

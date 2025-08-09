@@ -1,10 +1,12 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import './Header.css'
 import FilterComponentItem from './FilterComponentItem';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { toggleFilterBox } from '../../../store/reducers/ModuleFilterSlice';
 import CreateRecordLayout from './CreateRecord/CreateRecordLayout';
+import { apiRequest } from '../../../http_request';
+import { showPopup } from '../../../store/reducers/PopupSlice';
 
 const GetParams = () => {
     const params = useParams();
