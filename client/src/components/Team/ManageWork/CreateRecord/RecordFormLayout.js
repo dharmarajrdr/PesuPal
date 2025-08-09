@@ -84,7 +84,7 @@ const FieldValue = ({ field }) => {
 const RecordField = ({ field }) => {
 
     const { showInDetail, fieldType, required, editable } = field || {};
-    return (
+    return showInDetail && (
         <div className={`FRSS w100 record-field ${showInDetail ? 'show-in-detail' : ''} ${fieldType.toLowerCase()} ${editable ? 'editable' : ''}`}>
             <FieldName fieldType={fieldType} fieldName={field.fieldName} required={required} />
             <FieldValue field={field} />
