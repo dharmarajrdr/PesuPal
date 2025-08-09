@@ -2,15 +2,15 @@
   width: 350px;
 }
 
-#createButtons div {
+#createButtons>div {
   padding: 10px 20px;
   border-radius: 10px;
   border: none;
   cursor: pointer;
 }
 
-#createButtons div i,
-#createButtons div span {
+#createButtons>div>i,
+#createButtons>div>span {
   color: var(--pure-white);
   font-size: 14px;
 }
@@ -29,7 +29,7 @@
   height: 40px;
 }
 
-#filterIcon, 
+#filterIcon,
 #moduleBuilderIcon {
   position: relative;
   border: 1px solid #ccc;
@@ -40,17 +40,45 @@
   background-color: var(--pure-white);
 }
 
-#filterIcon .fa-filter, 
+#filterIcon .fa-filter,
 #moduleBuilderIcon i {
   font-size: 16px;
   color: var(--primary-color);
 }
 
-#filterIcon:hover, 
+#filterIcon:hover,
 #moduleBuilderIcon:hover {
   background-color: var(--pure-white-hover);
 }
 
 #filterIcon.active {
   background-color: var(--pure-white-hover);
+}
+
+#quick-create-record {
+  border-radius: 0;
+  border: 1px solid red;
+  padding: 0;
+}
+
+#quick-create-record #create-new-record {
+  width: 50%;
+  position: absolute;
+  right: 0;
+  height: 100vh;
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+  padding-top: 10px;
+}
+
+#quick-create-record #create-new-record #record-form-layout #slider {
+  width: 100%;
+}
+
+#quick-create-record #create-new-record #record-form-layout {
+  padding: 0;
+}
+
+#quick-create-record #create-new-record #create-new-record-header {
+  padding: 10px 25px;
 }
