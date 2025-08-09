@@ -13,6 +13,7 @@
 .record-field {
     padding: 15px;
     border-radius: 5px;
+    overflow: hidden;
 }
 
 .record-field:hover {
