@@ -1,0 +1,80 @@
+#record-form-layout {
+    width: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+    padding: 50px 0px;
+    height: calc(100vh - 100px);
+}
+
+#record-form-layout #slider {
+    width: 45%;
+}
+
+.record-field {
+    padding: 15px;
+    border-radius: 5px;
+}
+
+.record-field:hover {
+    background-color: #f9f9f9;
+}
+
+.field-name {
+    width: 35%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-family: 'system-ui';
+    font-size: 14px;
+    padding: 8px;
+}
+
+.field-name .required {
+    color: red;
+    margin-left: 5px;
+}
+
+.field-value {
+    width: 65%;
+}
+
+input.field-value {
+    padding: 8px;
+    border: none;
+    outline: none;
+    border-bottom: 1px solid #ddd;
+    background-color: transparent;
+}
+
+input.field-value:focus {
+    border-bottom: 1px solid var(--primary-color);
+    transition-duration: 0.5s;
+}
+
+select.field-value {
+    padding: 8px;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    border-bottom: 1px solid #ddd;
+    background-color: transparent;
+}
+
+select.field-value:hover {
+    border-bottom: 1px solid var(--primary-color);
+}
+
+textarea.field-value {
+    padding: 8px;
+    border: none;
+    outline: none;
+    border-bottom: 1px solid #ddd;
+    background-color: transparent;
+    max-height: 200px;
+    min-height: 35px;
+    resize: vertical;
+}
+
+textarea.field-value:hover {
+    border-bottom: 1px solid var(--primary-color);
+}
