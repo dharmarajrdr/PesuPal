@@ -30,7 +30,7 @@ const FieldValue = ({ field }) => {
     switch (fieldType) {
 
         case 'STRING': {
-            return <input type='text' className='field-value' placeholder={field.fieldName} value={data} readOnly={!editable} />;
+            return <input type='text' className='field-value' value={data} readOnly={!editable} />;
         }
         case 'USER': {
             return <p className='field-value'>User select box will come here...</p>
@@ -74,7 +74,7 @@ const FieldValue = ({ field }) => {
             return <p className='field-value'>Geo location select box will come here...</p>
         }
         case 'FILE': {
-            return <input type='file' className='field-value' disabled={!editable} />;
+            return <input type='file' className='field-value' disabled={!editable} />
         }
         case 'LINK': {
             return <input type='url' className='field-value' placeholder='Enter URL' disabled={!editable} />;

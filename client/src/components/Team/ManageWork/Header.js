@@ -40,11 +40,12 @@ const CreateButtons = () => {
 
     return (
         <div className='FRCE' id='createButtons' onClick={createRecordHandler}>
-            {createRecord && <div className='FRCC mR10' id='createRecord'>
-                <i className='fa fa-plus pR5 w_20'></i>
-                <span>Create Record</span>
-            </div>}
-            {showQuickCreateRecord && <QuickCreateRecord view={view} moduleId={moduleId} setShowQuickCreateRecord={setShowQuickCreateRecord} />}
+            {createRecord &&
+                <div className='FRCC mR10' id='createRecord'>
+                    {showQuickCreateRecord && <QuickCreateRecord view={view} moduleId={moduleId} setShowQuickCreateRecord={setShowQuickCreateRecord} />}
+                    <i className='fa fa-plus pR5 w_20'></i>
+                    <span>Create Record</span>
+                </div>}
             <div className='FRCC' id='createModule' onClick={createModuleHandler}>
                 <i className='fa fa-plus pR5 w_20'></i>
                 <span>Create Module</span>
