@@ -1,9 +1,26 @@
 import data from './data';
 import './RecordFormLayout.css';
 
-const FieldName = ({ fieldName, required }) => {
+const fieldIcons = {
+    "STRING": "fa fa-edit",
+    "USER": "fa fa-user",
+    "DATE_TIME": "fa fa-calendar",
+    "TEXT": "fa fa-paragraph",
+    "SELECT": "fa fa-list",
+    "TRANSITION": "fa fa-chart-line",
+    "CURRENCY": "fa fa-dollar-sign",
+    "GEO_LOCATION": "fa fa-map-marker-alt",
+    "FILE": "fa fa-file",
+    "LINK": "fa fa-link"
+}
 
-    return <div className='field-name'>{fieldName}{required && <span className='required'>*</span>}</div>;
+const FieldName = ({ fieldName, fieldType, required }) => {
+
+    return <div className='field-name'>
+        <i className={`mR10 w15 color777 ${fieldIcons[fieldType] || 'fa fa-question'}`} aria-hidden='true'></i>
+        <span className='field-name-text'>{fieldName}</span>
+        {required && <span className='required'>*</span>}
+    </div>;
 }
 
 const FieldValue = ({ field }) => {
@@ -39,7 +56,8 @@ const FieldValue = ({ field }) => {
             );
         }
         case 'TRANSITION': {
-            return <p className='field-value'>Transition select box will come here...</p>
+            const { name, score } = data || {};
+            return <p className='field-value transition-value' title={`Score: ${score}`}>{name}</p>
         }
         case 'CURRENCY': {
             const { currency, amount } = data || {};
@@ -67,7 +85,7 @@ const RecordField = ({ field }) => {
     const { showInDetail, fieldType, required, editable } = field || {};
     return (
         <div className={`FRSS w100 record-field ${showInDetail ? 'show-in-detail' : ''} ${fieldType.toLowerCase()} ${editable ? 'editable' : ''}`}>
-            <FieldName fieldName={field.fieldName} required={required} />
+            <FieldName fieldType={fieldType} fieldName={field.fieldName} required={required} />
             <FieldValue field={field} />
         </div>
     )

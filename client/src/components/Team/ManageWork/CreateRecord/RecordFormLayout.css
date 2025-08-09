@@ -79,3 +79,13 @@ textarea.field-value {
 textarea.field-value:hover {
     border-bottom: 1px solid var(--primary-color);
 }
+
+.field-value.transition-value {
+    background-color: #f0f0f0;
+    width: fit-content;
+    padding: 10px 15px;
+    border-radius: 5px;
+    font-size: 13px;
+    cursor: default;
+    color: #333;
+}
