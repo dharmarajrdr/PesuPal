@@ -1,5 +1,6 @@
 package com.pesupal.server.service.implementations.module.relation;
 
+import com.pesupal.server.dto.response.module.CurrencyDto;
 import com.pesupal.server.dto.response.module.ModuleFieldDto;
 import com.pesupal.server.enums.Currency;
 import com.pesupal.server.exceptions.DataNotFoundException;
@@ -13,6 +14,8 @@ import com.pesupal.server.service.interfaces.module.relation.RecordCurrencyRelat
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -76,8 +79,9 @@ public class RecordCurrencyRelationServiceImpl extends RecordRelationServiceImpl
             }
         } else {
             RecordCurrencyRelation recordCurrencyRelation = optionalRecordCurrencyRelation.get();
+            List<CurrencyDto> currencyDtos = Arrays.stream(Currency.values()).map(currency -> CurrencyDto.fromCurrency(currency, currency.equals(recordCurrencyRelation.getCurrency()))).toList();
             Map<String, Object> currencyData = Map.of(
-                    "currency", recordCurrencyRelation.getCurrency().name(),
+                    "currency", currencyDtos,
                     "amount", recordCurrencyRelation.getAmount()
             );
             moduleFieldDto.setData(currencyData);
