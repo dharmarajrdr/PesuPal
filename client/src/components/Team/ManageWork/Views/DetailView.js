@@ -64,7 +64,7 @@ const DetailView = ({ moduleId, recordId, setShowQuickDetailView, view, fieldsLi
                             <button id='create-button'>Save</button>
                         </div>
                     </div>
-                    <RecordFormLayout fields={fields} />
+                    <RecordFormLayout fields={fields} componentType='detail' />
                 </> : <InternalServerError />}
         </div>
     ) : <PermissionDenied />

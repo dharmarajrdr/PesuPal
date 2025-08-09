@@ -83,9 +83,12 @@ const FieldValue = ({ field }) => {
     }
 }
 
-const RecordField = ({ field }) => {
+const RecordField = ({ field, componentType }) => {
 
-    const { showInDetail, fieldType, required, editable } = field || {};
+    const { showInDetail, fieldType, required, editable, classification } = field || {};
+    if (classification == 'SYSTEM_FIELD' && componentType == 'create') {
+        return null; // Skip system fields only on creating record
+    }
     return showInDetail && (
         <div className={`FRSS w100 record-field ${showInDetail ? 'show-in-detail' : ''} ${fieldType.toLowerCase()} ${editable ? 'editable' : ''}`}>
             <FieldName fieldType={fieldType} fieldName={field.fieldName} required={required} />
@@ -94,13 +97,13 @@ const RecordField = ({ field }) => {
     )
 }
 
-const RecordFormLayout = ({ fields }) => {
+const RecordFormLayout = ({ fields, componentType }) => {
 
     return (
         <div id='record-form-layout' className='FCCS'>
             <div id='slider' className='FCCS'>
                 {fields?.map((field) => (
-                    <RecordField key={field.fieldId} field={field} />
+                    <RecordField key={field.fieldId} field={field} componentType={componentType} />
                 ))}
             </div>
         </div>

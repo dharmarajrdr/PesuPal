@@ -57,7 +57,7 @@ const CreateRecordLayout = ({ moduleId, setShowQuickCreateRecord, view }) => {
                         <button id='create-button'>Create</button>
                     </div>
                 </div>
-                <RecordFormLayout fields={fields} />
+                <RecordFormLayout fields={fields} componentType='create' />
             </>}
         </div>
     ) : <PermissionDenied />
