@@ -55,6 +55,11 @@
   color: var(--primary-color);
 }
 
+.PeopleCard .user_status {
+  right: -2%;
+  bottom: -2%;
+}
+
 .profile_contacts {
   margin: 0px 5px;
   border-radius: 100%;
