@@ -83,6 +83,10 @@
   padding: 10px 25px;
 }
 
+#subject-as-header {
+  width: calc(100% - 250px);
+}
+
 @keyframes slideIn {
   from {
     right: -50%;
