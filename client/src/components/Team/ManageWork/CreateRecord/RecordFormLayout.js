@@ -1,4 +1,3 @@
-import data from './data';
 import './RecordFormLayout.css';
 
 const fieldIcons = {
@@ -47,7 +46,7 @@ const FieldValue = ({ field }) => {
         case 'SELECT': {
             return (
                 <select className='field-value' disabled={!editable}>
-                    {data.map(({ value, selected }, index) => (
+                    {data?.map(({ value, selected }, index) => (
                         <option key={index} value={value} selected={selected}>
                             {value}
                         </option>
@@ -63,7 +62,7 @@ const FieldValue = ({ field }) => {
             const { currency, amount } = data || {};
             return <div className='field-value currency-field FRCS'>
                 <select className='field-value'>
-                    {currency.map(({ code, selected, name }, index) => (
+                    {currency?.map(({ code, selected, name }, index) => (
                         <option key={index} value={code} selected={selected} title={name}>{code}</option>
                     ))}
                 </select>
@@ -93,12 +92,12 @@ const RecordField = ({ field }) => {
     )
 }
 
-const RecordFormLayout = () => {
+const RecordFormLayout = ({ fields }) => {
 
     return (
         <div id='record-form-layout' className='FCCS'>
             <div id='slider' className='FCCS'>
-                {data.map((field) => (
+                {fields?.map((field) => (
                     <RecordField key={field.fieldId} field={field} />
                 ))}
             </div>
