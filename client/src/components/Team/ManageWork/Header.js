@@ -106,8 +106,6 @@ const ModulesList = ({ modules }) => {
         navigate(route);
     }
 
-    modules = modules.filter(module => module.active);  // Filter out inactive modules
-
     return <span className='mR10'>
         <FilterComponentItem item={{ id: 1, title: 'Module 1', icon: 'fa fa-chart-bar', options: modules }} onChange={onChange} selectedValue={moduleId} />
     </span>
