@@ -148,7 +148,8 @@ const Column = ({ fieldType, data, index }) => {
 
         case 'CURRENCY': {
             const { currency, amount } = data || {};
-            content = amount ? <span>{utils.formatCurrency(amount, currency)}</span> : null;
+            const { code: selectedCurrencyCode } = currency?.find(c => c.selected) || {};
+            content = (amount && selectedCurrencyCode) ? <span>{utils.formatCurrency(amount, selectedCurrencyCode)}</span> : null;
             break;
         }
 
