@@ -2,10 +2,14 @@ package com.pesupal.server.dto.response.module;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.pesupal.server.enums.FieldType;
+import com.pesupal.server.model.module.FieldClassification;
+import com.pesupal.server.model.module.Module;
 import com.pesupal.server.model.module.ModuleField;
+import lombok.Builder;
 import lombok.Data;
 
 @Data
+@Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ModuleFieldDto<T> {
 
@@ -14,6 +18,8 @@ public class ModuleFieldDto<T> {
     private String fieldName;
 
     private FieldType fieldType;
+
+    private FieldClassification classification;
 
     private boolean required;
 
@@ -33,18 +39,25 @@ public class ModuleFieldDto<T> {
 
     public static ModuleFieldDto fromModuleField(ModuleField moduleField) {
 
-        ModuleFieldDto dto = new ModuleFieldDto();
-        dto.setFieldId(moduleField.getId());
-        dto.setFieldName(moduleField.getName());
-        dto.setFieldType(moduleField.getFieldType());
-        dto.setRequired(moduleField.isRequired());
-        dto.setSearchable(moduleField.isSearchable());
-        dto.setFilterable(moduleField.isFilterable());
-        dto.setSortable(moduleField.isSortable());
-        dto.setEditable(moduleField.isEditable());
-        dto.setShowInList(moduleField.isShowInList());
-        dto.setShowInDetail(moduleField.isShowInDetail());
-        return dto;
+        return ModuleFieldDto.builder().fieldId(moduleField.getId()).fieldName(moduleField.getName()).fieldType(moduleField.getFieldType()).classification(moduleField.getClassification()).required(moduleField.isRequired()).searchable(moduleField.isSearchable()).filterable(moduleField.isFilterable()).sortable(moduleField.isSortable()).editable(moduleField.isEditable()).showInList(moduleField.isShowInList()).showInDetail(moduleField.isShowInDetail()).build();
+    }
+
+    public ModuleField toModuleField(Module module) {
+
+        ModuleField moduleField = new ModuleField();
+        moduleField.setId(this.fieldId);
+        moduleField.setName(this.fieldName);
+        moduleField.setFieldType(this.fieldType);
+        moduleField.setClassification(this.classification);
+        moduleField.setRequired(this.required);
+        moduleField.setSearchable(this.searchable);
+        moduleField.setFilterable(this.filterable);
+        moduleField.setSortable(this.sortable);
+        moduleField.setEditable(this.editable);
+        moduleField.setShowInList(this.showInList);
+        moduleField.setShowInDetail(this.showInDetail);
+        moduleField.setModule(module);
+        return moduleField;
     }
 
     public static ModuleFieldDto fromModuleFieldWithData(ModuleField moduleField, Object data) {
