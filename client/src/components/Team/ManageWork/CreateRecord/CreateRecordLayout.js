@@ -11,8 +11,8 @@ import { showPopup } from '../../../../store/reducers/PopupSlice';
 const CreateRecordLayout = ({ moduleId, setShowQuickCreateRecord, view }) => {
 
     const dispatch = useDispatch();
-    const [loader, setLoader] = useState();
-    const [fields, setFields] = useState();
+    const [loader, setLoader] = useState(true);
+    const [fields, setFields] = useState([]);
     const navigate = useNavigate();
     const params = useParams();
     view = view || 'create';
