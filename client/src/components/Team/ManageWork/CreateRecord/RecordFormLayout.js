@@ -62,8 +62,10 @@ const FieldValue = ({ field }) => {
         case 'CURRENCY': {
             const { currency, amount } = data || {};
             return <div className='field-value currency-field FRCS'>
-                <select className='field-value' disabled={!editable}>
-                    <option value={currency} selected>{currency}</option>
+                <select className='field-value'>
+                    {currency.map(({ code, selected, name }, index) => (
+                        <option key={index} value={code} selected={selected} title={name}>{code}</option>
+                    ))}
                 </select>
                 <input type='number' className='field-value' value={amount} readOnly={!editable} />
             </div>

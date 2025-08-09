@@ -163,7 +163,246 @@ export default [
         "showInList": true,
         "showInDetail": true,
         "data": {
-            "currency": "INR",
+            "currency": [
+                {
+                    "name": "United States Dollar",
+                    "code": "USD",
+                    "symbol": "$",
+                    "exchangeRate": 1.0,
+                    "selected": false
+                },
+                {
+                    "name": "Indian Rupee",
+                    "code": "INR",
+                    "symbol": "₹",
+                    "exchangeRate": 80.0,
+                    "selected": true
+                },
+                {
+                    "name": "Euro",
+                    "code": "EUR",
+                    "symbol": "€",
+                    "exchangeRate": 0.85,
+                    "selected": false
+                },
+                {
+                    "name": "British Pound",
+                    "code": "GBP",
+                    "symbol": "£",
+                    "exchangeRate": 0.75,
+                    "selected": false
+                },
+                {
+                    "name": "Japanese Yen",
+                    "code": "JPY",
+                    "symbol": "¥",
+                    "exchangeRate": 110.0,
+                    "selected": false
+                },
+                {
+                    "name": "Chinese Yuan",
+                    "code": "CNY",
+                    "symbol": "¥",
+                    "exchangeRate": 6.5,
+                    "selected": false
+                },
+                {
+                    "name": "Kenyan Shilling",
+                    "code": "KES",
+                    "symbol": "KSh",
+                    "exchangeRate": 110.0,
+                    "selected": false
+                },
+                {
+                    "name": "Tanzanian Shilling",
+                    "code": "TZS",
+                    "symbol": "TSh",
+                    "exchangeRate": 2300.0,
+                    "selected": false
+                },
+                {
+                    "name": "Ugandan Shilling",
+                    "code": "UGX",
+                    "symbol": "USh",
+                    "exchangeRate": 3600.0,
+                    "selected": false
+                },
+                {
+                    "name": "Rwandan Franc",
+                    "code": "RWF",
+                    "symbol": "RF",
+                    "exchangeRate": 1000.0,
+                    "selected": false
+                },
+                {
+                    "name": "South African Rand",
+                    "code": "ZAR",
+                    "symbol": "R",
+                    "exchangeRate": 15.0,
+                    "selected": false
+                },
+                {
+                    "name": "Nigerian Naira",
+                    "code": "NGN",
+                    "symbol": "₦",
+                    "exchangeRate": 410.0,
+                    "selected": false
+                },
+                {
+                    "name": "Ghanaian Cedi",
+                    "code": "GHS",
+                    "symbol": "GH₵",
+                    "exchangeRate": 6.0,
+                    "selected": false
+                },
+                {
+                    "name": "Central African CFA Franc",
+                    "code": "XAF",
+                    "symbol": "FCFA",
+                    "exchangeRate": 600.0,
+                    "selected": false
+                },
+                {
+                    "name": "West African CFA Franc",
+                    "code": "XOF",
+                    "symbol": "CFA",
+                    "exchangeRate": 600.0,
+                    "selected": false
+                },
+                {
+                    "name": "CFP Franc",
+                    "code": "XPF",
+                    "symbol": "CFPF",
+                    "exchangeRate": 105.0,
+                    "selected": false
+                },
+                {
+                    "name": "United Arab Emirates Dirham",
+                    "code": "AED",
+                    "symbol": "د.إ",
+                    "exchangeRate": 3.67,
+                    "selected": false
+                },
+                {
+                    "name": "Canadian Dollar",
+                    "code": "CAD",
+                    "symbol": "$",
+                    "exchangeRate": 1.25,
+                    "selected": false
+                },
+                {
+                    "name": "Australian Dollar",
+                    "code": "AUD",
+                    "symbol": "$",
+                    "exchangeRate": 1.35,
+                    "selected": false
+                },
+                {
+                    "name": "New Zealand Dollar",
+                    "code": "NZD",
+                    "symbol": "$",
+                    "exchangeRate": 1.4,
+                    "selected": false
+                },
+                {
+                    "name": "Swiss Franc",
+                    "code": "CHF",
+                    "symbol": "CHF",
+                    "exchangeRate": 0.92,
+                    "selected": false
+                },
+                {
+                    "name": "Swedish Krona",
+                    "code": "SEK",
+                    "symbol": "kr",
+                    "exchangeRate": 8.5,
+                    "selected": false
+                },
+                {
+                    "name": "Norwegian Krone",
+                    "code": "NOK",
+                    "symbol": "kr",
+                    "exchangeRate": 8.7,
+                    "selected": false
+                },
+                {
+                    "name": "Danish Krone",
+                    "code": "DKK",
+                    "symbol": "kr",
+                    "exchangeRate": 6.5,
+                    "selected": false
+                },
+                {
+                    "name": "Polish Zloty",
+                    "code": "PLN",
+                    "symbol": "zł",
+                    "exchangeRate": 4.0,
+                    "selected": false
+                },
+                {
+                    "name": "Hungarian Forint",
+                    "code": "HUF",
+                    "symbol": "Ft",
+                    "exchangeRate": 300.0,
+                    "selected": false
+                },
+                {
+                    "name": "Czech Koruna",
+                    "code": "CZK",
+                    "symbol": "Kč",
+                    "exchangeRate": 22.0,
+                    "selected": false
+                },
+                {
+                    "name": "Israeli New Shekel",
+                    "code": "ILS",
+                    "symbol": "₪",
+                    "exchangeRate": 3.3,
+                    "selected": false
+                },
+                {
+                    "name": "Turkish Lira",
+                    "code": "TRY",
+                    "symbol": "₺",
+                    "exchangeRate": 8.5,
+                    "selected": false
+                },
+                {
+                    "name": "Brazilian Real",
+                    "code": "BRL",
+                    "symbol": "R$",
+                    "exchangeRate": 5.2,
+                    "selected": false
+                },
+                {
+                    "name": "Argentine Peso",
+                    "code": "ARS",
+                    "symbol": "$",
+                    "exchangeRate": 95.0,
+                    "selected": false
+                },
+                {
+                    "name": "Chilean Peso",
+                    "code": "CLP",
+                    "symbol": "$",
+                    "exchangeRate": 720.0,
+                    "selected": false
+                },
+                {
+                    "name": "Colombian Peso",
+                    "code": "COP",
+                    "symbol": "$",
+                    "exchangeRate": 3800.0,
+                    "selected": false
+                },
+                {
+                    "name": "Peruvian Sol",
+                    "code": "PEN",
+                    "symbol": "S/.",
+                    "exchangeRate": 3.8,
+                    "selected": false
+                }
+            ],
             "amount": 14.4
         }
     },

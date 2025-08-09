@@ -104,3 +104,11 @@ p.field-value {
     font-size: 14px;
     color: #555;
 }
+
+.currency-field select {
+    width: 100px;
+}
+
+.currency-field input {
+    width: calc(100% - 100px);
+}
