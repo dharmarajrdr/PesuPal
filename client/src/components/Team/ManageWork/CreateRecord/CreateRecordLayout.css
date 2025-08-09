@@ -1,3 +1,7 @@
+#create-new-record {
+    background-color: var(--pure-white);
+}
+
 #new-record-title {
     margin: 0;
     font-size: 20px;
@@ -27,4 +31,13 @@
 
 #new-record-actions #create-button:hover {
     background-color: var(--primary-color-active);
+}
+
+#expand-create-record-page {
+    cursor: pointer;
+    color: #777;
+}
+
+#expand-create-record-page:hover {
+    color: var(--primary-color);
 }
