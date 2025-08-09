@@ -1,6 +1,7 @@
 import { useSelector } from 'react-redux';
 import PermissionDenied from '../../../Auth/PermissionDenied';
 import './CreateRecordLayout.css';
+import RecordFormLayout from './RecordFormLayout';
 
 const CreateRecordLayout = () => {
 
@@ -8,8 +9,15 @@ const CreateRecordLayout = () => {
   const { createRecord } = currentModuleData || { 'createRecord': false };
 
   return createRecord ? (
-    <div id='create-new-record' className='w100 h100P'>
-
+    <div id='create-new-record' className='w100 FCCS h100P'>
+      <div className='FRCB w100'>
+        <h1 id='new-record-title'>New Record</h1>
+        <div className='FRCE' id='new-record-actions'>
+          <button id='cancel-button'>Cancel</button>
+          <button id='create-button'>Create</button>
+        </div>
+      </div>
+      <RecordFormLayout />
     </div>
   ) : <PermissionDenied />
 }
