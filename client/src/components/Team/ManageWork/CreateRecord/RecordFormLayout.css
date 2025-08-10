@@ -45,6 +45,8 @@
 
 .field-value {
     width: 65%;
+    border-radius: 5px;
+    background-color: #f8f8f8;
 }
 
 input.field-value {
@@ -52,7 +54,6 @@ input.field-value {
     border: none;
     outline: none;
     border-bottom: 1px solid transparent;
-    background-color: transparent;
     color: #555;
 }
 
@@ -61,6 +62,8 @@ select.field-value:focus,
 input.field-value:focus {
     border-bottom: 1px solid #ccc;
     transition-duration: 0.5s;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
 }
 
 select.field-value {
@@ -69,7 +72,6 @@ select.field-value {
     outline: none;
     cursor: pointer;
     border-bottom: 1px solid transparent;
-    background-color: transparent;
     color: #555;
 }
 
@@ -78,7 +80,6 @@ textarea.field-value {
     border: none;
     outline: none;
     border-bottom: 1px solid transparent;
-    background-color: transparent;
     max-height: 200px;
     min-height: 35px;
     resize: vertical;
