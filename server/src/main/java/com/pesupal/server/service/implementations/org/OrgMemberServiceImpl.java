@@ -52,8 +52,8 @@ public class OrgMemberServiceImpl implements OrgMemberService {
         this.designationService = designationService;
         this.orgMemberRepository = orgMemberRepository;
         this.orgConfigurationService = orgConfigurationService;
-        this.orgSubscriptionHistoryService = orgSubscriptionHistoryService;
         this.directMessageChatService = directMessageChatService;
+        this.orgSubscriptionHistoryService = orgSubscriptionHistoryService;
     }
 
     /**
@@ -145,7 +145,13 @@ public class OrgMemberServiceImpl implements OrgMemberService {
     public List<UserBasicInfoDto> getAllMembers(Long departmentId, OrgMember orgMember) {
 
         Department department = departmentService.getDepartmentByIdAndOrg(departmentId, orgMember.getOrg());
-        return orgMemberRepository.findAllByOrgAndDepartmentOrderByDisplayName(orgMember.getOrg(), department).stream().map(UserBasicInfoDto::fromOrgMember).toList();
+        return orgMemberRepository.findAllByOrgAndDepartmentOrderByDisplayName(orgMember.getOrg(), department).stream().map(om -> {
+            UserBasicInfoDto userBasicInfoDto = UserBasicInfoDto.fromOrgMember(om);
+            if (!om.getPublicId().equals(orgMember.getPublicId())) {
+                userBasicInfoDto.setChatId(directMessageChatService.getOrCreateDirectMessageChat(om, orgMember).getPublicId());
+            }
+            return userBasicInfoDto;
+        }).toList();
     }
 
     /**
