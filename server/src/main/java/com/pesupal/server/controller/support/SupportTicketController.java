@@ -39,7 +39,7 @@ public class SupportTicketController {
         return ResponseEntity.ok(new ApiResponseDto("Tickets retrieved successfully", supportTicketDtos));
     }
 
-    @GetMapping("/ticket/${ticketId}/comments")
+    @GetMapping("/ticket/{ticketId}/comments")
     public ResponseEntity<ApiResponseDto> getTicketComments(@PathVariable String ticketId) {
 
         List<TicketCommentDto> comments = supportTicketService.getTicketComments(ticketId);
