@@ -24,6 +24,7 @@ const FieldName = ({ fieldName, fieldType, required }) => {
 }
 
 const FieldValue = ({ field, onChange }) => {
+
     const { fieldId, fieldType, data, editable } = field || {};
     const isReadOnly = !editable;
 
@@ -76,7 +77,7 @@ const FieldValue = ({ field, onChange }) => {
         }
 
         case 'SELECT': {
-            const selectedValue = data?.find(opt => opt.selected)?.value || "";
+            const selectedValue = data?.find(opt => opt.selected)?.id || "";
             return (
                 <select
                     className="field-value"
@@ -84,11 +85,9 @@ const FieldValue = ({ field, onChange }) => {
                     disabled={isReadOnly}
                     onChange={e => editable && onChange(fieldId, e.target.value)}
                 >
-                    <option value="" disabled>
-                        Select an option
-                    </option>
-                    {data?.map(({ value }, index) => (
-                        <option key={index} value={value}>
+                    <option value="" disabled>Select an option</option>
+                    {data?.map(({ id, value, selected }, index) => (
+                        <option key={index} value={id} selected={selected}>
                             {value}
                         </option>
                     ))}
@@ -165,6 +164,35 @@ const FieldValue = ({ field, onChange }) => {
     }
 };
 
+const getDataFromField = (field) => {
+    const { fieldType, data } = field || {};
+    switch (fieldType) {
+        case 'STRING': {
+            return data || "";
+        }
+        case 'NUMBER': {
+            return data || "";
+        }
+        case 'DATE_TIME': {
+            return data ? new Date(data).toISOString() : "";
+        }
+        case 'BOOLEAN': {
+            return data ? "true" : "false";
+        }
+        case 'SELECT': {
+            return data?.find(opt => opt.selected)?.id || "";
+        }
+        case 'TRANSITION': {
+            return data?.name || "";
+        }
+        case 'CURRENCY': {
+            const amount = data?.amount || "";
+            const currency = data?.currency?.find(c => c.selected)?.code || "";
+            return { amount, currency };
+        }
+    }
+}
+
 const RecordField = ({ field, componentType, onChange }) => {
 
     const { showInDetail, fieldType, required, editable, classification } = field || {};
@@ -181,12 +209,14 @@ const RecordField = ({ field, componentType, onChange }) => {
 
 const RecordFormLayout = ({ fields, componentType }) => {
 
+    const toLowerCase = str => str.toLowerCase().replace(/\s+/g, '_');
+
     const [formData, setFormData] = useState(() =>
-        Object.fromEntries(fields.map(f => [f.fieldId, f.data || ""]))
+        Object.fromEntries(fields.map(({ fieldName, data }) => [toLowerCase(fieldName), data || ""]))
     );
 
-    const handleChange = (fieldId, value) => {
-        setFormData(prev => ({ ...prev, [fieldId]: value }));
+    const handleChange = (fieldName, value) => {
+        setFormData(prev => ({ ...prev, [toLowerCase(fieldName)]: value }));
     };
 
     return (
