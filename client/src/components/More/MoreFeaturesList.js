@@ -1,19 +1,20 @@
+import { Link } from 'react-router-dom';
 import ListOfAdditionalFeatures from './ListOfAdditionalFeatures.js';
 import './MoreFeaturesList.css';
 
 const FeaturePreview = ({ feature }) => {
 
-    const { backgroundColor } = feature;
+    const { backgroundColor, id, displayName, description, icon, route } = feature || {};
 
-    return <div key={feature.id} className="feature-item p10 FRSB">
+    return <Link key={id} className="feature-item p10 FRSB" to={`/more${route}`}>
         <div className='FRCC feature-item-icon img_40_40' style={{ backgroundColor }}>
-            <i className={feature.icon}></i>
+            <i className={icon}></i>
         </div>
         <div className='FCSS feature-item-details'>
-            <h4>{feature.displayName}</h4>
-            <p>{feature.description}</p>
+            <h4>{displayName}</h4>
+            <p>{description}</p>
         </div>
-    </div>
+    </Link>
 }
 
 const MoreFeaturesList = () => {

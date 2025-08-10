@@ -52,12 +52,12 @@ const CreateRecordLayout = ({ moduleId, setShowQuickCreateRecord, view }) => {
                 <div className='FRCB w100' id='create-new-record-header'>
                     <h1 id='new-record-title'>New Record</h1>
                     <div className='FRCE' id='new-record-actions'>
-                        {view != 'create' && <i class="fa-solid fa-up-right-and-down-left-from-center mR10" id='expand-create-record-page' onClick={onExpand} title='Expand Create Record'></i>}
+                        {view != 'create' && <i className="fa-solid fa-up-right-and-down-left-from-center mR10" id='expand-create-record-page' onClick={onExpand} title='Expand Create Record'></i>}
                         <button id='cancel-button' onClick={onCancel}>Cancel</button>
                         <button id='create-button'>Create</button>
                     </div>
                 </div>
-                <RecordFormLayout fields={fields} />
+                <RecordFormLayout fields={fields} componentType='create' />
             </>}
         </div>
     ) : <PermissionDenied />
