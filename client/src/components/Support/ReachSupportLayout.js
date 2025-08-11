@@ -43,7 +43,7 @@ const ReachSupportLayout = () => {
                 </div>
                 <SupportTicketList setSelectedTicket={setSelectedTicket} ticketColor={ticketColor} />
             </div>
-            <div id='right-panel' className='w100 h100'>
+            <div id='right-panel' className='h100'>
                 <Routes>
                     <Route path='/' element={<TicketPlaceholder />} />
                     <Route path='/:ticketId' element={<TicketDetailView ticket={selectedTicket} ticketColor={ticketColor} />} />

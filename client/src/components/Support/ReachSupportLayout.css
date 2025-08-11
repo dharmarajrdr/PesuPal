@@ -4,6 +4,10 @@
     border-right: 1px solid #ddd;
 }
 
+#reach-support-layout #right-panel {
+    width: 70%;
+}
+
 #support-tickets-header {
     font-size: 18px;
     padding: 15px 15px;
