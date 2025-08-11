@@ -7,11 +7,13 @@ const ChatInput = ({ clickSendMessageHandler }) => {
 
     // const fileInputRef = useRef();
     const [message, setMessage] = useState('');
+    const [files, setFiles] = useState([]);
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
     const chatId = useSelector((state) => state.chatId);
 
     const chatInputRef = useRef(null);
+    const fileInputRef = useRef(null);
 
     const handleSend = () => {
         if (message.trim()) {
@@ -38,6 +40,36 @@ const ChatInput = ({ clickSendMessageHandler }) => {
         }
     }
 
+    const allowedTypes = ['image/png', 'image/jpeg', 'image/gif', 'video/mp4', 'audio/mpeg', 'application/pdf'];
+
+    const handleFileChange = (e) => {
+
+        const selectedFiles = Array.from(e.target.files);
+        if (selectedFiles.length === 0) return;
+
+        if (selectedFiles.length > 5) {
+            return alert("You can only upload a maximum of 5 files.");
+        }
+
+        const filtered = selectedFiles.filter((file) =>
+            allowedTypes.some((type) => file.type.includes(type))
+        );
+
+        if (filtered.length < selectedFiles.length) {
+            return alert("Some files were not allowed based on file type restrictions.");
+        }
+
+        const withPreview = filtered.map((file) => ({
+            file,
+            preview: file.type.startsWith("image")
+                ? URL.createObjectURL(file)
+                : null
+        }));
+
+        // clickSendMessageHandler({ files: withPreview, chatId });
+        setFiles(withPreview);
+        e.target.value = ""; // Reset file input
+    };
 
     return (
         <div className="chat-input w100 FRSS">
@@ -46,10 +78,14 @@ const ChatInput = ({ clickSendMessageHandler }) => {
             {showEmojiPicker && <div id='emoji-picker'>
                 <EmojiPicker onEmojiClick={onEmojiClick} />
             </div>}
-            <button onClick={emojiPickerClickHandler} className="emoji-button">
+            <button onClick={() => fileInputRef.current.click()} id="insert-file-button">
+                <i className='fa fa-plus w20' />
+                <input multiple type="file" ref={fileInputRef} style={{ display: 'none' }} onChange={handleFileChange} accept={allowedTypes.length ? allowedTypes.join(",") : "*/*"} />
+            </button>
+            <button onClick={emojiPickerClickHandler} id="emoji-button">
                 <i className='fa fa-smile w20' />
             </button>
-            <button onClick={handleSend} className="send-button">
+            <button onClick={handleSend} id="send-button">
                 <i className='fa fa-paper-plane w20' />
             </button>
         </div>

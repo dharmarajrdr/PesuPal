@@ -33,8 +33,9 @@
     margin-left: 10px;
 }
 
-.send-button,
-.emoji-button {
+#send-button,
+#emoji-button,
+#insert-file-button {
     background-color: var(--primary-color);
     color: white;
     border: none;
@@ -44,8 +45,9 @@
     cursor: pointer;
 }
 
-.send-button i,
-.emoji-button i {
+#send-button i,
+#emoji-button i, 
+#insert-file-button i {
     font-size: 16px;
     color: #fff;
 }
