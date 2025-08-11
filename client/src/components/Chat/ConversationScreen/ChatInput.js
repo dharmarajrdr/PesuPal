@@ -26,7 +26,7 @@ const ChatInput = ({ clickSendMessageHandler }) => {
             setMessage("");
             setShowEmojiPicker(false);
             chatInputRef.current.focus();
-            // fileInputRef?.current?.value = '';
+            // fileInputRef?.current?.value = "";
         }
     };
 
@@ -71,7 +71,6 @@ const ChatInput = ({ clickSendMessageHandler }) => {
                 : null
         }));
 
-        // clickSendMessageHandler({ files: withPreview, chatId });
         setFiles(withPreview);
         e.target.value = ""; // Reset file input
     };

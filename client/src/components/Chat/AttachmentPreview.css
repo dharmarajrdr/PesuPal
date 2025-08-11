@@ -36,6 +36,14 @@
     overflow-y: auto;
 }
 
+#attachment-preview-file-list .file-uploaded {
+    color: green;
+}
+
+#attachment-preview-file-list .file-uploading {
+    color: orange;
+}
+
 #attachment-preview-actions {
     padding: 20px;
     height: 50px;

@@ -11,6 +11,16 @@ const AttachmentPreview = ({ files, setFiles }) => {
         });
     };
 
+    const sendFiles = async () => {
+        for (const file of files) {
+            if (file.preview) {
+                // Here you would typically handle the file upload logic
+                console.log(`Sending file: ${file.file.name}`);
+
+            }
+        }
+    }
+
     return files.length > 0 ? (
         <div className='entire-screen-overlay FRCC'>
             <div id='attachment-preview' className='centerMe FCSB'>
@@ -31,7 +41,13 @@ const AttachmentPreview = ({ files, setFiles }) => {
                                     {utils.formatFileSize(file.size)}
                                 </span>
                             </div>
-                            <i className="fa fa-trash remove-btn" onClick={() => removeFile(index)} title="Remove file" />
+                            {file.uploaded ? (
+                                <i className="fa fa-check-circle file-uploaded" title="File uploaded successfully" />
+                            ) : file.uploading ? (
+                                <i className="fa fa-spinner fa-spin file-uploading" title="File is uploading" />
+                            ) : (
+                                <i className="fa fa-trash remove-btn" onClick={() => removeFile(index)} title="Remove file" />
+                            )}
                         </div>
                     ))}
                 </div>
@@ -43,7 +59,7 @@ const AttachmentPreview = ({ files, setFiles }) => {
                     </div>
                     <div className='FRCE'>
                         <button id="cancel-button" onClick={() => setFiles([])}>Cancel</button>
-                        <button id="send-button" onClick={() => {/* Handle send files */ }}>Send</button>
+                        <button id="send-button" onClick={sendFiles}>Send</button>
                     </div>
                 </div>
             </div>
