@@ -1,6 +1,6 @@
 #create-ticket-container {
     background-color: var(--pure-white);
-    width: 40%;
+    width: 45%;
     border-radius: 8px;
     box-shadow: 0 2px 6px var(--box-shadow-color);
     padding: 20px;
@@ -8,7 +8,7 @@
 
 #create-ticket-header h2 {
     font-size: 18px;
-    font-weight: bold;
+    font-weight: 600;
     color: var(--text-color);
     margin-bottom: 10px;
     border-bottom: 1px solid #eee;
@@ -37,9 +37,7 @@
     border-radius: 4px;
     font-size: 14px;
     color: #333;
-    resize: vertical;
-    min-height: 35px;
-    max-height: 200px;
+
 }
 
 #create-ticket-form .row input:focus,
@@ -49,13 +47,19 @@
     outline: none;
 }
 
+#create-ticket-form .row textarea {
+    resize: vertical;
+    min-height: 35px;
+    max-height: 200px;
+}
+
 #create-ticket-form .row>button {
     color: var(--pure-white);
     border: none;
-    padding: 10px 15px;
+    padding: 8px 15px;
     border-radius: 4px;
     cursor: pointer;
-    font-size: 14px;
+    font-size: 13px;
 }
 
 #create-ticket-form .row #cancel-button {
