@@ -1,7 +1,11 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from "react-redux";
 import utils from '../../utils';
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import Loader from '../Loader';
+import { apiRequest } from '../../http_request';
+import { showPopup } from '../../store/reducers/PopupSlice';
+import { setTickets } from '../../store/reducers/SupportTicketsSlice';
 
 const NoTicketsFound = () => {
     return (
@@ -16,6 +20,8 @@ const NoTicketsFound = () => {
 
 const SupportTicketPreview = ({ ticket, setSelectedTicket, ticketColor }) => {
 
+    const params = useParams();
+    const currentTicketId = params['*'];
     const navigate = useNavigate();
     const { ticketId, subject, description, status, createdAt } = ticket;
     const route = `/more/reach-support/${ticketId}`;
@@ -26,7 +32,7 @@ const SupportTicketPreview = ({ ticket, setSelectedTicket, ticketColor }) => {
     }
 
     return (
-        <div className='support-ticket-preview w100' onClick={viewTicketHandler}>
+        <div className={`support-ticket-preview w100 ${currentTicketId === ticketId ? 'active' : ''}`} onClick={viewTicketHandler}>
             <h5 className='ticket-subject'>
                 <i className='fa fa-ticket pR10 w20' title={status} style={{ color: ticketColor?.[status] }}></i>
                 {subject}
@@ -41,31 +47,19 @@ const SupportTicketPreview = ({ ticket, setSelectedTicket, ticketColor }) => {
 
 const SupportTicketList = ({ setSelectedTicket, ticketColor }) => {
 
-    const [tickets, setTickets] = useState([
-        {
-            ticketId: "TCK-1001",
-            subject: "Login page error when entering special characters Login page error when entering special characters",
-            description: "When a user attempts to log in using special characters in the username field, the system throws a server-side validation error instead of a client-side alert. This happens only on the production environment and not on staging. Steps to reproduce: 1) Go to login page 2) Enter username containing symbols like # or $ 3) Press Enter. Expected: client-side warning. Actual: server error. This issue was first reported after the last deployment.",
-            status: "Open",
-            createdAt: "2025-08-07T09:15:32Z"
-        },
-        {
-            ticketId: "TCK-1002",
-            subject: "Mobile UI alignment issue in dashboard widgets",
-            description: "On mobile view (iPhone 12, Safari), dashboard widgets overlap with each other, making the data unreadable. This happens particularly when there are more than five widgets added by the user. The problem appears to be related to CSS flexbox rules and insufficient min-height on widget containers.",
-            status: "In Progress",
-            createdAt: "2025-06-06T11:42:19Z"
-        },
-        {
-            ticketId: "TCK-1003",
-            subject: "Email notifications not sent for password reset requests",
-            description: "Several users have reported that they are not receiving password reset emails. The mail logs show entries for password reset attempts, but no outbound SMTP activity. This issue is intermittent and may be linked to the recent upgrade of the mail server's SSL certificate. Logs from August 1st show multiple 'Connection Timeout' errors when attempting to connect to smtp.mailserver.com on port 465.",
-            status: "Pending Review",
-            createdAt: "2024-08-06T15:05:48Z"
-        }
-    ]);
+    const { tickets } = useSelector(state => state.supportTickets);
+    const [loader, setLoader] = useState(true);
+    const dispatch = useDispatch();
 
-    const [loader, setLoader] = useState(false);
+    useEffect(() => {
+        apiRequest(`/api/v1/support/tickets`, 'GET').then(({ data }) => {
+            dispatch(setTickets(data));
+            setLoader(false);
+        }).catch(({ message }) => {
+            dispatch(showPopup({ message, type: 'error' }));
+            setLoader(false);
+        });
+    }, []);
 
     return (
         <div id='support-ticket-list' className='w100'>

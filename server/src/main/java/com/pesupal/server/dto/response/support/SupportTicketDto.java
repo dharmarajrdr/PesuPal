@@ -1,10 +1,13 @@
 package com.pesupal.server.dto.response.support;
 
+import com.pesupal.server.dto.request.support.TicketAttachmentDto;
 import com.pesupal.server.model.support.SupportTicket;
 import com.pesupal.server.model.support.SupportTicketStatus;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 public class SupportTicketDto {
@@ -18,7 +21,9 @@ public class SupportTicketDto {
     private String description;
 
     private SupportTicketStatus status;
-    
+
+    private List<TicketAttachmentDto> attachments = new ArrayList<>();
+
     public static SupportTicketDto fromSupportTicket(SupportTicket supportTicket) {
 
         SupportTicketDto supportTicketDto = new SupportTicketDto();
@@ -27,6 +32,9 @@ public class SupportTicketDto {
         supportTicketDto.setSubject(supportTicket.getSubject());
         supportTicketDto.setDescription(supportTicket.getDescription());
         supportTicketDto.setStatus(supportTicket.getStatus());
+        if (supportTicket.getAttachments() != null) {
+            supportTicketDto.setAttachments(supportTicket.getAttachments().stream().map(TicketAttachmentDto::fromTicketAttachment).toList());
+        }
         return supportTicketDto;
     }
 }

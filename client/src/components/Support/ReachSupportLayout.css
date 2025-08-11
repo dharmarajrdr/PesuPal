@@ -4,6 +4,10 @@
     border-right: 1px solid #ddd;
 }
 
+#reach-support-layout #right-panel {
+    width: 70%;
+}
+
 #support-tickets-header {
     font-size: 18px;
     padding: 15px 15px;
@@ -12,7 +16,7 @@
     box-shadow: 0 1px 3px var(--box-shadow-color);
 }
 
-#support-tickets-header p {
+#support-tickets-header>p {
     color: var(--primary-color);
 }
 
@@ -30,7 +34,11 @@
     border-bottom: 1px solid #ddd;
 }
 
-.support-ticket-preview:hover {
+.support-ticket-preview.active {
+    background-color: #f0f0f0;
+}
+
+.support-ticket-preview:not(.active):hover {
     background-color: #f9f9f9;
     cursor: pointer;
 }
@@ -93,7 +101,7 @@
     }
 }
 
-#ticket-placeholder p {
+#ticket-placeholder>p {
     color: var(--primary-color);
     font-family: 'system-ui';
 }

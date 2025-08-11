@@ -6,10 +6,13 @@ import com.pesupal.server.dto.response.support.TicketCommentDto;
 import com.pesupal.server.exceptions.PermissionDeniedException;
 import com.pesupal.server.helpers.CurrentValueRetriever;
 import com.pesupal.server.model.support.SupportTicket;
+import com.pesupal.server.model.support.TicketAttachment;
 import com.pesupal.server.model.support.TicketComment;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.repository.support.SupportTicketRepository;
+import com.pesupal.server.repository.support.TicketAttachmentRepository;
 import com.pesupal.server.service.interfaces.support.SupportTicketService;
+import com.pesupal.server.strategies.media_storage.S3Service;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +22,9 @@ import java.util.List;
 @AllArgsConstructor
 public class SupportTicketServiceImpl extends CurrentValueRetriever implements SupportTicketService {
 
+    private final S3Service s3Service;
     private final SupportTicketRepository supportTicketRepository;
+    private final TicketAttachmentRepository ticketAttachmentRepository;
 
     /**
      * Creates a new support ticket.
@@ -33,6 +38,8 @@ public class SupportTicketServiceImpl extends CurrentValueRetriever implements S
         OrgMember orgMember = getCurrentOrgMember();
         SupportTicket supportTicket = createTicketDto.toSupportTicket(orgMember);
         supportTicketRepository.save(supportTicket);
+        List<TicketAttachment> ticketAttachments = createTicketDto.getAttachments().stream().map(ticketAttachmentDto -> ticketAttachmentDto.toTicketAttachment(supportTicket)).toList();
+        ticketAttachmentRepository.saveAll(ticketAttachments);
         return SupportTicketDto.fromSupportTicket(supportTicket);
     }
 
@@ -72,7 +79,12 @@ public class SupportTicketServiceImpl extends CurrentValueRetriever implements S
         if (!supportTicket.getTicketOwner().getId().equals(orgMember.getId())) {
             throw new PermissionDeniedException("You do not have permission to access this ticket.");
         }
-        return SupportTicketDto.fromSupportTicket(supportTicket);
+        SupportTicketDto supportTicketDto = SupportTicketDto.fromSupportTicket(supportTicket);
+        supportTicketDto.setAttachments(supportTicketDto.getAttachments().stream().peek(ticketAttachmentDto -> {
+            String key = ticketAttachmentDto.getMediaId() + ticketAttachmentDto.getExtension();
+            ticketAttachmentDto.setMediaUrl(s3Service.generatePresignedUrl(key));
+        }).toList());
+        return supportTicketDto;
     }
 
     /**
@@ -83,6 +95,13 @@ public class SupportTicketServiceImpl extends CurrentValueRetriever implements S
     @Override
     public List<SupportTicketDto> getAllTickets() {
 
-        return supportTicketRepository.findByTicketOwnerOrderByCreatedAtDesc(getCurrentOrgMember()).stream().map(SupportTicketDto::fromSupportTicket).toList();
+        return supportTicketRepository.findByTicketOwnerOrderByCreatedAtDesc(getCurrentOrgMember()).stream().map(supportTicket -> {
+            SupportTicketDto supportTicketDto = SupportTicketDto.fromSupportTicket(supportTicket);
+            supportTicketDto.setAttachments(supportTicketDto.getAttachments().stream().peek(ticketAttachmentDto -> {
+                String key = ticketAttachmentDto.getMediaId() + ticketAttachmentDto.getExtension();
+                ticketAttachmentDto.setMediaUrl(s3Service.generatePresignedUrl(key));
+            }).toList());
+            return supportTicketDto;
+        }).toList();
     }
 }
