@@ -30,7 +30,11 @@
     border-bottom: 1px solid #ddd;
 }
 
-.support-ticket-preview:hover {
+.support-ticket-preview.active {
+    background-color: #f0f0f0;
+}
+
+.support-ticket-preview:not(.active):hover {
     background-color: #f9f9f9;
     cursor: pointer;
 }

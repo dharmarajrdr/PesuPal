@@ -21,7 +21,8 @@ const ticketColor = {
     'Open': 'red',
     'In Progress': 'blue',
     'Pending Review': 'orange',
-    'Closed': 'green'
+    'Closed': 'green',
+    'UNASSIGNED': 'gray'
 }
 
 const ReachSupportLayout = () => {
