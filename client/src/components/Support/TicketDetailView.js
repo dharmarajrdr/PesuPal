@@ -105,9 +105,9 @@ const TicketDetailView = ({ ticket, ticketColor }) => {
                         <TicketDescription html={description} />
                         <div id='ticket-attachments' className='FRSS w100 mT10'>
                             <FullScreenImageView mediaUrl={fullScreenAttachment} onClose={closeFullScreenView} />
-                            {attachments?.map(({ mediaUrl }, index) => (
+                            {attachments?.map(({ mediaUrl, fileName }, index) => (
                                 <div className='attachment' key={index} onClick={() => viewAttachmentFullScreen(mediaUrl)}>
-                                    <img src={mediaUrl} alt={`Ticket Attachment ${index + 1}`} />
+                                    <img src={mediaUrl} alt={fileName} />
                                 </div>
                             ))}
                         </div>
