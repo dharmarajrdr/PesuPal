@@ -21,4 +21,6 @@ public interface RecentPrivateChatProjection {
     String getReadReceipt();
 
     String getChatPublicId();
+
+    Boolean getDeleted();
 }

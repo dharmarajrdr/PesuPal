@@ -219,7 +219,11 @@ public class DirectMessageServiceImpl extends CurrentValueRetriever implements D
         List<RecentChatDto> chats = rows.stream().map(projection -> {
             LastMessageDto lastMessage = new LastMessageDto();
             lastMessage.setSender(projection.getSenderName());
-            lastMessage.setMessage(projection.getContent());
+            if (!projection.getDeleted()) {
+                lastMessage.setMessage(projection.getContent());
+            } else {
+                lastMessage.setMessage("This message has been deleted.");
+            }
             lastMessage.setMedia(projection.getIncludedMedia());
             lastMessage.setCreatedAt(TimeFormatterUtil.formatShort(projection.getCreatedAt()));
             lastMessage.setReadReceipt(ReadReceipt.valueOf(projection.getReadReceipt()));
@@ -229,6 +233,7 @@ public class DirectMessageServiceImpl extends CurrentValueRetriever implements D
             dto.setName(projection.getDisplayName());
             dto.setImage(projection.getDisplayPicture());
             dto.setStatus(projection.getUserStatus());
+            dto.setDeleted(projection.getDeleted());
             dto.setRecentMessage(lastMessage);
 
             return dto;
