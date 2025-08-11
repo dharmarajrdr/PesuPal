@@ -79,7 +79,7 @@ const ChatInput = ({ clickSendMessageHandler }) => {
     return (
         <div className="chat-input w100 FRSS">
             <textarea ref={chatInputRef} type="text" value={message} autoFocus onChange={(e) => setMessage(e.target.value)} placeholder="Type your message..." />
-            {files.length > 0 && <AttachmentPreview files={files} setFiles={setFiles} />}
+            <AttachmentPreview files={files} setFiles={setFiles} />
             {showEmojiPicker && <div id='emoji-picker'>
                 <EmojiPicker onEmojiClick={onEmojiClick} />
             </div>}

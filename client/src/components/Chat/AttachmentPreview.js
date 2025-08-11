@@ -11,9 +11,10 @@ const AttachmentPreview = ({ files, setFiles }) => {
         });
     };
 
-    return files.length > 0 ? (
+    return files.length >= 0 ? (
         <div className='entire-screen-overlay FRCC'>
             <div id='attachment-preview' className='centerMe'>
+                <h4 id='attachment-preview-title' className='w100'>Attachment Preview</h4>
                 <div className="w100 FCSS mB10">
                     {files.map(({ preview, file }, index) => (
                         <div key={index} className="attachment-item">
