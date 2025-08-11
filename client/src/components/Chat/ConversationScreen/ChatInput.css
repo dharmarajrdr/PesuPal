@@ -21,11 +21,20 @@
     transition-duration: 0.25s;
 }
 
+.chat-input #emoji-picker {
+    box-shadow: 0 2px 5px var(--box-shadow-color);
+    border-radius: 5px;
+    position: absolute;
+    bottom: 100px;
+    right: 10px;
+}
+
 .file-upload {
     margin-left: 10px;
 }
 
-.send-button {
+.send-button,
+.emoji-button {
     background-color: var(--primary-color);
     color: white;
     border: none;
@@ -35,7 +44,8 @@
     cursor: pointer;
 }
 
-.send-button i {
+.send-button i,
+.emoji-button i {
     font-size: 16px;
     color: #fff;
 }
