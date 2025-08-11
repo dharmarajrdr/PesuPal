@@ -3,6 +3,7 @@ import './ReachSupportLayout.css';
 import SupportTicketList from './SupportTicketList';
 import TicketDetailView from './TicketDetailView';
 import { useState } from 'react';
+import CreateTicketLayout from './CreateTicketLayout';
 
 const TicketPlaceholder = () => {
 
@@ -26,6 +27,8 @@ const ticketColor = {
 const ReachSupportLayout = () => {
 
     const [selectedTicket, setSelectedTicket] = useState(null);
+    const [showCreateTicket, setShowCreateTicket] = useState(false);
+
     return (
         <div id='reach-support-layout' className='layout FRSS'>
             <div className='FCSS' id='left-panel'>
@@ -33,7 +36,8 @@ const ReachSupportLayout = () => {
                     <p>My Tickets</p>
                     <div>
                         <i className='cursP w20 fa fa-filter' title='Filter Tickets'></i>
-                        <i className='cursP mL15 w20 fa fa-plus' title='Create New Ticket'></i>
+                        {showCreateTicket && <CreateTicketLayout onCancel={() => setShowCreateTicket(false)} />}
+                        <i className='cursP mL15 w20 fa fa-plus' title='Create New Ticket' onClick={() => setShowCreateTicket(true)}></i>
                     </div>
                 </div>
                 <SupportTicketList setSelectedTicket={setSelectedTicket} ticketColor={ticketColor} />

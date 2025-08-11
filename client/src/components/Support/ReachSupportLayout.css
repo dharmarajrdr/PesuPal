@@ -12,7 +12,7 @@
     box-shadow: 0 1px 3px var(--box-shadow-color);
 }
 
-#support-tickets-header p {
+#support-tickets-header>p {
     color: var(--primary-color);
 }
 
@@ -93,7 +93,7 @@
     }
 }
 
-#ticket-placeholder p {
+#ticket-placeholder>p {
     color: var(--primary-color);
     font-family: 'system-ui';
 }
