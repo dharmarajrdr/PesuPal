@@ -47,10 +47,10 @@ const ChatInput = ({ clickSendMessageHandler }) => {
                 <EmojiPicker onEmojiClick={onEmojiClick} />
             </div>}
             <button onClick={emojiPickerClickHandler} className="emoji-button">
-                <i className='fa fa-smile' />
+                <i className='fa fa-smile w20' />
             </button>
             <button onClick={handleSend} className="send-button">
-                <i className='fa fa-paper-plane' />
+                <i className='fa fa-paper-plane w20' />
             </button>
         </div>
     );
