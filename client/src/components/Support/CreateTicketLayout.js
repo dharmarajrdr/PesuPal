@@ -93,7 +93,7 @@ const CreateTicketLayout = ({ onCancel }) => {
                         <textarea value={description} placeholder='Enter a detailed description (required)' minLength={30} maxLength={999} onChange={(e) => setDescription(e.target.value)} />
                     </div>
                     <div className='row FRSS w100 mT10'>
-                        <AddAttachments allowedTypes={["image/png"]} maxFileSize={2 * 1024 * 1024} maxFiles={5} files={files} setFiles={setFiles} />
+                        <AddAttachments allowedTypes={["image/png", "image/jpeg"]} maxFileSize={2 * 1024 * 1024} maxFiles={5} files={files} setFiles={setFiles} />
                     </div>
                     <div className='row FRCE w100'>
                         <button id='cancel-button' className='mR10' onClick={onCancel}>Cancel</button>
