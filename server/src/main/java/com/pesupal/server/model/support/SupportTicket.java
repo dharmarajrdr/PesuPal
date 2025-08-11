@@ -23,7 +23,8 @@ public class SupportTicket extends PublicAccessModel {
     private String description;
 
     @Enumerated(EnumType.STRING)
-    private SupportTicketStatus status;
+    @Column(nullable = false)
+    private SupportTicketStatus status = SupportTicketStatus.UNASSIGNED;
 
     @OneToMany(mappedBy = "ticket", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<TicketComment> comments;
