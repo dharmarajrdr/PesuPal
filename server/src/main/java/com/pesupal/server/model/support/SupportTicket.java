@@ -1,5 +1,6 @@
 package com.pesupal.server.model.support;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.pesupal.server.model.PublicAccessModel;
 import com.pesupal.server.model.user.OrgMember;
 import jakarta.persistence.*;
@@ -12,6 +13,7 @@ import java.util.List;
 public class SupportTicket extends PublicAccessModel {
 
     @ManyToOne
+    @JsonIgnore
     private OrgMember ticketOwner;
 
     @Column(nullable = false)
@@ -23,6 +25,9 @@ public class SupportTicket extends PublicAccessModel {
     @Enumerated(EnumType.STRING)
     private SupportTicketStatus status;
 
-    @OneToMany(mappedBy = "ticket", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "ticket", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<TicketComment> comments;
+
+    @OneToMany(mappedBy = "ticket", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<TicketAttachment> attachments;
 }

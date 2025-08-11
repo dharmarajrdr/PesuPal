@@ -6,9 +6,11 @@ import com.pesupal.server.dto.response.support.TicketCommentDto;
 import com.pesupal.server.exceptions.PermissionDeniedException;
 import com.pesupal.server.helpers.CurrentValueRetriever;
 import com.pesupal.server.model.support.SupportTicket;
+import com.pesupal.server.model.support.TicketAttachment;
 import com.pesupal.server.model.support.TicketComment;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.repository.support.SupportTicketRepository;
+import com.pesupal.server.repository.support.TicketAttachmentRepository;
 import com.pesupal.server.service.interfaces.support.SupportTicketService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,6 +22,7 @@ import java.util.List;
 public class SupportTicketServiceImpl extends CurrentValueRetriever implements SupportTicketService {
 
     private final SupportTicketRepository supportTicketRepository;
+    private final TicketAttachmentRepository ticketAttachmentRepository;
 
     /**
      * Creates a new support ticket.
@@ -33,6 +36,8 @@ public class SupportTicketServiceImpl extends CurrentValueRetriever implements S
         OrgMember orgMember = getCurrentOrgMember();
         SupportTicket supportTicket = createTicketDto.toSupportTicket(orgMember);
         supportTicketRepository.save(supportTicket);
+        List<TicketAttachment> ticketAttachments = createTicketDto.getAttachments().stream().map(ticketAttachmentDto -> ticketAttachmentDto.toTicketAttachment(supportTicket)).toList();
+        ticketAttachmentRepository.saveAll(ticketAttachments);
         return SupportTicketDto.fromSupportTicket(supportTicket);
     }
 
