@@ -3,4 +3,19 @@
     width: 30%;
     height: 60%;
     border-radius: 5px;
+    overflow-y: scroll;
+}
+
+#attachment-preview .attachment-item {
+    width: 100%;
+    background-color: #fff;
+    border-radius: 0;
+    box-shadow: none;
+    border-bottom: 1px solid #e0e0e0;
+    cursor: pointer;
+    padding: 15px 20px;
+}
+
+#attachment-preview .attachment-item:hover {
+    background-color: #f5f5f5;
 }
