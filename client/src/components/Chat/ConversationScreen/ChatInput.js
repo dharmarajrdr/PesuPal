@@ -1,12 +1,14 @@
 import { useRef, useState } from 'react';
 import './ChatInput.css'
 import EmojiPicker from 'emoji-picker-react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import AttachmentPreview from '../AttachmentPreview';
+import { showPopup } from '../../../store/reducers/PopupSlice';
 
 const ChatInput = ({ clickSendMessageHandler }) => {
 
     // const fileInputRef = useRef();
+    const maxFilesSendable = 10;
     const [message, setMessage] = useState('');
     const [files, setFiles] = useState([]);
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
@@ -15,6 +17,8 @@ const ChatInput = ({ clickSendMessageHandler }) => {
 
     const chatInputRef = useRef(null);
     const fileInputRef = useRef(null);
+
+    const dispatch = useDispatch();
 
     const handleSend = () => {
         if (message.trim()) {
@@ -48,8 +52,8 @@ const ChatInput = ({ clickSendMessageHandler }) => {
         const selectedFiles = Array.from(e.target.files);
         if (selectedFiles.length === 0) return;
 
-        if (selectedFiles.length > 5) {
-            return alert("You can only upload a maximum of 5 files.");
+        if (selectedFiles.length > maxFilesSendable) {
+            return dispatch(showPopup({ message: `You can only upload a maximum of ${maxFilesSendable} files.`, type: 'error' }));
         }
 
         const filtered = selectedFiles.filter((file) =>
@@ -57,7 +61,7 @@ const ChatInput = ({ clickSendMessageHandler }) => {
         );
 
         if (filtered.length < selectedFiles.length) {
-            return alert("Some files were not allowed based on file type restrictions.");
+            return dispatch(showPopup({ message: "Some files were not allowed based on file type restrictions.", type: 'error' }));
         }
 
         const withPreview = filtered.map((file) => ({
@@ -75,7 +79,7 @@ const ChatInput = ({ clickSendMessageHandler }) => {
     return (
         <div className="chat-input w100 FRSS">
             <textarea ref={chatInputRef} type="text" value={message} autoFocus onChange={(e) => setMessage(e.target.value)} placeholder="Type your message..." />
-            {files.length > 0 && <AttachmentPreview />}
+            {files.length > 0 && <AttachmentPreview files={files} setFiles={setFiles} />}
             {showEmojiPicker && <div id='emoji-picker'>
                 <EmojiPicker onEmojiClick={onEmojiClick} />
             </div>}
