@@ -77,9 +77,9 @@ const TicketDetailView = ({ ticket, ticketColor }) => {
                         </div>
                         <TicketDescription html={description} />
                         <div id='ticket-attachments' className='FRSS w100 mT10'>
-                            {attachments?.map((attachment, index) => (
-                                <div className='attachment'>
-                                    <img key={index} src={attachment} alt={`Ticket Attachment ${index + 1}`} />
+                            {attachments?.map(({ mediaUrl }, index) => (
+                                <div className='attachment' key={index}>
+                                    <img src={mediaUrl} alt={`Ticket Attachment ${index + 1}`} />
                                 </div>
                             ))}
                         </div>
