@@ -88,17 +88,19 @@ const TicketDetailView = ({ ticket, ticketColor }) => {
         setFullScreenAttachment(null);
     }
 
-    return <div id='ticket-detail-view' className='FCSS w100 h100'>
+    return <div id='ticket-detail-view-layout' className='FCSS w100 h100'>
         {
             loader ? <Loader /> :
                 pageNotFound ? <PageNotFound /> : (
-                    <div id='ticket-detail-view' className='w100 FCSB'>
-                        <div id='ticket-detail-header' className='w100 FRSB'>
+                    <div id='ticket-detail-view' className='FCSB'>
+                        <div id='ticket-detail-header' className='FRSB'>
                             <div id='ticket-subject-id' className='FCSS'>
-                                <h3>{subject}</h3>
+                                <p id='subject'>{subject}</p>
                                 <span id='ticket-id'>#{ticketId}</span>
                             </div>
-                            <span id='ticket-status' style={{ backgroundColor: ticketColor?.[status] }}>{status}</span>
+                            <div id='ticket-status-container' className='FRCE'>
+                                <span id='ticket-status' style={{ backgroundColor: ticketColor?.[status] }}>{status}</span>
+                            </div>
                         </div>
                         <TicketDescription html={description} />
                         <div id='ticket-attachments' className='FRSS w100 mT10'>
