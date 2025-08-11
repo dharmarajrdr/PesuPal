@@ -188,7 +188,8 @@ public class DirectMessageServiceImpl extends CurrentValueRetriever implements D
             throw new ActionProhibitedException("This message has already been deleted.");
         }
 
-        directMessageRepository.delete(directMessage);
+        directMessage.setDeleted(true);
+        directMessageRepository.save(directMessage);
     }
 
     /**
