@@ -39,7 +39,7 @@ const FullScreenImageView = ({ mediaUrl, onClose }) => {
             }
         }}>
             <div id='full-screen-image-viewer' className='centerMe'>
-                <img src={mediaUrl} alt='Full Screen' />
+                <img src={mediaUrl} alt='Resource Not Found' />
             </div>
         </div>
     ) : null;

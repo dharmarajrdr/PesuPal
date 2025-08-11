@@ -7,8 +7,8 @@ import { apiRequest } from '../../http_request';
 
 const CreateTicketLayout = ({ onCancel }) => {
 
-    const [title, setTitle] = useState('Some random title for the ticket');
-    const [description, setDescription] = useState('Some random description for the ticket that is at least 30 characters long. This is just a placeholder text to demonstrate the layout and functionality of the ticket creation form. It should be descriptive enough to give an idea of the issue or request being made.');
+    const [title, setTitle] = useState('');
+    const [description, setDescription] = useState('');
     const [files, setFiles] = useState([]);
     const dispatch = useDispatch();
 
