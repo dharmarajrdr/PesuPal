@@ -29,6 +29,22 @@ const SupportTicketComment = ({ comment }) => {
     );
 };
 
+const FullScreenImageView = ({ mediaUrl, onClose }) => {
+
+    return mediaUrl ? (
+        <div className='entire-screen-overlay' id='full-screen-ticket-attachment-overlay' onClick={(e) => {
+            e.stopPropagation();
+            if (e.target.id === 'full-screen-ticket-attachment-overlay') {
+                onClose();
+            }
+        }}>
+            <div id='full-screen-image-viewer' className='centerMe'>
+                <img src={mediaUrl} alt='Full Screen' />
+            </div>
+        </div>
+    ) : null;
+}
+
 const TicketDetailView = ({ ticket, ticketColor }) => {
 
     const dispatch = useDispatch();
@@ -62,6 +78,15 @@ const TicketDetailView = ({ ticket, ticketColor }) => {
     const { ticketId, subject, description, status, createdAt, attachments } = ticketDetails || {};
 
     const [comments, setComments] = useState([]);
+    const [fullScreenAttachment, setFullScreenAttachment] = useState(null);
+
+    const viewAttachmentFullScreen = (mediaUrl) => {
+        setFullScreenAttachment(mediaUrl);
+    }
+
+    const closeFullScreenView = () => {
+        setFullScreenAttachment(null);
+    }
 
     return <div id='ticket-detail-view' className='FCSS w100 h100'>
         {
@@ -77,8 +102,9 @@ const TicketDetailView = ({ ticket, ticketColor }) => {
                         </div>
                         <TicketDescription html={description} />
                         <div id='ticket-attachments' className='FRSS w100 mT10'>
+                            <FullScreenImageView mediaUrl={fullScreenAttachment} onClose={closeFullScreenView} />
                             {attachments?.map(({ mediaUrl }, index) => (
-                                <div className='attachment' key={index}>
+                                <div className='attachment' key={index} onClick={() => viewAttachmentFullScreen(mediaUrl)}>
                                     <img src={mediaUrl} alt={`Ticket Attachment ${index + 1}`} />
                                 </div>
                             ))}
