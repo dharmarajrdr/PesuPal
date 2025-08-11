@@ -92,7 +92,7 @@ const TicketDetailView = ({ ticket, ticketColor }) => {
         {
             loader ? <Loader /> :
                 pageNotFound ? <PageNotFound /> : (
-                    <div id='ticket-detail-view' className='FCSB'>
+                    <div id='ticket-detail-view' className='FCSB w100'>
                         <div id='ticket-detail-header' className='FRSB'>
                             <div id='ticket-subject-id' className='FCSS'>
                                 <p id='subject'>{subject}</p>
