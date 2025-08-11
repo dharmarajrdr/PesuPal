@@ -4,6 +4,7 @@ import AddAttachments from '../AddAttachments'
 import { useDispatch } from 'react-redux';
 import { showPopup } from '../../store/reducers/PopupSlice';
 import { apiRequest } from '../../http_request';
+import { addNewTicket } from '../../store/reducers/SupportTicketsSlice';
 
 const CreateTicketLayout = ({ onCancel }) => {
 
@@ -21,12 +22,6 @@ const CreateTicketLayout = ({ onCancel }) => {
         if (!description || !description.trim().length) {
             return dispatch(showPopup({ message: 'Description must be at least 30 characters long.', type: 'error' }));
         }
-
-        console.log('Ticket Created:', {
-            title,
-            description,
-            attachments: files.map(file => file.file.name)
-        });
 
         const uploadMedia = async () => {
             return new Promise(async (resolve, reject) => {
@@ -65,6 +60,7 @@ const CreateTicketLayout = ({ onCancel }) => {
             console.log(payload);
 
             apiRequest(`/api/v1/support/ticket`, 'POST', payload).then(({ data, message }) => {
+                dispatch(addNewTicket(data));
                 dispatch(showPopup({ message, type: 'success' }));
                 onCancel(); // Close the ticket creation layout
             }).catch(({ message }) => {

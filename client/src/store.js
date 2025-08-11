@@ -16,6 +16,7 @@ import LeftNavigationSlice from './store/reducers/LeftNavigationSlice';
 import ConversationSlice from './store/reducers/ConversationSlice';
 import ConfirmationPopupSlice from './store/reducers/ConfirmationPopupSlice';
 import CurrentModuleSlice from './store/reducers/CurrentModuleSlice';
+import SupportTicketsSlice from './store/reducers/SupportTicketsSlice';
 import CurrentChatPreviewSlice from './store/reducers/CurrentChatPreviewSlice';
 import ShowChatHeaderOptionsModalSlice from './store/reducers/ShowChatHeaderOptionsModalSlice';
 
@@ -25,13 +26,14 @@ const store = configureStore({
         posts: PostReducer,
         chatId: ChatIdSlice,
         myProfile: MyProfileSlice,
-        currentOrg: CurrentOrgSlice, 
+        currentOrg: CurrentOrgSlice,
         recentChats: RecentChatsSlice,
         Navigation: NavigationReducers,
         moduleFilter: ModuleFilterSlice,
         conversation: ConversationSlice,
         activeChatTab: ActiveChatTabSlice,
         currentModule: CurrentModuleSlice,
+        supportTickets: SupportTicketsSlice,
         leftNavigation: LeftNavigationSlice,
         VerticalLoader: VerticalLoaderReducer,
         activeRecentChat: ActiveRecentChatSlice,

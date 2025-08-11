@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import utils from '../../utils';
 import { useNavigate, useParams } from 'react-router-dom'
 import Loader from '../Loader';
 import { apiRequest } from '../../http_request';
 import { showPopup } from '../../store/reducers/PopupSlice';
+import { setTickets } from '../../store/reducers/SupportTicketsSlice';
 
 const NoTicketsFound = () => {
     return (
@@ -46,13 +47,13 @@ const SupportTicketPreview = ({ ticket, setSelectedTicket, ticketColor }) => {
 
 const SupportTicketList = ({ setSelectedTicket, ticketColor }) => {
 
-    const [tickets, setTickets] = useState([]);
+    const { tickets } = useSelector(state => state.supportTickets);
     const [loader, setLoader] = useState(true);
     const dispatch = useDispatch();
 
     useEffect(() => {
         apiRequest(`/api/v1/support/tickets`, 'GET').then(({ data }) => {
-            setTickets(data);
+            dispatch(setTickets(data));
             setLoader(false);
         }).catch(({ message }) => {
             dispatch(showPopup({ message, type: 'error' }));
