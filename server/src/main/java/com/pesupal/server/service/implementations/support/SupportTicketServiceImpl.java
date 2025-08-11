@@ -81,7 +81,7 @@ public class SupportTicketServiceImpl extends CurrentValueRetriever implements S
         }
         SupportTicketDto supportTicketDto = SupportTicketDto.fromSupportTicket(supportTicket);
         supportTicketDto.setAttachments(supportTicketDto.getAttachments().stream().peek(ticketAttachmentDto -> {
-            String key = ticketAttachmentDto.getMediaId() + "." + ticketAttachmentDto.getExtension();
+            String key = ticketAttachmentDto.getMediaId() + ticketAttachmentDto.getExtension();
             ticketAttachmentDto.setMediaUrl(s3Service.generatePresignedUrl(key));
         }).toList());
         return supportTicketDto;
@@ -95,6 +95,13 @@ public class SupportTicketServiceImpl extends CurrentValueRetriever implements S
     @Override
     public List<SupportTicketDto> getAllTickets() {
 
-        return supportTicketRepository.findByTicketOwnerOrderByCreatedAtDesc(getCurrentOrgMember()).stream().map(SupportTicketDto::fromSupportTicket).toList();
+        return supportTicketRepository.findByTicketOwnerOrderByCreatedAtDesc(getCurrentOrgMember()).stream().map(supportTicket -> {
+            SupportTicketDto supportTicketDto = SupportTicketDto.fromSupportTicket(supportTicket);
+            supportTicketDto.setAttachments(supportTicketDto.getAttachments().stream().peek(ticketAttachmentDto -> {
+                String key = ticketAttachmentDto.getMediaId() + ticketAttachmentDto.getExtension();
+                ticketAttachmentDto.setMediaUrl(s3Service.generatePresignedUrl(key));
+            }).toList());
+            return supportTicketDto;
+        }).toList();
     }
 }
