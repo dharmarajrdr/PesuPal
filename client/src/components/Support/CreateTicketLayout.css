@@ -50,7 +50,7 @@
 #create-ticket-form .row textarea {
     resize: vertical;
     min-height: 35px;
-    max-height: 200px;
+    height: 100px;
 }
 
 #create-ticket-form .row>button {

@@ -3,6 +3,7 @@ import './CreateTicketLayout.css'
 import AddAttachments from '../AddAttachments'
 import { useDispatch } from 'react-redux';
 import { showPopup } from '../../store/reducers/PopupSlice';
+import { apiRequest } from '../../http_request';
 
 const CreateTicketLayout = ({ onCancel }) => {
 
@@ -11,7 +12,8 @@ const CreateTicketLayout = ({ onCancel }) => {
     const [files, setFiles] = useState([]);
     const dispatch = useDispatch();
 
-    const submitTicketHandler = (e) => {
+    const submitTicketHandler = async (e) => {
+
         e.preventDefault();
         if (!title || !title.trim().length) {
             return dispatch(showPopup({ message: 'Title must be at least 10 characters long.', type: 'error' }));
@@ -24,6 +26,53 @@ const CreateTicketLayout = ({ onCancel }) => {
             title,
             description,
             attachments: files.map(file => file.file.name)
+        });
+
+        const uploadMedia = async () => {
+            return new Promise(async (resolve, reject) => {
+                for (const file of files) {
+                    try {
+                        const formData = new FormData();
+                        formData.append("file", file.file, file.file.name);
+                        const { data, message } = await apiRequest(`/api/v1/media/upload`, 'POST', formData, {
+                            "mimeType": "multipart/form-data"
+                        });
+                        const { name: mediaId, extension } = data;
+                        Object.assign(file, { mediaId, extension });
+                    } catch ({ message }) {
+                        reject({ message });
+                    }
+                }
+                resolve(files);
+            });
+        }
+
+        uploadMedia().then((files) => {
+
+            const payload = {
+                'subject': title,
+                description,
+                'attachments': files.map(({ mediaId, extension, file }) => {
+                    const fileName = file.name;
+                    return {
+                        fileName,
+                        mediaId,
+                        extension
+                    }
+                })
+            }
+
+            console.log(payload);
+
+            apiRequest(`/api/v1/support/ticket`, 'POST', payload).then(({ data, message }) => {
+                dispatch(showPopup({ message, type: 'success' }));
+                onCancel(); // Close the ticket creation layout
+            }).catch(({ message }) => {
+                dispatch(showPopup({ message, type: 'error' }));
+            });
+
+        }).catch(({ message }) => {
+            dispatch(showPopup({ message, type: 'error' }));
         });
 
     }
