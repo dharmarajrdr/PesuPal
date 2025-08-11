@@ -3,7 +3,7 @@
     width: 30%;
     height: 60%;
     border-radius: 5px;
-    overflow-y: scroll;
+    overflow: hidden;
 }
 
 #attachment-preview .attachment-item {
@@ -24,9 +24,47 @@
     font-size: 16px;
     font-weight: 500;
     color: #333;
-    margin-bottom: 10px;
     text-align: center;
     padding: 10px;
+    z-index: 1;
     background-color: #fff;
     box-shadow: 0 2px 4px var(--box-shadow-color);
+}
+
+#attachment-preview-file-list {
+    height: calc(100% - 50px);
+    overflow-y: auto;
+}
+
+#attachment-preview-actions {
+    padding: 20px;
+    height: 50px;
+    box-shadow: 0 -2px 4px var(--box-shadow-color);
+}
+
+#attachment-preview-actions button {
+    background-color: gray;
+    color: #fff;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#attachment-preview-actions #send-button {
+    background-color: var(--primary-color);
+}
+
+#attachment-preview-actions #send-button:hover {
+    background-color: var(--primary-color-active);
+}
+
+#attachment-preview-actions #cancel-button:hover {
+    background-color: #666;
+}
+
+#attachment-preview-count {
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 5px;
 }
