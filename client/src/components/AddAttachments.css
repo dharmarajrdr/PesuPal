@@ -31,17 +31,17 @@
 .attachment-item {
     background: var(--pure-white-hover);
     border-radius: 8px;
-    padding: 0.5rem;
+    padding: 10px;
     display: flex;
     align-items: center;
-    width: 250px;
+    width: 200px;
     box-shadow: 0 2px 5px var(--box-shadow-color);
     justify-content: space-between;
 }
 
 .file-preview {
-    width: 40px;
-    height: 40px;
+    width: 30px;
+    height: 30px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -67,27 +67,30 @@
 
 .file-name {
     display: block;
-    font-size: 14px;
-    font-weight: bold;
+    font-size: 12px;
+    font-weight: 500;
     color: var(--text-color);
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
+    width: 100%;
 }
 
 .file-size {
-    font-size: 12px;
+    font-size: 10px;
+    font-weight: 400;
     color: var(--secondary-color);
 }
 
 .remove-btn {
     background: transparent;
     border: none;
-    color: var(--error-color);
-    font-size: 16px;
+    font-size: 14px;
     cursor: pointer;
+    color: #aaa;
+    padding: 5px;
 }
 
 .remove-btn:hover {
-    opacity: 0.7;
+    color: rgb(255, 135, 135);
 }
