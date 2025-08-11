@@ -6,6 +6,7 @@ import com.pesupal.server.model.support.SupportTicketStatus;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -21,7 +22,7 @@ public class SupportTicketDto {
 
     private SupportTicketStatus status;
 
-    private List<TicketAttachmentDto> attachments;
+    private List<TicketAttachmentDto> attachments = new ArrayList<>();
 
     public static SupportTicketDto fromSupportTicket(SupportTicket supportTicket) {
 

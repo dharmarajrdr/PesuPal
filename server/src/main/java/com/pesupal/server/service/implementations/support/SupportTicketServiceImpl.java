@@ -12,6 +12,7 @@ import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.repository.support.SupportTicketRepository;
 import com.pesupal.server.repository.support.TicketAttachmentRepository;
 import com.pesupal.server.service.interfaces.support.SupportTicketService;
+import com.pesupal.server.strategies.media_storage.S3Service;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +22,7 @@ import java.util.List;
 @AllArgsConstructor
 public class SupportTicketServiceImpl extends CurrentValueRetriever implements SupportTicketService {
 
+    private final S3Service s3Service;
     private final SupportTicketRepository supportTicketRepository;
     private final TicketAttachmentRepository ticketAttachmentRepository;
 
@@ -77,7 +79,12 @@ public class SupportTicketServiceImpl extends CurrentValueRetriever implements S
         if (!supportTicket.getTicketOwner().getId().equals(orgMember.getId())) {
             throw new PermissionDeniedException("You do not have permission to access this ticket.");
         }
-        return SupportTicketDto.fromSupportTicket(supportTicket);
+        SupportTicketDto supportTicketDto = SupportTicketDto.fromSupportTicket(supportTicket);
+        supportTicketDto.setAttachments(supportTicketDto.getAttachments().stream().peek(ticketAttachmentDto -> {
+            String key = ticketAttachmentDto.getMediaId() + "." + ticketAttachmentDto.getExtension();
+            ticketAttachmentDto.setMediaUrl(s3Service.generatePresignedUrl(key));
+        }).toList());
+        return supportTicketDto;
     }
 
     /**

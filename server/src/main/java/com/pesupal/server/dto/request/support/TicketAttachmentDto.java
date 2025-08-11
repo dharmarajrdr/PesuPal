@@ -4,6 +4,7 @@ import com.pesupal.server.model.support.SupportTicket;
 import com.pesupal.server.model.support.TicketAttachment;
 import lombok.Data;
 
+import java.net.URL;
 import java.util.UUID;
 
 @Data
@@ -16,6 +17,8 @@ public class TicketAttachmentDto {
     private UUID mediaId;
 
     private String extension;
+
+    private URL mediaUrl;
 
     public static TicketAttachmentDto fromTicketAttachment(TicketAttachment ticketAttachment) {
 
