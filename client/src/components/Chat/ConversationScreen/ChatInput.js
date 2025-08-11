@@ -2,6 +2,7 @@ import { useRef, useState } from 'react';
 import './ChatInput.css'
 import EmojiPicker from 'emoji-picker-react';
 import { useSelector } from 'react-redux';
+import AttachmentPreview from '../AttachmentPreview';
 
 const ChatInput = ({ clickSendMessageHandler }) => {
 
@@ -74,7 +75,7 @@ const ChatInput = ({ clickSendMessageHandler }) => {
     return (
         <div className="chat-input w100 FRSS">
             <textarea ref={chatInputRef} type="text" value={message} autoFocus onChange={(e) => setMessage(e.target.value)} placeholder="Type your message..." />
-            {/* <input type="file" ref={fileInputRef} className="file-upload" /> */}
+            {files.length > 0 && <AttachmentPreview />}
             {showEmojiPicker && <div id='emoji-picker'>
                 <EmojiPicker onEmojiClick={onEmojiClick} />
             </div>}
