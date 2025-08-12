@@ -18,13 +18,11 @@ const AttachmentPreview = ({ files, setFiles }) => {
 
     const handleUpload = () => {
 
-        Media.uploadMultipleMedia(files, setFiles)
-            .then(uploadedFiles => {
-                dispatch(showPopup({ message: 'Files sent successfully!', type: 'success' }));
-            })
-            .catch(({ message }) => {
-                dispatch(showPopup({ message, type: 'error' }));
-            });
+        Media.uploadMultipleMedia(files, setFiles).then(() => {
+            dispatch(showPopup({ message: 'Files sent successfully!', type: 'success' }));
+        }).catch(({ message }) => {
+            dispatch(showPopup({ message, type: 'error' }));
+        });
     };
 
     return files.length > 0 ? (

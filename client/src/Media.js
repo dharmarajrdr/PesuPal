@@ -7,18 +7,18 @@ async function uploadSingleMedia(file) {
 }
 
 async function uploadMultipleMedia(files, setFiles) {
-    const uploadedFiles = [];
+
+    setFiles(prevFiles => prevFiles.map(f => ({ ...f, uploading: true })));
     for (const file of files) {
         try {
             const { data } = await uploadSingleMedia(file);
             const { name: mediaId, extension, size } = data;
             Object.assign(file, { mediaId, extension, size, uploaded: true });
-            uploadedFiles.push(file);
+            setFiles(prevFiles => prevFiles.map(f => f.file.name === file.file.name ? { ...f, ...file } : f));
         } catch ({ message }) {
             throw { message };
         }
     }
-    return uploadedFiles;
 }
 
 export default {
