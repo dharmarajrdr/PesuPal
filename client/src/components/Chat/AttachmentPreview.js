@@ -4,7 +4,7 @@ import './AttachmentPreview.css';
 import { showPopup } from '../../store/reducers/PopupSlice';
 import AttachmentItem from './AttachmentItem';
 
-const AttachmentPreview = ({ files, setFiles }) => {
+const AttachmentPreview = ({ files, setFiles, clickSendMessageHandler }) => {
 
     const dispatch = useDispatch();
 
@@ -18,8 +18,21 @@ const AttachmentPreview = ({ files, setFiles }) => {
 
     const handleUpload = () => {
 
-        Media.uploadMultipleMedia(files, setFiles).then(() => {
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        Media.uploadMultipleMedia(files, setFiles).then(async () => {
+
             dispatch(showPopup({ message: 'Files sent successfully!', type: 'success' }));
+
+            for (const { mediaId, extension, size } of files) {
+                const media = { "name": mediaId, extension, size }
+                clickSendMessageHandler({ media });
+                await sleep(10); // wait 10ms before next send
+            }
+
+            setFiles([]);
         }).catch(({ message }) => {
             dispatch(showPopup({ message, type: 'error' }));
         });
