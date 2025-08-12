@@ -26,7 +26,7 @@ const MediaDisplayer = ({ media }) => {
 
     if (!media) return null;
 
-    const { id, extension, mediaUrl } = media || {};
+    const { id, extension, mediaUrl, name } = media || {};
 
     for (const [tag, extensions] of Object.entries(extensionTagMapper)) {
         if (extensions.includes(extension)) {
@@ -46,10 +46,10 @@ const MediaDisplayer = ({ media }) => {
                     return <div className="message-media media-doc FRCB">
                         <div className='FRCS left-panel'>
                             <i className="fa fa-file-alt mR5" />
-                            <span className="media-doc-name">some random text for testing purpose</span>
+                            <span className="media-doc-name">{name}</span>
                         </div>
                         <div className='FRCE right-panel'>
-                            <a href={mediaUrl} target="_blank"  rel="noopener noreferrer" className="cursP download-link">
+                            <a href={mediaUrl} target="_blank" rel="noopener noreferrer" className="cursP download-link">
                                 <i className="fa fa-download" />
                             </a>
                         </div>

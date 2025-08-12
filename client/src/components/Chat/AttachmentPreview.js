@@ -26,8 +26,8 @@ const AttachmentPreview = ({ files, setFiles, clickSendMessageHandler }) => {
 
             dispatch(showPopup({ message: 'Files sent successfully!', type: 'success' }));
 
-            for (const { mediaId, extension, size } of files) {
-                const media = { "name": mediaId, extension, size }
+            for (const { mediaId, file, extension, size } of files) {
+                const media = { mediaId, 'name': file.name, extension, size };
                 clickSendMessageHandler({ media });
                 await sleep(10); // wait 10ms before next send
             }
