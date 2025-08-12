@@ -6,6 +6,7 @@ import com.pesupal.server.enums.Reaction;
 import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.helpers.CurrentValueRetriever;
+import com.pesupal.server.model.chat.group_message.Group;
 import com.pesupal.server.model.chat.group_message.GroupChatMessage;
 import com.pesupal.server.model.chat.group_message.GroupChatReaction;
 import com.pesupal.server.model.user.OrgMember;
@@ -104,5 +105,16 @@ public class GroupChatReactionServiceImpl extends CurrentValueRetriever implemen
         }
 
         groupChatReactionRepository.delete(groupChatReaction);
+    }
+
+    /**
+     * Deletes all reactions associated with a specific group.
+     *
+     * @param group
+     */
+    @Override
+    public void deleteAllByGroup(Group group) {
+
+        groupChatReactionRepository.deleteAllByGroupChatMessage_Group(group);
     }
 }

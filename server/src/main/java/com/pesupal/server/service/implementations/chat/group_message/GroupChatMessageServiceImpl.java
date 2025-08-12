@@ -198,6 +198,8 @@ public class GroupChatMessageServiceImpl extends CurrentValueRetriever implement
 
         groupMessageMediaFileService.unlinkAllMediaFilesByGroup(group);
 
+        groupChatReactionService.deleteAllByGroup(group);
+
         groupChatMessageRepository.deleteAllByGroup(group);
 
         addSystemMessage(group, orgMember.getDisplayName() + " has cleared the group chat messages.");
