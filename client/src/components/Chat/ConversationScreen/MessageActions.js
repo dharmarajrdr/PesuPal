@@ -38,6 +38,9 @@ const MessageActions = ({ id, isCurrentUser }) => {
     const { reactMessageApi } = useSelector(state => state.activeChatTab) || {};
 
     const reactMessageHandler = (e) => {
+        if (!reactMessageApi) {
+            return dispatch(showPopup({ message: 'Feature not implemented yet.', type: 'error' }));
+        }
         const reaction = e.target.getAttribute('title');
         e.stopPropagation();
         e.preventDefault();
@@ -75,7 +78,7 @@ const MessageActions = ({ id, isCurrentUser }) => {
         }));
     }
 
-    return reactMessageApi && (
+    return (
         <div className={`message-actions FRCC ${isCurrentUser ? 'sent' : 'received'}`}>
             {isCurrentUser && <i className='fa fa-trash delete-icon' style={{ color: '#ff6c6cff' }} title="Delete" onClick={deleteMessageHandler} />}
             <div className="reactions">
