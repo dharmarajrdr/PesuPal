@@ -8,6 +8,7 @@
     z-index: 15;
 }
 
+#update-group-modal-content.modal-box,
 #create-group-modal-content.modal-box {
     background-color: var(--pure-white);
     box-shadow: 0 4px 12px var(--box-shadow-color);
@@ -102,6 +103,7 @@
     left: 50%;
 }
 
+#update-group-modal-content div button,
 #create-group-modal-content div button {
     margin-top: 20px;
     padding: 10px 15px;
@@ -114,15 +116,18 @@
     transition: background-color 0.2s ease;
 }
 
+#update-group-modal-content div .submit-btn:hover,
 #create-group-modal-content div .submit-btn:hover {
     background-color: var(--primary-color-active);
 }
 
+#update-group-modal-content div button.cancel-btn,
 #create-group-modal-content div button.cancel-btn {
     background-color: #ccc;
     color: var(--text-color);
 }
 
+#update-group-modal-content div .cancel-btn:hover,
 #create-group-modal-content div .cancel-btn:hover {
     background-color: #bbb;
 }
