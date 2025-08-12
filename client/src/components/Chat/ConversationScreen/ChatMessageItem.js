@@ -45,12 +45,12 @@ const MediaDisplayer = ({ media }) => {
                 case 'doc':
                     return <div className="message-media media-doc FRCB">
                         <div className='FRCS left-panel'>
-                            <i className="fa fa-file-alt mR5" />
+                            <i className="fa fa-file-alt mR5 w10 fs12 colorAAA" />
                             <span className="media-doc-name">{name}</span>
                         </div>
                         <div className='FRCE right-panel'>
                             <a href={mediaUrl} target="_blank" rel="noopener noreferrer" className="cursP download-link">
-                                <i className="fa fa-download" />
+                                <i className="fa fa-download colorDDD" />
                             </a>
                         </div>
                     </div>;

@@ -18,7 +18,6 @@ public class GroupChatMessage extends CreationTimeAuditable {
     @ManyToOne
     private OrgMember sender;
 
-    @Column(nullable = false)
     private String message;
 
     private boolean containsMedia;
