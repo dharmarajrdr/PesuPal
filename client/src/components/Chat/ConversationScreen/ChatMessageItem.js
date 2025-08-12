@@ -4,6 +4,8 @@ import MessageActions from './MessageActions';
 import MessageMeta from './MessageMeta';
 import { useSelector } from 'react-redux';
 import UserAvatar from '../../User/UserAvatar';
+import FullScreenImageView from '../../FullScreenImageView';
+import { useState } from 'react';
 
 const extensionTagMapper = {
     "img": ["jpeg", "jpg", "png", "gif", "avif"],
@@ -16,9 +18,11 @@ const extensionTagMapper = {
 const ImageDisplayer = ({ media }) => {
 
     const { mediaUrl } = media || {};
+    const [showFullScreen, setShowFullScreen] = useState(false);
 
     return mediaUrl ? <div className="message-media">
-        <img src={mediaUrl} alt="Media" className="media-image cursP" />
+        {showFullScreen && <FullScreenImageView mediaUrl={mediaUrl} onClose={() => setShowFullScreen(false)} />}
+        <img src={mediaUrl} alt="Media" className="media-image cursP" onClick={() => setShowFullScreen(true)} />
     </div> : null;
 }
 
