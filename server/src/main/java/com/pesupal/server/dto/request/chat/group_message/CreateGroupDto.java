@@ -22,4 +22,17 @@ public class CreateGroupDto {
         group.setShowOldMessagesToNewJoiners(true);
         return group;
     }
+
+    public void applyToGroup(Group group) {
+
+        if (name != null) {
+            group.setName(name);
+        }
+        if (description != null) {
+            group.setDescription(description);
+        }
+        if (visibility != null) {
+            group.setVisibility(visibility);
+        }
+    }
 }
