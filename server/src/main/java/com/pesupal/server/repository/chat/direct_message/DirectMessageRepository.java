@@ -75,13 +75,11 @@ public interface DirectMessageRepository extends JpaRepository<DirectMessage, Lo
     @Query(value = """
             SELECT COUNT(*)
             FROM (
-                SELECT chat_id
-                FROM direct_message
-                WHERE org_id = :orgId
-                  AND (sender_id = :userId OR receiver_id = :userId)
-                GROUP BY chat_id
+                SELECT id
+                FROM direct_message_chat
+                WHERE user1_id = :userId OR user2_id = :userId
             ) AS chat_count
             """, nativeQuery = true)
-    Long countRecentChats(@Param("userId") Long userId, @Param("orgId") Long orgId);
+    Long countRecentChats(@Param("userId") Long userId);
 
 }
