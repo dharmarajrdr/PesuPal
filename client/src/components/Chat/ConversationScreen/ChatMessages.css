@@ -87,6 +87,8 @@
     border: 1px solid #eee;
 }
 
+.chat-messages .row .message.received .message-media.media-doc i,
+.chat-messages .row .message.received .message-media.media-doc span,
 .chat-messages .row .message.received .message-content div {
     color: var(--primary-color);
 }
@@ -128,13 +130,11 @@
     font-size: 14px;
     padding: 2px 5px;
     border-radius: 5px;
-    color: #aaa;
 }
 
-.chat-messages .row .message.sent .message-media.media-doc span {
+.chat-messages .row .message .message-media.media-doc span {
     font-size: 13px;
     font-weight: 500;
-    color: #ddd;
     font-family: 'system-ui';
 }
 
@@ -275,6 +275,7 @@
     color: #eee;
 }
 
+.chat-messages .row .message.sent .message-media.media-doc span,
 .chat-messages .row .message.sent .message-meta .delivery-status,
 .chat-messages .row .message.sent .message-meta .time {
     color: #ccc;
