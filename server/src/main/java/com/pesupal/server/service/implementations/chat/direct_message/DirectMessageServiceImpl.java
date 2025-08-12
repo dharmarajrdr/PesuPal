@@ -239,7 +239,7 @@ public class DirectMessageServiceImpl extends CurrentValueRetriever implements D
             return dto;
         }).toList();
 
-        Long total = directMessageRepository.countRecentChats(userId, orgId);
+        Long total = directMessageRepository.countRecentChats(userId);
 
         return new RecentChatPagedDto(chats, pageable, total);
     }

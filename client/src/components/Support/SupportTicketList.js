@@ -18,7 +18,7 @@ const NoTicketsFound = () => {
     )
 }
 
-const SupportTicketPreview = ({ ticket, setSelectedTicket, ticketColor }) => {
+const SupportTicketPreview = ({ index, ticket, setSelectedTicket, ticketColor }) => {
 
     const params = useParams();
     const currentTicketId = params['*'];
@@ -32,7 +32,7 @@ const SupportTicketPreview = ({ ticket, setSelectedTicket, ticketColor }) => {
     }
 
     return (
-        <div className={`support-ticket-preview w100 ${currentTicketId === ticketId ? 'active' : ''}`} onClick={viewTicketHandler}>
+        <div className={`support-ticket-preview w100 ${currentTicketId === ticketId ? 'active' : ''}`} onClick={viewTicketHandler} key={index}>
             <h5 className='ticket-subject'>
                 <i className='fa fa-ticket pR10 w20' title={status} style={{ color: ticketColor?.[status] }}></i>
                 {subject}
@@ -65,9 +65,9 @@ const SupportTicketList = ({ setSelectedTicket, ticketColor }) => {
         <div id='support-ticket-list' className='w100'>
             {loader ? <Loader /> :
                 tickets.length ?
-                    tickets.map(ticket => <>
-                        <SupportTicketPreview key={ticket.id} ticket={ticket} setSelectedTicket={setSelectedTicket} ticketColor={ticketColor} />
-                    </>) : <NoTicketsFound />}
+                    tickets.map((ticket, index) =>
+                        <SupportTicketPreview key={index} index={index} ticket={ticket} setSelectedTicket={setSelectedTicket} ticketColor={ticketColor} />
+                    ) : <NoTicketsFound />}
         </div>
     )
 }

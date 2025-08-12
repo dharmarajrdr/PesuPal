@@ -5,6 +5,7 @@ import { useDispatch } from 'react-redux';
 import { showPopup } from '../../store/reducers/PopupSlice';
 import { apiRequest } from '../../http_request';
 import { addNewTicket } from '../../store/reducers/SupportTicketsSlice';
+import Media from '../../Media';
 
 const CreateTicketLayout = ({ onCancel }) => {
 
@@ -23,26 +24,8 @@ const CreateTicketLayout = ({ onCancel }) => {
             return dispatch(showPopup({ message: 'Description must be at least 30 characters long.', type: 'error' }));
         }
 
-        const uploadMedia = async () => {
-            return new Promise(async (resolve, reject) => {
-                for (const file of files) {
-                    try {
-                        const formData = new FormData();
-                        formData.append("file", file.file, file.file.name);
-                        const { data, message } = await apiRequest(`/api/v1/media/upload`, 'POST', formData, {
-                            "mimeType": "multipart/form-data"
-                        });
-                        const { name: mediaId, extension } = data;
-                        Object.assign(file, { mediaId, extension });
-                    } catch ({ message }) {
-                        reject({ message });
-                    }
-                }
-                resolve(files);
-            });
-        }
 
-        uploadMedia().then((files) => {
+        Media.uploadMultipleMedia(files, setFiles).then(() => {
 
             const payload = {
                 'subject': title,
@@ -56,8 +39,6 @@ const CreateTicketLayout = ({ onCancel }) => {
                     }
                 })
             }
-
-            console.log(payload);
 
             apiRequest(`/api/v1/support/ticket`, 'POST', payload).then(({ data, message }) => {
                 dispatch(addNewTicket(data));

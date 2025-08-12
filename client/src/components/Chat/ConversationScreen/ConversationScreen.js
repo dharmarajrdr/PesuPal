@@ -130,10 +130,10 @@ const ConversationScreen = ({ activeTabName }) => {
 		});
 	}
 
-	const clickSendMessageHandler = ({ message }) => {
+	const clickSendMessageHandler = ({ message, media }) => {
 
 		const payload = {
-			message, chatId
+			message, chatId, media
 		};
 
 		if (activeChatTab.name === 'directMessage') {
