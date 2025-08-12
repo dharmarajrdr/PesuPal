@@ -36,15 +36,15 @@
     overflow-y: auto;
 }
 
-#attachment-preview-file-list .file-uploaded {
+.file-uploaded-icon {
     color: green;
 }
 
-#attachment-preview-file-list .file-uploading {
+.file-uploading-icon {
     color: orange;
 }
 
-#attachment-preview-file-list .file-upload-failed {
+.file-upload-failed-icon {
     color: red;
 }
 

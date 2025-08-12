@@ -1,8 +1,8 @@
 import { useDispatch } from 'react-redux';
 import Media from '../../Media';
-import utils from '../../utils';
 import './AttachmentPreview.css';
 import { showPopup } from '../../store/reducers/PopupSlice';
+import AttachmentItem from './AttachmentItem';
 
 const AttachmentPreview = ({ files, setFiles }) => {
 
@@ -30,31 +30,8 @@ const AttachmentPreview = ({ files, setFiles }) => {
             <div id='attachment-preview' className='centerMe FCSB'>
                 <h4 id='attachment-preview-title' className='w100'>Attachment Preview</h4>
                 <div className="w100 FCSS" id='attachment-preview-file-list'>
-                    {files.map(({ preview, file, uploading, uploaded, failedUpload, failedUploadReason }, index) => (
-                        <div key={index} className="attachment-item">
-                            <div className="file-preview">
-                                {preview ? (
-                                    <img src={preview} alt={file.name} className="file-thumbnail" />
-                                ) : (
-                                    <i className={`${utils.getFileIcon(file)} file-icon`} />
-                                )}
-                            </div>
-                            <div className="file-info FCSS">
-                                <span className="file-name mB5">{file.name}</span>
-                                <span className="file-size">
-                                    {utils.formatFileSize(file.size)}
-                                </span>
-                            </div>
-                            {uploaded ? (
-                                <i className="fa fa-check-circle file-uploaded" title="File uploaded successfully" />
-                            ) : failedUpload ? (
-                                <i className="fa fa-exclamation-triangle file-upload-failed" title={failedUploadReason} />
-                            ) : uploading ? (
-                                <i className="fa fa-spinner fa-spin file-uploading" title="File is uploading" />
-                            ) : (
-                                <i className="fa fa-trash remove-btn" onClick={() => removeFile(index)} title="Remove file" />
-                            )}
-                        </div>
+                    {files.map((file, index) => (
+                        <AttachmentItem key={index} file={file} index={index} removeFile={removeFile} />
                     ))}
                 </div>
                 <div className='w100 FRCB' id='attachment-preview-actions'>
