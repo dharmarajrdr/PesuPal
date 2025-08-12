@@ -44,6 +44,10 @@
     color: orange;
 }
 
+#attachment-preview-file-list .file-upload-failed {
+    color: red;
+}
+
 #attachment-preview-actions {
     padding: 20px;
     height: 50px;
