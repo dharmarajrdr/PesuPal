@@ -5,6 +5,8 @@ import { apiRequest } from '../../../http_request';
 import GroupVisibility from './GroupVisibility';
 import { showPopup } from '../../../store/reducers/PopupSlice';
 import { updateCurrentChatPreview } from '../../../store/reducers/CurrentChatPreviewSlice';
+import { updateRecentChat } from '../../../store/reducers/RecentChatsSlice';
+import { updatePinnedDirectMessage } from '../../../store/reducers/PinnedDirectMessageSlice';
 
 const UpdateGroupModal = ({ setShowCreateGroupModal, groupData }) => {
 
@@ -39,6 +41,16 @@ const UpdateGroupModal = ({ setShowCreateGroupModal, groupData }) => {
             dispatch(updateCurrentChatPreview({
                 'displayName': name,
                 'description': description,
+                'visibility': visibility
+            }));
+            dispatch(updateRecentChat({
+                'chatId': groupId,
+                name,
+                visibility
+            }));
+            dispatch(updatePinnedDirectMessage({
+                'chatId': groupId,
+                'displayName': name,
                 'visibility': visibility
             }));
             closeCreateGroupModal();
