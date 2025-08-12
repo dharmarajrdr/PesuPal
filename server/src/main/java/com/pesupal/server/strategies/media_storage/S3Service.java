@@ -45,9 +45,9 @@ public class S3Service implements MediaService {
     @Override
     public MediaUploadDto uploadFile(MultipartFile file) throws Exception {
 
-        String extension = Objects.requireNonNull(file.getOriginalFilename()).substring(file.getOriginalFilename().lastIndexOf('.'));
+        String extension = Objects.requireNonNull(file.getOriginalFilename()).substring(file.getOriginalFilename().lastIndexOf('.') + 1);
         UUID fileName = UUID.randomUUID();
-        String fileNameWithExtension = fileName + extension;
+        String fileNameWithExtension = fileName + "." + extension;
         Long size = file.getSize();
 
         s3Client.putObject(
