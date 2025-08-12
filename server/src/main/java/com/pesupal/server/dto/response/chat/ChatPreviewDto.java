@@ -26,4 +26,6 @@ public class ChatPreviewDto {
     private Boolean reopenable;
 
     private Boolean messagePostable;
+
+    private Boolean messageDeletable;
 }
