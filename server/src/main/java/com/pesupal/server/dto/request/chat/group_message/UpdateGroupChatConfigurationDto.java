@@ -21,6 +21,8 @@ public class UpdateGroupChatConfigurationDto {
 
     private Boolean changeDescription;
 
+    private Boolean changeVisibility;
+
     private Boolean deleteGroup;
 
     private Boolean leaveGroup;
@@ -52,6 +54,9 @@ public class UpdateGroupChatConfigurationDto {
         }
         if (changeDescription != null) {
             groupChatConfiguration.setChangeDescription(changeDescription);
+        }
+        if (changeVisibility != null) {
+            groupChatConfiguration.setChangeVisibility(changeVisibility);
         }
         if (deleteGroup != null) {
             groupChatConfiguration.setDeleteGroup(deleteGroup);

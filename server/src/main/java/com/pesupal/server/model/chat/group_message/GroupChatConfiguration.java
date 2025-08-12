@@ -32,6 +32,8 @@ public class GroupChatConfiguration extends BaseModel {
 
     private boolean changeDescription;
 
+    private boolean changeVisibility;
+
     private boolean deleteGroup;
 
     private boolean leaveGroup;
