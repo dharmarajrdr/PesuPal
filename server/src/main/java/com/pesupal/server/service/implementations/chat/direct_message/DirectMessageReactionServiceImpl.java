@@ -74,7 +74,7 @@ public class DirectMessageReactionServiceImpl extends CurrentValueRetriever impl
         directMessageReaction.setReactor(reactor);
         directMessageReaction.setReaction(reaction);
 
-        directMessageReaction = directMessageReactionRepository.save(directMessageReaction);
+        directMessageReactionRepository.save(directMessageReaction);
 
         return new ReactMessageResponseDto(directMessageReaction.getId(), reaction, directMessageReaction.getCreatedAt(), UserBasicInfoDto.fromOrgMember(reactor));
 
