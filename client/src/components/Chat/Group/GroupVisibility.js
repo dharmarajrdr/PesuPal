@@ -1,3 +1,5 @@
+import './GroupVisibility.css';
+
 const GroupVisibility = ({ isPublic, setIsPublic }) => {
 
     return <div className="visibility-toggle-container">

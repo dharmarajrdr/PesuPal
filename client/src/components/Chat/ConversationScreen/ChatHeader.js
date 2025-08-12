@@ -16,6 +16,7 @@ import { hideConfirmationPopup, showConfirmationPopup } from '../../../store/red
 import { showPopup } from '../../../store/reducers/PopupSlice';
 import { clearMessages } from '../../../store/reducers/ConversationSlice';
 import GroupPermissionModal from '../Group/GroupPermissionModal';
+import UpdateGroupModal from '../Group/UpdateGroupModal';
 
 const ParticipantsCount = ({ count, setShowGroupMembers }) => {
     return (
@@ -32,6 +33,7 @@ const ChatHeader = () => {
     const dispatch = useDispatch();
     const showChatHeaderOptionsModalSlice = useSelector(state => state.showChatHeaderOptionsModalSlice);
     const [showProfile, setShowProfile] = useState(false);
+    const [showUpdateGroupModal, setShowUpdateGroupModal] = useState(false);
     const [showGroupPermission, setShowGroupPermission] = useState(false);
     const [showGroupMembers, setShowGroupMembers] = useState(false);
     const currentChatPreview = useSelector(state => state.currentChatPreviewSlice);
@@ -179,7 +181,7 @@ const ChatHeader = () => {
             name: activeChatTab.name == 'groupMessage' && active && groupActive ? 'Group Info' : null,
             icon: 'fa fa-info-circle',
             onClick: () => {
-
+                setShowUpdateGroupModal(true);
                 dispatch(setShowChatHeaderOptionsModal(false));
             }
         },
@@ -230,6 +232,7 @@ const ChatHeader = () => {
             {showProfile && <Profile userId={userId} setShowProfile={setShowProfile} />}
             {showGroupMembers && <GroupMembers groupId={chatId} setShowGroupMembers={setShowGroupMembers} />}
             {showGroupPermission && <GroupPermissionModal groupId={chatId} onClose={(e) => setShowGroupPermission(false)} />}
+            {showUpdateGroupModal && <UpdateGroupModal setShowCreateGroupModal={setShowUpdateGroupModal} groupData={currentChatPreview} />}
             <div className='FRCS'>
                 <UserAvatar displayPicture={displayPicture} displayName={displayName} setShowProfile={setShowProfile} />
                 <p className="name mL10">{displayName}</p>

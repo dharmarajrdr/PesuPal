@@ -1,3 +1,4 @@
+#update-group-modal,
 #create-group-modal {
     background-color: var(--overlay-bg-color);
     width: 100vw;
@@ -41,66 +42,6 @@
 .group-name-input:focus,
 .group-description-input:focus {
     border-color: var(--primary-color);
-}
-
-.visibility-toggle-container {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin-bottom: 1.5rem;
-}
-
-.toggle-label {
-    color: #777;
-    font-size: 14px;
-}
-
-.segmented-toggle {
-    position: relative;
-    background-color: var(--pure-white-hover);
-    border-radius: 999px;
-    display: flex;
-    padding: 2px;
-    width: 240px;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.toggle-option {
-    flex: 1;
-    z-index: 1;
-    text-align: center;
-    padding: 8px 0;
-    border-radius: 999px;
-    font-weight: 400;
-    font-size: 13px;
-    color: #999;
-    cursor: pointer;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    transition: color 0.2s ease;
-}
-
-.toggle-option.active {
-    color: var(--pure-white);
-}
-
-.toggle-bg {
-    position: absolute;
-    width: 50%;
-    height: 100%;
-    background-color: var(--badge-color);
-    /* Use yellow theme */
-    border-radius: 999px;
-    top: 0;
-    left: 0;
-    transition: all 0.3s ease;
-    z-index: 0;
-}
-
-.toggle-bg.right {
-    left: 50%;
 }
 
 #update-group-modal-content div button,
