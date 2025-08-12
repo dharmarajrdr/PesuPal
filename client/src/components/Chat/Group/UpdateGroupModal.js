@@ -4,12 +4,13 @@ import { useDispatch } from "react-redux";
 import { apiRequest } from '../../../http_request';
 import GroupVisibility from './GroupVisibility';
 import { showPopup } from '../../../store/reducers/PopupSlice';
+import { updateCurrentChatPreview } from '../../../store/reducers/CurrentChatPreviewSlice';
 
 const UpdateGroupModal = ({ setShowCreateGroupModal, groupData }) => {
 
     const dispatch = useDispatch();
 
-    const { groupId, name, description, visibility } = groupData || {};
+    const { chatId: groupId, displayName: name, description, visibility } = groupData || {};
     const [groupName, setGroupName] = useState(name);
     const [groupDescription, setGroupDescription] = useState(description);
     const [isPublic, setIsPublic] = useState(visibility === 'PUBLIC');
@@ -32,9 +33,14 @@ const UpdateGroupModal = ({ setShowCreateGroupModal, groupData }) => {
             visibility: isPublic ? 'PUBLIC' : 'PRIVATE',
         };
 
-        apiRequest(`/api/v1/group/${groupId}`, 'PATCH', groupData).then(({ data, message }) => {
+        apiRequest(`/api/v1/group/${groupId}`, 'PUT', groupData).then(({ data, message }) => {
             dispatch(showPopup({ message, type: 'success' }));
-            console.log("Group updated successfully:", data);
+            const { name, description, visibility } = data || {};
+            dispatch(updateCurrentChatPreview({
+                'displayName': name,
+                'description': description,
+                'visibility': visibility
+            }));
             closeCreateGroupModal();
         }).catch(({ message }) => {
             dispatch(showPopup({ message, type: 'error' }));
@@ -43,8 +49,8 @@ const UpdateGroupModal = ({ setShowCreateGroupModal, groupData }) => {
     };
 
     return (
-        <div className="entire-screen-overlay" id='update-group-modal'>
-            <div id="update-group-modal-content" className="centerMe FCCC modal-box">
+        <div className="FCCC entire-screen-overlay" id='update-group-modal'>
+            <div id="update-group-modal-content" className="FCCC modal-box">
 
                 <h2>Update Group</h2>
 
