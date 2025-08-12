@@ -1,6 +1,7 @@
 package com.pesupal.server.dto.response.chat;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.pesupal.server.enums.Visibility;
 import lombok.Data;
 
 @Data
@@ -10,6 +11,10 @@ public class ChatPreviewDto {
     private String displayName;
 
     private String displayPicture;
+
+    private String description;
+
+    private Visibility visibility;
 
     private Long pinnedId;
 

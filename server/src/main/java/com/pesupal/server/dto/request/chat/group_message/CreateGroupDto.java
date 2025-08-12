@@ -26,10 +26,10 @@ public class CreateGroupDto {
     public void applyToGroup(Group group) {
 
         if (name != null) {
-            group.setName(name);
+            group.setName(name.trim());
         }
         if (description != null) {
-            group.setDescription(description);
+            group.setDescription(description.trim());
         }
         if (visibility != null) {
             group.setVisibility(visibility);

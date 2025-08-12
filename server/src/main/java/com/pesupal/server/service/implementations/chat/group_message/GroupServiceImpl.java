@@ -224,6 +224,8 @@ public class GroupServiceImpl extends CurrentValueRetriever implements GroupServ
         chatPreviewDto.setReopenable(!groupActive && GroupHelper.isGroupOwner(group, orgMember));
         chatPreviewDto.setActive(isActiveGroupMember && optionalGroupChatMember.isPresent());
         chatPreviewDto.setDisplayName(group.getName());
+        chatPreviewDto.setDescription(group.getDescription());
+        chatPreviewDto.setVisibility(group.getVisibility());
         chatPreviewDto.setMessagePostable(groupChatConfiguration.isPostMessage());
         chatPreviewDto.setMessageDeletable(groupChatConfiguration.isDeleteMessage());
         chatPreviewDto.setDisplayPicture(group.getDisplayPicture());
@@ -282,19 +284,28 @@ public class GroupServiceImpl extends CurrentValueRetriever implements GroupServ
 
         GroupChatConfiguration groupChatConfiguration = groupChatConfigurationService.getConfigurationByGroupAndRole(group, groupChatMember.getRole());
 
-        if (updateGroupDto.getName() != null && !groupChatConfiguration.isChangeName()) {
+        if (!updateGroupDto.getName().equals(group.getName()) && !groupChatConfiguration.isChangeName()) {
             throw new PermissionDeniedException("You do not have permission to update the group name.");
         }
 
-        if (updateGroupDto.getDescription() != null && !groupChatConfiguration.isChangeDescription()) {
+        if (!updateGroupDto.getDescription().equals(group.getDescription()) && !groupChatConfiguration.isChangeDescription()) {
             throw new PermissionDeniedException("You do not have permission to update the group description.");
         }
 
-        if (updateGroupDto.getVisibility() != null && !groupChatConfiguration.isChangeVisibility()) {
+        if (!updateGroupDto.getVisibility().equals(group.getVisibility()) && !groupChatConfiguration.isChangeVisibility()) {
             throw new PermissionDeniedException("You do not have permission to update the group visibility.");
         }
 
         updateGroupDto.applyToGroup(group);
+
+        if (group.getName().isBlank()) {
+            throw new PermissionDeniedException("Group name cannot be empty.");
+        }
+
+        if (group.getVisibility() == null) {
+            throw new PermissionDeniedException("Group visibility cannot be null.");
+        }
+
         groupRepository.save(group);
 
         return GroupDto.fromGroup(group);

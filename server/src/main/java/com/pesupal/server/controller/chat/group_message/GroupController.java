@@ -25,8 +25,8 @@ public class GroupController {
         return ResponseEntity.ok().body(new ApiResponseDto("Group message created successfully", groupDto));
     }
 
-    @PatchMapping("/{groupId}")
-    public ResponseEntity<ApiResponseDto> updateGroup(@PathVariable String groupId, @PathVariable CreateGroupDto createGroupDto) {
+    @PutMapping("/{groupId}")
+    public ResponseEntity<ApiResponseDto> updateGroup(@PathVariable String groupId, @RequestBody CreateGroupDto createGroupDto) {
 
         GroupDto updatedGroup = groupService.updateGroup(groupId, createGroupDto);
         return ResponseEntity.ok().body(new ApiResponseDto("Group updated successfully", updatedGroup));
