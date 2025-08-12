@@ -102,4 +102,15 @@ public class S3Service implements MediaService {
         redisTemplate.opsForValue().set(redisKey, presignedUrl, TTL);
         return presignedUrl;
     }
+
+    /**
+     * Deletes a file from the S3 bucket.
+     *
+     * @param key
+     */
+    @Override
+    public void deleteFile(String key) {
+
+        s3Client.deleteObject(software.amazon.awssdk.services.s3.model.DeleteObjectRequest.builder().bucket(bucketName).key(key).build());
+    }
 }

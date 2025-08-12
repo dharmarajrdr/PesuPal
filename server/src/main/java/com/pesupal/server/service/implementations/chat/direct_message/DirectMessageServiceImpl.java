@@ -87,8 +87,9 @@ public class DirectMessageServiceImpl extends CurrentValueRetriever implements D
         }
         messageDto.setSender(memo.get(senderId));
         if (dm.getContainsMedia()) {
-            DirectMessageMediaFile directMessageMediaFile = directMessageMediaFileRepository.findByDirectMessage(dm);
-            if (directMessageMediaFile != null) {
+            Optional<DirectMessageMediaFile> optionalDirectMessageMediaFile = directMessageMediaFileRepository.findByDirectMessage(dm);
+            if (optionalDirectMessageMediaFile.isPresent()) {
+                DirectMessageMediaFile directMessageMediaFile = optionalDirectMessageMediaFile.get();
                 MediaFileDto directMessageMediaFileDto = MediaFileDto.fromDirectMessageMediaFile(directMessageMediaFile);
                 String key = directMessageMediaFile.getMediaId() + "." + directMessageMediaFile.getExtension();
                 directMessageMediaFileDto.setMediaUrl(s3Service.generatePresignedUrl(key));
@@ -190,6 +191,8 @@ public class DirectMessageServiceImpl extends CurrentValueRetriever implements D
 
         directMessage.setDeleted(true);
         directMessageRepository.save(directMessage);
+
+        directMessageMediaFileService.unlinkMediaFilesByDirectMessage(directMessage);
     }
 
     /**

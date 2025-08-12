@@ -1,5 +1,6 @@
 import Popup from './Popup'
 import ConfirmationPopup from './Utils/ConfirmationPopup'
+import VerticalLoader from './VerticalLoader'
 
 const CommonContainer = () => {
 
@@ -7,6 +8,7 @@ const CommonContainer = () => {
         <div>
             <Popup />
             <ConfirmationPopup />
+            <VerticalLoader />
         </div>
     )
 }
