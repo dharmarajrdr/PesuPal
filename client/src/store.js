@@ -1,4 +1,4 @@
-import { VerticalLoaderReducer } from './store/reducers/VerticalLoader';
+import VerticalLoaderSlice from './store/reducers/VerticalLoaderSlice';
 import PinnedDirectMessageSlice from './store/reducers/PinnedDirectMessageSlice';
 import { NavigationReducers } from './store/reducers/Navigation';
 import PostReducer from './store/reducers/PostSlice';
@@ -35,7 +35,7 @@ const store = configureStore({
         currentModule: CurrentModuleSlice,
         supportTickets: SupportTicketsSlice,
         leftNavigation: LeftNavigationSlice,
-        VerticalLoader: VerticalLoaderReducer,
+        VerticalLoader: VerticalLoaderSlice,
         activeRecentChat: ActiveRecentChatSlice,
         confirmationPopup: ConfirmationPopupSlice,
         pinnedDirectMessage: PinnedDirectMessageSlice,
