@@ -1,7 +1,12 @@
+import { useDispatch } from 'react-redux';
+import Media from '../../Media';
 import utils from '../../utils';
 import './AttachmentPreview.css';
+import { showPopup } from '../../store/reducers/PopupSlice';
 
 const AttachmentPreview = ({ files, setFiles }) => {
+
+    const dispatch = useDispatch();
 
     const removeFile = (index) => {
         setFiles((prev) => {
@@ -11,22 +16,23 @@ const AttachmentPreview = ({ files, setFiles }) => {
         });
     };
 
-    const sendFiles = async () => {
-        for (const file of files) {
-            if (file.preview) {
-                // Here you would typically handle the file upload logic
-                console.log(`Sending file: ${file.file.name}`);
+    const handleUpload = () => {
 
-            }
-        }
-    }
+        Media.uploadMultipleMedia(files, setFiles)
+            .then(uploadedFiles => {
+                dispatch(showPopup({ message: 'Files sent successfully!', type: 'success' }));
+            })
+            .catch(({ message }) => {
+                dispatch(showPopup({ message, type: 'error' }));
+            });
+    };
 
     return files.length > 0 ? (
         <div className='entire-screen-overlay FRCC'>
             <div id='attachment-preview' className='centerMe FCSB'>
                 <h4 id='attachment-preview-title' className='w100'>Attachment Preview</h4>
                 <div className="w100 FCSS" id='attachment-preview-file-list'>
-                    {files.map(({ preview, file }, index) => (
+                    {files.map(({ preview, file, uploading, uploaded, failedUpload, failedUploadReason }, index) => (
                         <div key={index} className="attachment-item">
                             <div className="file-preview">
                                 {preview ? (
@@ -41,9 +47,11 @@ const AttachmentPreview = ({ files, setFiles }) => {
                                     {utils.formatFileSize(file.size)}
                                 </span>
                             </div>
-                            {file.uploaded ? (
+                            {uploaded ? (
                                 <i className="fa fa-check-circle file-uploaded" title="File uploaded successfully" />
-                            ) : file.uploading ? (
+                            ) : failedUpload ? (
+                                <i className="fa fa-exclamation-triangle file-upload-failed" title={failedUploadReason} />
+                            ) : uploading ? (
                                 <i className="fa fa-spinner fa-spin file-uploading" title="File is uploading" />
                             ) : (
                                 <i className="fa fa-trash remove-btn" onClick={() => removeFile(index)} title="Remove file" />
@@ -59,7 +67,7 @@ const AttachmentPreview = ({ files, setFiles }) => {
                     </div>
                     <div className='FRCE'>
                         <button id="cancel-button" onClick={() => setFiles([])}>Cancel</button>
-                        <button id="send-button" onClick={sendFiles}>Send</button>
+                        <button id="send-button" onClick={handleUpload}>Send</button>
                     </div>
                 </div>
             </div>
