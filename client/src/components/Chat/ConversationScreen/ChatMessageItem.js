@@ -4,6 +4,8 @@ import MessageActions from './MessageActions';
 import MessageMeta from './MessageMeta';
 import { useSelector } from 'react-redux';
 import UserAvatar from '../../User/UserAvatar';
+import FullScreenImageView from '../../FullScreenImageView';
+import { useState } from 'react';
 
 const extensionTagMapper = {
     "img": ["jpeg", "jpg", "png", "gif", "avif"],
@@ -16,9 +18,11 @@ const extensionTagMapper = {
 const ImageDisplayer = ({ media }) => {
 
     const { mediaUrl } = media || {};
+    const [showFullScreen, setShowFullScreen] = useState(false);
 
     return mediaUrl ? <div className="message-media">
-        <img src={mediaUrl} alt="Media" className="media-image cursP" />
+        {showFullScreen && <FullScreenImageView mediaUrl={mediaUrl} onClose={() => setShowFullScreen(false)} />}
+        <img src={mediaUrl} alt="Media" className="media-image cursP" onClick={() => setShowFullScreen(true)} />
     </div> : null;
 }
 
@@ -45,12 +49,12 @@ const MediaDisplayer = ({ media }) => {
                 case 'doc':
                     return <div className="message-media media-doc FRCB">
                         <div className='FRCS left-panel'>
-                            <i className="fa fa-file-alt mR5" />
+                            <i className="fa fa-file-alt mR5 w10 fs12 colorAAA" />
                             <span className="media-doc-name">{name}</span>
                         </div>
                         <div className='FRCE right-panel'>
                             <a href={mediaUrl} target="_blank" rel="noopener noreferrer" className="cursP download-link">
-                                <i className="fa fa-download" />
+                                <i className="fa fa-download colorDDD" />
                             </a>
                         </div>
                     </div>;

@@ -8,6 +8,7 @@ import { apiRequest } from '../../http_request';
 import { useParams } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { showPopup } from '../../store/reducers/PopupSlice';
+import FullScreenImageView from '../FullScreenImageView';
 
 const TicketDescription = ({ html }) => <div id='ticket-description' className="html-content-renderer postContent" dangerouslySetInnerHTML={{ __html: html }} />
 
@@ -28,22 +29,6 @@ const SupportTicketComment = ({ comment }) => {
         </div>
     );
 };
-
-const FullScreenImageView = ({ mediaUrl, onClose }) => {
-
-    return mediaUrl ? (
-        <div className='entire-screen-overlay' id='full-screen-ticket-attachment-overlay' onClick={(e) => {
-            e.stopPropagation();
-            if (e.target.id === 'full-screen-ticket-attachment-overlay') {
-                onClose();
-            }
-        }}>
-            <div id='full-screen-image-viewer' className='centerMe'>
-                <img src={mediaUrl} alt='Resource Not Found' />
-            </div>
-        </div>
-    ) : null;
-}
 
 const TicketDetailView = ({ ticket, ticketColor }) => {
 
