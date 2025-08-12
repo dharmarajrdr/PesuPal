@@ -193,14 +193,9 @@ public class GroupChatMessageServiceImpl extends CurrentValueRetriever implement
             throw new ActionProhibitedException("This group is no longer active.");
         }
 
-        Role role = groupChatMember.getRole();
-
-        if (!role.equals(Role.SUPER_ADMIN)) {
-
-            GroupChatConfiguration groupChatConfiguration = groupChatConfigurationService.getConfigurationByGroupAndRole(group, role);
-            if (!groupChatConfiguration.isClearChat()) {
-                throw new PermissionDeniedException("You do not have permission to clear messages in this group.");
-            }
+        GroupChatConfiguration groupChatConfiguration = groupChatConfigurationService.getConfigurationByGroupAndRole(group, groupChatMember.getRole());
+        if (!groupChatConfiguration.isClearChat()) {
+            throw new PermissionDeniedException("You do not have permission to clear messages in this group.");
         }
 
         // Set last read message to null for all members in the group to ensure that the members are not removed from the group
