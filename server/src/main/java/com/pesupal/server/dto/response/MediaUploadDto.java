@@ -9,7 +9,9 @@ import java.util.UUID;
 @Builder
 public class MediaUploadDto {
 
-    private UUID name;
+    private String name;
+
+    private UUID mediaId;
 
     private String extension;
 
