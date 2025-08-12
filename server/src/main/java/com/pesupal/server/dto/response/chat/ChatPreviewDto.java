@@ -24,4 +24,8 @@ public class ChatPreviewDto {
     private Integer participantsCount;
 
     private Boolean reopenable;
+
+    private Boolean messagePostable;
+
+    private Boolean messageDeletable;
 }

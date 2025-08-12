@@ -19,7 +19,7 @@ const SystemMessage = ({ msg }) => {
     );
 }
 
-const ChatMessages = ({ showStartNewConversation, chatId, retrievingChat, clickSendMessageHandler }) => {
+const ChatMessages = ({ showStartNewConversation, messageDeletable, chatId, retrievingChat, clickSendMessageHandler }) => {
 
     let lastDate = null;
     let previousMessageSenderId = null;
@@ -62,7 +62,7 @@ const ChatMessages = ({ showStartNewConversation, chatId, retrievingChat, clickS
                 return (
                     <div key={msg.id} className='w100'>
                         {showDate && <div className="date-label">{newDate}</div>}
-                        {messageType == 'USER_MESSAGE' && <ChatMessageItem msg={msg} isSameSender={isSameSender} />}
+                        {messageType == 'USER_MESSAGE' && <ChatMessageItem msg={msg} isSameSender={isSameSender} messageDeletable={messageDeletable} />}
                         {messageType == 'SYSTEM_MESSAGE' && <SystemMessage msg={msg} />}
                     </div>
                 );

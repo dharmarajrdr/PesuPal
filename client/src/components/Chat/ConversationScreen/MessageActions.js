@@ -32,12 +32,15 @@ const reactionsList = [
     }
 ];
 
-const MessageActions = ({ id, isCurrentUser }) => {
+const MessageActions = ({ id, isCurrentUser, messageDeletable }) => {
 
     const dispatch = useDispatch();
-    const { reactMessageApi } = useSelector(state => state.activeChatTab) || {};
+    const { reactMessageApi, deleteMessageApi } = useSelector(state => state.activeChatTab) || {};
 
     const reactMessageHandler = (e) => {
+        if (!reactMessageApi) {
+            return dispatch(showPopup({ message: 'Feature not implemented yet.', type: 'error' }));
+        }
         const reaction = e.target.getAttribute('title');
         e.stopPropagation();
         e.preventDefault();
@@ -56,7 +59,7 @@ const MessageActions = ({ id, isCurrentUser }) => {
                     title: 'Delete',
                     color: 'red',
                     onClick: () => {
-                        apiRequest(`${reactMessageApi}/${id}`, 'DELETE').then(({ data, message }) => {
+                        apiRequest(`${deleteMessageApi}/${id}`, 'DELETE').then(({ data, message }) => {
                             dispatch(deleteMessage({ id }));
                             dispatch(showPopup({ message, type: 'success' }));
                             dispatch(hideConfirmationPopup());
@@ -75,9 +78,9 @@ const MessageActions = ({ id, isCurrentUser }) => {
         }));
     }
 
-    return reactMessageApi && (
+    return (
         <div className={`message-actions FRCC ${isCurrentUser ? 'sent' : 'received'}`}>
-            {isCurrentUser && <i className='fa fa-trash delete-icon' style={{ color: '#ff6c6cff' }} title="Delete" onClick={deleteMessageHandler} />}
+            {isCurrentUser && messageDeletable && <i className='fa fa-trash delete-icon' style={{ color: '#ff6c6cff' }} title="Delete" onClick={deleteMessageHandler} />}
             <div className="reactions">
                 {reactionsList.map(({ name, icon, color }) => (
                     <i key={name} className={`fa ${icon} w20 reaction-icon`} style={{ color }} title={name} onClick={reactMessageHandler} />

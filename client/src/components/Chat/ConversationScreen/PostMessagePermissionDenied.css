@@ -1,0 +1,16 @@
+#post-message-permission-denied {
+    background-color: var(--pure-white);
+}
+
+#post-message-permission-denied p {
+    color: var(--primary-color);
+    font-size: 13px;
+    font-weight: 300;
+    user-select: none;
+}
+
+#post-message-permission-denied i {
+    color: var(--primary-color);
+    font-size: 12px;
+    width: 16px;
+}
