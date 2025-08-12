@@ -48,6 +48,7 @@ public class GroupChatMessageServiceImpl extends CurrentValueRetriever implement
     private final GroupChatReactionService groupChatReactionService;
     private final GroupChatMemberRepository groupChatMemberRepository;
     private final GroupChatMessageRepository groupChatMessageRepository;
+    private final GroupMessageMediaFileService groupMessageMediaFileService;
     private final GroupChatConfigurationService groupChatConfigurationService;
     private final GroupMessageMediaFileRepository groupMessageMediaFileRepository;
 
@@ -114,6 +115,8 @@ public class GroupChatMessageServiceImpl extends CurrentValueRetriever implement
 
         groupChatMessage.setDeleted(true);
         groupChatMessageRepository.save(groupChatMessage);
+
+        groupMessageMediaFileService.unlinkMediaFilesByGroupMessage(groupChatMessage);
     }
 
     /**
@@ -148,8 +151,9 @@ public class GroupChatMessageServiceImpl extends CurrentValueRetriever implement
             }
             messageDto.setSender(memo.get(senderId));
             if (gm.isContainsMedia()) {
-                GroupMessageMediaFile groupMessageMediaFile = groupMessageMediaFileRepository.findByGroupChatMessage(gm);
-                if (groupMessageMediaFile != null) {
+                Optional<GroupMessageMediaFile> optionalGroupMessageMediaFile = groupMessageMediaFileRepository.findByGroupChatMessage(gm);
+                if (optionalGroupMessageMediaFile.isPresent()) {
+                    GroupMessageMediaFile groupMessageMediaFile = optionalGroupMessageMediaFile.get();
                     MediaFileDto mediaFileDto = MediaFileDto.fromGroupMessageMediaFile(groupMessageMediaFile);
                     String key = groupMessageMediaFile.getMediaId() + "." + groupMessageMediaFile.getExtension();
                     mediaFileDto.setMediaUrl(s3Service.generatePresignedUrl(key));
@@ -202,6 +206,8 @@ public class GroupChatMessageServiceImpl extends CurrentValueRetriever implement
         // Set last read message to null for all members in the group to ensure that the members are not removed from the group
         groupChatMemberRepository.updateAllLastReadMessageToNullByGroup(group);
 
+        groupMessageMediaFileService.unlinkAllMediaFilesByGroup(group);
+
         groupChatMessageRepository.deleteAllByGroup(group);
 
         addSystemMessage(group, orgMember.getDisplayName() + " has cleared the group chat messages.");
@@ -249,8 +255,9 @@ public class GroupChatMessageServiceImpl extends CurrentValueRetriever implement
         }
         messageDto.setSender(memo.get(senderId));
         if (gm.isContainsMedia()) {
-            GroupMessageMediaFile groupMessageMediaFile = groupMessageMediaFileRepository.findByGroupChatMessage(gm);
-            if (groupMessageMediaFile != null) {
+            Optional<GroupMessageMediaFile> optionalGroupMessageMediaFile = groupMessageMediaFileRepository.findByGroupChatMessage(gm);
+            if (optionalGroupMessageMediaFile.isPresent()) {
+                GroupMessageMediaFile groupMessageMediaFile = optionalGroupMessageMediaFile.get();
                 MediaFileDto groupMessageMediaFileDto = MediaFileDto.fromGroupMessageMediaFile(groupMessageMediaFile);
                 String key = groupMessageMediaFile.getMediaId() + "." + groupMessageMediaFile.getExtension();
                 groupMessageMediaFileDto.setMediaUrl(s3Service.generatePresignedUrl(key));
