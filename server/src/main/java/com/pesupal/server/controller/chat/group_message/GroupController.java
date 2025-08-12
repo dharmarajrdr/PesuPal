@@ -25,6 +25,13 @@ public class GroupController {
         return ResponseEntity.ok().body(new ApiResponseDto("Group message created successfully", groupDto));
     }
 
+    @PutMapping("/{groupId}")
+    public ResponseEntity<ApiResponseDto> updateGroup(@PathVariable String groupId, @RequestBody CreateGroupDto createGroupDto) {
+
+        GroupDto updatedGroup = groupService.updateGroup(groupId, createGroupDto);
+        return ResponseEntity.ok().body(new ApiResponseDto("Group updated successfully", updatedGroup));
+    }
+
     @DeleteMapping("/{groupId}")
     public ResponseEntity<ApiResponseDto> deleteGroup(@PathVariable String groupId) {
 

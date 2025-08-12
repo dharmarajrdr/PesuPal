@@ -224,6 +224,8 @@ public class GroupServiceImpl extends CurrentValueRetriever implements GroupServ
         chatPreviewDto.setReopenable(!groupActive && GroupHelper.isGroupOwner(group, orgMember));
         chatPreviewDto.setActive(isActiveGroupMember && optionalGroupChatMember.isPresent());
         chatPreviewDto.setDisplayName(group.getName());
+        chatPreviewDto.setDescription(group.getDescription());
+        chatPreviewDto.setVisibility(group.getVisibility());
         chatPreviewDto.setMessagePostable(groupChatConfiguration.isPostMessage());
         chatPreviewDto.setMessageDeletable(groupChatConfiguration.isDeleteMessage());
         chatPreviewDto.setDisplayPicture(group.getDisplayPicture());
@@ -256,5 +258,56 @@ public class GroupServiceImpl extends CurrentValueRetriever implements GroupServ
         groupRepository.save(group);
         // initializeGroupChatMember(group, orgMember);
         groupChatMessageService.addSystemMessage(group, orgMember.getDisplayName() + " has reopened the group.");
+    }
+
+    /**
+     * Updates an existing group with the provided CreateGroupDto.
+     *
+     * @param groupId
+     * @param updateGroupDto
+     * @return
+     */
+    @Override
+    public GroupDto updateGroup(String groupId, CreateGroupDto updateGroupDto) {
+
+        OrgMember orgMember = getCurrentOrgMember();
+        Group group = getGroupByPublicId(groupId);
+
+        if (!GroupHelper.isGroupOwner(group, orgMember)) {
+            throw new PermissionDeniedException("You do not have permission to update this group.");
+        }
+
+        GroupChatMember groupChatMember = groupChatMemberService.getGroupMemberByGroupIdAndUserId(groupId, orgMember.getId());
+        if (!groupChatMember.isActive()) {
+            throw new PermissionDeniedException("You do not have permission to update this group as you are not an active member.");
+        }
+
+        GroupChatConfiguration groupChatConfiguration = groupChatConfigurationService.getConfigurationByGroupAndRole(group, groupChatMember.getRole());
+
+        if (!updateGroupDto.getName().equals(group.getName()) && !groupChatConfiguration.isChangeName()) {
+            throw new PermissionDeniedException("You do not have permission to update the group name.");
+        }
+
+        if (!updateGroupDto.getDescription().equals(group.getDescription()) && !groupChatConfiguration.isChangeDescription()) {
+            throw new PermissionDeniedException("You do not have permission to update the group description.");
+        }
+
+        if (!updateGroupDto.getVisibility().equals(group.getVisibility()) && !groupChatConfiguration.isChangeVisibility()) {
+            throw new PermissionDeniedException("You do not have permission to update the group visibility.");
+        }
+
+        updateGroupDto.applyToGroup(group);
+
+        if (group.getName().isBlank()) {
+            throw new PermissionDeniedException("Group name cannot be empty.");
+        }
+
+        if (group.getVisibility() == null) {
+            throw new PermissionDeniedException("Group visibility cannot be null.");
+        }
+
+        groupRepository.save(group);
+
+        return GroupDto.fromGroup(group);
     }
 }
