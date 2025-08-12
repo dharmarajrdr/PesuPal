@@ -3,10 +3,13 @@ import Media from '../../Media';
 import './AttachmentPreview.css';
 import { showPopup } from '../../store/reducers/PopupSlice';
 import AttachmentItem from './AttachmentItem';
+import { useState } from 'react';
+import { hideLoader, showLoader } from '../../store/reducers/VerticalLoaderSlice';
 
 const AttachmentPreview = ({ files, setFiles, clickSendMessageHandler }) => {
 
     const dispatch = useDispatch();
+    const [sending, setSending] = useState(false);
 
     const removeFile = (index) => {
         setFiles((prev) => {
@@ -17,6 +20,14 @@ const AttachmentPreview = ({ files, setFiles, clickSendMessageHandler }) => {
     };
 
     const handleUpload = () => {
+
+        if (sending) {
+            return dispatch(showPopup({ message: 'Please wait, files are being sent.', type: 'error' }));
+        }
+
+        setSending(true);
+
+        dispatch(showLoader());
 
         function sleep(ms) {
             return new Promise(resolve => setTimeout(resolve, ms));
@@ -33,8 +44,12 @@ const AttachmentPreview = ({ files, setFiles, clickSendMessageHandler }) => {
             }
 
             setFiles([]);
+            setSending(false);
+            dispatch(hideLoader());
         }).catch(({ message }) => {
             dispatch(showPopup({ message, type: 'error' }));
+            setSending(false);
+            dispatch(hideLoader());
         });
     };
 
@@ -54,8 +69,8 @@ const AttachmentPreview = ({ files, setFiles, clickSendMessageHandler }) => {
                         </span>}
                     </div>
                     <div className='FRCE'>
-                        <button id="cancel-button" onClick={() => setFiles([])}>Cancel</button>
-                        <button id="send-button" onClick={handleUpload}>Send</button>
+                        {!sending && <button id="cancel-button" onClick={() => setFiles([])}>Cancel</button>}
+                        <button id="send-button" onClick={handleUpload}>{sending ? 'Sending...' : 'Send'}</button>
                     </div>
                 </div>
             </div>
