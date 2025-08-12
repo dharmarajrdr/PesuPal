@@ -23,6 +23,7 @@ const details = {
         'chatPreviewApi': '/api/v1/group/preview',
         'retrieveConversationApi': '/api/v1/group-chat-message',
         'readAllMessagesApi': '/api/v1/group-chat-message',
+        'reactMessageApi': '/api/v1/group-chat-reactions',
         'deleteMessageApi': '/api/v1/group-chat-message',
         'showStatusIndicator': false
     }

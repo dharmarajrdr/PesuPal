@@ -21,7 +21,7 @@ import UpdateGroupModal from '../Group/UpdateGroupModal';
 const ParticipantsCount = ({ count, setShowGroupMembers }) => {
     return (
         <div id="participants-count" className='FRCC pY5 pX10 mL10 borderRadius5' onClick={() => setShowGroupMembers(true)}>
-            <i className="fa fa-users pR5 fs12"></i>
+            <i className="fa fa-users pR5 fs12 w20"></i>
             <span className="count fs14">{count}</span>
         </div>
     );

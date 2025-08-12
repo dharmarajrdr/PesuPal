@@ -1,5 +1,6 @@
 package com.pesupal.server.model.chat.group_message;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.pesupal.server.enums.Role;
 import com.pesupal.server.model.BaseModel;
 import jakarta.persistence.Entity;
@@ -19,6 +20,7 @@ import lombok.experimental.SuperBuilder;
 public class GroupChatConfiguration extends BaseModel {
 
     @ManyToOne
+    @JsonIgnore
     private Group group;
 
     @Enumerated(EnumType.STRING)

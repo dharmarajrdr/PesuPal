@@ -10,6 +10,18 @@
     border-bottom-left-radius: 5px;
     overflow-x: hidden;
     overflow-y: auto;
+    position: relative;
+    right: -500px;
+    animation: slideIn 0.3s ease-in-out forwards;
+}
+
+@keyframes slideIn {
+    from {
+        right: -500px;
+    }
+    to {
+        right: 0;
+    }
 }
 
 #group-permission-modal-content #title {

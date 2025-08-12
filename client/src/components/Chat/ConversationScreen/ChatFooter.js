@@ -7,14 +7,12 @@ import PostMessagePermissionDenied from './PostMessagePermissionDenied'
 const ChatFooter = ({ active, messagePostable, groupActive, currentTab, displayName, clickSendMessageHandler }) => {
 
     if (currentTab === 'groupMessage') {
-        if (!messagePostable) {
-            return <PostMessagePermissionDenied />;
-        } else if (active) {
-            if (!groupActive) {
-                return <ChatInputGroupArchived />
-            }
-        } else {
+        if (!active) {
             return <GroupChatInactiveUser />
+        } else if (!groupActive) {
+            return <ChatInputGroupArchived />
+        } else if (!messagePostable) {
+            return <PostMessagePermissionDenied />;
         }
     } else {
         if (!active) {
