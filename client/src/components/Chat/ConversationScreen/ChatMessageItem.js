@@ -43,8 +43,16 @@ const MediaDisplayer = ({ media }) => {
                         <audio src={mediaUrl} controls className="media-audio cursP" />
                     </div>;
                 case 'doc':
-                    return <div className="message-media">
-                        <a href={mediaUrl} target="_blank" rel="noopener noreferrer" className="media-doc cursP">Document</a>
+                    return <div className="message-media media-doc FRCB">
+                        <div className='FRCS left-panel'>
+                            <i className="fa fa-file-alt mR5" />
+                            <span className="media-doc-name">some random text for testing purpose</span>
+                        </div>
+                        <div className='FRCE right-panel'>
+                            <a href={mediaUrl} target="_blank"  rel="noopener noreferrer" className="cursP download-link">
+                                <i className="fa fa-download" />
+                            </a>
+                        </div>
                     </div>;
                 case 'zip':
                     return <div className="message-media">
