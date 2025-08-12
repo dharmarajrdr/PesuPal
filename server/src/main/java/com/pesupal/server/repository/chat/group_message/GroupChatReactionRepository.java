@@ -1,5 +1,6 @@
 package com.pesupal.server.repository.chat.group_message;
 
+import com.pesupal.server.model.chat.group_message.Group;
 import com.pesupal.server.model.chat.group_message.GroupChatMessage;
 import com.pesupal.server.model.chat.group_message.GroupChatReaction;
 import com.pesupal.server.model.user.OrgMember;
@@ -20,4 +21,6 @@ public interface GroupChatReactionRepository extends JpaRepository<GroupChatReac
     List<ReactionCountProjection> findReactionCountsByMessageId(@Param("messageId") Long messageId);
 
     Optional<GroupChatReaction> findByGroupChatMessageAndReactedBy(GroupChatMessage groupChatMessage, OrgMember reactor);
+
+    void deleteAllByGroupChatMessage_Group(Group group);
 }
