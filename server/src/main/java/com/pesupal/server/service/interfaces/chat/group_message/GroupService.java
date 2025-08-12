@@ -20,4 +20,6 @@ public interface GroupService {
     ChatPreviewDto getGroupChatPreviewByChatId(String groupId);
 
     void reopenGroup(String groupId);
+
+    GroupDto updateGroup(String groupId, CreateGroupDto createGroupDto);
 }

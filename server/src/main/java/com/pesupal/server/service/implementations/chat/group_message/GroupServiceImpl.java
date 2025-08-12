@@ -257,4 +257,46 @@ public class GroupServiceImpl extends CurrentValueRetriever implements GroupServ
         // initializeGroupChatMember(group, orgMember);
         groupChatMessageService.addSystemMessage(group, orgMember.getDisplayName() + " has reopened the group.");
     }
+
+    /**
+     * Updates an existing group with the provided CreateGroupDto.
+     *
+     * @param groupId
+     * @param updateGroupDto
+     * @return
+     */
+    @Override
+    public GroupDto updateGroup(String groupId, CreateGroupDto updateGroupDto) {
+
+        OrgMember orgMember = getCurrentOrgMember();
+        Group group = getGroupByPublicId(groupId);
+
+        if (!GroupHelper.isGroupOwner(group, orgMember)) {
+            throw new PermissionDeniedException("You do not have permission to update this group.");
+        }
+
+        GroupChatMember groupChatMember = groupChatMemberService.getGroupMemberByGroupIdAndUserId(groupId, orgMember.getId());
+        if (!groupChatMember.isActive()) {
+            throw new PermissionDeniedException("You do not have permission to update this group as you are not an active member.");
+        }
+
+        GroupChatConfiguration groupChatConfiguration = groupChatConfigurationService.getConfigurationByGroupAndRole(group, groupChatMember.getRole());
+
+        if (updateGroupDto.getName() != null && !groupChatConfiguration.isChangeName()) {
+            throw new PermissionDeniedException("You do not have permission to update the group name.");
+        }
+
+        if (updateGroupDto.getDescription() != null && !groupChatConfiguration.isChangeDescription()) {
+            throw new PermissionDeniedException("You do not have permission to update the group description.");
+        }
+
+        if (updateGroupDto.getVisibility() != null && !groupChatConfiguration.isChangeVisibility()) {
+            throw new PermissionDeniedException("You do not have permission to update the group visibility.");
+        }
+
+        updateGroupDto.applyToGroup(group);
+        groupRepository.save(group);
+
+        return GroupDto.fromGroup(group);
+    }
 }
