@@ -16,7 +16,7 @@ async function uploadMultipleMedia(files, setFiles) {
             Object.assign(file, { mediaId, extension, size, uploaded: true });
             setFiles(prevFiles => prevFiles.map(f => f.file.name === file.file.name ? { ...f, ...file } : f));
         } catch ({ message }) {
-            throw { message };
+            setFiles(prevFiles => prevFiles.map(f => f.file.name === file.file.name ? { ...f, failedUpload: true, failedUploadReason: message } : f));
         }
     }
 }
