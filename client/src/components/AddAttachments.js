@@ -1,8 +1,8 @@
-import React, { useRef, useState } from "react";
+import { useRef } from "react";
 import "./AddAttachments.css";
 import { useDispatch } from "react-redux";
 import { showPopup } from "../store/reducers/PopupSlice";
-import utils from "../utils";
+import AttachmentItem from "./Chat/AttachmentItem";
 
 export default function AddAttachments({ allowedTypes = [], maxFileSize, maxFiles, files, setFiles }) {
 
@@ -66,23 +66,8 @@ export default function AddAttachments({ allowedTypes = [], maxFileSize, maxFile
 
             {files.length > 0 ? (
                 <div className="attachments-list w100 FRCS mB10">
-                    {files.map((fileObj, index) => (
-                        <div key={index} className="attachment-item">
-                            <div className="file-preview">
-                                {fileObj.preview ? (
-                                    <img src={fileObj.preview} alt={fileObj.file.name} className="file-thumbnail" />
-                                ) : (
-                                    <i className={`${utils.getFileIcon(fileObj)} file-icon`} />
-                                )}
-                            </div>
-                            <div className="file-info FCSS">
-                                <span className="file-name mB5">{fileObj.file.name}</span>
-                                <span className="file-size">
-                                    {utils.formatFileSize(fileObj.file.size)}
-                                </span>
-                            </div>
-                            <i className="fa fa-trash remove-btn" onClick={() => removeFile(index)} title="Remove file" />
-                        </div>
+                    {files.map((file, index) => (
+                        <AttachmentItem key={index} file={file} index={index} removeFile={removeFile} />
                     ))}
                 </div>
             ) : null}
