@@ -66,10 +66,12 @@ public interface GroupRepository extends JpaRepository<Group, Long> {
                 ON sender.user_id = msg.sender_id
                AND sender.org_id = :orgId
             
+            WHERE LOWER(g.name) LIKE LOWER(CONCAT('%', :search, '%'))
+            
             ORDER BY msg.created_at DESC
             LIMIT :limit OFFSET :offset;
             """, nativeQuery = true)
-    List<RecentGroupChatProjection> findRecentGroupChatsPaged(@Param("userId") Long userId, @Param("orgId") Long orgId, @Param("limit") int limit, @Param("offset") int offset);
+    List<RecentGroupChatProjection> findRecentGroupChatsPaged(@Param("userId") Long userId, @Param("orgId") Long orgId, @Param("search") String search, @Param("limit") int limit, @Param("offset") int offset);
 
 
     Optional<Group> findByPublicId(String publicId);

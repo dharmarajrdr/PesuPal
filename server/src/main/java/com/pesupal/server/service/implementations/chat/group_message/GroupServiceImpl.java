@@ -144,7 +144,7 @@ public class GroupServiceImpl extends CurrentValueRetriever implements GroupServ
      * @return
      */
     @Override
-    public RecentChatPagedDto getAllGroups(Pageable pageable) {
+    public RecentChatPagedDto getRecentGroups(String search, Pageable pageable) {
 
         int page = pageable.getPageNumber();
         int size = pageable.getPageSize();
@@ -159,7 +159,7 @@ public class GroupServiceImpl extends CurrentValueRetriever implements GroupServ
 
         orgMemberService.validateUserIsOrgMember(user, org);
 
-        List<RecentGroupChatProjection> rows = groupRepository.findRecentGroupChatsPaged(userId, orgId, size, offset);
+        List<RecentGroupChatProjection> rows = groupRepository.findRecentGroupChatsPaged(userId, orgId, search, size, offset);
 
         List<RecentChatDto> chats = rows.stream().map(proj -> {
             LastMessageDto lastMessage = new LastMessageDto();
