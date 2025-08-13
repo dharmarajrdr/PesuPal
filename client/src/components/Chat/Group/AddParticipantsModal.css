@@ -55,10 +55,12 @@
     padding: 10px 20px;
 }
 
-#add-participants-users-list .user-preview:hover .add-user-button {
+.user-preview:hover .remove-user-button,
+.user-preview:hover .add-user-button {
     display: flex;
 }
 
+.remove-user-button,
 .add-user-button {
     cursor: pointer;
     padding: 5px 10px;
@@ -66,6 +68,7 @@
     display: none;
 }
 
+.remove-user-button:hover,
 .add-user-button:hover {
     color: var(--primary-color);
 }

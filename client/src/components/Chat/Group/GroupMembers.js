@@ -1,9 +1,57 @@
 import { useEffect, useState } from 'react'
 import './GroupMembers.css';
-import UserPreview from '../../User/UserPreview';
+import { useDispatch, useSelector } from "react-redux";
 import { apiRequest } from '../../../http_request';
+import { showProfile } from '../../../store/reducers/ProfileSlice';
+import { hideConfirmationPopup, showConfirmationPopup } from '../../../store/reducers/ConfirmationPopupSlice';
+import { showPopup } from '../../../store/reducers/PopupSlice';
+import { decreaseParticipantsCount } from '../../../store/reducers/CurrentChatPreviewSlice';
 
-const RoleComponent = ({ role, members }) => {
+const UserPreview = ({ user_detail, groupId }) => {
+
+    const dispatch = useDispatch();
+    const { id, displayName, displayPicture } = user_detail || {};
+    const { groupChatConfiguration } = useSelector(state => state.currentChatPreviewSlice);
+    const { removeMember: memberRemovable } = groupChatConfiguration || {};
+
+    const removeMemberHandler = () => {
+        dispatch(showConfirmationPopup({
+            message: 'Are you sure you want to remove this member?',
+            options: [
+                {
+                    title: 'Remove',
+                    color: 'red',
+                    onClick: () => {
+                        apiRequest(`/api/v1/group-chat-member/remove-member`, 'DELETE', {
+                            'userId': id, groupId
+                        }).then(({ message }) => {
+                            dispatch(hideConfirmationPopup());
+                            dispatch(decreaseParticipantsCount());
+                            dispatch(showPopup({ message, type: 'success' }));
+                        }).catch(({ message }) => {
+                            dispatch(showPopup({ message, type: 'error' }));
+                        });
+                    }
+                },
+                {
+                    title: 'Cancel',
+                    color: 'gray',
+                    onClick: () => dispatch(hideConfirmationPopup())
+                }
+            ]
+        }));
+    }
+
+    return <div key={id} className='user-preview FRCB w100'>
+        <div className='FRCS'>
+            <img src={displayPicture} alt={displayName} className='img_30_30 mR10' onClick={() => { dispatch(showProfile(id)); }} />
+            <h6>{displayName}</h6>
+        </div>
+        {memberRemovable && <span className='fs12 color777 remove-user-button' onClick={removeMemberHandler}>Remove</span>}
+    </div>
+}
+
+const RoleComponent = ({ role, members, groupId }) => {
 
     const items = members[role] || [];
     const formattedRole = role.replace(/_/g, ' ').toLowerCase().replace(/\b\w/g, char => char.toUpperCase());
@@ -12,7 +60,7 @@ const RoleComponent = ({ role, members }) => {
         <h3>{formattedRole}</h3>
         <ul>
             {items.map(member => (
-                !member.archived && <UserPreview user_detail={member} key={member.id} />
+                !member.archived && <UserPreview user_detail={member} key={member.id} groupId={groupId} />
             ))}
         </ul>
     </div>
@@ -59,7 +107,7 @@ const GroupMembers = ({ groupId, setShowGroupMembers }) => {
                 <div id='group-members-content'>
                     {
                         Object.keys(members).length > 0 ? (
-                            roleOrder.map(role => <RoleComponent role={role} members={members} key={role} />)
+                            roleOrder.map(role => <RoleComponent role={role} members={members} key={role} groupId={groupId} />)
                         ) : <NoMembersFound message={error} />
                     }
                 </div>
