@@ -8,7 +8,6 @@ import com.pesupal.server.dto.response.chat.ChatPreviewDto;
 import com.pesupal.server.dto.response.chat.MessageDto;
 import com.pesupal.server.dto.response.chat.ReactMessageResponseDto;
 import com.pesupal.server.dto.response.chat.RecentChatPagedDto;
-import com.pesupal.server.helpers.CurrentValueRetriever;
 import com.pesupal.server.service.interfaces.chat.direct_message.DirectMessageReactionService;
 import com.pesupal.server.service.interfaces.chat.direct_message.DirectMessageService;
 import lombok.AllArgsConstructor;
@@ -21,7 +20,7 @@ import java.util.List;
 @RestController
 @AllArgsConstructor
 @RequestMapping("/api/v1/direct-messages")
-public class DirectMessageController extends CurrentValueRetriever {
+public class DirectMessageController {
 
     private final DirectMessageService directMessageService;
     private final DirectMessageReactionService directMessageReactionService;
@@ -35,10 +34,10 @@ public class DirectMessageController extends CurrentValueRetriever {
     }
 
     @GetMapping("/recent")
-    public ResponseEntity<ApiResponseDto> getRecentChats(@RequestParam Integer page, @RequestParam Integer size) {
+    public ResponseEntity<ApiResponseDto> getRecentChats(@RequestParam(required = false, defaultValue = "") String search, @RequestParam Integer page, @RequestParam Integer size) {
 
         Pageable pageable = Pageable.ofSize(size).withPage(page);
-        RecentChatPagedDto recentChats = directMessageService.getRecentChatsPaged(getCurrentOrgMember(), pageable);
+        RecentChatPagedDto recentChats = directMessageService.getRecentChatsPaged(search, pageable);
         return ResponseEntity.ok(new ApiResponseDto("Recent chats retrieved successfully", recentChats.getChats(), recentChats.getPageable()));
     }
 
