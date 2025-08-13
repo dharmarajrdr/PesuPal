@@ -20,7 +20,7 @@ public interface GroupChatMemberRepository extends JpaRepository<GroupChatMember
 
     Optional<GroupChatMember> findByGroupIdAndParticipantId(Long groupId, Long participantId);
 
-    boolean existsByGroup_PublicIdAndParticipant_PublicId(String groupId, String participantId);
+    boolean existsByGroup_PublicIdAndParticipant_PublicIdAndActiveIsTrue(String groupId, String participantId);
 
     Optional<GroupChatMember> findByGroup_PublicIdAndParticipantId(String groupId, Long userId);
 
@@ -45,6 +45,7 @@ public interface GroupChatMemberRepository extends JpaRepository<GroupChatMember
                         SELECT gm.participant.id
                         FROM GroupChatMember gm
                         WHERE gm.group.publicId = :groupId
+                        AND gm.active = true
                     )
                     ORDER BY u.displayName ASC
             """)

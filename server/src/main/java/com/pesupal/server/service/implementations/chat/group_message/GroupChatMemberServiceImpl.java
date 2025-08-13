@@ -233,7 +233,7 @@ public class GroupChatMemberServiceImpl extends CurrentValueRetriever implements
             throw new PermissionDeniedException("You do not have permission to add members to this group.");
         }
 
-        boolean isAlreadyMember = groupChatMemberRepository.existsByGroup_PublicIdAndParticipant_PublicId(addGroupMemberDto.getGroupId(), addGroupMemberDto.getUserId());
+        boolean isAlreadyMember = groupChatMemberRepository.existsByGroup_PublicIdAndParticipant_PublicIdAndActiveIsTrue(addGroupMemberDto.getGroupId(), addGroupMemberDto.getUserId());
         if (isAlreadyMember) {
             throw new ActionProhibitedException("User is already a member of this group.");
         }
