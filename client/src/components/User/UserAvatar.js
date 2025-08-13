@@ -1,11 +1,12 @@
 import { useState } from "react";
 import './UserAvatar.css';
 import utils from "../../utils";
+import { useDispatch } from "react-redux";
+import { showProfile } from "../../store/reducers/ProfileSlice";
 
+const UserAvatar = ({ displayPicture, displayName, userId }) => {
 
-
-const UserAvatar = ({ displayPicture, displayName, setShowProfile }) => {
-
+    const dispatch = useDispatch();
     const [imageError, setImageError] = useState(false);
 
     return (imageError || !displayPicture) ? (
@@ -17,7 +18,7 @@ const UserAvatar = ({ displayPicture, displayName, setShowProfile }) => {
             <i className="fa fa-user-circle user-avatar-placeholder" aria-hidden="true" />
         )
     ) : (
-        <img src={displayPicture} alt="User" className="img_40_40 cursP objectFitCover" onError={() => setImageError(true)} onClick={() => setShowProfile ? setShowProfile(true) : null} />
+        <img src={displayPicture} alt="User" className="img_40_40 cursP objectFitCover" onError={() => setImageError(true)} onClick={() => { dispatch(showProfile(userId)); }} />
     );
 };
 
