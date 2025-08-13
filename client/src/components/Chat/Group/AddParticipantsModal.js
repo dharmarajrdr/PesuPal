@@ -84,7 +84,12 @@ const UsersList = ({ users, groupId }) => {
 
 const AddParticipantsModal = ({ groupId, onClose }) => {
     return (
-        <div id='add-participants-modal' className='FCCC entire-screen-overlay' onClick={onClose}>
+        <div id='add-participants-modal' className='FCCC entire-screen-overlay' onClick={(e) => {
+            e.stopPropagation();
+            if (e.target.id === 'add-participants-modal') {
+                onClose();
+            }
+        }}>
             <div id='add-participants-modal-content' className='FCCS centerMe'>
                 <h3 id='add-participants-title' className='w100'>Add Participants</h3>
                 <SearchUsers groupId={groupId} />
