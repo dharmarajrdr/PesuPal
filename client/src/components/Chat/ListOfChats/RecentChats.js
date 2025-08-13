@@ -22,7 +22,7 @@ const NoChatsFound = () => {
     )
 }
 
-const RecentChats = () => {
+const RecentChats = ({ searchChat }) => {
 
     const [page, setPage] = useState(0);
     const [size, setSize] = useState(10);
@@ -36,7 +36,7 @@ const RecentChats = () => {
     useEffect(() => {
         const { recentChatsApi } = activeChatTab;
         if (!recentChatsApi) { return; }
-        apiRequest(`${recentChatsApi}?page=${page}&size=${size}`, 'GET').then(({ data }) => {
+        apiRequest(`${recentChatsApi}?search=${searchChat}&page=${page}&size=${size}`, 'GET').then(({ data }) => {
             dispatch(setRecentChats(data));
             setLoading(false);
         }).catch(({ message }) => {
