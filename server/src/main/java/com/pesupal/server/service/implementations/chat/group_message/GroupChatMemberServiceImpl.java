@@ -169,6 +169,46 @@ public class GroupChatMemberServiceImpl extends CurrentValueRetriever implements
     }
 
     /**
+     * Removes a member from a group.
+     *
+     * @param removeGroupMemberDto
+     */
+    @Override
+    public void removeMemberFromGroup(AddGroupMemberDto removeGroupMemberDto) {
+
+        OrgMember orgMember = getCurrentOrgMember();
+        GroupChatMember groupChatMember = getGroupMemberByGroupIdAndUserId(removeGroupMemberDto.getGroupId(), orgMember.getId());
+        Role role = groupChatMember.getRole();
+
+        Group group = groupService.getGroupByPublicId(removeGroupMemberDto.getGroupId());
+        OrgMember memberToRemove = orgMemberService.getOrgMemberByPublicId(removeGroupMemberDto.getUserId());
+
+        GroupChatConfiguration groupChatConfiguration = groupChatConfigurationService.getConfigurationByGroupAndRole(group, groupChatMember.getRole());
+
+        if (!groupChatConfiguration.isRemoveMember()) {
+            throw new PermissionDeniedException("You do not have permission to remove members from this group.");
+        }
+
+        if (orgMember.getPublicId().equals(memberToRemove.getPublicId())) {
+            throw new ActionProhibitedException("You cannot remove yourself from the group.");
+        }
+
+        if (group.getOwner().getPublicId().equals(memberToRemove.getPublicId())) {
+            throw new ActionProhibitedException("You cannot remove the group owner from the group.");
+        }
+
+        GroupChatMember memberToRemoveChatMember = getGroupMemberByGroupIdAndUserId(removeGroupMemberDto.getGroupId(), memberToRemove.getId());
+        Role memberToRemoveRole = memberToRemoveChatMember.getRole();
+
+        if (role.getLevel() < memberToRemoveRole.getLevel()) {
+            throw new PermissionDeniedException("The role of the member you are trying to remove is higher than yours. You do not have permission to remove this member.");
+        }
+
+        memberToRemoveChatMember.setActive(false);
+        groupChatMemberRepository.save(memberToRemoveChatMember);
+    }
+
+    /**
      * Adds a member to a group.
      *
      * @param addGroupMemberDto
@@ -193,7 +233,7 @@ public class GroupChatMemberServiceImpl extends CurrentValueRetriever implements
             throw new PermissionDeniedException("You do not have permission to add members to this group.");
         }
 
-        boolean isAlreadyMember = groupChatMemberRepository.existsByGroup_PublicIdAndParticipant_PublicId(addGroupMemberDto.getGroupId(), addGroupMemberDto.getUserId());
+        boolean isAlreadyMember = groupChatMemberRepository.existsByGroup_PublicIdAndParticipant_PublicIdAndActiveIsTrue(addGroupMemberDto.getGroupId(), addGroupMemberDto.getUserId());
         if (isAlreadyMember) {
             throw new ActionProhibitedException("User is already a member of this group.");
         }

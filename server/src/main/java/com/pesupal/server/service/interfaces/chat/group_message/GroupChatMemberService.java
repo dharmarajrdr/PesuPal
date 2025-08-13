@@ -25,4 +25,6 @@ public interface GroupChatMemberService {
     void leaveGroup(String groupId);
 
     List<UserPreviewDto> getNonParticipantMembers(String groupId, String search, Pageable pageable);
+
+    void removeMemberFromGroup(AddGroupMemberDto removeGroupMemberDto);
 }
