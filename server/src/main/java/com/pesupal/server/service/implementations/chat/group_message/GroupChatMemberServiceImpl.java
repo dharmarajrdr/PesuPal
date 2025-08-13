@@ -19,6 +19,7 @@ import com.pesupal.server.service.interfaces.chat.group_message.GroupChatMemberS
 import com.pesupal.server.service.interfaces.chat.group_message.GroupService;
 import com.pesupal.server.service.interfaces.org.OrgMemberService;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
@@ -148,6 +149,23 @@ public class GroupChatMemberServiceImpl extends CurrentValueRetriever implements
         groupChatMemberRepository.save(groupChatMember);
 
         groupChatMessageService.addSystemMessage(group, orgMember.getDisplayName() + " has left the group.");
+    }
+
+    /**
+     * Retrieves a list of users who are not participants of a group, optionally filtered by search criteria.
+     *
+     * @param groupId
+     * @param search
+     * @param pageable
+     * @return
+     */
+    @Override
+    public List<UserPreviewDto> getNonParticipantMembers(String groupId, String search, Pageable pageable) {
+
+        OrgMember orgMember = getCurrentOrgMember();
+        GroupChatMember groupChatMember = getGroupMemberByGroupIdAndUserId(groupId, orgMember.getId());
+
+        return groupChatMemberRepository.getNonParticipantMembersByGroupId(groupChatMember.getGroup().getPublicId(), search, pageable).getContent().stream().map(UserPreviewDto::fromOrgMember).toList();
     }
 
     /**

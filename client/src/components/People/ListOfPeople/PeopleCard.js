@@ -3,10 +3,11 @@ import { StatusIndicator } from '../../Auth/utils';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from "react-redux";
 import { showPopup } from '../../../store/reducers/PopupSlice';
+import { showProfile } from '../../../store/reducers/ProfileSlice';
 
-const PeopleCard = ({ person, setShowProfile }) => {
+const PeopleCard = ({ person }) => {
 
-    const { displayName, displayPicture, designation, status, id, chatId } = person;
+    const { displayName, displayPicture, designation, status, userId, chatId } = person || {};
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -20,7 +21,7 @@ const PeopleCard = ({ person, setShowProfile }) => {
     }
 
     return (
-        <div className='FCCC PeopleCard' onClick={() => setShowProfile(true)}>
+        <div className='FCCC PeopleCard' onClick={() => { dispatch(showProfile(userId)); }}>
             <i className="fa fa-ellipsis-vertical three_dots"></i>
             <div className='FCCC mB5 img_name_dept'>
                 <div className='FRCC profile_picture_container mB10'>

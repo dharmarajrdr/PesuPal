@@ -1,6 +1,7 @@
 package com.pesupal.server.service.implementations.chat.group_message;
 
 import com.pesupal.server.dto.request.chat.group_message.CreateGroupDto;
+import com.pesupal.server.dto.request.chat.group_message.UpdateGroupChatConfigurationDto;
 import com.pesupal.server.dto.response.chat.ChatPreviewDto;
 import com.pesupal.server.dto.response.chat.LastMessageDto;
 import com.pesupal.server.dto.response.chat.RecentChatDto;
@@ -226,9 +227,8 @@ public class GroupServiceImpl extends CurrentValueRetriever implements GroupServ
         chatPreviewDto.setDisplayName(group.getName());
         chatPreviewDto.setDescription(group.getDescription());
         chatPreviewDto.setVisibility(group.getVisibility());
-        chatPreviewDto.setMessagePostable(groupChatConfiguration.isPostMessage());
-        chatPreviewDto.setMessageDeletable(groupChatConfiguration.isDeleteMessage());
         chatPreviewDto.setDisplayPicture(group.getDisplayPicture());
+        chatPreviewDto.setGroupChatConfiguration(UpdateGroupChatConfigurationDto.fromGroupChatConfiguration(groupChatConfiguration));
         chatPreviewDto.setParticipantsCount(group.getMembers().stream().filter(GroupChatMember::isActive).toList().size());
         Optional<GroupChatPinned> pinnedGroupChat = groupchatPinnedService.getPinnedGroupByPinnedByAndGroup(orgMember, group);
         pinnedGroupChat.ifPresent(groupChatPinned -> chatPreviewDto.setPinnedId(groupChatPinned.getId()));

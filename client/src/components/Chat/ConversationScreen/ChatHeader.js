@@ -17,6 +17,7 @@ import { showPopup } from '../../../store/reducers/PopupSlice';
 import { clearMessages } from '../../../store/reducers/ConversationSlice';
 import GroupPermissionModal from '../Group/GroupPermissionModal';
 import UpdateGroupModal from '../Group/UpdateGroupModal';
+import AddParticipantsModal from '../Group/AddParticipantsModal';
 
 const ParticipantsCount = ({ count, setShowGroupMembers }) => {
     return (
@@ -32,14 +33,15 @@ const ChatHeader = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const showChatHeaderOptionsModalSlice = useSelector(state => state.showChatHeaderOptionsModalSlice);
-    const [showProfile, setShowProfile] = useState(false);
     const [showUpdateGroupModal, setShowUpdateGroupModal] = useState(false);
+    const [showAddParticipantsModal, setShowAddParticipantsModal] = useState(false);
     const [showGroupPermission, setShowGroupPermission] = useState(false);
     const [showGroupMembers, setShowGroupMembers] = useState(false);
     const currentChatPreview = useSelector(state => state.currentChatPreviewSlice);
     const [pinnedId, setPinnedIdState] = useState(null);
     const activeChatTab = useSelector(state => state.activeChatTab);
-    const { chatId, displayName, displayPicture, userId, participantsCount, groupActive, active } = currentChatPreview || {};
+    const { chatId, displayName, displayPicture, userId, participantsCount, groupActive, active, groupChatConfiguration } = currentChatPreview || {};
+    const { clearChat: chatClearable, leaveGroup: groupLeaveable, deleteGroup: groupDeletable, addMember: groupAddable } = groupChatConfiguration || {};
 
     const closeChatHandler = () => {
         dispatch(setActiveRecentChat(null));
@@ -186,9 +188,10 @@ const ChatHeader = () => {
             }
         },
         {
-            name: activeChatTab.name == 'groupMessage' && active && groupActive ? 'Add Participant' : null,
+            name: activeChatTab.name == 'groupMessage' && active && groupActive && groupAddable ? 'Add Participant' : null,
             icon: 'fa fa-user-plus',
             onClick: () => {
+                setShowAddParticipantsModal(true);
                 dispatch(setShowChatHeaderOptionsModal(false));
             }
         },
@@ -202,7 +205,7 @@ const ChatHeader = () => {
         },
         { name: 'View Media', icon: 'fa fa-image' },
         {
-            name: activeChatTab.name == 'groupMessage' && active && groupActive ? 'Clear Chat' : null,
+            name: activeChatTab.name == 'groupMessage' && active && groupActive && chatClearable ? 'Clear Chat' : null,
             icon: 'fa fa-delete-left',
             onClick: () => {
                 clearChatHandler();
@@ -210,7 +213,7 @@ const ChatHeader = () => {
             }
         },
         {
-            name: activeChatTab.name == 'groupMessage' && active && groupActive ? 'Leave Group' : null,
+            name: activeChatTab.name == 'groupMessage' && active && groupActive && groupLeaveable ? 'Leave Group' : null,
             icon: 'fa fa-sign-out-alt',
             onClick: () => {
                 leaveGroupHandler();
@@ -218,7 +221,7 @@ const ChatHeader = () => {
             }
         },
         {
-            name: activeChatTab.name == 'groupMessage' && active && groupActive ? 'Delete Group' : null,
+            name: activeChatTab.name == 'groupMessage' && active && groupActive && groupDeletable ? 'Delete Group' : null,
             icon: 'fa fa-trash',
             onClick: () => {
                 deleteGroupHandler();
@@ -229,16 +232,16 @@ const ChatHeader = () => {
 
     return (
         <div className="chat-header FRCB w100">
-            {showProfile && <Profile userId={userId} setShowProfile={setShowProfile} />}
             {showGroupMembers && <GroupMembers groupId={chatId} setShowGroupMembers={setShowGroupMembers} />}
             {showGroupPermission && <GroupPermissionModal groupId={chatId} onClose={(e) => setShowGroupPermission(false)} />}
             {showUpdateGroupModal && <UpdateGroupModal setShowCreateGroupModal={setShowUpdateGroupModal} groupData={currentChatPreview} />}
-            <div className='FRCS'>
-                <UserAvatar displayPicture={displayPicture} displayName={displayName} setShowProfile={setShowProfile} />
+            {showAddParticipantsModal && <AddParticipantsModal groupId={chatId} onClose={(e) => setShowAddParticipantsModal(false)} />}
+            <div className='FRCS' id='chat-header-left'>
+                <UserAvatar displayPicture={displayPicture} displayName={displayName} userId={userId} />
                 <p className="name mL10">{displayName}</p>
                 {participantsCount > 0 && active && <ParticipantsCount count={participantsCount} setShowGroupMembers={setShowGroupMembers} />}
             </div>
-            <div className='FRCE'>
+            <div className='FRCE' id='chat-header-right'>
                 <i className='header-icons fa fa-phone' id='chat-header-options' />
                 <i className='header-icons fa fa-video mL10' id='chat-header-options' />
                 {showChatHeaderOptionsModalSlice && <OptionsModal options={options} />}
@@ -250,4 +253,4 @@ const ChatHeader = () => {
 };
 
 
-export default ChatHeader
+export default ChatHeader;

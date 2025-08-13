@@ -87,6 +87,7 @@
     border: 1px solid #eee;
 }
 
+.chat-messages .row .message.received .message-media .image-not-found p,
 .chat-messages .row .message.received .message-media.media-doc i,
 .chat-messages .row .message.received .message-media.media-doc span,
 .chat-messages .row .message.received .message-content div {
@@ -275,6 +276,7 @@
     color: #eee;
 }
 
+.chat-messages .row .message.sent .message-media .image-not-found p,
 .chat-messages .row .message.sent .message-media.media-doc span,
 .chat-messages .row .message.sent .message-meta .delivery-status,
 .chat-messages .row .message.sent .message-meta .time {
@@ -327,6 +329,16 @@
     animation: wave-hands 2s ease-in-out infinite;
     color: #eec66d;
     font-size: 17px;
+}
+
+.image-not-found {
+    width: 100%;
+    padding: 30px 0px 10px 0px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 13px;
+    font-weight: 300;
 }
 
 @keyframes wave-hands {

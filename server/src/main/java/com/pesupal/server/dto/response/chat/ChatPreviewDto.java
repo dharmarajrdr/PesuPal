@@ -1,6 +1,7 @@
 package com.pesupal.server.dto.response.chat;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.pesupal.server.dto.request.chat.group_message.UpdateGroupChatConfigurationDto;
 import com.pesupal.server.enums.Visibility;
 import lombok.Data;
 
@@ -30,7 +31,5 @@ public class ChatPreviewDto {
 
     private Boolean reopenable;
 
-    private Boolean messagePostable;
-
-    private Boolean messageDeletable;
+    private UpdateGroupChatConfigurationDto groupChatConfiguration;
 }

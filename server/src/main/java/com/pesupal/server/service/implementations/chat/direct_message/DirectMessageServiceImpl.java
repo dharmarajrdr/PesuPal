@@ -309,8 +309,6 @@ public class DirectMessageServiceImpl extends CurrentValueRetriever implements D
         chatPreviewDto.setUserId(otherUser.getPublicId());
         chatPreviewDto.setChatId(chatId);
         chatPreviewDto.setActive(!otherUser.isArchived());
-        chatPreviewDto.setMessageDeletable(true);
-        chatPreviewDto.setMessagePostable(true);
         chatPreviewDto.setDisplayName(otherUser.getDisplayName());
         chatPreviewDto.setDisplayPicture(otherUser.getDisplayPicture());
         Optional<PinnedDirectMessage> pinnedDirectMessage = pinnedDirectMessageService.getPinnedDirectMessageByPinnedByAndDirectMessageChat(currentUser, directMessageChat);

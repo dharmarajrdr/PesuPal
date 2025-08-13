@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import './CreateGroupModal.css';
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { apiRequest } from '../../../http_request';
 import GroupVisibility from './GroupVisibility';
 import { showPopup } from '../../../store/reducers/PopupSlice';
@@ -16,6 +16,10 @@ const UpdateGroupModal = ({ setShowCreateGroupModal, groupData }) => {
     const [groupName, setGroupName] = useState(name);
     const [groupDescription, setGroupDescription] = useState(description);
     const [isPublic, setIsPublic] = useState(visibility === 'PUBLIC');
+
+    const currentChatPreview = useSelector(state => state.currentChatPreviewSlice);
+    const { groupChatConfiguration } = currentChatPreview || {};
+    const { changeName: groupNameEditable, changeDescription: groupDescriptionEditable, changeVisibility: groupVisibilityEditable } = groupChatConfiguration || {};
 
     const closeCreateGroupModal = () => {
         setGroupName('');
@@ -64,12 +68,12 @@ const UpdateGroupModal = ({ setShowCreateGroupModal, groupData }) => {
         <div className="FCCC entire-screen-overlay" id='update-group-modal'>
             <div id="update-group-modal-content" className="FCCC modal-box">
 
-                <h2>Update Group</h2>
+                <h2>Group Info</h2>
 
                 <div className='FCSS w100'>
-                    <input type="text" placeholder="Enter group name" value={groupName} onChange={(e) => setGroupName(e.target.value)} className="group-name-input" />
-                    <input type="text" placeholder="Enter group description (optional)" value={groupDescription} onChange={(e) => setGroupDescription(e.target.value)} className="group-description-input" />
-                    <GroupVisibility isPublic={isPublic} setIsPublic={setIsPublic} />
+                    <input type="text" placeholder="Enter group name" value={groupName} onChange={(e) => groupNameEditable ? setGroupName(e.target.value) : null} className="group-name-input" />
+                    <input type="text" placeholder="Enter group description (optional)" value={groupDescription} onChange={(e) => groupDescriptionEditable ? setGroupDescription(e.target.value) : null} className="group-description-input" />
+                    <GroupVisibility isPublic={isPublic} setIsPublic={setIsPublic} groupVisibilityEditable={groupVisibilityEditable} />
                 </div>
 
                 <div className='FRCC w100'>

@@ -34,6 +34,8 @@ const reactionsList = [
 
 const MessageActions = ({ id, isCurrentUser, messageDeletable }) => {
 
+    messageDeletable = messageDeletable == undefined ? true : messageDeletable;
+
     const dispatch = useDispatch();
     const { reactMessageApi, deleteMessageApi } = useSelector(state => state.activeChatTab) || {};
 

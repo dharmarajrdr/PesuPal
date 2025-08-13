@@ -41,6 +41,26 @@ public class UpdateGroupChatConfigurationDto {
 
     private Boolean roleUpdate;
 
+    public static UpdateGroupChatConfigurationDto fromGroupChatConfiguration(GroupChatConfiguration groupChatConfiguration) {
+        
+        UpdateGroupChatConfigurationDto dto = new UpdateGroupChatConfigurationDto();
+        dto.setAddMember(groupChatConfiguration.isAddMember());
+        dto.setRemoveMember(groupChatConfiguration.isRemoveMember());
+        dto.setChangeName(groupChatConfiguration.isChangeName());
+        dto.setChangeDescription(groupChatConfiguration.isChangeDescription());
+        dto.setChangeVisibility(groupChatConfiguration.isChangeVisibility());
+        dto.setDeleteGroup(groupChatConfiguration.isDeleteGroup());
+        dto.setLeaveGroup(groupChatConfiguration.isLeaveGroup());
+        dto.setChangeProfilePicture(groupChatConfiguration.isChangeProfilePicture());
+        dto.setViewMembers(groupChatConfiguration.isViewMembers());
+        dto.setPostMessage(groupChatConfiguration.isPostMessage());
+        dto.setPinMessage(groupChatConfiguration.isPinMessage());
+        dto.setDeleteMessage(groupChatConfiguration.isDeleteMessage());
+        dto.setClearChat(groupChatConfiguration.isClearChat());
+        dto.setRoleUpdate(groupChatConfiguration.isRoleUpdate());
+        return dto;
+    }
+
     public void applyToGroupChatConfiguration(GroupChatConfiguration groupChatConfiguration) {
 
         if (addMember != null) {
