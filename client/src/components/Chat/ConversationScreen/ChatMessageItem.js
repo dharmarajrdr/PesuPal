@@ -15,14 +15,22 @@ const extensionTagMapper = {
     "zip": ["zip", "rar", "tar", "gz"]
 }
 
+const ImageNotFound = () => {
+    return <div className="image-not-found FRCC">
+        <i className='fa fa-image colorAAA mR5' />
+        <p>Error loading image</p>
+    </div>;
+}
+
 const ImageDisplayer = ({ media }) => {
 
     const { mediaUrl } = media || {};
+    const [imageError, setImageError] = useState(false);
     const [showFullScreen, setShowFullScreen] = useState(false);
 
     return mediaUrl ? <div className="message-media">
         {showFullScreen && <FullScreenImageView mediaUrl={mediaUrl} onClose={() => setShowFullScreen(false)} />}
-        <img src={mediaUrl} alt="Media" className="media-image cursP" onClick={() => setShowFullScreen(true)} />
+        {imageError ? <ImageNotFound /> : <img src={mediaUrl} alt="Media" className="media-image cursP" onError={() => setImageError(true)} onClick={() => setShowFullScreen(true)} />}
     </div> : null;
 }
 

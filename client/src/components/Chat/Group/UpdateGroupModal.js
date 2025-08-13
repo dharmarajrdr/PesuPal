@@ -64,7 +64,7 @@ const UpdateGroupModal = ({ setShowCreateGroupModal, groupData }) => {
         <div className="FCCC entire-screen-overlay" id='update-group-modal'>
             <div id="update-group-modal-content" className="FCCC modal-box">
 
-                <h2>Update Group</h2>
+                <h2>Group Info</h2>
 
                 <div className='FCSS w100'>
                     <input type="text" placeholder="Enter group name" value={groupName} onChange={(e) => setGroupName(e.target.value)} className="group-name-input" />
