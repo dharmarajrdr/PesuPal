@@ -331,7 +331,7 @@ public class OrgMemberServiceImpl implements OrgMemberService {
     public List<UserPreviewDto> getSearchedOrgMembers(OrgMember orgMember, String search, int page, int size) {
 
         Long orgId = orgMember.getOrg().getId();
-        List<OrgMember> orgMembers = orgMemberRepository.fuzzySearchOrgMembers(orgId, search, PageRequest.of(page, size)).getContent();
+        List<OrgMember> orgMembers = orgMemberRepository.searchOrgMembers(orgId, search, PageRequest.of(page, size)).getContent();
         return orgMembers.stream().map(UserPreviewDto::fromOrgMember).toList();
     }
 
