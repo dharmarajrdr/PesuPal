@@ -35,6 +35,13 @@ public class GroupChatMemberController {
         return ResponseEntity.ok().body(new ApiResponseDto("Left group successfully"));
     }
 
+    @DeleteMapping("/remove-member")
+    public ResponseEntity<ApiResponseDto> removeMemberFromGroup(@RequestBody AddGroupMemberDto removeGroupMemberDto) {
+
+        groupChatMemberService.removeMemberFromGroup(removeGroupMemberDto);
+        return ResponseEntity.ok().body(new ApiResponseDto("Member removed successfully"));
+    }
+
     @PostMapping("/add-member")
     public ResponseEntity<ApiResponseDto> addMemberToGroup(@RequestBody AddGroupMemberDto addGroupMemberDto) {
 
