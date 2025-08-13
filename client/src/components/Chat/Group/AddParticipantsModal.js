@@ -1,17 +1,18 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import './AddParticipantsModal.css';
 import { useDispatch } from "react-redux";
-import Profile from '../../OthersProfile/Profile';
 import { hideConfirmationPopup, showConfirmationPopup } from '../../../store/reducers/ConfirmationPopupSlice';
 import { apiRequest } from '../../../http_request';
 import { showPopup } from '../../../store/reducers/PopupSlice';
 import { increaseParticipantsCount, updateCurrentChatPreview } from '../../../store/reducers/CurrentChatPreviewSlice';
+import Loader from '../../Loader';
+import { showProfile } from '../../../store/reducers/ProfileSlice';
 
-const SearchUsers = () => {
+const SearchUsers = ({ searchQuery, setSearchQuery }) => {
     return (
         <div id='search-users' className='w100 FRCC'>
             <i className='fa fa-search mR5' id='search-icon'></i>
-            <input type='text' placeholder='Search users...' className='w100' />
+            <input type='text' placeholder='Search users...' className='w100' value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
         </div>
     );
 }
@@ -19,8 +20,7 @@ const SearchUsers = () => {
 const AddUser = ({ user, groupId }) => {
 
     const dispatch = useDispatch();
-    const { userId, displayPicture, displayName, email } = user || {};
-    const [showProfile, setShowProfile] = useState(false);
+    const { id, displayPicture, displayName, email } = user || {};
 
     const addUserHandler = () => {
         dispatch(showConfirmationPopup({
@@ -30,7 +30,7 @@ const AddUser = ({ user, groupId }) => {
                     title: 'Add',
                     color: 'green',
                     onClick: () => {
-                        apiRequest(`/api/v1/group-chat-member/add-member`, 'POST', { userId, groupId }).then(({ message }) => {
+                        apiRequest(`/api/v1/group-chat-member/add-member`, 'POST', { userId: id, groupId }).then(({ message }) => {
                             dispatch(hideConfirmationPopup());
                             dispatch(increaseParticipantsCount());
                             dispatch(showPopup({ message, type: 'success' }));
@@ -48,10 +48,9 @@ const AddUser = ({ user, groupId }) => {
         }));
     }
 
-    return <div key={userId} className='user-preview FRCB w100'>
-        {showProfile && <Profile userId={userId} setShowProfile={setShowProfile} />}
+    return <div key={id} className='user-preview FRCB w100'>
         <div className='FRCS'>
-            <img src={displayPicture} alt={displayName} className='img_30_30 mR10' onClick={() => setShowProfile(true)} />
+            <img src={displayPicture} alt={displayName} className='img_30_30 mR10' onClick={() => { dispatch(showProfile(id)); }} />
             <div className='FCSS'>
                 <h6>{displayName}</h6>
                 <span className='fs10 mT2 color999'>{email}</span>
@@ -77,12 +76,40 @@ const UsersList = ({ users, groupId }) => {
 
     return <div className='w100' id='add-participants-users-list'>
         {users.length ?
-            users.map((user) => <AddUser user={user} groupId={groupId} />) :
+            users.map((user, index) => <AddUser key={index} user={user} groupId={groupId} />) :
             <NoUserFound />}
     </div>
 }
 
 const AddParticipantsModal = ({ groupId, onClose }) => {
+
+    const debounceDelay = 1000; // Delay in milliseconds
+    const dispatch = useDispatch();
+    const [users, setUsers] = useState([]);
+    const [loader, setLoader] = useState(true);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [page, setPage] = useState(0);
+    const [size, setSize] = useState(10);
+
+    const getUsers = () => {
+        apiRequest(`/api/v1/group-chat-member/non-participants/${groupId}?search=${searchQuery}&page=${page}&size=${size}`, 'GET').then(({ data }) => {
+            setUsers(data);
+            setLoader(false);
+        }).catch(({ message }) => {
+            setUsers([]);
+            dispatch(showPopup({ message, type: 'error' }));
+        });
+    }
+
+    // Fetch users when the component mounts
+    useEffect(getUsers, []);
+
+    // Fetch users when the search query changes - Debounce with a delay
+    useEffect(() => {
+        const timer = setTimeout(getUsers, debounceDelay);
+        return () => clearTimeout(timer);
+    }, [searchQuery]);
+
     return (
         <div id='add-participants-modal' className='FCCC entire-screen-overlay' onClick={(e) => {
             e.stopPropagation();
@@ -92,8 +119,10 @@ const AddParticipantsModal = ({ groupId, onClose }) => {
         }}>
             <div id='add-participants-modal-content' className='FCCS centerMe'>
                 <h3 id='add-participants-title' className='w100'>Add Participants</h3>
-                <SearchUsers groupId={groupId} />
-                <UsersList users={[]} groupId={groupId} />
+                {loader ? <Loader /> : <>
+                    <SearchUsers groupId={groupId} setSearchQuery={setSearchQuery} />
+                    <UsersList users={users} groupId={groupId} />
+                </>}
             </div>
         </div>
     )
