@@ -45,7 +45,7 @@ public interface DirectMessageRepository extends JpaRepository<DirectMessage, Lo
                 dm.deleted AS deleted
             
             FROM direct_message dm
-
+            
             JOIN direct_message_chat dmc ON dmc.id = dm.direct_message_chat_id
             
             JOIN org_member om ON om.user_id = CASE
@@ -64,13 +64,14 @@ public interface DirectMessageRepository extends JpaRepository<DirectMessage, Lo
             ) latest_msg ON dm.id = latest_msg.latest_id
             
             WHERE dm.org_id = :orgId
-              AND (dm.sender_id = :userId OR dm.receiver_id = :userId)
+                AND (dm.sender_id = :userId OR dm.receiver_id = :userId)
+                AND (LOWER(om.display_name) LIKE LOWER(CONCAT('%', :search, '%')) OR LOWER(sender_member.display_name) LIKE LOWER(CONCAT('%', :search, '%')))
             
             ORDER BY dm.created_at DESC
             LIMIT :limit OFFSET :offset
             """, nativeQuery = true)
-    List<RecentPrivateChatProjection> findRecentChatsPaged(@Param("userId") Long userId, @Param("orgId") Long orgId, @Param("limit") int limit, @Param("offset") int offset);
-    
+    List<RecentPrivateChatProjection> findRecentChatsPaged(@Param("userId") Long userId, @Param("orgId") Long orgId, @Param("search") String search, @Param("limit") int limit, @Param("offset") int offset);
+
 
     @Query(value = """
             SELECT COUNT(*)

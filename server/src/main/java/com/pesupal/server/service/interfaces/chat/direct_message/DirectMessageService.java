@@ -6,7 +6,6 @@ import com.pesupal.server.dto.response.chat.MessageDto;
 import com.pesupal.server.dto.response.chat.RecentChatPagedDto;
 import com.pesupal.server.model.chat.direct_message.DirectMessage;
 import com.pesupal.server.model.chat.direct_message.DirectMessageChat;
-import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.service.interfaces.chat.ChatService;
 import org.springframework.data.domain.Pageable;
 
@@ -24,7 +23,7 @@ public interface DirectMessageService extends ChatService {
 
     void deleteMessage(Long messageId);
 
-    RecentChatPagedDto getRecentChatsPaged(OrgMember orgMember, Pageable pageable);
+    RecentChatPagedDto getRecentChatsPaged(String search, Pageable pageable);
 
     ChatPreviewDto getDirectMessagePreviewByChatId(String chatId);
 }

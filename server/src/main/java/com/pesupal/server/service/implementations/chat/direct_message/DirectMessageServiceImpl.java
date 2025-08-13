@@ -198,17 +198,18 @@ public class DirectMessageServiceImpl extends CurrentValueRetriever implements D
     /**
      * Retrieves recent chats for a user in a specific organization.
      *
-     * @param orgMember
+     * @param search
      * @param pageable
      * @return
      */
     @Override
-    public RecentChatPagedDto getRecentChatsPaged(OrgMember orgMember, Pageable pageable) {
+    public RecentChatPagedDto getRecentChatsPaged(String search, Pageable pageable) {
 
         int page = pageable.getPageNumber();
         int size = pageable.getPageSize();
         int offset = page * size;
 
+        OrgMember orgMember = getCurrentOrgMember();
         Long userId = orgMember.getId();
         Long orgId = orgMember.getOrg().getId();
 
@@ -217,7 +218,7 @@ public class DirectMessageServiceImpl extends CurrentValueRetriever implements D
 
         orgMemberService.validateUserIsOrgMember(user, org);
 
-        List<RecentPrivateChatProjection> rows = directMessageRepository.findRecentChatsPaged(userId, orgId, size, offset);
+        List<RecentPrivateChatProjection> rows = directMessageRepository.findRecentChatsPaged(userId, orgId, search, size, offset);
 
         List<RecentChatDto> chats = rows.stream().map(projection -> {
             LastMessageDto lastMessage = new LastMessageDto();
