@@ -163,6 +163,10 @@
   padding-top: 10px;
 }
 
+.mT2 {
+  margin-top: 2px;
+}
+
 .mT5 {
   margin-top: 5px;
 }
@@ -257,6 +261,10 @@
 
 .colorAAA {
   color: #aaa;
+}
+
+.color999 {
+  color: #999;
 }
 
 .color555 {
