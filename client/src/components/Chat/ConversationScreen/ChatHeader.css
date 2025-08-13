@@ -21,7 +21,8 @@
     line-height: 40px;
 }
 
-.chat-header>div {
+#chat-header-left,
+#chat-header-right {
     position: relative;
 }
 

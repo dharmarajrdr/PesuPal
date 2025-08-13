@@ -17,6 +17,7 @@ import { showPopup } from '../../../store/reducers/PopupSlice';
 import { clearMessages } from '../../../store/reducers/ConversationSlice';
 import GroupPermissionModal from '../Group/GroupPermissionModal';
 import UpdateGroupModal from '../Group/UpdateGroupModal';
+import AddParticipantsModal from '../Group/AddParticipantsModal';
 
 const ParticipantsCount = ({ count, setShowGroupMembers }) => {
     return (
@@ -34,6 +35,7 @@ const ChatHeader = () => {
     const showChatHeaderOptionsModalSlice = useSelector(state => state.showChatHeaderOptionsModalSlice);
     const [showProfile, setShowProfile] = useState(false);
     const [showUpdateGroupModal, setShowUpdateGroupModal] = useState(false);
+    const [showAddParticipantsModal, setShowAddParticipantsModal] = useState(false);
     const [showGroupPermission, setShowGroupPermission] = useState(false);
     const [showGroupMembers, setShowGroupMembers] = useState(false);
     const currentChatPreview = useSelector(state => state.currentChatPreviewSlice);
@@ -189,6 +191,7 @@ const ChatHeader = () => {
             name: activeChatTab.name == 'groupMessage' && active && groupActive ? 'Add Participant' : null,
             icon: 'fa fa-user-plus',
             onClick: () => {
+                setShowAddParticipantsModal(true);
                 dispatch(setShowChatHeaderOptionsModal(false));
             }
         },
@@ -233,12 +236,13 @@ const ChatHeader = () => {
             {showGroupMembers && <GroupMembers groupId={chatId} setShowGroupMembers={setShowGroupMembers} />}
             {showGroupPermission && <GroupPermissionModal groupId={chatId} onClose={(e) => setShowGroupPermission(false)} />}
             {showUpdateGroupModal && <UpdateGroupModal setShowCreateGroupModal={setShowUpdateGroupModal} groupData={currentChatPreview} />}
-            <div className='FRCS'>
+            {showAddParticipantsModal && <AddParticipantsModal groupId={chatId} onClose={(e) => setShowAddParticipantsModal(false)} />}
+            <div className='FRCS' id='chat-header-left'>
                 <UserAvatar displayPicture={displayPicture} displayName={displayName} setShowProfile={setShowProfile} />
                 <p className="name mL10">{displayName}</p>
                 {participantsCount > 0 && active && <ParticipantsCount count={participantsCount} setShowGroupMembers={setShowGroupMembers} />}
             </div>
-            <div className='FRCE'>
+            <div className='FRCE' id='chat-header-right'>
                 <i className='header-icons fa fa-phone' id='chat-header-options' />
                 <i className='header-icons fa fa-video mL10' id='chat-header-options' />
                 {showChatHeaderOptionsModalSlice && <OptionsModal options={options} />}
