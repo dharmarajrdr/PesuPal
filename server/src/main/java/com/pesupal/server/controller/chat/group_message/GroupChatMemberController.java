@@ -7,6 +7,7 @@ import com.pesupal.server.dto.response.chat.group_message.GroupDto;
 import com.pesupal.server.enums.Role;
 import com.pesupal.server.service.interfaces.chat.group_message.GroupChatMemberService;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -39,6 +40,17 @@ public class GroupChatMemberController {
 
         UserPreviewDto userPreviewDto = groupChatMemberService.addMemberToGroup(addGroupMemberDto);
         return ResponseEntity.ok().body(new ApiResponseDto("Member added successfully", userPreviewDto));
+    }
+
+    @GetMapping("/non-participants/{groupId}")
+    public ResponseEntity<ApiResponseDto> getNonParticipantMembers(@PathVariable String groupId,
+                                                                   @RequestParam(required = false) String search,
+                                                                   @RequestParam(defaultValue = "0") int page,
+                                                                   @RequestParam(defaultValue = "25") int size) {
+
+        Pageable pageable = Pageable.ofSize(size).withPage(page);
+        List<UserPreviewDto> nonParticipantMembers = groupChatMemberService.getNonParticipantMembers(groupId, search, pageable);
+        return ResponseEntity.ok().body(new ApiResponseDto("Non-participant members retrieved successfully", nonParticipantMembers));
     }
 
     @GetMapping("/members/{groupId}")
