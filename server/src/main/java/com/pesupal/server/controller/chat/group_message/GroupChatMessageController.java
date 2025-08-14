@@ -1,5 +1,6 @@
 package com.pesupal.server.controller.chat.group_message;
 
+import com.pesupal.server.dto.request.chat.direct_message.ChatMessageDto;
 import com.pesupal.server.dto.request.chat.group_message.GetGroupConversationDto;
 import com.pesupal.server.dto.response.ApiResponseDto;
 import com.pesupal.server.dto.response.chat.MessageDto;
@@ -45,5 +46,12 @@ public class GroupChatMessageController extends CurrentValueRetriever {
 
         groupChatMessageService.markAllGroupMessagesAsRead(groupId);
         return ResponseEntity.ok().body(new ApiResponseDto("All group messages marked as read successfully"));
+    }
+
+    @PostMapping("/schedule")
+    public ResponseEntity<ApiResponseDto> scheduleGroupChatMessage(@RequestBody ChatMessageDto chatMessageDto) {
+
+        groupChatMessageService.schedule(chatMessageDto);
+        return ResponseEntity.ok(new ApiResponseDto("Message scheduled successfully"));
     }
 }
