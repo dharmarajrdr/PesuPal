@@ -1,0 +1,39 @@
+#schedule-picker-container {
+    position: absolute;
+    top: -75px;
+    right: -115px;
+    transform: translate(-50%, -50%);
+    background-color: #fff;
+    padding: 20px;
+    box-shadow: 0 4px 12px var(--box-shadow-color);
+    border-radius: 8px;
+    z-index: 1000;
+}
+
+#schedule-picker-container input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #007bff;
+    border-radius: 4px;
+    outline: none;
+    margin-bottom: 5px;
+}
+
+#schedule-picker-container div button {
+    padding: 7px 12px;
+    border: none;
+    border-radius: 5px;
+    outline: none;
+    cursor: pointer;
+}
+
+#schedule-picker-container div #schedule-button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+}
+
+#schedule-picker-container div #cancel-button {
+    background-color: gray;
+    color: #fff;
+}
