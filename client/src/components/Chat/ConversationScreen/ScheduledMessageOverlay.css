@@ -1,0 +1,18 @@
+#schedule-messages-container {
+    background-color: #fff;
+    width: 50%;
+    height: 100%;
+    position: relative;
+    left: 50%;
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+}
+
+#scheduled-messages-title {
+    font-size: 18px;
+    font-weight: bold;
+    height: 50px;
+    line-height: 50px;
+    padding: 0px 20px;
+    box-shadow: 0 2px 4px var(--box-shadow-color);
+}

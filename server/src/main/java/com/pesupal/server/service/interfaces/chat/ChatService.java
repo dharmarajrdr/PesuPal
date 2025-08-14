@@ -9,4 +9,6 @@ public interface ChatService {
     MessageDto save(ChatMessageDto chatMessageDto);
 
     void broadcastMessage(MessageDto messageDto, SimpMessagingTemplate messagingTemplate);
+
+    void schedule(ChatMessageDto chatMessageDto);
 }

@@ -33,6 +33,7 @@
     margin-left: 10px;
 }
 
+#schedule-message-button,
 #send-button,
 #emoji-button,
 #insert-file-button {
@@ -45,6 +46,7 @@
     cursor: pointer;
 }
 
+#schedule-message-button i,
 #send-button i,
 #emoji-button i, 
 #insert-file-button i {

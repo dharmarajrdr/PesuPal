@@ -48,6 +48,13 @@ public class DirectMessageController {
         return ResponseEntity.ok(new ApiResponseDto("Direct message sent successfully"));
     }
 
+    @PostMapping("/schedule")
+    public ResponseEntity<ApiResponseDto> scheduleDirectMessage(@RequestBody ChatMessageDto chatMessageDto) {
+
+        directMessageService.schedule(chatMessageDto);
+        return ResponseEntity.ok(new ApiResponseDto("Direct message scheduled successfully"));
+    }
+
     @PutMapping("/{chatId}/read-all")
     public ResponseEntity<ApiResponseDto> markAllMessagesAsRead(@PathVariable String chatId) {
 

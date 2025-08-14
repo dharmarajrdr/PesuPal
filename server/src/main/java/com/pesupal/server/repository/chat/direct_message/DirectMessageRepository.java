@@ -1,6 +1,7 @@
 package com.pesupal.server.repository.chat.direct_message;
 
 import com.pesupal.server.enums.ReadReceipt;
+import com.pesupal.server.model.chat.MessageStatus;
 import com.pesupal.server.model.chat.direct_message.DirectMessage;
 import com.pesupal.server.projections.RecentPrivateChatProjection;
 import jakarta.transaction.Transactional;
@@ -17,9 +18,9 @@ import java.util.List;
 @Repository
 public interface DirectMessageRepository extends JpaRepository<DirectMessage, Long> {
 
-    Page<DirectMessage> findAllByDirectMessageChatPublicId(String directMessageChat, Pageable pageable);
+    Page<DirectMessage> findAllByDirectMessageChatPublicIdAndMessageStatusIn(String directMessageChat, List<MessageStatus> fetchMessagesWithStatus, Pageable pageable);
 
-    Page<DirectMessage> findAllByDirectMessageChatPublicIdAndIdLessThan(String directMessageChat, Long pivotMessageId, Pageable pageable);
+    Page<DirectMessage> findAllByDirectMessageChatPublicIdAndIdLessThanAndMessageStatusIn(String directMessageChat, Long pivotMessageId, List<MessageStatus> fetchMessagesWithStatus, Pageable pageable);
 
     @Modifying
     @Transactional
@@ -42,7 +43,8 @@ public interface DirectMessageRepository extends JpaRepository<DirectMessage, Lo
                 dm.created_at AS createdAt,
                 dm.read_receipt AS readReceipt,
                 dmc.public_id AS chatPublicId,
-                dm.deleted AS deleted
+                dm.message_status AS messageStatus,
+                dm.message_type AS messageType
             
             FROM direct_message dm
             

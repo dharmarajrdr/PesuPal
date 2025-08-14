@@ -11,6 +11,7 @@ import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.exceptions.PermissionDeniedException;
 import com.pesupal.server.helpers.CurrentValueRetriever;
 import com.pesupal.server.helpers.InputValidator;
+import com.pesupal.server.model.chat.MessageStatus;
 import com.pesupal.server.model.chat.group_message.*;
 import com.pesupal.server.model.org.Org;
 import com.pesupal.server.model.user.OrgMember;
@@ -32,6 +33,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
@@ -89,7 +91,7 @@ public class GroupChatMessageServiceImpl extends CurrentValueRetriever implement
             throw new ActionProhibitedException("This group is no longer active.");
         }
 
-        if (groupChatMessage.isDeleted()) {
+        if (groupChatMessage.getMessageStatus().equals(MessageStatus.DELETED)) {
             throw new ActionProhibitedException("This message has already been deleted.");
         }
 
@@ -108,7 +110,7 @@ public class GroupChatMessageServiceImpl extends CurrentValueRetriever implement
 
         groupChatMemberRepository.updateLastReadMessageToNull(groupChatMessage);
 
-        groupChatMessage.setDeleted(true);
+        groupChatMessage.setMessageStatus(MessageStatus.DELETED);
         groupChatMessageRepository.save(groupChatMessage);
 
         groupMessageMediaFileService.unlinkMediaFilesByGroupMessage(groupChatMessage);
@@ -132,10 +134,11 @@ public class GroupChatMessageServiceImpl extends CurrentValueRetriever implement
                 Sort.by("createdAt").descending());
         Page<GroupChatMessage> messages = null;
         Long pivotMessageId = getGroupConversationDto.getPivotMessageId();
+        List<MessageStatus> fetchMessagesWithStatus = List.of(MessageStatus.SENT, MessageStatus.DELETED);
         if (pivotMessageId != null) {
-            messages = groupChatMessageRepository.findAllByGroup_PublicIdAndIdLessThan(getGroupConversationDto.getGroupId(), getGroupConversationDto.getPivotMessageId(), pageable);
+            messages = groupChatMessageRepository.findAllByGroup_PublicIdAndIdLessThanAndMessageStatusIn(getGroupConversationDto.getGroupId(), getGroupConversationDto.getPivotMessageId(), fetchMessagesWithStatus, pageable);
         } else {
-            messages = groupChatMessageRepository.findAllByGroup_PublicId(getGroupConversationDto.getGroupId(), pageable);
+            messages = groupChatMessageRepository.findAllByGroup_PublicIdAndMessageStatusIn(getGroupConversationDto.getGroupId(), fetchMessagesWithStatus, pageable);
         }
         Map<Long, UserPreviewDto> memo = new HashMap<>();
         return messages.stream().map(gm -> {
@@ -267,6 +270,7 @@ public class GroupChatMessageServiceImpl extends CurrentValueRetriever implement
      * @return
      */
     @Override
+    @Transactional
     public MessageDto save(ChatMessageDto chatMessageDto) {
 
         String token = (String) InputValidator.notNull(chatMessageDto.getToken(), "token");
@@ -300,10 +304,20 @@ public class GroupChatMessageServiceImpl extends CurrentValueRetriever implement
 
         GroupChatMessage groupChatMessage = new GroupChatMessage();
         groupChatMessage.setGroup(group);
-        groupChatMessage.setDeleted(false);
         groupChatMessage.setSender(sender);
         groupChatMessage.setMessage(chatMessageDto.getMessage());
         groupChatMessage.setContainsMedia(containsMedia);
+        groupChatMessage.setMessageStatus(MessageStatus.SENT);
+        if (chatMessageDto.getMessageStatus().equals(MessageStatus.SCHEDULED)) {
+            if (chatMessageDto.getScheduleAt() == null) {
+                throw new ActionProhibitedException("Scheduled messages must have a schedule time.");
+            }
+            if (chatMessageDto.getScheduleAt().isBefore(LocalDateTime.now())) {
+                throw new ActionProhibitedException("Messages cannot be scheduled in the past.");
+            }
+            groupChatMessage.setMessageStatus(MessageStatus.SCHEDULED);
+            groupChatMessage.setCreatedAt(chatMessageDto.getScheduleAt());
+        }
         groupChatMessage = groupChatMessageRepository.save(groupChatMessage);
         if (containsMedia) { // Store media file if present
             GroupMessageMediaFile groupMessageMediaFile = GroupMessageMediaFile.fromMediaUploadDto(chatMessageDto.getMedia());
@@ -341,6 +355,17 @@ public class GroupChatMessageServiceImpl extends CurrentValueRetriever implement
     }
 
     /**
+     * Schedules a message to be sent later.
+     *
+     * @param chatMessageDto
+     */
+    public void schedule(ChatMessageDto chatMessageDto) {
+
+        chatMessageDto.setMessageStatus(MessageStatus.SCHEDULED);
+        save(chatMessageDto);
+    }
+
+    /**
      * Adds a system message to a group chat.
      *
      * @param group
@@ -354,7 +379,7 @@ public class GroupChatMessageServiceImpl extends CurrentValueRetriever implement
         groupChatMessage.setSender(getCurrentOrgMember());
         groupChatMessage.setMessage(message);
         groupChatMessage.setContainsMedia(false);
-        groupChatMessage.setDeleted(false);
+        groupChatMessage.setMessageStatus(MessageStatus.SENT);
         groupChatMessage.setMessageType(MessageType.SYSTEM_MESSAGE);
         groupChatMessageRepository.save(groupChatMessage);
     }

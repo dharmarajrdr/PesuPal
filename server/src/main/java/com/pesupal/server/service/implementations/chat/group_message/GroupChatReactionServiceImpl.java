@@ -6,6 +6,7 @@ import com.pesupal.server.enums.Reaction;
 import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.helpers.CurrentValueRetriever;
+import com.pesupal.server.model.chat.MessageStatus;
 import com.pesupal.server.model.chat.group_message.Group;
 import com.pesupal.server.model.chat.group_message.GroupChatMessage;
 import com.pesupal.server.model.chat.group_message.GroupChatReaction;
@@ -76,7 +77,7 @@ public class GroupChatReactionServiceImpl extends CurrentValueRetriever implemen
             throw new ActionProhibitedException("You cannot react to your own message.");
         }
 
-        if (groupChatMessage.isDeleted()) {
+        if (groupChatMessage.getMessageStatus().equals(MessageStatus.DELETED)) {
             throw new ActionProhibitedException("Cannot react to a deleted message.");
         }
 

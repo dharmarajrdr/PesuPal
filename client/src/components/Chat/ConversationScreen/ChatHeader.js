@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import Profile from '../../OthersProfile/Profile';
 import UserAvatar from '../../User/UserAvatar';
 import './ChatHeader.css';
 import { useNavigate } from 'react-router-dom';
@@ -18,6 +17,7 @@ import { clearMessages } from '../../../store/reducers/ConversationSlice';
 import GroupPermissionModal from '../Group/GroupPermissionModal';
 import UpdateGroupModal from '../Group/UpdateGroupModal';
 import AddParticipantsModal from '../Group/AddParticipantsModal';
+import ScheduledMessageOverlay from './ScheduledMessageOverlay';
 
 const ParticipantsCount = ({ count, setShowGroupMembers }) => {
     return (
@@ -32,14 +32,18 @@ const ChatHeader = () => {
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const showChatHeaderOptionsModalSlice = useSelector(state => state.showChatHeaderOptionsModalSlice);
-    const [showUpdateGroupModal, setShowUpdateGroupModal] = useState(false);
-    const [showAddParticipantsModal, setShowAddParticipantsModal] = useState(false);
-    const [showGroupPermission, setShowGroupPermission] = useState(false);
-    const [showGroupMembers, setShowGroupMembers] = useState(false);
-    const currentChatPreview = useSelector(state => state.currentChatPreviewSlice);
-    const [pinnedId, setPinnedIdState] = useState(null);
+
     const activeChatTab = useSelector(state => state.activeChatTab);
+    const currentChatPreview = useSelector(state => state.currentChatPreviewSlice);
+    const showChatHeaderOptionsModalSlice = useSelector(state => state.showChatHeaderOptionsModalSlice);
+
+    const [pinnedId, setPinnedIdState] = useState(null);
+    const [showGroupMembers, setShowGroupMembers] = useState(false);
+    const [showGroupPermission, setShowGroupPermission] = useState(false);
+    const [showUpdateGroupModal, setShowUpdateGroupModal] = useState(false);
+    const [showScheduledMessages, setShowScheduledMessages] = useState(true);
+    const [showAddParticipantsModal, setShowAddParticipantsModal] = useState(false);
+
     const { chatId, displayName, displayPicture, userId, participantsCount, groupActive, active, groupChatConfiguration } = currentChatPreview || {};
     const { clearChat: chatClearable, leaveGroup: groupLeaveable, deleteGroup: groupDeletable, addMember: groupAddable } = groupChatConfiguration || {};
 
@@ -180,6 +184,14 @@ const ChatHeader = () => {
             }
         },
         {
+            name: 'Scheduled Messages',
+            icon: 'fa-regular fa-clock',
+            onClick: () => {
+                setShowScheduledMessages(true);
+                dispatch(setShowChatHeaderOptionsModal(false));
+            }
+        },
+        {
             name: activeChatTab.name == 'groupMessage' && active && groupActive ? 'Group Info' : null,
             icon: 'fa fa-info-circle',
             onClick: () => {
@@ -236,6 +248,7 @@ const ChatHeader = () => {
             {showGroupPermission && <GroupPermissionModal groupId={chatId} onClose={(e) => setShowGroupPermission(false)} />}
             {showUpdateGroupModal && <UpdateGroupModal setShowCreateGroupModal={setShowUpdateGroupModal} groupData={currentChatPreview} />}
             {showAddParticipantsModal && <AddParticipantsModal groupId={chatId} onClose={(e) => setShowAddParticipantsModal(false)} />}
+            {showScheduledMessages && <ScheduledMessageOverlay onClose={(e) => setShowScheduledMessages(false)} />}
             <div className='FRCS' id='chat-header-left'>
                 <UserAvatar displayPicture={displayPicture} displayName={displayName} userId={userId} />
                 <p className="name mL10">{displayName}</p>
