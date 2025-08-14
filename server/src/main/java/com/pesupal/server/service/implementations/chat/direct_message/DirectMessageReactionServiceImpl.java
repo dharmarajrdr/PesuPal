@@ -7,6 +7,7 @@ import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.exceptions.PermissionDeniedException;
 import com.pesupal.server.helpers.CurrentValueRetriever;
+import com.pesupal.server.model.chat.MessageStatus;
 import com.pesupal.server.model.chat.direct_message.DirectMessage;
 import com.pesupal.server.model.chat.direct_message.DirectMessageReaction;
 import com.pesupal.server.model.user.OrgMember;
@@ -65,7 +66,7 @@ public class DirectMessageReactionServiceImpl extends CurrentValueRetriever impl
             throw new PermissionDeniedException("You do not have permission to react to this message.");
         }
 
-        if (directMessage.isDeleted()) {
+        if (directMessage.getMessageStatus().equals(MessageStatus.DELETED)) {
             throw new ActionProhibitedException("Cannot react to a deleted message.");
         }
 
