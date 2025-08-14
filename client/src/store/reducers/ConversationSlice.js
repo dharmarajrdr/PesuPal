@@ -19,7 +19,7 @@ const ConversationSlice = createSlice({
             const { id } = action.payload;
             state.messages = state.messages.map(msg => {
                 if (msg.id === id) {
-                    return { ...msg, deleted: true };
+                    return { ...msg, status: 'DELETED' };
                 }
                 return msg;
             });
