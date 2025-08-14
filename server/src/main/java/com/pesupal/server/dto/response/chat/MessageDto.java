@@ -6,6 +6,7 @@ import com.pesupal.server.enums.ChatMode;
 import com.pesupal.server.enums.MessageType;
 import com.pesupal.server.enums.Reaction;
 import com.pesupal.server.enums.ReadReceipt;
+import com.pesupal.server.model.chat.MessageStatus;
 import com.pesupal.server.model.chat.direct_message.DirectMessage;
 import com.pesupal.server.model.chat.direct_message.DirectMessageChat;
 import com.pesupal.server.model.chat.group_message.GroupChatMessage;
@@ -32,7 +33,7 @@ public class MessageDto {
 
     private String message;
 
-    private Boolean deleted;
+    private MessageStatus status;
 
     private ReadReceipt readReceipt;
 
@@ -48,14 +49,14 @@ public class MessageDto {
 
         MessageDto responseDto = new MessageDto();
         responseDto.setId(directMessage.getId());
-        if (!directMessage.isDeleted()) {
+        if (!directMessage.getMessageStatus().equals(MessageStatus.DELETED)) {
             responseDto.setMessage(directMessage.getMessage()); // Only set message if not deleted
         }
 //        responseDto.setOrgId(directMessage.getOrg().getPublicId());
         responseDto.setCreatedAt(directMessage.getCreatedAt());
         DirectMessageChat directMessageChat = directMessage.getDirectMessageChat();
         responseDto.setChatId(directMessageChat.getPublicId());
-        responseDto.setDeleted(directMessage.isDeleted());
+        responseDto.setStatus(directMessage.getMessageStatus());
         responseDto.setReadReceipt(directMessage.getReadReceipt());
         responseDto.setChatMode(ChatMode.DIRECT_MESSAGE);
         responseDto.setMessageType(directMessage.getMessageType());
@@ -67,13 +68,13 @@ public class MessageDto {
 
         MessageDto responseDto = new MessageDto();
         responseDto.setId(groupChatMessage.getId());
-        if (!groupChatMessage.isDeleted()) {
+        if (!groupChatMessage.getMessageStatus().equals(MessageStatus.DELETED)) {
             responseDto.setMessage(groupChatMessage.getMessage()); // Only set message if not deleted
         }
 //        responseDto.setOrgId(groupChatMessage.getGroup().getOrg().getPublicId());
         responseDto.setCreatedAt(groupChatMessage.getCreatedAt());
         responseDto.setChatId(groupChatMessage.getGroup().getPublicId());
-        responseDto.setDeleted(groupChatMessage.isDeleted());
+        responseDto.setStatus(groupChatMessage.getMessageStatus());
         responseDto.setChatMode(ChatMode.GROUP_MESSAGE);
         responseDto.setMessageType(groupChatMessage.getMessageType());
         return responseDto;

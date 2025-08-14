@@ -16,8 +16,6 @@ public class RecentChatDto {
 
     private String status;
 
-    private boolean deleted;
-
     private Visibility visibility;
 
     private LastMessageDto recentMessage;
