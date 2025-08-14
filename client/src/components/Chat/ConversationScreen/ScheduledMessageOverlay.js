@@ -108,8 +108,8 @@ const ScheduledMessageOverlay = ({ onClose, chatId }) => {
                 onClose();
             }
         }}>
-            <div id='schedule-messages-container'>
-                <div className='FRCB' id='scheduled-messages-header'>
+            <div id='schedule-messages-container' className='FCCS w100'>
+                <div className='FRCB w100' id='scheduled-messages-header'>
                     <h2 id='scheduled-messages-title'>Scheduled Messages</h2>
                     {messages.length > 0 && <div className='FRCE'>
                         <button id='send-all-messages' onClick={sendAllScheduledMessagesHandler}>
