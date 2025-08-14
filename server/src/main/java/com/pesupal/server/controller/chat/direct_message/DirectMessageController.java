@@ -55,6 +55,13 @@ public class DirectMessageController {
         return ResponseEntity.ok(new ApiResponseDto("Direct message scheduled successfully"));
     }
 
+    @GetMapping("/{chatId}/scheduled-messages")
+    public ResponseEntity<ApiResponseDto> getScheduledDirectMessage(@PathVariable String chatId) {
+
+        List<MessageDto> scheduledMessages = directMessageService.getScheduledMessages(chatId);
+        return ResponseEntity.ok(new ApiResponseDto("Scheduled messages retrieved successfully", scheduledMessages));
+    }
+
     @PutMapping("/{chatId}/read-all")
     public ResponseEntity<ApiResponseDto> markAllMessagesAsRead(@PathVariable String chatId) {
 

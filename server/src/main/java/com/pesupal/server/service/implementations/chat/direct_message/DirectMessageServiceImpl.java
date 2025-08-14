@@ -355,4 +355,25 @@ public class DirectMessageServiceImpl extends CurrentValueRetriever implements D
         chatMessageDto.setMessageStatus(MessageStatus.SCHEDULED);
         save(chatMessageDto);
     }
+
+    /**
+     * Retrieves scheduled messages for a specific chat.
+     *
+     * @param chatId
+     * @return
+     */
+    @Override
+    public List<MessageDto> getScheduledMessages(String chatId) {
+
+        OrgMember orgMember = getCurrentOrgMember();
+        Long orgId = orgMember.getOrg().getId();
+        DirectMessageChat directMessageChat = directMessageChatService.getDirectMessageByPublicId(chatId);
+        if (!isUserPartOfThisChat(directMessageChat, orgMember.getId())) {
+            throw new PermissionDeniedException("You don't have permission to read this chat");
+        }
+
+        Map<Long, UserPreviewDto> memo = new HashMap<>();
+
+        return directMessageRepository.findAllBySenderAndDirectMessageChatAndMessageStatus(orgMember, directMessageChat, MessageStatus.SCHEDULED).stream().map(directMessage -> toMessageDto(directMessage, orgId, memo)).toList();
+    }
 }
