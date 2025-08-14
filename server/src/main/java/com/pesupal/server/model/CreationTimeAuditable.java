@@ -22,6 +22,8 @@ public class CreationTimeAuditable extends BaseModel {
 
     @PrePersist
     protected void setCreationTime() {
-        this.createdAt = LocalDateTime.now();
+        if (this.createdAt == null) {
+            this.createdAt = LocalDateTime.now();
+        }
     }
 }
