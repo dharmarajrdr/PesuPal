@@ -11,6 +11,7 @@ import com.pesupal.server.exceptions.PermissionDeniedException;
 import com.pesupal.server.helpers.CurrentValueRetriever;
 import com.pesupal.server.helpers.InputValidator;
 import com.pesupal.server.helpers.TimeFormatterUtil;
+import com.pesupal.server.model.chat.MessageStatus;
 import com.pesupal.server.model.chat.direct_message.DirectMessage;
 import com.pesupal.server.model.chat.direct_message.DirectMessageChat;
 import com.pesupal.server.model.chat.direct_message.DirectMessageMediaFile;
@@ -38,6 +39,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
@@ -130,12 +132,13 @@ public class DirectMessageServiceImpl extends CurrentValueRetriever implements D
         }
 
         Pageable pageable = PageRequest.of(getConversationBetweenUsers.getPage(), getConversationBetweenUsers.getSize(), Sort.by("createdAt").descending());
-        Page<DirectMessage> messages = null;
+        Page<DirectMessage> messages;
         Long pivotMessageId = getConversationBetweenUsers.getPivotMessageId();
+        List<MessageStatus> fetchMessagesWithStatus = List.of(MessageStatus.SENT, MessageStatus.DELETED);
         if (pivotMessageId != null) {
-            messages = directMessageRepository.findAllByDirectMessageChatPublicIdAndIdLessThan(getConversationBetweenUsers.getChatId(), getConversationBetweenUsers.getPivotMessageId(), pageable);
+            messages = directMessageRepository.findAllByDirectMessageChatPublicIdAndIdLessThanAndMessageStatusIn(getConversationBetweenUsers.getChatId(), getConversationBetweenUsers.getPivotMessageId(), fetchMessagesWithStatus, pageable);
         } else {
-            messages = directMessageRepository.findAllByDirectMessageChatPublicId(getConversationBetweenUsers.getChatId(), pageable);
+            messages = directMessageRepository.findAllByDirectMessageChatPublicIdAndMessageStatusIn(getConversationBetweenUsers.getChatId(), fetchMessagesWithStatus, pageable);
         }
         Map<Long, UserPreviewDto> memo = new HashMap<>();
         return messages.stream().map(dm -> toMessageDto(dm, orgId, memo)).sorted(Comparator.comparing(MessageDto::getCreatedAt)).toList();
@@ -185,11 +188,11 @@ public class DirectMessageServiceImpl extends CurrentValueRetriever implements D
             throw new PermissionDeniedException("You do not have permission to delete this message.");
         }
 
-        if (directMessage.isDeleted()) {
+        if (directMessage.getMessageType().equals(MessageStatus.DELETED)) {
             throw new ActionProhibitedException("This message has already been deleted.");
         }
 
-        directMessage.setDeleted(true);
+        directMessage.setMessageStatus(MessageStatus.DELETED);
         directMessageRepository.save(directMessage);
 
         directMessageMediaFileService.unlinkMediaFilesByDirectMessage(directMessage);
@@ -223,7 +226,7 @@ public class DirectMessageServiceImpl extends CurrentValueRetriever implements D
         List<RecentChatDto> chats = rows.stream().map(projection -> {
             LastMessageDto lastMessage = new LastMessageDto();
             lastMessage.setSender(projection.getSenderName());
-            if (!projection.getDeleted()) {
+            if (!projection.getMessageStatus().equals(MessageStatus.DELETED)) {
                 lastMessage.setMessage(projection.getContent());
             } else {
                 lastMessage.setMessage("This message has been deleted.");
@@ -231,13 +234,14 @@ public class DirectMessageServiceImpl extends CurrentValueRetriever implements D
             lastMessage.setMedia(projection.getIncludedMedia());
             lastMessage.setCreatedAt(TimeFormatterUtil.formatShort(projection.getCreatedAt()));
             lastMessage.setReadReceipt(ReadReceipt.valueOf(projection.getReadReceipt()));
+            lastMessage.setMessageStatus(projection.getMessageStatus());
+            lastMessage.setMessageType(projection.getMessageType());
 
             RecentChatDto dto = new RecentChatDto();
             dto.setChatId(projection.getChatPublicId());
             dto.setName(projection.getDisplayName());
             dto.setImage(projection.getDisplayPicture());
             dto.setStatus(projection.getUserStatus());
-            dto.setDeleted(projection.getDeleted());
             dto.setRecentMessage(lastMessage);
 
             return dto;
@@ -279,10 +283,20 @@ public class DirectMessageServiceImpl extends CurrentValueRetriever implements D
         directMessage.setReceiver(receiver);
         directMessage.setOrg(org);
         directMessage.setDirectMessageChat(directMessageChat);
-        directMessage.setDeleted(false);
         directMessage.setContainsMedia(containsMedia);
         directMessage.setReadReceipt(ReadReceipt.SENT);
         directMessage.setMessage(chatMessageDto.getMessage());
+        directMessage.setMessageStatus(MessageStatus.SENT);
+        if (chatMessageDto.getMessageStatus().equals(MessageStatus.SCHEDULED)) {
+            if (chatMessageDto.getScheduleAt() == null) {
+                throw new ActionProhibitedException("Scheduled messages must have a schedule time.");
+            }
+            if (chatMessageDto.getScheduleAt().isBefore(LocalDateTime.now())) {
+                throw new ActionProhibitedException("Messages cannot be scheduled in the past.");
+            }
+            directMessage.setMessageStatus(MessageStatus.SCHEDULED);
+            directMessage.setCreatedAt(chatMessageDto.getScheduleAt());
+        }
         directMessage = directMessageRepository.save(directMessage);
         if (containsMedia) { // Store media file if present
             DirectMessageMediaFile directMessageMediaFile = DirectMessageMediaFile.fromMediaUploadDto(chatMessageDto.getMedia());
@@ -313,9 +327,7 @@ public class DirectMessageServiceImpl extends CurrentValueRetriever implements D
         chatPreviewDto.setDisplayName(otherUser.getDisplayName());
         chatPreviewDto.setDisplayPicture(otherUser.getDisplayPicture());
         Optional<PinnedDirectMessage> pinnedDirectMessage = pinnedDirectMessageService.getPinnedDirectMessageByPinnedByAndDirectMessageChat(currentUser, directMessageChat);
-        if (pinnedDirectMessage.isPresent()) {
-            chatPreviewDto.setPinnedId(pinnedDirectMessage.get().getId());
-        }
+        pinnedDirectMessage.ifPresent(directMessage -> chatPreviewDto.setPinnedId(directMessage.getId()));
         return chatPreviewDto;
     }
 
@@ -330,5 +342,17 @@ public class DirectMessageServiceImpl extends CurrentValueRetriever implements D
 
         messagingTemplate.convertAndSend("/topic/direct-message." + messageDto.getReceiverId(), messageDto);
         messagingTemplate.convertAndSend("/topic/message-delivery." + messageDto.getSender().getId(), messageDto);
+    }
+
+    /**
+     * Schedules a chat message for future delivery.
+     *
+     * @param chatMessageDto
+     */
+    @Override
+    public void schedule(ChatMessageDto chatMessageDto) {
+
+        chatMessageDto.setMessageStatus(MessageStatus.SCHEDULED);
+        save(chatMessageDto);
     }
 }
