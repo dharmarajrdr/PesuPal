@@ -235,6 +235,14 @@
     right: -80px;
 }
 
+.scheduled-message-actions.sent {
+    left: -30px;
+}
+
+.message-actions.active-action {
+    background-color: rgba(0, 0, 0, 0.033);
+}
+
 .reaction-icon {
     cursor: pointer;
     color: var(--badge-color);

@@ -6,6 +6,7 @@ import { useSelector } from 'react-redux';
 import UserAvatar from '../../User/UserAvatar';
 import FullScreenImageView from '../../FullScreenImageView';
 import { useState } from 'react';
+import ScheduledMessageActions from './ScheduledMessageActions';
 
 const extensionTagMapper = {
     "img": ["jpeg", "jpg", "png", "gif", "avif"],
@@ -87,7 +88,7 @@ const SenderName = ({ displayName, sent_or_received, is_super_admin }) => {
     </p>
 }
 
-const ChatMessageItem = ({ msg, isSameSender, messageDeletable }) => {
+const ChatMessageItem = ({ msg, isSameSender, messageDeletable, isScheduledMessage }) => {
 
     const { id, sender, status, createdAt, readReceipt, message, media, chatMode, reactions } = msg;
     const { id: senderId, displayName, displayPicture, is_super_admin } = sender || {};
@@ -112,7 +113,9 @@ const ChatMessageItem = ({ msg, isSameSender, messageDeletable }) => {
                 {showUserMeta && !isSameSender && <SenderName displayName={displayName} sent_or_received={sent_or_received} is_super_admin={is_super_admin} />}
                 <div className={`message ${sent_or_received}`}>
                     {isMessageDeleted ? <MessageDeleted /> : <>
-                        <MessageActions id={id} isCurrentUser={isCurrentUser} messageDeletable={messageDeletable} />
+                        {isScheduledMessage ?
+                            <ScheduledMessageActions id={id} /> :
+                            <MessageActions id={id} isCurrentUser={isCurrentUser} messageDeletable={messageDeletable} />}
                         <MediaDisplayer media={media} />
                         <div className="message-content">
                             <Message html={message} />
