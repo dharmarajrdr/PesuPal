@@ -21,4 +21,6 @@ public interface GroupChatMessageRepository extends JpaRepository<GroupChatMessa
     Page<GroupChatMessage> findAllByGroup_PublicIdAndMessageStatusIn(String groupId, List<MessageStatus> messageStatuses, Pageable pageable);
 
     Optional<GroupChatMessage> findFirstByGroupOrderByCreatedAtDesc(Group group);
+
+    List<GroupChatMessage> findAllByGroup_PublicIdAndMessageStatus(String chatId, MessageStatus messageStatus);
 }

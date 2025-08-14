@@ -366,6 +366,29 @@ public class GroupChatMessageServiceImpl extends CurrentValueRetriever implement
     }
 
     /**
+     * Retrieves scheduled messages for a specific chat.
+     *
+     * @param groupId
+     * @return
+     */
+    @Override
+    public List<MessageDto> getScheduledMessages(String groupId) {
+
+        OrgMember orgMember = getCurrentOrgMember();
+        Long orgId = orgMember.getOrg().getId();
+
+        GroupChatMember groupChatMember = groupChatMemberService.getGroupMemberByGroupIdAndUserId(groupId, orgMember.getId());
+        if (!groupChatMember.isActive()) {
+            throw new PermissionDeniedException("You are no longer part of this group.");
+        }
+
+        List<GroupChatMessage> scheduledMessages = groupChatMessageRepository.findAllByGroup_PublicIdAndMessageStatus(groupId, MessageStatus.SCHEDULED);
+
+        Map<Long, UserPreviewDto> memo = new HashMap<>();
+        return scheduledMessages.stream().map(gm -> toMessageDto(gm, orgId, memo)).sorted(Comparator.comparing(MessageDto::getCreatedAt)).toList();
+    }
+
+    /**
      * Adds a system message to a group chat.
      *
      * @param group

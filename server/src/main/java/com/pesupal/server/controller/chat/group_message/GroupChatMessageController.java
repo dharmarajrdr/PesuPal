@@ -41,6 +41,13 @@ public class GroupChatMessageController extends CurrentValueRetriever {
         return ResponseEntity.ok().body(new ApiResponseDto("Group chat messages retrieved successfully", messageDtos));
     }
 
+    @GetMapping("/{groupId}/scheduled-messages")
+    public ResponseEntity<ApiResponseDto> getGroupChatMessages(@PathVariable String groupId) {
+
+        List<MessageDto> messageDtos = groupChatMessageService.getScheduledMessages(groupId);
+        return ResponseEntity.ok().body(new ApiResponseDto("Group chat scheduled messages retrieved successfully", messageDtos));
+    }
+
     @PutMapping("/{groupId}/read-all")
     public ResponseEntity<ApiResponseDto> markAllGroupMessagesAsRead(@PathVariable String groupId) {
 
