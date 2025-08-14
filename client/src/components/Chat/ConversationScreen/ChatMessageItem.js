@@ -89,8 +89,10 @@ const SenderName = ({ displayName, sent_or_received, is_super_admin }) => {
 
 const ChatMessageItem = ({ msg, isSameSender, messageDeletable }) => {
 
-    const { id, sender, deleted, createdAt, readReceipt, message, media, chatMode, reactions } = msg;
+    const { id, sender, status, createdAt, readReceipt, message, media, chatMode, reactions } = msg;
     const { id: senderId, displayName, displayPicture, is_super_admin } = sender || {};
+
+    const isMessageDeleted = status === 'DELETED';
 
     const showUserMeta = chatMode == 'GROUP_MESSAGE';
 
@@ -109,7 +111,7 @@ const ChatMessageItem = ({ msg, isSameSender, messageDeletable }) => {
             <div className={`message-wrapper FCSE ${sent_or_received}`}>
                 {showUserMeta && !isSameSender && <SenderName displayName={displayName} sent_or_received={sent_or_received} is_super_admin={is_super_admin} />}
                 <div className={`message ${sent_or_received}`}>
-                    {deleted ? <MessageDeleted /> : <>
+                    {isMessageDeleted ? <MessageDeleted /> : <>
                         <MessageActions id={id} isCurrentUser={isCurrentUser} messageDeletable={messageDeletable} />
                         <MediaDisplayer media={media} />
                         <div className="message-content">
