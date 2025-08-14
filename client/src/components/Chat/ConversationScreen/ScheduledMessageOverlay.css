@@ -26,7 +26,9 @@
 }
 
 #scheduled-messages-title {
-    font-size: 18px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #555;
 }
 
 #scheduled-messages-list {

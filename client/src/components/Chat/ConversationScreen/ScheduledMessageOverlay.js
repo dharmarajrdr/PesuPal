@@ -37,7 +37,7 @@ const ScheduledMessagesList = ({ messages }) => {
             return (
                 <div key={id} className='w100'>
                     {showDate && <div className="date-label">{newDate}</div>}
-                    <ChatMessageItem msg={message} isSameSender={!showDate} messageDeletable={true} />
+                    <ChatMessageItem msg={message} isSameSender={!showDate} messageDeletable={true} isScheduledMessage={true} />
                 </div>
             );
         }) : <NoMessagesFound />}
@@ -70,7 +70,7 @@ const ScheduledMessageOverlay = ({ onClose, chatId }) => {
                     title: 'Send',
                     color: 'green',
                     onClick: () => {
-
+                        dispatch(hideConfirmationPopup())
                     }
                 },
                 {
@@ -90,7 +90,7 @@ const ScheduledMessageOverlay = ({ onClose, chatId }) => {
                     title: 'Delete',
                     color: 'red',
                     onClick: () => {
-
+                        dispatch(hideConfirmationPopup())
                     }
                 },
                 {
@@ -110,7 +110,7 @@ const ScheduledMessageOverlay = ({ onClose, chatId }) => {
         }}>
             <div id='schedule-messages-container' className='FCCS w100'>
                 <div className='FRCB w100' id='scheduled-messages-header'>
-                    <h2 id='scheduled-messages-title'>Scheduled Messages</h2>
+                    <h2 id='scheduled-messages-title'>Scheduled Messages {messages.length > 0 ? `(${messages.length})` : null}</h2>
                     {messages.length > 0 && <div className='FRCE'>
                         <button id='send-all-messages' onClick={sendAllScheduledMessagesHandler}>
                             <i className='fa fa-paper-plane mR5 colorFFF' />Send All
