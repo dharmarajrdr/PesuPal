@@ -32,12 +32,14 @@ const reactionsList = [
     }
 ];
 
-const MessageActions = ({ id, isCurrentUser, messageDeletable }) => {
+const MessageActions = ({ id, isCurrentUser, messageDeletable, messageEditable, messagePinnable }) => {
 
+    messageEditable = messageEditable == undefined ? true : messageEditable;
+    messagePinnable = messagePinnable == undefined ? true : messagePinnable;
     messageDeletable = messageDeletable == undefined ? true : messageDeletable;
 
     const dispatch = useDispatch();
-    const { reactMessageApi, deleteMessageApi } = useSelector(state => state.activeChatTab) || {};
+    const { reactMessageApi, deleteMessageApi, chatMode } = useSelector(state => state.activeChatTab) || {};
 
     const reactMessageHandler = (e) => {
         if (!reactMessageApi) {
@@ -82,9 +84,14 @@ const MessageActions = ({ id, isCurrentUser, messageDeletable }) => {
 
     return (
         <div className={`message-actions FRCC ${isCurrentUser ? 'sent' : 'received'}`}>
-            <i className='fa fa-eye delete-icon' style={{ color: '#23a9a0' }} title="Delete" onClick={deleteMessageHandler} />
-            {isCurrentUser && messageDeletable && <i className='fa fa-trash delete-icon' style={{ color: '#ff6c6cff' }} title="Delete" onClick={deleteMessageHandler} />}
-            {!isCurrentUser && <div className="reactions">
+            <i className="fa fa-reply reply-icon" style={{ color: '#00aaff' }} title="Reply" />
+            <i className="fa fa-share forward-icon" style={{ color: '#ffb300' }} title="Forward" />
+            {messagePinnable && <i className="fa fa-thumbtack pin-icon" style={{ color: '#ff6c6cff' }} title="Pin" />}
+            {isCurrentUser ? <>
+                {chatMode == 'GROUP_MESSAGE' && <i className='fa fa-eye delete-icon' style={{ color: '#23a9a0' }} title="Views" />}
+                {messageEditable && <i className='fa fa-edit delete-icon' style={{ color: '#b02da3ff' }} title="Edit" />}
+                {messageDeletable && <i className='fa fa-trash delete-icon' style={{ color: '#ff6c6cff' }} title="Delete" onClick={deleteMessageHandler} />}
+            </> : <div className="reactions">
                 {reactionsList.map(({ name, icon, color }) => (
                     <i key={name} className={`fa ${icon} reaction-icon`} style={{ color }} title={name} onClick={reactMessageHandler} />
                 ))}
