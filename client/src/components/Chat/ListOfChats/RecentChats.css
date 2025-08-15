@@ -1,7 +1,3 @@
-#RecentChats {
-  max-height: calc(100vh - 110px);
-}
-
 .RecentChatContainer {
   width: 100%;
   overflow: hidden;

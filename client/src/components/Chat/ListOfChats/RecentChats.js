@@ -25,7 +25,7 @@ const NoChatsFound = () => {
 const RecentChats = ({ searchChat }) => {
 
     const [page, setPage] = useState(0);
-    const [size, setSize] = useState(10);
+    const [size, setSize] = useState(25);
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(true);
     const dispatch = useDispatch();
