@@ -84,6 +84,10 @@ public class S3Service implements MediaService {
     @Override
     public URL generatePresignedUrl(String key) {
 
+        if (key == null || key.isEmpty()) {
+            throw new IllegalArgumentException("Key must not be null or empty");
+        }
+
         String redisKey = "s3-presigned-url:" + key;
         String cachedPresignedUrl = (String) redisTemplate.opsForValue().get(redisKey);
         Duration TTL = Duration.ofMinutes(5);

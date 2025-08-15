@@ -1,18 +1,20 @@
-import { useState } from 'react';
 import './CreateGroupModal.css';
-import { useDispatch, useSelector } from "react-redux";
-import { apiRequest } from '../../../http_request';
+import { useState } from 'react';
 import GroupVisibility from './GroupVisibility';
+import ImageUploader from '../../ImageUploader';
+import { apiRequest } from '../../../http_request';
+import { useDispatch, useSelector } from "react-redux";
 import { showPopup } from '../../../store/reducers/PopupSlice';
-import { updateCurrentChatPreview } from '../../../store/reducers/CurrentChatPreviewSlice';
 import { updateRecentChat } from '../../../store/reducers/RecentChatsSlice';
+import { updateCurrentChatPreview } from '../../../store/reducers/CurrentChatPreviewSlice';
 import { updatePinnedDirectMessage } from '../../../store/reducers/PinnedDirectMessageSlice';
 
 const UpdateGroupModal = ({ setShowCreateGroupModal, groupData }) => {
 
     const dispatch = useDispatch();
 
-    const { chatId: groupId, displayName: name, description, visibility } = groupData || {};
+    const { chatId: groupId, displayName: name, displayPicture, description, visibility } = groupData || {};
+    const [file, setFile] = useState(null);
     const [groupName, setGroupName] = useState(name);
     const [groupDescription, setGroupDescription] = useState(description);
     const [isPublic, setIsPublic] = useState(visibility === 'PUBLIC');
@@ -71,6 +73,7 @@ const UpdateGroupModal = ({ setShowCreateGroupModal, groupData }) => {
                 <h2>Group Info</h2>
 
                 <div className='FCSS w100'>
+                    <ImageUploader defaultImage={displayPicture} onImageSelect={(file) => setFile(file)} style={{ width: '100px', height: '100px', marginBottom: '20px' }} />
                     <input type="text" placeholder="Enter group name" value={groupName} onChange={(e) => groupNameEditable ? setGroupName(e.target.value) : null} className="group-name-input" />
                     <input type="text" placeholder="Enter group description (optional)" value={groupDescription} onChange={(e) => groupDescriptionEditable ? setGroupDescription(e.target.value) : null} className="group-description-input" />
                     <GroupVisibility isPublic={isPublic} setIsPublic={setIsPublic} groupVisibilityEditable={groupVisibilityEditable} />
