@@ -1,9 +1,8 @@
-import React from "react";
-import "./AccountSection.css";
+import "./GeneralSection.css";
 
-const AccountSection = ({ title, description, warning, bgColor, items, addItemButton }) => {
+const GeneralSection = ({ title, description, warning, bgColor, items, addItemButton }) => {
     return (
-        <div className="account-section">
+        <div className="general-section">
 
             <div className="FRCB section-title-wrapper">
                 <h3 className="section-title">{title}</h3>
@@ -40,4 +39,4 @@ const AccountSection = ({ title, description, warning, bgColor, items, addItemBu
     );
 };
 
-export default AccountSection;
+export default GeneralSection;

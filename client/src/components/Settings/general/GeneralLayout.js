@@ -1,11 +1,10 @@
-import React from 'react'
-import AccountSection from './AccountSection';
+import GeneralSection from './GeneralSection';
 
 const GeneralLayout = () => {
 
     return (
         <div style={{ padding: "20px" }}>
-            <AccountSection
+            <GeneralSection
                 title="My Email Addresses"
                 bgColor="#00aaff"
                 description="View and manage the email addresses associated with your account. They can be used to sign in and to reset password if you ever forget it."
@@ -35,7 +34,7 @@ const GeneralLayout = () => {
                 }}
             />
 
-            <AccountSection
+            <GeneralSection
                 title="My Mobile Numbers"
                 bgColor="#ff5a3c"
                 description="View and manage all of the mobile numbers associated with your account."
