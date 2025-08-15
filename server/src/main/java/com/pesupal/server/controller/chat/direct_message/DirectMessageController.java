@@ -1,5 +1,6 @@
 package com.pesupal.server.controller.chat.direct_message;
 
+import com.pesupal.server.dto.request.chat.RescheduleMessageDto;
 import com.pesupal.server.dto.request.chat.direct_message.ChatMessageDto;
 import com.pesupal.server.dto.request.chat.direct_message.GetConversationBetweenUsers;
 import com.pesupal.server.dto.request.post.AddReactionDto;
@@ -8,6 +9,7 @@ import com.pesupal.server.dto.response.chat.ChatPreviewDto;
 import com.pesupal.server.dto.response.chat.MessageDto;
 import com.pesupal.server.dto.response.chat.ReactMessageResponseDto;
 import com.pesupal.server.dto.response.chat.RecentChatPagedDto;
+import com.pesupal.server.model.chat.direct_message.DirectMessage;
 import com.pesupal.server.service.interfaces.chat.direct_message.DirectMessageReactionService;
 import com.pesupal.server.service.interfaces.chat.direct_message.DirectMessageService;
 import lombok.AllArgsConstructor;
@@ -42,19 +44,40 @@ public class DirectMessageController {
     }
 
     @PostMapping("")
-    public ResponseEntity<ApiResponseDto> sendDirectMessage(@RequestBody ChatMessageDto chatMessageDto) {
+    public ResponseEntity<ApiResponseDto> sendDirectMessage(@RequestBody ChatMessageDto<DirectMessage> chatMessageDto) {
 
         directMessageService.save(chatMessageDto);
         return ResponseEntity.ok(new ApiResponseDto("Direct message sent successfully"));
     }
 
     @PostMapping("/schedule")
-    public ResponseEntity<ApiResponseDto> scheduleDirectMessage(@RequestBody ChatMessageDto chatMessageDto) {
+    public ResponseEntity<ApiResponseDto> scheduleDirectMessage(@RequestBody ChatMessageDto<DirectMessage> chatMessageDto) {
 
         directMessageService.schedule(chatMessageDto);
         return ResponseEntity.ok(new ApiResponseDto("Direct message scheduled successfully"));
     }
 
+    @PatchMapping("/reschedule/{messageId}")
+    public ResponseEntity<ApiResponseDto> rescheduleDirectMessage(@PathVariable Long messageId, @RequestBody RescheduleMessageDto rescheduleMessageDto) {
+
+        directMessageService.reschedule(messageId, rescheduleMessageDto);
+        return ResponseEntity.ok(new ApiResponseDto("Direct message rescheduled successfully"));
+    }
+
+    @DeleteMapping("/schedule/{messageId}")
+    public ResponseEntity<ApiResponseDto> deleteScheduleDirectMessage(@PathVariable Long messageId) {
+
+        directMessageService.deleteSchedule(messageId);
+        return ResponseEntity.ok(new ApiResponseDto("Direct message unscheduled successfully"));
+    }
+
+    @DeleteMapping("/schedule/all/{chatId}")
+    public ResponseEntity<ApiResponseDto> deleteAllScheduledDirectMessages(@PathVariable String chatId) {
+
+        directMessageService.deleteAllScheduledMessages(chatId);
+        return ResponseEntity.ok(new ApiResponseDto("All scheduled direct messages deleted successfully"));
+    }
+    
     @GetMapping("/{chatId}/scheduled-messages")
     public ResponseEntity<ApiResponseDto> getScheduledDirectMessage(@PathVariable String chatId) {
 
