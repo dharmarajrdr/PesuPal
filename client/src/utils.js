@@ -126,6 +126,22 @@ export default {
         if (minutes > 0) return `${minutes} min${minutes > 1 ? 's' : ''} ago`;
         return `${seconds} sec${seconds > 1 ? 's' : ''} ago`;
     },
+    "futureTimeCalculator": (date) => {
+        const now = new Date();
+        const diff = new Date(date) - now;
+        const seconds = Math.floor(diff / 1000);
+        const minutes = Math.floor(seconds / 60);
+        const hours = Math.floor(minutes / 60);
+        const days = Math.floor(hours / 24);
+        const months = Math.floor(days / 30);
+        const years = Math.floor(months / 12);
+        if (years > 0) return `${years} yr${years > 1 ? 's' : ''} to go`;
+        if (months > 0) return `${months} mnt${months > 1 ? 's' : ''} to go`;
+        if (days > 0) return `${days} day${days > 1 ? 's' : ''} to go`;
+        if (hours > 0) return `${hours} hr${hours > 1 ? 's' : ''} to go`;
+        if (minutes > 0) return `${minutes} min${minutes > 1 ? 's' : ''} to go`;
+        return `${seconds} sec${seconds > 1 ? 's' : ''} to go`;
+    },
     "parseCookie": () => {
         const cookies = document.cookie
             .split(';')
