@@ -20,6 +20,8 @@ public class UserPreviewDto {
 
     private boolean archived;
 
+    private String chatId;
+
     public static UserPreviewDto fromOrgMember(OrgMember orgMember) {
 
         if (orgMember == null) {
