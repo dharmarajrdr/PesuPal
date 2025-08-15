@@ -82,12 +82,13 @@ const MessageActions = ({ id, isCurrentUser, messageDeletable }) => {
 
     return (
         <div className={`message-actions FRCC ${isCurrentUser ? 'sent' : 'received'}`}>
+            <i className='fa fa-eye delete-icon' style={{ color: '#23a9a0' }} title="Delete" onClick={deleteMessageHandler} />
             {isCurrentUser && messageDeletable && <i className='fa fa-trash delete-icon' style={{ color: '#ff6c6cff' }} title="Delete" onClick={deleteMessageHandler} />}
-            <div className="reactions">
+            {!isCurrentUser && <div className="reactions">
                 {reactionsList.map(({ name, icon, color }) => (
-                    <i key={name} className={`fa ${icon} w20 reaction-icon`} style={{ color }} title={name} onClick={reactMessageHandler} />
+                    <i key={name} className={`fa ${icon} reaction-icon`} style={{ color }} title={name} onClick={reactMessageHandler} />
                 ))}
-            </div>
+            </div>}
         </div>
     )
 }

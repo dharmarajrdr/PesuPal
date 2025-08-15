@@ -332,7 +332,14 @@ public class OrgMemberServiceImpl implements OrgMemberService {
 
         Long orgId = orgMember.getOrg().getId();
         List<OrgMember> orgMembers = orgMemberRepository.searchOrgMembers(orgId, search, PageRequest.of(page, size)).getContent();
-        return orgMembers.stream().map(UserPreviewDto::fromOrgMember).toList();
+        return orgMembers.stream().map(om -> {
+            UserPreviewDto userPreviewDto = UserPreviewDto.fromOrgMember(om);
+            DirectMessageChat directMessageChat = directMessageChatService.getOrCreateDirectMessageChat(orgMember, om);
+            if (directMessageChat != null) {
+                userPreviewDto.setChatId(directMessageChat.getPublicId());
+            }
+            return userPreviewDto;
+        }).toList();
     }
 
     /**

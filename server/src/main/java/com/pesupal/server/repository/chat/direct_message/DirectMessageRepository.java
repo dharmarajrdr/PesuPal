@@ -20,15 +20,6 @@ import java.util.List;
 @Repository
 public interface DirectMessageRepository extends JpaRepository<DirectMessage, Long> {
 
-    Page<DirectMessage> findAllByDirectMessageChatPublicIdAndMessageStatusIn(String directMessageChat, List<MessageStatus> fetchMessagesWithStatus, Pageable pageable);
-
-    Page<DirectMessage> findAllByDirectMessageChatPublicIdAndIdLessThanAndMessageStatusIn(String directMessageChat, Long pivotMessageId, List<MessageStatus> fetchMessagesWithStatus, Pageable pageable);
-
-    @Modifying
-    @Transactional
-    @Query("UPDATE DirectMessage dm SET dm.readReceipt = :readReceipt WHERE dm.directMessageChat.publicId = :chatId AND dm.receiver.id = :receiverId AND dm.readReceipt <> :readReceipt")
-    void markMessagesAsRead(@Param("chatId") String chatId, @Param("receiverId") Long receiverId, @Param("readReceipt") ReadReceipt readReceipt);
-
     @Query(value = """
             SELECT
                 om.display_picture AS displayPicture,
@@ -63,7 +54,8 @@ public interface DirectMessageRepository extends JpaRepository<DirectMessage, Lo
                 SELECT direct_message_chat_id, MAX(id) AS latest_id
                 FROM direct_message
                 WHERE org_id = :orgId
-                  AND (sender_id = :userId OR receiver_id = :userId)
+                    AND (sender_id = :userId OR receiver_id = :userId)
+                    AND message_status IN ('SENT', 'DELETED')
                 GROUP BY direct_message_chat_id
             ) latest_msg ON dm.id = latest_msg.latest_id
             
@@ -75,6 +67,15 @@ public interface DirectMessageRepository extends JpaRepository<DirectMessage, Lo
             LIMIT :limit OFFSET :offset
             """, nativeQuery = true)
     List<RecentPrivateChatProjection> findRecentChatsPaged(@Param("userId") Long userId, @Param("orgId") Long orgId, @Param("search") String search, @Param("limit") int limit, @Param("offset") int offset);
+
+    Page<DirectMessage> findAllByDirectMessageChatPublicIdAndMessageStatusIn(String directMessageChat, List<MessageStatus> fetchMessagesWithStatus, Pageable pageable);
+
+    Page<DirectMessage> findAllByDirectMessageChatPublicIdAndIdLessThanAndMessageStatusIn(String directMessageChat, Long pivotMessageId, List<MessageStatus> fetchMessagesWithStatus, Pageable pageable);
+
+    @Modifying
+    @Transactional
+    @Query("UPDATE DirectMessage dm SET dm.readReceipt = :readReceipt WHERE dm.directMessageChat.publicId = :chatId AND dm.receiver.id = :receiverId AND dm.readReceipt <> :readReceipt")
+    void markMessagesAsRead(@Param("chatId") String chatId, @Param("receiverId") Long receiverId, @Param("readReceipt") ReadReceipt readReceipt);
 
 
     @Query(value = """
