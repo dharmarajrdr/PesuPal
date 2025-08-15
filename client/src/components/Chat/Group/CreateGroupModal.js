@@ -7,6 +7,7 @@ import ImageUploader from '../../ImageUploader';
 import { useDispatch } from 'react-redux';
 import { showPopup } from '../../../store/reducers/PopupSlice';
 import Media from '../../../Media';
+import { hideLoader, showLoader } from '../../../store/reducers/VerticalLoaderSlice';
 
 const CreateGroupModal = ({ setShowCreateGroupModal }) => {
 
@@ -26,6 +27,9 @@ const CreateGroupModal = ({ setShowCreateGroupModal }) => {
     }
 
     const handleSubmit = () => {
+
+        dispatch(showLoader());
+
         if (!groupName.trim()) {
             dispatch(showPopup({ message: "Group name can't be empty!", type: 'error' }));
             return;
@@ -41,9 +45,11 @@ const CreateGroupModal = ({ setShowCreateGroupModal }) => {
             apiRequest(`/api/v1/group/create`, 'POST', groupData).then(({ data, message }) => {
                 const { id } = data;
                 closeCreateGroupModal();
+                dispatch(hideLoader());
                 navigate(`/chat/groups/${id}`);
                 dispatch(showPopup({ message, type: 'success' }));
             }).catch(({ message }) => {
+                dispatch(hideLoader());
                 dispatch(showPopup({ message, type: 'error' }));
             });
         }
@@ -56,6 +62,7 @@ const CreateGroupModal = ({ setShowCreateGroupModal }) => {
                 Object.assign(groupData, { 'displayPicture': `${mediaId}.${extension}` });
                 createGroup(groupData);
             }).catch(({ message }) => {
+                dispatch(hideLoader());
                 dispatch(showPopup({ message, type: 'error' }));
             });
         }

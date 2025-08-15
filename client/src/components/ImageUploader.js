@@ -42,11 +42,18 @@ const ImageUploader = ({ defaultImage, onImageSelect, style, allowEdit }) => {
         }
     };
 
+    const onDeleteClick = () => {
+        if (allowEdit) {
+            setImage(null);
+            onImageSelect && onImageSelect(null);
+        }
+    };
+
     return (
         <div className="image-uploader w100 FRCC">
             <div id="image-preview" style={{ ...style }}>
                 {image ?
-                    <ImageContainer allowEdit={allowEdit} image={image} onEditClick={handleImageClick} onDeleteClick={() => allowEdit && setImage(null)} /> :
+                    <ImageContainer allowEdit={allowEdit} image={image} onEditClick={handleImageClick} onDeleteClick={onDeleteClick} /> :
                     <Placeholder onClick={handleImageClick} />
                 }
             </div>
