@@ -44,7 +44,7 @@ const ConversationScreen = ({ activeTabName }) => {
 	const activeChatTab = useSelector(state => state.activeChatTab);
 	const currentChatPreview = useSelector(state => state.currentChatPreviewSlice);
 	const { displayName, active, groupActive, groupChatConfiguration } = currentChatPreview || {};
-	const { postMessage: messagePostable, deleteMessage: messageDeletable } = groupChatConfiguration || {};
+	const { postMessage: messagePostable, deleteMessage: messageDeletable, editMessage: messageEditable } = groupChatConfiguration || {};
 
 	const updateRecentChat = (msg) => {
 
@@ -211,7 +211,7 @@ const ConversationScreen = ({ activeTabName }) => {
 						: currentChatPreview ? <>
 							<ChatHeader />
 							<audio ref={audioRef} src="/audio/on-message.mp3" preload="auto" />
-							<ChatMessages messageDeletable={messageDeletable} showStartNewConversation={showStartNewConversation} retrievingChat={retrievingChat} chatId={chatId} clickSendMessageHandler={clickSendMessageHandler} />
+							<ChatMessages messageDeletable={messageDeletable} messageEditable={messageEditable} showStartNewConversation={showStartNewConversation} retrievingChat={retrievingChat} chatId={chatId} clickSendMessageHandler={clickSendMessageHandler} />
 							<ChatFooter messagePostable={messagePostable} active={active} groupActive={groupActive} currentTab={activeChatTab.name} displayName={displayName} clickSendMessageHandler={clickSendMessageHandler} />
 						</> : null
 			}
