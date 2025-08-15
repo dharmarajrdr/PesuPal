@@ -2,10 +2,12 @@ package com.pesupal.server.service.interfaces.chat;
 
 import com.pesupal.server.dto.request.chat.RescheduleMessageDto;
 import com.pesupal.server.dto.request.chat.direct_message.ChatMessageDto;
+import com.pesupal.server.dto.response.UserPreviewDto;
 import com.pesupal.server.dto.response.chat.MessageDto;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 import java.util.List;
+import java.util.Map;
 
 public interface ChatService<T> {
 
@@ -19,7 +21,7 @@ public interface ChatService<T> {
 
     void reschedule(Long messageId, RescheduleMessageDto rescheduleMessageDto);
 
-    void unschedule(Long messageId);
+    void unschedule(Long messageId, Map<Long, UserPreviewDto> memo);
 
     void deleteSchedule(Long messageId);
 

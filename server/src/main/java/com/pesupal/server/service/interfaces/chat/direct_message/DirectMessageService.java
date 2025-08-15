@@ -8,6 +8,7 @@ import com.pesupal.server.model.chat.direct_message.DirectMessage;
 import com.pesupal.server.model.chat.direct_message.DirectMessageChat;
 import com.pesupal.server.service.interfaces.chat.ChatService;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Scheduled;
 
 import java.util.List;
 
@@ -26,4 +27,7 @@ public interface DirectMessageService extends ChatService<DirectMessage> {
     RecentChatPagedDto getRecentChatsPaged(String search, Pageable pageable);
 
     ChatPreviewDto getDirectMessagePreviewByChatId(String chatId);
+
+    @Scheduled(cron = "0 * * * * *")
+    void broadcastScheduledMessages();
 }
