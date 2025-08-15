@@ -13,7 +13,7 @@ const ImageContainer = ({ image, onEditClick, onDeleteClick }) => {
 }
 
 const Placeholder = ({ onClick }) => {
-    return <div className="placeholder" onClick={onClick}>
+    return <div className="FRCC" id="placeholder" onClick={onClick}>
         <i className="fas fa-image"></i> Upload
     </div>
 }
