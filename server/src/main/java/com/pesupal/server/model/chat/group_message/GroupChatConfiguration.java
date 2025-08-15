@@ -48,6 +48,8 @@ public class GroupChatConfiguration extends BaseModel {
 
     private boolean pinMessage;
 
+    private boolean editMessage;
+
     private boolean deleteMessage;
 
     private boolean clearChat;

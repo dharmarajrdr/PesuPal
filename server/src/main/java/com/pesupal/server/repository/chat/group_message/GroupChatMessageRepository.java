@@ -20,8 +20,8 @@ public interface GroupChatMessageRepository extends JpaRepository<GroupChatMessa
 
     Page<GroupChatMessage> findAllByGroup_PublicIdAndMessageStatusIn(String groupId, List<MessageStatus> messageStatuses, Pageable pageable);
 
-    Optional<GroupChatMessage> findFirstByGroupOrderByCreatedAtDesc(Group group);
-    
+    Optional<GroupChatMessage> findFirstByGroupAndMessageStatusIsInOrderByCreatedAtDesc(Group group, List<MessageStatus> messageStatuses);
+
     int countByGroup_PublicIdAndMessageStatus(String chatId, MessageStatus messageStatus);
 
     List<GroupChatMessage> findAllByGroupAndSenderAndMessageStatus(Group group, OrgMember orgMember, MessageStatus messageStatus);

@@ -13,8 +13,8 @@ import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.exceptions.PermissionDeniedException;
 import com.pesupal.server.helpers.CurrentValueRetriever;
+import com.pesupal.server.helpers.DateTimeUtil;
 import com.pesupal.server.helpers.GroupHelper;
-import com.pesupal.server.helpers.TimeFormatterUtil;
 import com.pesupal.server.model.chat.group_message.Group;
 import com.pesupal.server.model.chat.group_message.GroupChatConfiguration;
 import com.pesupal.server.model.chat.group_message.GroupChatMember;
@@ -166,7 +166,7 @@ public class GroupServiceImpl extends CurrentValueRetriever implements GroupServ
             lastMessage.setSender(proj.getSenderName());
             lastMessage.setMessage(proj.getContent());
             lastMessage.setMedia(proj.getIncludedMedia());
-            lastMessage.setCreatedAt(TimeFormatterUtil.formatShort(proj.getCreatedAt()));
+            lastMessage.setCreatedAt(DateTimeUtil.formatShort(proj.getCreatedAt()));
             lastMessage.setMessageStatus(proj.getMessageStatus());
             lastMessage.setMessageType(proj.getMessageType());
 

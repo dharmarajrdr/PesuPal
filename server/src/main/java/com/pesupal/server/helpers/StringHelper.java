@@ -1,5 +1,7 @@
 package com.pesupal.server.helpers;
 
+import java.util.Optional;
+
 public class StringHelper {
 
     /**
@@ -27,6 +29,12 @@ public class StringHelper {
         return title.toString().trim();
     }
 
+    /**
+     * Converts a string with spaces to camelCase.
+     *
+     * @param input
+     * @return
+     */
     public static String toCamelCase(String input) {
         if (input == null || input.isEmpty()) {
             return input;
@@ -49,6 +57,28 @@ public class StringHelper {
         }
 
         return camelCaseString.toString();
+    }
+
+    /**
+     * Finds the first URL in a given string.
+     *
+     * @param input
+     * @return
+     */
+    public static Optional<String> findFirstUrl(String input) {
+        if (input == null || input.isEmpty()) {
+            return Optional.empty();
+        }
+
+        String urlRegex = "(https?://[\\w-]+(\\.[\\w-]+)+(/\\S*)?)";
+        java.util.regex.Pattern pattern = java.util.regex.Pattern.compile(urlRegex);
+        java.util.regex.Matcher matcher = pattern.matcher(input);
+
+        if (matcher.find()) {
+            return Optional.of(matcher.group(0));
+        } else {
+            return Optional.empty();
+        }
     }
 
 }

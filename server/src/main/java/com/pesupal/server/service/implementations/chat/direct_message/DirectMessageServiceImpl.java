@@ -11,8 +11,8 @@ import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.exceptions.PermissionDeniedException;
 import com.pesupal.server.helpers.CurrentValueRetriever;
+import com.pesupal.server.helpers.DateTimeUtil;
 import com.pesupal.server.helpers.InputValidator;
-import com.pesupal.server.helpers.TimeFormatterUtil;
 import com.pesupal.server.model.chat.MessageStatus;
 import com.pesupal.server.model.chat.direct_message.DirectMessage;
 import com.pesupal.server.model.chat.direct_message.DirectMessageChat;
@@ -38,7 +38,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -48,11 +51,15 @@ import java.util.*;
 @Qualifier("directMessageService")
 public class DirectMessageServiceImpl extends CurrentValueRetriever implements DirectMessageService {
 
+    private static final String SCHEDULED_MESSAGE_KEY = "scheduled_direct_messages";
+
     private final JwtUtil jwtUtil;
     private final S3Service s3Service;
     private final OrgService orgService;
     private final UserService userService;
     private final OrgMemberService orgMemberService;
+    private final SimpMessagingTemplate messagingTemplate;
+    private final RedisTemplate<String, Object> redisTemplate;
     private final DirectMessageRepository directMessageRepository;
     private final DirectMessageChatService directMessageChatService;
     private final PinnedDirectMessageService pinnedDirectMessageService;
@@ -60,12 +67,14 @@ public class DirectMessageServiceImpl extends CurrentValueRetriever implements D
     private final DirectMessageMediaFileService directMessageMediaFileService;
     private final DirectMessageMediaFileRepository directMessageMediaFileRepository;
 
-    public DirectMessageServiceImpl(DirectMessageRepository directMessageRepository, @Lazy DirectMessageReactionService directMessageReactionService, UserService userService, OrgService orgService, OrgMemberService orgMemberService, PinnedDirectMessageService pinnedDirectMessageService, DirectMessageMediaFileRepository directMessageMediaFileRepository, S3Service s3Service, DirectMessageMediaFileService directMessageMediaFileService, JwtUtil jwtUtil, DirectMessageChatService directMessageChatService) {
+    public DirectMessageServiceImpl(DirectMessageRepository directMessageRepository, @Lazy DirectMessageReactionService directMessageReactionService, UserService userService, OrgService orgService, OrgMemberService orgMemberService, PinnedDirectMessageService pinnedDirectMessageService, DirectMessageMediaFileRepository directMessageMediaFileRepository, S3Service s3Service, DirectMessageMediaFileService directMessageMediaFileService, JwtUtil jwtUtil, DirectMessageChatService directMessageChatService, RedisTemplate<String, Object> redisTemplate, SimpMessagingTemplate messagingTemplate) {
         this.jwtUtil = jwtUtil;
         this.s3Service = s3Service;
         this.orgService = orgService;
         this.userService = userService;
+        this.redisTemplate = redisTemplate;
         this.orgMemberService = orgMemberService;
+        this.messagingTemplate = messagingTemplate;
         this.directMessageRepository = directMessageRepository;
         this.directMessageChatService = directMessageChatService;
         this.pinnedDirectMessageService = pinnedDirectMessageService;
@@ -234,7 +243,7 @@ public class DirectMessageServiceImpl extends CurrentValueRetriever implements D
                 lastMessage.setMessage("This message has been deleted.");
             }
             lastMessage.setMedia(projection.getIncludedMedia());
-            lastMessage.setCreatedAt(TimeFormatterUtil.formatShort(projection.getCreatedAt()));
+            lastMessage.setCreatedAt(DateTimeUtil.formatShort(projection.getCreatedAt()));
             lastMessage.setReadReceipt(ReadReceipt.valueOf(projection.getReadReceipt()));
             lastMessage.setMessageStatus(projection.getMessageStatus());
             lastMessage.setMessageType(projection.getMessageType());
@@ -314,6 +323,10 @@ public class DirectMessageServiceImpl extends CurrentValueRetriever implements D
             directMessageMediaFile.setDirectMessage(directMessage);
             directMessageMediaFileService.save(directMessageMediaFile);
         }
+        if (chatMessageDto.getMessageStatus().equals(MessageStatus.SCHEDULED)) {
+            long timestampMillis = DateTimeUtil.toEpochMilli(directMessage.getCreatedAt());
+            redisTemplate.opsForZSet().add(SCHEDULED_MESSAGE_KEY, directMessage.getId(), timestampMillis);
+        }
         return toMessageDto(directMessage, org.getId(), new HashMap<>());
     }
 
@@ -349,6 +362,7 @@ public class DirectMessageServiceImpl extends CurrentValueRetriever implements D
      * @param messagingTemplate
      */
     @Override
+    @Async
     public void broadcastMessage(MessageDto messageDto, SimpMessagingTemplate messagingTemplate) {
 
         messagingTemplate.convertAndSend("/topic/direct-message." + messageDto.getReceiverId(), messageDto);
@@ -384,7 +398,6 @@ public class DirectMessageServiceImpl extends CurrentValueRetriever implements D
         }
 
         Map<Long, UserPreviewDto> memo = new HashMap<>();
-
         return directMessageRepository.findAllBySenderAndDirectMessageChatAndMessageStatusAndCreatedAtIsAfterOrderByCreatedAt(orgMember, directMessageChat, MessageStatus.SCHEDULED, LocalDateTime.now()).stream().map(directMessage -> toMessageDto(directMessage, orgId, memo)).toList();
     }
 
@@ -427,9 +440,22 @@ public class DirectMessageServiceImpl extends CurrentValueRetriever implements D
      * @param messageId
      */
     @Override
-    public void unschedule(Long messageId) {
+    public void unschedule(Long messageId, Map<Long, UserPreviewDto> memo) {
 
-
+        Optional<DirectMessage> optionalDirectMessage = directMessageRepository.findById(messageId);
+        if (optionalDirectMessage.isEmpty()) {
+            return;   // message not found
+        }
+        DirectMessage directMessage = optionalDirectMessage.get();
+        if (!directMessage.getMessageStatus().equals(MessageStatus.SCHEDULED)) {
+            return;   // Skip if the message is not scheduled
+        }
+        directMessage.setMessageStatus(MessageStatus.SENT);
+        directMessage.setCreatedAt(LocalDateTime.now());
+        directMessageRepository.save(directMessage);
+        MessageDto messageDto = toMessageDto(directMessage, directMessage.getOrg().getId(), memo);
+        redisTemplate.opsForZSet().remove(SCHEDULED_MESSAGE_KEY, messageId);
+        broadcastMessage(messageDto, messagingTemplate);
     }
 
     /**
@@ -453,6 +479,8 @@ public class DirectMessageServiceImpl extends CurrentValueRetriever implements D
 
         directMessageMediaFileService.unlinkMediaFilesByDirectMessage(directMessage);
         directMessageRepository.delete(directMessage);
+
+        redisTemplate.opsForZSet().remove(SCHEDULED_MESSAGE_KEY, messageId);
     }
 
     /**
@@ -473,6 +501,24 @@ public class DirectMessageServiceImpl extends CurrentValueRetriever implements D
         for (DirectMessage message : scheduledMessages) {
             directMessageMediaFileService.unlinkMediaFilesByDirectMessage(message);
             directMessageRepository.delete(message);
+            redisTemplate.opsForZSet().remove(SCHEDULED_MESSAGE_KEY, message.getId());
+        }
+    }
+
+    /**
+     * Scheduled task to broadcast messages that are due for delivery.
+     */
+    @Scheduled(cron = "0 * * * * *")
+    @Override
+    public void broadcastScheduledMessages() {
+
+        long currentTimeMillis = DateTimeUtil.toEpochMilli(LocalDateTime.now());
+        Set<Object> messageIds = redisTemplate.opsForZSet().rangeByScore(SCHEDULED_MESSAGE_KEY, 0, currentTimeMillis);
+        Map<Long, UserPreviewDto> memo = new HashMap<>();
+
+        for (Object messageId : Objects.requireNonNull(messageIds)) {
+            Long id = Long.parseLong(messageId.toString());
+            unschedule(id, memo);
         }
     }
 }

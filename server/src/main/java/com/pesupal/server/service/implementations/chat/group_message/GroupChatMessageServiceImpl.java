@@ -227,7 +227,7 @@ public class GroupChatMessageServiceImpl extends CurrentValueRetriever implement
         }
 
         Group group = groupChatMember.getGroup();
-        Optional<GroupChatMessage> lastMessageOfGroup = groupChatMessageRepository.findFirstByGroupOrderByCreatedAtDesc(group);
+        Optional<GroupChatMessage> lastMessageOfGroup = groupChatMessageRepository.findFirstByGroupAndMessageStatusIsInOrderByCreatedAtDesc(group, List.of(MessageStatus.SENT, MessageStatus.DELETED));
         lastMessageOfGroup.ifPresent(groupChatMember::setLastReadMessage);
 
         groupChatMemberRepository.save(groupChatMember);
@@ -332,6 +332,10 @@ public class GroupChatMessageServiceImpl extends CurrentValueRetriever implement
             groupMessageMediaFile.setGroupChatMessage(groupChatMessage);
             groupMessageMediaFileRepository.save(groupMessageMediaFile);
         }
+        if (chatMessageDto.getMessageStatus().equals(MessageStatus.SENT)) {
+            groupChatMember.setLastReadMessage(groupChatMessage);
+            groupChatMemberRepository.save(groupChatMember);
+        }
         return toMessageDto(groupChatMessage, org.getId(), new HashMap<>());
     }
 
@@ -434,7 +438,7 @@ public class GroupChatMessageServiceImpl extends CurrentValueRetriever implement
      * @param messageId
      */
     @Override
-    public void unschedule(Long messageId) {
+    public void unschedule(Long messageId, Map<Long, UserPreviewDto> memo) {
 
     }
 
