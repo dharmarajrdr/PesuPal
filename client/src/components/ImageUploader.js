@@ -50,7 +50,7 @@ const ImageUploader = ({ defaultImage, onImageSelect, style, allowEdit }) => {
     };
 
     return (
-        <div className="image-uploader w100 FRCC">
+        <div className="image-uploader FRCC">
             <div id="image-preview" style={{ ...style }}>
                 {image ?
                     <ImageContainer allowEdit={allowEdit} image={image} onEditClick={handleImageClick} onDeleteClick={onDeleteClick} /> :
