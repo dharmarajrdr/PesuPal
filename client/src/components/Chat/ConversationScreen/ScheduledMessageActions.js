@@ -14,6 +14,7 @@ const ScheduledMessageActions = ({ id, setActiveMessageRowId, updateMessage, del
 
     const deleteScheduledMessageHandler = () => {
         setActiveMessageRowId(id);
+        setShowPicker(false);
         dispatch(showConfirmationPopup({
             message: 'Are you sure you want to delete this scheduled message?',
             options: [
@@ -85,6 +86,7 @@ const ScheduledMessageActions = ({ id, setActiveMessageRowId, updateMessage, del
 
     const sendScheduledMessageHandler = () => {
         setActiveMessageRowId(id);
+        setShowPicker(false);
         dispatch(showConfirmationPopup({
             message: 'Are you sure you want to send this scheduled message?',
             options: [
@@ -92,7 +94,15 @@ const ScheduledMessageActions = ({ id, setActiveMessageRowId, updateMessage, del
                     title: 'Send',
                     color: 'green',
                     onClick: () => {
-                        dispatch(hideConfirmationPopup())
+                        apiRequest(`${retrieveConversationApi}/unschedule/${id}`, "PATCH").then(({ message }) => {
+                            dispatch(hideConfirmationPopup());
+                            setActiveMessageRowId(null);
+                            dispatch(showPopup({ message, type: 'success' }));
+                            deleteMessage(id);
+                        }).catch(({ message }) => {
+                            dispatch(hideConfirmationPopup());
+                            dispatch(showPopup({ message, type: 'error' }));
+                        });
                     }
                 },
                 {
