@@ -8,6 +8,7 @@ import { showPopup } from '../../../store/reducers/PopupSlice';
 import { updateRecentChat } from '../../../store/reducers/RecentChatsSlice';
 import { updateCurrentChatPreview } from '../../../store/reducers/CurrentChatPreviewSlice';
 import { updatePinnedDirectMessage } from '../../../store/reducers/PinnedDirectMessageSlice';
+import Media from '../../../Media';
 
 const UpdateGroupModal = ({ setShowCreateGroupModal, groupData }) => {
 
@@ -21,9 +22,9 @@ const UpdateGroupModal = ({ setShowCreateGroupModal, groupData }) => {
 
     const currentChatPreview = useSelector(state => state.currentChatPreviewSlice);
     const { groupChatConfiguration } = currentChatPreview || {};
-    const { changeName: groupNameEditable, changeDescription: groupDescriptionEditable, changeVisibility: groupVisibilityEditable } = groupChatConfiguration || {};
+    const { changeName: groupNameEditable, changeDescription: groupDescriptionEditable, changeVisibility: groupVisibilityEditable, changeProfilePicture: groupProfilePictureEditable } = groupChatConfiguration || {};
 
-    const closeCreateGroupModal = () => {
+    const closeUpdateGroupModal = () => {
         setGroupName('');
         setGroupDescription('');
         setIsPublic(true);
@@ -31,39 +32,60 @@ const UpdateGroupModal = ({ setShowCreateGroupModal, groupData }) => {
     }
 
     const handleSubmit = () => {
+
         if (!groupName.trim()) {
             alert("Group name can't be empty!");
             return;
         }
+
         const groupData = {
             name: groupName.trim(),
+            displayPicture,
             description: groupDescription.trim(),
             visibility: isPublic ? 'PUBLIC' : 'PRIVATE',
         };
 
-        apiRequest(`/api/v1/group/${groupId}`, 'PUT', groupData).then(({ data, message }) => {
-            dispatch(showPopup({ message, type: 'success' }));
-            const { name, description, visibility } = data || {};
-            dispatch(updateCurrentChatPreview({
-                'displayName': name,
-                'description': description,
-                'visibility': visibility
-            }));
-            dispatch(updateRecentChat({
-                'chatId': groupId,
-                name,
-                visibility
-            }));
-            dispatch(updatePinnedDirectMessage({
-                'chatId': groupId,
-                'displayName': name,
-                'visibility': visibility
-            }));
-            closeCreateGroupModal();
-        }).catch(({ message }) => {
-            dispatch(showPopup({ message, type: 'error' }));
-            closeCreateGroupModal();
-        });
+        const updateGroup = function (groupData) {
+
+            apiRequest(`/api/v1/group/${groupId}`, 'PUT', groupData).then(({ data, message }) => {
+                dispatch(showPopup({ message, type: 'success' }));
+                const { name, description, visibility, displayPicture } = data || {};
+                dispatch(updateCurrentChatPreview({
+                    'displayName': name,
+                    displayPicture,
+                    description,
+                    visibility
+                }));
+                dispatch(updateRecentChat({
+                    'chatId': groupId,
+                    name,
+                    'image': displayPicture,
+                    visibility
+                }));
+                dispatch(updatePinnedDirectMessage({
+                    'chatId': groupId,
+                    'displayName': name,
+                    displayPicture,
+                    visibility
+                }));
+                closeUpdateGroupModal();
+            }).catch(({ message }) => {
+                dispatch(showPopup({ message, type: 'error' }));
+            });
+        }
+
+        if (file == null) {
+            updateGroup(groupData);
+        } else {
+            Media.uploadSingleMedia({ file }).then(({ data }) => {
+                const { mediaId, extension } = data || {};
+                Object.assign(groupData, { 'displayPicture': `${mediaId}.${extension}` });
+                updateGroup(groupData);
+            }).catch(({ message }) => {
+                dispatch(showPopup({ message, type: 'error' }));
+            });
+        }
+
     };
 
     return (
@@ -73,14 +95,14 @@ const UpdateGroupModal = ({ setShowCreateGroupModal, groupData }) => {
                 <h2>Group Info</h2>
 
                 <div className='FCSS w100'>
-                    <ImageUploader defaultImage={displayPicture} onImageSelect={(file) => setFile(file)} style={{ width: '100px', height: '100px', marginBottom: '20px' }} />
+                    <ImageUploader allowEdit={groupProfilePictureEditable} defaultImage={displayPicture} onImageSelect={(file) => setFile(file)} style={{ width: '100px', height: '100px', marginBottom: '20px' }} />
                     <input type="text" placeholder="Enter group name" value={groupName} onChange={(e) => groupNameEditable ? setGroupName(e.target.value) : null} className="group-name-input" />
                     <input type="text" placeholder="Enter group description (optional)" value={groupDescription} onChange={(e) => groupDescriptionEditable ? setGroupDescription(e.target.value) : null} className="group-description-input" />
                     <GroupVisibility isPublic={isPublic} setIsPublic={setIsPublic} groupVisibilityEditable={groupVisibilityEditable} />
                 </div>
 
                 <div className='FRCC w100'>
-                    <button className="cancel-btn mR5" onClick={closeCreateGroupModal}>Cancel</button>
+                    <button className="cancel-btn mR5" onClick={closeUpdateGroupModal}>Cancel</button>
                     <button className="submit-btn mL5" onClick={handleSubmit}>Update</button>
                 </div>
             </div>

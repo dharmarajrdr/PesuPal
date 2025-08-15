@@ -96,7 +96,12 @@ public class GroupServiceImpl extends CurrentValueRetriever implements GroupServ
         groupChatConfigurationService.initializeGroupChatConfiguration(group);
         initializeGroupChatMember(group, owner);
         groupChatMessageService.addSystemMessage(group, owner.getDisplayName() + " has created the group.");
-        return GroupDto.fromGroupAndOrgMember(group, owner);
+        String displayPicture = null;
+        try {
+            displayPicture = mediaService.generatePresignedUrl(createGroupDto.getDisplayPicture()).toString();
+        } catch (Exception ignored) {
+        }
+        return GroupDto.fromGroupAndOrgMemberAndDisplayPicture(group, owner, displayPicture);
     }
 
     /**
@@ -303,6 +308,15 @@ public class GroupServiceImpl extends CurrentValueRetriever implements GroupServ
             throw new PermissionDeniedException("You do not have permission to update the group description.");
         }
 
+        if (!groupChatConfiguration.isChangeProfilePicture()) {
+            if (updateGroupDto.getDisplayPicture() == null && group.getDisplayPicture() != null) {
+                throw new PermissionDeniedException("You do not have permission to update the group display picture.");
+            }
+            if (updateGroupDto.getDisplayPicture() != null && !updateGroupDto.getDisplayPicture().equals(group.getDisplayPicture())) {
+                throw new PermissionDeniedException("You do not have permission to update the group display picture.");
+            }
+        }
+
         if (!updateGroupDto.getVisibility().equals(group.getVisibility()) && !groupChatConfiguration.isChangeVisibility()) {
             throw new PermissionDeniedException("You do not have permission to update the group visibility.");
         }
@@ -319,6 +333,11 @@ public class GroupServiceImpl extends CurrentValueRetriever implements GroupServ
 
         groupRepository.save(group);
 
-        return GroupDto.fromGroup(group);
+        GroupDto groupDto = GroupDto.fromGroup(group);
+        try {
+            groupDto.setDisplayPicture(mediaService.generatePresignedUrl(group.getDisplayPicture()).toString());
+        } catch (Exception ignored) {
+        }
+        return groupDto;
     }
 }

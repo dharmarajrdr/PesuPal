@@ -1,13 +1,13 @@
-import React, { useRef, useState } from "react";
 import "./ImageUploader.css";
+import { useRef, useState } from "react";
 
-const ImageContainer = ({ image, onEditClick, onDeleteClick }) => {
+const ImageContainer = ({ image, onEditClick, onDeleteClick, allowEdit }) => {
 
     return <div id="image-container">
-        <div className="FRCC centerMe" id="actionButtons">
+        {allowEdit && <div className="FRCC centerMe" id="actionButtons">
             <i className="fa fa-edit mR5" aria-hidden="true" onClick={onEditClick}></i>
             <i className="fa fa-trash mL5" aria-hidden="true" onClick={onDeleteClick}></i>
-        </div>
+        </div>}
         <img src={image} alt="Uploaded" />
     </div>
 }
@@ -18,13 +18,17 @@ const Placeholder = ({ onClick }) => {
     </div>
 }
 
-const ImageUploader = ({ defaultImage, onImageSelect, style }) => {
+const ImageUploader = ({ defaultImage, onImageSelect, style, allowEdit }) => {
 
-    const [image, setImage] = useState(defaultImage || null);
+    allowEdit = allowEdit != null ? allowEdit : true;
+
     const fileInputRef = useRef(null);
+    const [image, setImage] = useState(defaultImage || null);
 
     const handleImageClick = () => {
-        fileInputRef.current.click();
+        if (allowEdit) {
+            fileInputRef.current.click();
+        }
     };
 
     const handleFileChange = (e) => {
@@ -42,7 +46,7 @@ const ImageUploader = ({ defaultImage, onImageSelect, style }) => {
         <div className="image-uploader w100 FRCC">
             <div id="image-preview" style={{ ...style }}>
                 {image ?
-                    <ImageContainer image={image} onEditClick={handleImageClick} onDeleteClick={() => setImage(null)} /> :
+                    <ImageContainer allowEdit={allowEdit} image={image} onEditClick={handleImageClick} onDeleteClick={() => allowEdit && setImage(null)} /> :
                     <Placeholder onClick={handleImageClick} />
                 }
             </div>
