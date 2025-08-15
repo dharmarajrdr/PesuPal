@@ -128,7 +128,7 @@ const ChatMessageItem = ({ msg, isSameSender, messageDeletable, isScheduledMessa
                         <div className="message-content">
                             <Message html={message} />
                         </div>
-                        <MessageMeta id={id} createdAt={createdAt} readReceipt={readReceipt} isCurrentUser={isCurrentUser} reactions={reactions} />
+                        <MessageMeta id={id} createdAt={createdAt} readReceipt={readReceipt} isCurrentUser={isCurrentUser} reactions={reactions} isScheduledMessage={isScheduledMessage} />
                     </>}
                 </div>
             </div>

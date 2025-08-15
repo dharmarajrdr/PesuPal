@@ -387,7 +387,7 @@ public class GroupChatMessageServiceImpl extends CurrentValueRetriever implement
             throw new PermissionDeniedException("You are no longer part of this group.");
         }
 
-        List<GroupChatMessage> scheduledMessages = groupChatMessageRepository.findAllByGroup_PublicIdAndMessageStatus(groupId, MessageStatus.SCHEDULED);
+        List<GroupChatMessage> scheduledMessages = groupChatMessageRepository.findAllByGroup_PublicIdAndMessageStatusAndCreatedAtIsAfter(groupId, MessageStatus.SCHEDULED, LocalDateTime.now());
 
         Map<Long, UserPreviewDto> memo = new HashMap<>();
         return scheduledMessages.stream().map(gm -> toMessageDto(gm, orgId, memo)).sorted(Comparator.comparing(MessageDto::getCreatedAt)).toList();

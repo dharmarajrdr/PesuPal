@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,12 +21,12 @@ public interface GroupChatMessageRepository extends JpaRepository<GroupChatMessa
     Page<GroupChatMessage> findAllByGroup_PublicIdAndMessageStatusIn(String groupId, List<MessageStatus> messageStatuses, Pageable pageable);
 
     Optional<GroupChatMessage> findFirstByGroupOrderByCreatedAtDesc(Group group);
-
-    List<GroupChatMessage> findAllByGroup_PublicIdAndMessageStatus(String chatId, MessageStatus messageStatus);
-
+    
     int countByGroup_PublicIdAndMessageStatus(String chatId, MessageStatus messageStatus);
 
     List<GroupChatMessage> findAllByGroupAndSenderAndMessageStatus(Group group, OrgMember orgMember, MessageStatus messageStatus);
 
     void deleteAllByGroupAndMessageStatusIn(Group group, List<MessageStatus> sent);
+
+    List<GroupChatMessage> findAllByGroup_PublicIdAndMessageStatusAndCreatedAtIsAfter(String groupId, MessageStatus messageStatus, LocalDateTime now);
 }
