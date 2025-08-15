@@ -47,7 +47,7 @@ const MessageMeta = ({ id, createdAt, readReceipt, isCurrentUser, reactions, isS
             <Reactions reactions={reactions} id={id} />
             <div className="FRCE">
                 <span className="time" title={isScheduledMessage ? utils.futureTimeCalculator(createdAt) : undefined}>{utils.convertTime(createdAt, 12)}</span>
-                {isCurrentUser && <ReadReceipt readReceipt={readReceipt} />}
+                {isCurrentUser && !isScheduledMessage && <ReadReceipt readReceipt={readReceipt} />}
             </div>
         </div>
     )
