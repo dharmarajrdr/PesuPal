@@ -41,6 +41,10 @@
     min-width: 35%;
 }
 
+#schedule-messages-container #schedule-picker-container {
+    right: -200px;
+}
+
 #scheduled-messages-header button {
     color: #fff;
     border: none;

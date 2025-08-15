@@ -21,11 +21,23 @@ const NoMessagesFound = () => {
     )
 }
 
-const ScheduledMessagesList = ({ messages }) => {
+const ScheduledMessagesList = ({ messages, setMessages }) => {
 
     let lastDate = null;
+    const [activeMessageRowId, setActiveMessageRowId] = useState(null);
 
-    return <div className='h100P FCSE chat-messages' id='scheduled-messages-list'>
+    const updateMessage = ({ id, updatedMessage }) => {
+
+        setMessages(prevMessages => prevMessages.map(msg => msg.id === id ? { ...msg, ...updatedMessage } : msg));
+        setMessages(prevMessages => [...prevMessages].sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt)));
+    }
+
+    const deleteMessage = (id) => {
+
+        setMessages(prevMessages => prevMessages.filter(msg => msg.id !== id));
+    }
+
+    return <div className='w100 h100P FCSE chat-messages' id='scheduled-messages-list'>
 
         {messages.length ? messages.map((message) => {
 
@@ -37,7 +49,7 @@ const ScheduledMessagesList = ({ messages }) => {
             return (
                 <div key={id} className='w100'>
                     {showDate && <div className="date-label">{newDate}</div>}
-                    <ChatMessageItem msg={message} isSameSender={!showDate} messageDeletable={true} isScheduledMessage={true} />
+                    <ChatMessageItem msg={message} isSameSender={!showDate} messageDeletable={true} isScheduledMessage={true} setActiveMessageRowId={setActiveMessageRowId} activeMessageRowId={activeMessageRowId} updateMessage={updateMessage} deleteMessage={deleteMessage} />
                 </div>
             );
         }) : <NoMessagesFound />}
@@ -90,7 +102,14 @@ const ScheduledMessageOverlay = ({ onClose, chatId }) => {
                     title: 'Delete',
                     color: 'red',
                     onClick: () => {
-                        dispatch(hideConfirmationPopup())
+                        apiRequest(`${retrieveConversationApi}/schedule/all/${chatId}`, "DELETE").then(({ message }) => {
+                            dispatch(hideConfirmationPopup());
+                            dispatch(showPopup({ message, type: 'success' }));
+                            setMessages([]);
+                        }).catch(({ message }) => {
+                            dispatch(hideConfirmationPopup());
+                            dispatch(showPopup({ message, type: 'error' }));
+                        });
                     }
                 },
                 {
@@ -120,7 +139,7 @@ const ScheduledMessageOverlay = ({ onClose, chatId }) => {
                         </button>
                     </div>}
                 </div>
-                {loader ? <Loader /> : <ScheduledMessagesList messages={messages} />}
+                {loader ? <Loader /> : <ScheduledMessagesList messages={messages} setMessages={setMessages} />}
             </div>
         </div>
     )
