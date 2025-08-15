@@ -35,6 +35,8 @@ public class UpdateGroupChatConfigurationDto {
 
     private Boolean pinMessage;
 
+    private Boolean editMessage;
+
     private Boolean deleteMessage;
 
     private Boolean clearChat;
@@ -57,6 +59,7 @@ public class UpdateGroupChatConfigurationDto {
         dto.setViewMembers(groupChatConfiguration.isViewMembers());
         dto.setPostMessage(groupChatConfiguration.isPostMessage());
         dto.setPinMessage(groupChatConfiguration.isPinMessage());
+        dto.setEditMessage(groupChatConfiguration.isEditMessage());
         dto.setDeleteMessage(groupChatConfiguration.isDeleteMessage());
         dto.setClearChat(groupChatConfiguration.isClearChat());
         dto.setRoleUpdate(groupChatConfiguration.isRoleUpdate());
@@ -98,6 +101,9 @@ public class UpdateGroupChatConfigurationDto {
         }
         if (pinMessage != null) {
             groupChatConfiguration.setPinMessage(pinMessage);
+        }
+        if (editMessage != null) {
+            groupChatConfiguration.setEditMessage(editMessage);
         }
         if (deleteMessage != null) {
             groupChatConfiguration.setDeleteMessage(deleteMessage);
