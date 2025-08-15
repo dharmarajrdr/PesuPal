@@ -15,6 +15,15 @@ const ConversationSlice = createSlice({
         'clearMessages': (state) => {
             state.messages = [];
         },
+        'updateMessage': (state, action) => {
+            const { id, updatedMessage } = action.payload;
+            state.messages = state.messages.map(msg => {
+                if (msg.id === id) {
+                    return { ...msg, ...updatedMessage };
+                }
+                return msg;
+            });
+        },
         'deleteMessage': (state, action) => {
             const { id } = action.payload;
             state.messages = state.messages.map(msg => {
@@ -34,6 +43,6 @@ const ConversationSlice = createSlice({
     }
 });
 
-export const { setMessages, addMessage, clearMessages, deleteMessage, reactMessage } = ConversationSlice.actions;
+export const { setMessages, addMessage, clearMessages, updateMessage, deleteMessage, reactMessage } = ConversationSlice.actions;
 
 export default ConversationSlice.reducer;
