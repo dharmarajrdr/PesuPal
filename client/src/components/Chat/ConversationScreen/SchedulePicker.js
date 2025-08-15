@@ -9,11 +9,11 @@ const getMinDateTime = () => {
     return now.toISOString().slice(0, 16);
 };
 
-const SchedulePicker = ({ onSchedule, showPicker, setShowPicker }) => {
+const SchedulePicker = ({ onSchedule, onCancel, showPicker, setShowPicker }) => {
 
     const dispatch = useDispatch();
     const pickerRef = useRef(null);
-    const [scheduledTime, setScheduledTime] = useState(null);
+    const [scheduledTime, setScheduledTime] = useState("");
 
     const handleScheduleClick = () => {
         if (scheduledTime) {
@@ -32,7 +32,7 @@ const SchedulePicker = ({ onSchedule, showPicker, setShowPicker }) => {
 
             <div className="FRCC mT10 w100">
                 <button id="schedule-button" onClick={handleScheduleClick}>Schedule</button>
-                <button id="cancel-button" className="mL10" onClick={() => setShowPicker(false)}>Cancel</button>
+                <button id="cancel-button" className="mL10" onClick={() => { setShowPicker(false); onCancel && onCancel(); }}>Cancel</button>
             </div>
 
         </div>
