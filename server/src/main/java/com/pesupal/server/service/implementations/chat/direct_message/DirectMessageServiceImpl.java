@@ -440,7 +440,7 @@ public class DirectMessageServiceImpl extends CurrentValueRetriever implements D
      * @param messageId
      */
     @Override
-    public void unschedule(Long messageId, Map<Long, UserPreviewDto> memo) {
+    public void unschedule(Long messageId, Map<Long, UserPreviewDto> memo, OrgMember triggeredBy) {
 
         Optional<DirectMessage> optionalDirectMessage = directMessageRepository.findById(messageId);
         if (optionalDirectMessage.isEmpty()) {
@@ -450,11 +450,13 @@ public class DirectMessageServiceImpl extends CurrentValueRetriever implements D
         if (!directMessage.getMessageStatus().equals(MessageStatus.SCHEDULED)) {
             return;   // Skip if the message is not scheduled
         }
+        if (triggeredBy != null && !directMessage.getSender().getPublicId().equals(triggeredBy.getPublicId())) {
+            throw new PermissionDeniedException("You do not have permission to unschedule this message.");
+        }
         directMessage.setMessageStatus(MessageStatus.SENT);
         directMessage.setCreatedAt(LocalDateTime.now());
         directMessageRepository.save(directMessage);
         MessageDto messageDto = toMessageDto(directMessage, directMessage.getOrg().getId(), memo);
-        redisTemplate.opsForZSet().remove(SCHEDULED_MESSAGE_KEY, messageId);
         broadcastMessage(messageDto, messagingTemplate);
     }
 
@@ -517,8 +519,12 @@ public class DirectMessageServiceImpl extends CurrentValueRetriever implements D
         Map<Long, UserPreviewDto> memo = new HashMap<>();
 
         for (Object messageId : Objects.requireNonNull(messageIds)) {
-            Long id = Long.parseLong(messageId.toString());
-            unschedule(id, memo);
+            try {
+                redisTemplate.opsForZSet().remove(SCHEDULED_MESSAGE_KEY, messageId);
+                Long id = Long.parseLong(messageId.toString());
+                unschedule(id, memo, null);
+            } catch (Exception ignored) {
+            }
         }
     }
 }

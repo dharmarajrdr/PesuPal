@@ -12,6 +12,7 @@ import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.exceptions.PermissionDeniedException;
 import com.pesupal.server.helpers.CurrentValueRetriever;
+import com.pesupal.server.helpers.DateTimeUtil;
 import com.pesupal.server.helpers.InputValidator;
 import com.pesupal.server.model.chat.MessageStatus;
 import com.pesupal.server.model.chat.group_message.*;
@@ -31,7 +32,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,10 +46,14 @@ import java.util.*;
 @Qualifier("groupChatMessageService")
 public class GroupChatMessageServiceImpl extends CurrentValueRetriever implements GroupChatMessageService {
 
+    private static final String SCHEDULED_MESSAGE_KEY = "scheduled_group_messages";
+
     private final JwtUtil jwtUtil;
     private final S3Service s3Service;
     private final GroupService groupService;
     private final OrgMemberService orgMemberService;
+    private final SimpMessagingTemplate messagingTemplate;
+    private final RedisTemplate<String, Object> redisTemplate;
     private final GroupChatMemberService groupChatMemberService;
     private final GroupChatReactionService groupChatReactionService;
     private final GroupChatMemberRepository groupChatMemberRepository;
@@ -335,6 +342,9 @@ public class GroupChatMessageServiceImpl extends CurrentValueRetriever implement
         if (chatMessageDto.getMessageStatus().equals(MessageStatus.SENT)) {
             groupChatMember.setLastReadMessage(groupChatMessage);
             groupChatMemberRepository.save(groupChatMember);
+        } else if (chatMessageDto.getMessageStatus().equals(MessageStatus.SCHEDULED)) {
+            long timestampMillis = DateTimeUtil.toEpochMilli(groupChatMessage.getCreatedAt());
+            redisTemplate.opsForZSet().add(SCHEDULED_MESSAGE_KEY, groupChatMessage.getId(), timestampMillis);
         }
         return toMessageDto(groupChatMessage, org.getId(), new HashMap<>());
     }
@@ -394,7 +404,7 @@ public class GroupChatMessageServiceImpl extends CurrentValueRetriever implement
             throw new PermissionDeniedException("You are no longer part of this group.");
         }
 
-        List<GroupChatMessage> scheduledMessages = groupChatMessageRepository.findAllByGroup_PublicIdAndMessageStatusAndCreatedAtIsAfter(groupId, MessageStatus.SCHEDULED, LocalDateTime.now());
+        List<GroupChatMessage> scheduledMessages = groupChatMessageRepository.findAllByGroup_PublicIdAndSenderAndMessageStatusAndCreatedAtIsAfter(groupId, orgMember, MessageStatus.SCHEDULED, LocalDateTime.now());
 
         Map<Long, UserPreviewDto> memo = new HashMap<>();
         return scheduledMessages.stream().map(gm -> toMessageDto(gm, orgId, memo)).sorted(Comparator.comparing(MessageDto::getCreatedAt)).toList();
@@ -438,8 +448,34 @@ public class GroupChatMessageServiceImpl extends CurrentValueRetriever implement
      * @param messageId
      */
     @Override
-    public void unschedule(Long messageId, Map<Long, UserPreviewDto> memo) {
+    public void unschedule(Long messageId, Map<Long, UserPreviewDto> memo, OrgMember triggeredBy) {
 
+        Optional<GroupChatMessage> optionalGroupChatMessage = groupChatMessageRepository.findById(messageId);
+        if (optionalGroupChatMessage.isEmpty()) {
+            return;
+        }
+        GroupChatMessage groupChatMessage = optionalGroupChatMessage.get();
+        if (!groupChatMessage.getMessageStatus().equals(MessageStatus.SCHEDULED)) {
+            return;
+        }
+        if (triggeredBy != null && !triggeredBy.getPublicId().equals(groupChatMessage.getSender().getPublicId())) {
+            throw new PermissionDeniedException("You do not have permission to unschedule this message.");
+        }
+
+        String groupId = groupChatMessage.getGroup().getPublicId();
+        OrgMember sender = groupChatMessage.getSender();
+
+        GroupChatMember groupChatMember = groupChatMemberService.getGroupMemberByGroupIdAndUserId(groupId, sender.getId());
+        GroupChatConfiguration groupChatConfiguration = groupChatConfigurationService.getConfigurationByGroupAndRole(groupChatMember.getGroup(), groupChatMember.getRole());
+        if (!groupChatConfiguration.isPostMessage()) {
+            throw new PermissionDeniedException("You do not have permission to post message in this group.");
+        }
+
+        groupChatMessage.setCreatedAt(LocalDateTime.now());
+        groupChatMessage.setMessageStatus(MessageStatus.SENT);
+        groupChatMessageRepository.save(groupChatMessage);
+        MessageDto messageDto = toMessageDto(groupChatMessage, groupChatMessage.getGroup().getOrg().getId(), memo);
+        broadcastMessage(messageDto, messagingTemplate);
     }
 
     /**
@@ -463,6 +499,8 @@ public class GroupChatMessageServiceImpl extends CurrentValueRetriever implement
 
         groupMessageMediaFileService.unlinkMediaFilesByGroupMessage(groupChatMessage);
         groupChatMessageRepository.delete(groupChatMessage);
+
+        redisTemplate.opsForZSet().remove(SCHEDULED_MESSAGE_KEY, messageId);
     }
 
     /**
@@ -495,6 +533,28 @@ public class GroupChatMessageServiceImpl extends CurrentValueRetriever implement
 
             groupMessageMediaFileService.unlinkMediaFilesByGroupMessage(scheduledMessage);
             groupChatMessageRepository.delete(scheduledMessage);
+            redisTemplate.opsForZSet().remove(SCHEDULED_MESSAGE_KEY, scheduledMessage.getId());
+        }
+    }
+
+    /**
+     * Scheduled task to broadcast messages that are due for delivery.
+     */
+    @Scheduled(cron = "0 * * * * *")
+    @Override
+    public void broadcastScheduledMessages() {
+
+        long currentTimeMillis = DateTimeUtil.toEpochMilli(LocalDateTime.now());
+        Set<Object> messageIds = redisTemplate.opsForZSet().rangeByScore(SCHEDULED_MESSAGE_KEY, 0, currentTimeMillis);
+        Map<Long, UserPreviewDto> memo = new HashMap<>();
+
+        for (Object messageId : Objects.requireNonNull(messageIds)) {
+            try {
+                redisTemplate.opsForZSet().remove(SCHEDULED_MESSAGE_KEY, messageId);
+                Long id = Long.parseLong(messageId.toString());
+                unschedule(id, memo, null);
+            } catch (Exception ignored) {
+            }
         }
     }
 

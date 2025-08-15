@@ -9,6 +9,7 @@ import com.pesupal.server.dto.response.chat.ChatPreviewDto;
 import com.pesupal.server.dto.response.chat.MessageDto;
 import com.pesupal.server.dto.response.chat.ReactMessageResponseDto;
 import com.pesupal.server.dto.response.chat.RecentChatPagedDto;
+import com.pesupal.server.helpers.CurrentValueRetriever;
 import com.pesupal.server.model.chat.direct_message.DirectMessage;
 import com.pesupal.server.service.interfaces.chat.direct_message.DirectMessageReactionService;
 import com.pesupal.server.service.interfaces.chat.direct_message.DirectMessageService;
@@ -23,7 +24,7 @@ import java.util.List;
 @RestController
 @AllArgsConstructor
 @RequestMapping("/api/v1/direct-messages")
-public class DirectMessageController {
+public class DirectMessageController extends CurrentValueRetriever {
 
     private final DirectMessageService directMessageService;
     private final DirectMessageReactionService directMessageReactionService;
@@ -68,7 +69,7 @@ public class DirectMessageController {
     @PatchMapping("/unschedule/{messageId}")
     public ResponseEntity<ApiResponseDto> unscheduleDirectMessage(@PathVariable Long messageId) {
 
-        directMessageService.unschedule(messageId, new HashMap<>());
+        directMessageService.unschedule(messageId, new HashMap<>(), getCurrentOrgMember());
         return ResponseEntity.ok(new ApiResponseDto("Direct message unscheduled successfully"));
     }
 
