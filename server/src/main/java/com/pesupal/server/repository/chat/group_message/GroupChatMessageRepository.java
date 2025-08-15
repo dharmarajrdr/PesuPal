@@ -15,8 +15,6 @@ import java.util.Optional;
 @Repository
 public interface GroupChatMessageRepository extends JpaRepository<GroupChatMessage, Long> {
 
-    void deleteAllByGroup(Group group);
-
     Page<GroupChatMessage> findAllByGroup_PublicIdAndIdLessThanAndMessageStatusIn(String groupId, Long pivotMessageId, List<MessageStatus> messageStatuses, Pageable pageable);
 
     Page<GroupChatMessage> findAllByGroup_PublicIdAndMessageStatusIn(String groupId, List<MessageStatus> messageStatuses, Pageable pageable);
@@ -28,4 +26,6 @@ public interface GroupChatMessageRepository extends JpaRepository<GroupChatMessa
     int countByGroup_PublicIdAndMessageStatus(String chatId, MessageStatus messageStatus);
 
     List<GroupChatMessage> findAllByGroupAndSenderAndMessageStatus(Group group, OrgMember orgMember, MessageStatus messageStatus);
+
+    void deleteAllByGroupAndMessageStatusIn(Group group, List<MessageStatus> sent);
 }

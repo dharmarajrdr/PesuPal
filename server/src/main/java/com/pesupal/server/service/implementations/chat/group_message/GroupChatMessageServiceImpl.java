@@ -205,7 +205,7 @@ public class GroupChatMessageServiceImpl extends CurrentValueRetriever implement
 
         groupChatReactionService.deleteAllByGroup(group);
 
-        groupChatMessageRepository.deleteAllByGroup(group);
+        groupChatMessageRepository.deleteAllByGroupAndMessageStatusIn(group, List.of(MessageStatus.SENT, MessageStatus.DELETED));
 
         addSystemMessage(group, orgMember.getDisplayName() + " has cleared the group chat messages.");
     }
