@@ -206,6 +206,8 @@ public class GroupChatMemberServiceImpl extends CurrentValueRetriever implements
 
         memberToRemoveChatMember.setActive(false);
         groupChatMemberRepository.save(memberToRemoveChatMember);
+
+        groupChatMessageService.addSystemMessage(group, orgMember.getDisplayName() + " removed " + memberToRemove.getDisplayName());
     }
 
     /**
@@ -246,6 +248,7 @@ public class GroupChatMemberServiceImpl extends CurrentValueRetriever implements
         newGroupMember.setRole(Role.USER);
         newGroupMember.setActive(true);
         groupChatMemberRepository.save(newGroupMember);
+        groupChatMessageService.addSystemMessage(group, currentUser.getDisplayName() + " added " + newMember.getDisplayName());
         return UserPreviewDto.fromOrgMember(newMember);
     }
 
