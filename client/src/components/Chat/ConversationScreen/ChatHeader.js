@@ -207,7 +207,7 @@ const ChatHeader = () => {
                                     dispatch(hideConfirmationPopup());
                                     dispatch(showPopup({ message, type: 'success' }));
                                     dispatch(setShowChatHeaderOptionsModal(false));
-                                    dispatch(updateCurrentChatPreview({ groupActive: false }));
+                                    dispatch(updateCurrentChatPreview({ 'groupActive': false, 'reopenable': true }));
                                 }).catch(({ message }) => {
                                     dispatch(showPopup({ message, type: 'error' }));
                                 });
