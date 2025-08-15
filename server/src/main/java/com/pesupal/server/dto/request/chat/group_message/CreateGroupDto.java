@@ -22,7 +22,7 @@ public class CreateGroupDto {
         group.setName(name);
         group.setDescription(description);
         group.setVisibility(visibility);
-        if (displayPictureRemoved) {
+        if (displayPictureRemoved != null && displayPictureRemoved) {
             displayPicture = null;
         }
         group.setDisplayPicture(displayPicture);
