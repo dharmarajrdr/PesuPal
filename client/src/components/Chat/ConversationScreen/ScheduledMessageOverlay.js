@@ -49,7 +49,7 @@ const ScheduledMessagesList = ({ messages, setMessages }) => {
             return (
                 <div key={id} className='w100'>
                     {showDate && <div className="date-label">{newDate}</div>}
-                    <ChatMessageItem msg={message} isSameSender={!showDate} messageDeletable={true} isScheduledMessage={true} setActiveMessageRowId={setActiveMessageRowId} activeMessageRowId={activeMessageRowId} updateMessage={updateMessage} deleteMessage={deleteMessage} />
+                    <ChatMessageItem msg={message} isSameSender={!showDate} messageDeletable={true} messageEditable={true} messagePinnable={false} isScheduledMessage={true} setActiveMessageRowId={setActiveMessageRowId} activeMessageRowId={activeMessageRowId} updateMessage={updateMessage} deleteMessage={deleteMessage} />
                 </div>
             );
         }) : <NoMessagesFound />}
