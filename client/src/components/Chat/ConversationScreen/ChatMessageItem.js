@@ -16,10 +16,10 @@ const extensionTagMapper = {
     "zip": ["zip", "rar", "tar", "gz"]
 }
 
-const ImageNotFound = () => {
+const ResourceNotFound = () => {
     return <div className="image-not-found FRCC">
         <i className='fa fa-image colorAAA mR5' />
-        <p>Error loading image</p>
+        <p>Resource not found</p>
     </div>;
 }
 
@@ -31,7 +31,17 @@ const ImageDisplayer = ({ media }) => {
 
     return mediaUrl ? <div className="message-media">
         {showFullScreen && <FullScreenImageView mediaUrl={mediaUrl} onClose={() => setShowFullScreen(false)} />}
-        {imageError ? <ImageNotFound /> : <img src={mediaUrl} alt="Media" className="media-image cursP" onError={() => setImageError(true)} onClick={() => setShowFullScreen(true)} />}
+        {imageError ? <ResourceNotFound /> : <img src={mediaUrl} alt="Media" className="media-image cursP" onError={() => setImageError(true)} onClick={() => setShowFullScreen(true)} />}
+    </div> : null;
+}
+
+const VideoDisplayer = ({ media }) => {
+
+    const { mediaUrl } = media || {};
+    const [videoError, setVideoError] = useState(false);
+
+    return mediaUrl ? <div className="message-media">
+        {videoError ? <ResourceNotFound /> : <video src={mediaUrl} controls className="media-video cursP" onError={() => setVideoError(true)} />}
     </div> : null;
 }
 
@@ -48,9 +58,7 @@ const MediaDisplayer = ({ media }) => {
                 case 'img':
                     return <ImageDisplayer media={media} />;
                 case 'video':
-                    return <div className="message-media">
-                        <video src={mediaUrl} controls className="media-video cursP" />
-                    </div>;
+                    return <VideoDisplayer media={media} />;
                 case 'audio':
                     return <div className="message-media">
                         <audio src={mediaUrl} controls className="media-audio cursP" />
