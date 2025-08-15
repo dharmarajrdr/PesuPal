@@ -13,6 +13,8 @@ public class CreateGroupDto {
 
     private String displayPicture;
 
+    private Boolean displayPictureRemoved;
+
     private Visibility visibility;
 
     public Group toGroup() {
@@ -20,6 +22,9 @@ public class CreateGroupDto {
         group.setName(name);
         group.setDescription(description);
         group.setVisibility(visibility);
+        if (displayPictureRemoved) {
+            displayPicture = null;
+        }
         group.setDisplayPicture(displayPicture);
         group.setActive(true);
         group.setShowOldMessagesToNewJoiners(true);
@@ -36,6 +41,11 @@ public class CreateGroupDto {
         }
         if (displayPicture != null) {
             group.setDisplayPicture(displayPicture.trim());
+        }
+        if (displayPictureRemoved != null) {
+            if (displayPictureRemoved) {
+                group.setDisplayPicture(null);
+            }
         }
         if (visibility != null) {
             group.setVisibility(visibility);

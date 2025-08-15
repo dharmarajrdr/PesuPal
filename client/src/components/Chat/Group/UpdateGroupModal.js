@@ -17,8 +17,8 @@ const UpdateGroupModal = ({ setShowCreateGroupModal, groupData }) => {
     const { chatId: groupId, displayName: name, displayPicture, description, visibility } = groupData || {};
     const [file, setFile] = useState(null);
     const [groupName, setGroupName] = useState(name);
-    const [groupDescription, setGroupDescription] = useState(description);
     const [isPublic, setIsPublic] = useState(visibility === 'PUBLIC');
+    const [groupDescription, setGroupDescription] = useState(description);
 
     const currentChatPreview = useSelector(state => state.currentChatPreviewSlice);
     const { groupChatConfiguration } = currentChatPreview || {};
@@ -75,6 +75,9 @@ const UpdateGroupModal = ({ setShowCreateGroupModal, groupData }) => {
         }
 
         if (file == null) {
+            if (displayPicture != null) {
+                Object.assign(groupData, { 'displayPictureRemoved': true });
+            }
             updateGroup(groupData);
         } else {
             Media.uploadSingleMedia({ file }).then(({ data }) => {
