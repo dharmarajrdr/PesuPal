@@ -385,7 +385,7 @@ public class DirectMessageServiceImpl extends CurrentValueRetriever implements D
 
         Map<Long, UserPreviewDto> memo = new HashMap<>();
 
-        return directMessageRepository.findAllBySenderAndDirectMessageChatAndMessageStatusAndCreatedAtIsAfter(orgMember, directMessageChat, MessageStatus.SCHEDULED, LocalDateTime.now()).stream().map(directMessage -> toMessageDto(directMessage, orgId, memo)).toList();
+        return directMessageRepository.findAllBySenderAndDirectMessageChatAndMessageStatusAndCreatedAtIsAfterOrderByCreatedAt(orgMember, directMessageChat, MessageStatus.SCHEDULED, LocalDateTime.now()).stream().map(directMessage -> toMessageDto(directMessage, orgId, memo)).toList();
     }
 
     /**
