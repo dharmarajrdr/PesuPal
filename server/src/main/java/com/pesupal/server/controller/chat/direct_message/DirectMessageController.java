@@ -17,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 
 @RestController
@@ -64,6 +65,13 @@ public class DirectMessageController {
         return ResponseEntity.ok(new ApiResponseDto("Direct message rescheduled successfully"));
     }
 
+    @PatchMapping("/unschedule/{messageId}")
+    public ResponseEntity<ApiResponseDto> unscheduleDirectMessage(@PathVariable Long messageId) {
+
+        directMessageService.unschedule(messageId, new HashMap<>());
+        return ResponseEntity.ok(new ApiResponseDto("Direct message unscheduled successfully"));
+    }
+
     @DeleteMapping("/schedule/{messageId}")
     public ResponseEntity<ApiResponseDto> deleteScheduleDirectMessage(@PathVariable Long messageId) {
 
@@ -77,7 +85,7 @@ public class DirectMessageController {
         directMessageService.deleteAllScheduledMessages(chatId);
         return ResponseEntity.ok(new ApiResponseDto("All scheduled direct messages deleted successfully"));
     }
-    
+
     @GetMapping("/{chatId}/scheduled-messages")
     public ResponseEntity<ApiResponseDto> getScheduledDirectMessage(@PathVariable String chatId) {
 
