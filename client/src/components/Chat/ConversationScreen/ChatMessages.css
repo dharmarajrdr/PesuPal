@@ -204,7 +204,7 @@
 
 .message-actions {
     width: fit-content;
-    margin-top: 4px;
+    margin-top: 10px;
     display: flex;
     padding: 2px;
     position: absolute;
@@ -239,18 +239,18 @@
 }
 
 .message-actions.sent {
-    left: -30px;
+    left: 0px;
 }
 
 .message-actions.received {
-    right: -80px;
+    right: 0px;
 }
 
-.message-actions .reactions {
+/* .message-actions .reactions {
     border-left: 1px solid #ddd;
     padding-left: 5px;
     margin-left: 5px;
-}
+} */
 
 .reaction-icon {
     cursor: pointer;
