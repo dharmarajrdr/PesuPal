@@ -68,6 +68,7 @@ public interface GroupRepository extends JpaRepository<Group, Long> {
                AND sender.org_id = :orgId
             
             WHERE LOWER(g.name) LIKE LOWER(CONCAT('%', :search, '%'))
+                AND msg.message_status IN ('SENT', 'DELETED')
             
             ORDER BY msg.created_at DESC
             LIMIT :limit OFFSET :offset;

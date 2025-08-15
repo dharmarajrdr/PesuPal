@@ -69,6 +69,7 @@ public interface DirectMessageRepository extends JpaRepository<DirectMessage, Lo
             
             WHERE dm.org_id = :orgId
                 AND (dm.sender_id = :userId OR dm.receiver_id = :userId)
+                AND dm.message_status IN ('SENT', 'DELETED')
                 AND (LOWER(om.display_name) LIKE LOWER(CONCAT('%', :search, '%')) OR LOWER(sender_member.display_name) LIKE LOWER(CONCAT('%', :search, '%')))
             
             ORDER BY dm.created_at DESC
