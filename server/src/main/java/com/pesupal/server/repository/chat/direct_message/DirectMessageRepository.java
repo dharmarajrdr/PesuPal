@@ -15,6 +15,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -91,4 +92,6 @@ public interface DirectMessageRepository extends JpaRepository<DirectMessage, Lo
     List<DirectMessage> findAllBySenderAndDirectMessageChatAndMessageStatus(OrgMember orgMember, DirectMessageChat directMessageChat, MessageStatus messageStatus);
 
     int countDirectMessagesByDirectMessageChat_PublicIdAndSender_PublicIdAndMessageStatus(String chatId, String senderId, MessageStatus messageStatus);
+
+    List<DirectMessage> findAllBySenderAndDirectMessageChatAndMessageStatusAndCreatedAtIsAfter(OrgMember orgMember, DirectMessageChat directMessageChat, MessageStatus messageStatus, LocalDateTime now);
 }
