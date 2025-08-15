@@ -9,6 +9,7 @@ import { updateRecentChat } from '../../../store/reducers/RecentChatsSlice';
 import { updateCurrentChatPreview } from '../../../store/reducers/CurrentChatPreviewSlice';
 import { updatePinnedDirectMessage } from '../../../store/reducers/PinnedDirectMessageSlice';
 import Media from '../../../Media';
+import { hideLoader, showLoader } from '../../../store/reducers/VerticalLoaderSlice';
 
 const UpdateGroupModal = ({ setShowCreateGroupModal, groupData }) => {
 
@@ -38,6 +39,8 @@ const UpdateGroupModal = ({ setShowCreateGroupModal, groupData }) => {
             return;
         }
 
+        dispatch(showLoader());
+
         const groupData = {
             name: groupName.trim(),
             displayPicture,
@@ -48,6 +51,7 @@ const UpdateGroupModal = ({ setShowCreateGroupModal, groupData }) => {
         const updateGroup = function (groupData) {
 
             apiRequest(`/api/v1/group/${groupId}`, 'PUT', groupData).then(({ data, message }) => {
+                dispatch(hideLoader());
                 dispatch(showPopup({ message, type: 'success' }));
                 const { name, description, visibility, displayPicture } = data || {};
                 dispatch(updateCurrentChatPreview({
@@ -70,6 +74,7 @@ const UpdateGroupModal = ({ setShowCreateGroupModal, groupData }) => {
                 }));
                 closeUpdateGroupModal();
             }).catch(({ message }) => {
+                dispatch(hideLoader());
                 dispatch(showPopup({ message, type: 'error' }));
             });
         }
@@ -85,6 +90,7 @@ const UpdateGroupModal = ({ setShowCreateGroupModal, groupData }) => {
                 Object.assign(groupData, { 'displayPicture': `${mediaId}.${extension}` });
                 updateGroup(groupData);
             }).catch(({ message }) => {
+                dispatch(hideLoader());
                 dispatch(showPopup({ message, type: 'error' }));
             });
         }

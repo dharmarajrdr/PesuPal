@@ -321,7 +321,11 @@ public class GroupServiceImpl extends CurrentValueRetriever implements GroupServ
             throw new PermissionDeniedException("You do not have permission to update the group visibility.");
         }
 
+        String previousDisplayPicture = group.getDisplayPicture();
+
         updateGroupDto.applyToGroup(group);
+
+        String newDisplayPicture = group.getDisplayPicture();
 
         if (group.getName().isBlank()) {
             throw new PermissionDeniedException("Group name cannot be empty.");
@@ -332,6 +336,16 @@ public class GroupServiceImpl extends CurrentValueRetriever implements GroupServ
         }
 
         groupRepository.save(group);
+
+        if (newDisplayPicture == null) {
+            if (previousDisplayPicture != null) {
+                mediaService.deleteFile(previousDisplayPicture);
+            }
+        } else {
+            if (previousDisplayPicture != null && !previousDisplayPicture.equals(newDisplayPicture)) {
+                mediaService.deleteFile(previousDisplayPicture);
+            }
+        }
 
         GroupDto groupDto = GroupDto.fromGroup(group);
         try {
