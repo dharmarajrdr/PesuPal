@@ -7,7 +7,7 @@ import { showProfile } from '../../../store/reducers/ProfileSlice';
 
 const PeopleCard = ({ person }) => {
 
-    const { displayName, displayPicture, designation, status, userId, chatId } = person || {};
+    const { displayName, displayPicture, designation, status, 'id': userId, chatId } = person || {};
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
