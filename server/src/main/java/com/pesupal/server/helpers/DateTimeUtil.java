@@ -4,8 +4,14 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-public class TimeFormatterUtil {
+public class DateTimeUtil {
 
+    /**
+     * Formats a LocalDateTime to a short string representation.
+     *
+     * @param timestamp
+     * @return
+     */
     public static String formatShort(LocalDateTime timestamp) {
         LocalDateTime now = LocalDateTime.now();
         LocalDate date = timestamp.toLocalDate();
@@ -22,4 +28,16 @@ public class TimeFormatterUtil {
             return timestamp.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
         }
     }
+
+    /**
+     * Converts a LocalDateTime to epoch milliseconds.
+     *
+     * @param timestamp
+     * @return
+     */
+    public static Long toEpochMilli(LocalDateTime timestamp) {
+
+        return timestamp.atZone(java.time.ZoneId.systemDefault()).toInstant().toEpochMilli();
+    }
+
 }
