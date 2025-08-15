@@ -1,5 +1,7 @@
 package com.pesupal.server.service.implementations.chat.direct_message;
 
+import com.pesupal.server.config.StaticConfig;
+import com.pesupal.server.dto.request.chat.RescheduleMessageDto;
 import com.pesupal.server.dto.request.chat.direct_message.ChatMessageDto;
 import com.pesupal.server.dto.request.chat.direct_message.GetConversationBetweenUsers;
 import com.pesupal.server.dto.response.UserPreviewDto;
@@ -65,11 +67,11 @@ public class DirectMessageServiceImpl extends CurrentValueRetriever implements D
         this.userService = userService;
         this.orgMemberService = orgMemberService;
         this.directMessageRepository = directMessageRepository;
+        this.directMessageChatService = directMessageChatService;
         this.pinnedDirectMessageService = pinnedDirectMessageService;
         this.directMessageReactionService = directMessageReactionService;
         this.directMessageMediaFileService = directMessageMediaFileService;
         this.directMessageMediaFileRepository = directMessageMediaFileRepository;
-        this.directMessageChatService = directMessageChatService;
     }
 
     /**
@@ -259,7 +261,7 @@ public class DirectMessageServiceImpl extends CurrentValueRetriever implements D
      */
     @Override
     @Transactional
-    public MessageDto save(ChatMessageDto chatMessageDto) {
+    public MessageDto save(ChatMessageDto<DirectMessage> chatMessageDto) {
 
         String token = (String) InputValidator.notNull(chatMessageDto.getToken(), "token");
 
@@ -288,6 +290,15 @@ public class DirectMessageServiceImpl extends CurrentValueRetriever implements D
         directMessage.setMessage(chatMessageDto.getMessage());
         directMessage.setMessageStatus(MessageStatus.SENT);
         if (chatMessageDto.getMessageStatus().equals(MessageStatus.SCHEDULED)) {
+            int maxScheduleLimit = StaticConfig.MAXIMUM_MESSAGES_SCHEDULABLE_PER_CHAT;
+            int numberOfScheduledMessages = directMessageRepository.countDirectMessagesByDirectMessageChat_PublicIdAndSender_PublicIdAndMessageStatus(
+                    chatMessageDto.getChatId(),
+                    chatMessageDto.getSenderId(),
+                    MessageStatus.SCHEDULED
+            );
+            if (numberOfScheduledMessages >= maxScheduleLimit) {
+                throw new ActionProhibitedException("You can only schedule a maximum of " + maxScheduleLimit + " messages per group chat at a time.");
+            }
             if (chatMessageDto.getScheduleAt() == null) {
                 throw new ActionProhibitedException("Scheduled messages must have a schedule time.");
             }
@@ -350,9 +361,118 @@ public class DirectMessageServiceImpl extends CurrentValueRetriever implements D
      * @param chatMessageDto
      */
     @Override
-    public void schedule(ChatMessageDto chatMessageDto) {
+    public void schedule(ChatMessageDto<DirectMessage> chatMessageDto) {
 
         chatMessageDto.setMessageStatus(MessageStatus.SCHEDULED);
         save(chatMessageDto);
+    }
+
+    /**
+     * Retrieves scheduled messages for a specific chat.
+     *
+     * @param chatId
+     * @return
+     */
+    @Override
+    public List<MessageDto> getScheduledMessages(String chatId) {
+
+        OrgMember orgMember = getCurrentOrgMember();
+        Long orgId = orgMember.getOrg().getId();
+        DirectMessageChat directMessageChat = directMessageChatService.getDirectMessageByPublicId(chatId);
+        if (!isUserPartOfThisChat(directMessageChat, orgMember.getId())) {
+            throw new PermissionDeniedException("You don't have permission to read this chat");
+        }
+
+        Map<Long, UserPreviewDto> memo = new HashMap<>();
+
+        return directMessageRepository.findAllBySenderAndDirectMessageChatAndMessageStatus(orgMember, directMessageChat, MessageStatus.SCHEDULED).stream().map(directMessage -> toMessageDto(directMessage, orgId, memo)).toList();
+    }
+
+    /**
+     * Reschedules a message to be sent at a later time.
+     *
+     * @param messageId
+     * @param rescheduleMessageDto
+     */
+    @Override
+    public void reschedule(Long messageId, RescheduleMessageDto rescheduleMessageDto) {
+
+        OrgMember orgMember = getCurrentOrgMember();
+        DirectMessage directMessage = getDirectMessageById(messageId);
+
+        if (!directMessage.getSender().getPublicId().equals(orgMember.getPublicId())) {
+            throw new PermissionDeniedException("You do not have permission to reschedule this message.");
+        }
+
+        if (directMessage.getMessageStatus() != MessageStatus.SCHEDULED) {
+            throw new ActionProhibitedException("This message is not scheduled for rescheduling.");
+        }
+
+        if (rescheduleMessageDto.getScheduleAt() == null) {
+            throw new ActionProhibitedException("Scheduled messages must have a schedule time.");
+        }
+
+        if (rescheduleMessageDto.getScheduleAt().isBefore(LocalDateTime.now())) {
+            throw new ActionProhibitedException("Messages cannot be scheduled in the past.");
+        }
+
+        directMessage.setCreatedAt(rescheduleMessageDto.getScheduleAt());
+        directMessage.setMessageStatus(MessageStatus.SCHEDULED);
+        directMessageRepository.save(directMessage);
+    }
+
+    /**
+     * Unschedules a message by its ID.
+     *
+     * @param messageId
+     */
+    @Override
+    public void unschedule(Long messageId) {
+
+
+    }
+
+    /**
+     * Deletes a scheduled message by its ID.
+     *
+     * @param messageId
+     */
+    @Override
+    public void deleteSchedule(Long messageId) {
+
+        OrgMember orgMember = getCurrentOrgMember();
+        DirectMessage directMessage = getDirectMessageById(messageId);
+
+        if (!directMessage.getSender().getPublicId().equals(orgMember.getPublicId())) {
+            throw new PermissionDeniedException("You do not have permission to delete this scheduled message.");
+        }
+
+        if (directMessage.getMessageStatus() != MessageStatus.SCHEDULED) {
+            throw new ActionProhibitedException("This message is not yet scheduled for deletion.");
+        }
+
+        directMessageMediaFileService.unlinkMediaFilesByDirectMessage(directMessage);
+        directMessageRepository.delete(directMessage);
+    }
+
+    /**
+     * Deletes all scheduled messages for a specific chat.
+     *
+     * @param chatId
+     */
+    @Override
+    public void deleteAllScheduledMessages(String chatId) {
+
+        OrgMember orgMember = getCurrentOrgMember();
+        DirectMessageChat directMessageChat = directMessageChatService.getDirectMessageByPublicId(chatId);
+        if (!isUserPartOfThisChat(directMessageChat, orgMember.getId())) {
+            throw new PermissionDeniedException("You don't have permission to read this chat");
+        }
+
+        List<DirectMessage> scheduledMessages = directMessageRepository.findAllBySenderAndDirectMessageChatAndMessageStatus(orgMember, directMessageChat, MessageStatus.SCHEDULED);
+        for (DirectMessage message : scheduledMessages) {
+            directMessageMediaFileService.unlinkMediaFilesByDirectMessage(message);
+            directMessageRepository.delete(message);
+        }
     }
 }

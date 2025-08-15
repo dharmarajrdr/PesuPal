@@ -20,13 +20,11 @@ import { addMessage, setMessages } from '../../../store/reducers/ConversationSli
 
 const ConversationScreen = ({ activeTabName }) => {
 
+	const audioRef = useRef(null);
 	const { chatId } = useParams();
-
 	const dispatch = useDispatch();
 
 	dispatch(setActiveChatTab(activeTabName));
-
-	const audioRef = useRef(null);
 
 	const playNotificationSound = () => {
 		if (audioRef.current) {
@@ -42,9 +40,9 @@ const ConversationScreen = ({ activeTabName }) => {
 	const [retrievingChat, setRetrievingChat] = useState(true);
 	const [pivotMessageId, setPivotMessageId] = useState(null);
 
-	const currentChatPreview = useSelector(state => state.currentChatPreviewSlice);
-	const activeChatTab = useSelector(state => state.activeChatTab);
 	const myProfile = useSelector(state => state.myProfile) || {};
+	const activeChatTab = useSelector(state => state.activeChatTab);
+	const currentChatPreview = useSelector(state => state.currentChatPreviewSlice);
 	const { displayName, active, groupActive, groupChatConfiguration } = currentChatPreview || {};
 	const { postMessage: messagePostable, deleteMessage: messageDeletable } = groupChatConfiguration || {};
 

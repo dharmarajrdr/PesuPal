@@ -3,6 +3,8 @@ package com.pesupal.server.repository.chat.direct_message;
 import com.pesupal.server.enums.ReadReceipt;
 import com.pesupal.server.model.chat.MessageStatus;
 import com.pesupal.server.model.chat.direct_message.DirectMessage;
+import com.pesupal.server.model.chat.direct_message.DirectMessageChat;
+import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.projections.RecentPrivateChatProjection;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
@@ -85,4 +87,7 @@ public interface DirectMessageRepository extends JpaRepository<DirectMessage, Lo
             """, nativeQuery = true)
     Long countRecentChats(@Param("userId") Long userId);
 
+    List<DirectMessage> findAllBySenderAndDirectMessageChatAndMessageStatus(OrgMember orgMember, DirectMessageChat directMessageChat, MessageStatus messageStatus);
+
+    int countDirectMessagesByDirectMessageChat_PublicIdAndSender_PublicIdAndMessageStatus(String chatId, String senderId, MessageStatus messageStatus);
 }

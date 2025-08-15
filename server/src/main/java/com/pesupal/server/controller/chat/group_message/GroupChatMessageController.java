@@ -1,10 +1,12 @@
 package com.pesupal.server.controller.chat.group_message;
 
+import com.pesupal.server.dto.request.chat.RescheduleMessageDto;
 import com.pesupal.server.dto.request.chat.direct_message.ChatMessageDto;
 import com.pesupal.server.dto.request.chat.group_message.GetGroupConversationDto;
 import com.pesupal.server.dto.response.ApiResponseDto;
 import com.pesupal.server.dto.response.chat.MessageDto;
 import com.pesupal.server.helpers.CurrentValueRetriever;
+import com.pesupal.server.model.chat.group_message.GroupChatMessage;
 import com.pesupal.server.service.interfaces.chat.group_message.GroupChatMessageService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -41,6 +43,13 @@ public class GroupChatMessageController extends CurrentValueRetriever {
         return ResponseEntity.ok().body(new ApiResponseDto("Group chat messages retrieved successfully", messageDtos));
     }
 
+    @GetMapping("/{groupId}/scheduled-messages")
+    public ResponseEntity<ApiResponseDto> getGroupChatMessages(@PathVariable String groupId) {
+
+        List<MessageDto> messageDtos = groupChatMessageService.getScheduledMessages(groupId);
+        return ResponseEntity.ok().body(new ApiResponseDto("Group chat scheduled messages retrieved successfully", messageDtos));
+    }
+
     @PutMapping("/{groupId}/read-all")
     public ResponseEntity<ApiResponseDto> markAllGroupMessagesAsRead(@PathVariable String groupId) {
 
@@ -49,9 +58,30 @@ public class GroupChatMessageController extends CurrentValueRetriever {
     }
 
     @PostMapping("/schedule")
-    public ResponseEntity<ApiResponseDto> scheduleGroupChatMessage(@RequestBody ChatMessageDto chatMessageDto) {
+    public ResponseEntity<ApiResponseDto> scheduleGroupChatMessage(@RequestBody ChatMessageDto<GroupChatMessage> chatMessageDto) {
 
         groupChatMessageService.schedule(chatMessageDto);
         return ResponseEntity.ok(new ApiResponseDto("Message scheduled successfully"));
+    }
+
+    @PatchMapping("/reschedule/{messageId}")
+    public ResponseEntity<ApiResponseDto> rescheduleGroupChatMessage(@PathVariable Long messageId, @RequestBody RescheduleMessageDto rescheduleMessageDto) {
+
+        groupChatMessageService.reschedule(messageId, rescheduleMessageDto);
+        return ResponseEntity.ok(new ApiResponseDto("Message rescheduled successfully"));
+    }
+
+    @DeleteMapping("/schedule/{messageId}")
+    public ResponseEntity<ApiResponseDto> deleteScheduleDirectMessage(@PathVariable Long messageId) {
+
+        groupChatMessageService.deleteSchedule(messageId);
+        return ResponseEntity.ok(new ApiResponseDto("Direct message unscheduled successfully"));
+    }
+
+    @DeleteMapping("/schedule/all/{groupId}")
+    public ResponseEntity<ApiResponseDto> deleteAllScheduledGroupChatMessages(@PathVariable String groupId) {
+
+        groupChatMessageService.deleteAllScheduledMessages(groupId);
+        return ResponseEntity.ok(new ApiResponseDto("All scheduled group chat messages deleted successfully"));
     }
 }

@@ -6,6 +6,7 @@ import { useSelector } from 'react-redux';
 import UserAvatar from '../../User/UserAvatar';
 import FullScreenImageView from '../../FullScreenImageView';
 import { useState } from 'react';
+import ScheduledMessageActions from './ScheduledMessageActions';
 
 const extensionTagMapper = {
     "img": ["jpeg", "jpg", "png", "gif", "avif"],
@@ -87,7 +88,7 @@ const SenderName = ({ displayName, sent_or_received, is_super_admin }) => {
     </p>
 }
 
-const ChatMessageItem = ({ msg, isSameSender, messageDeletable }) => {
+const ChatMessageItem = ({ msg, isSameSender, messageDeletable, isScheduledMessage, activeMessageRowId, setActiveMessageRowId, updateMessage, deleteMessage }) => {
 
     const { id, sender, status, createdAt, readReceipt, message, media, chatMode, reactions } = msg;
     const { id: senderId, displayName, displayPicture, is_super_admin } = sender || {};
@@ -102,8 +103,8 @@ const ChatMessageItem = ({ msg, isSameSender, messageDeletable }) => {
 
     const sent_or_received = isCurrentUser ? 'sent' : 'received';
 
-    return myProfile ? (
-        <div className={`row w100 FRSS ${sent_or_received}`}>
+    return myProfile && createdAt ? (
+        <div className={`row w100 FRSS ${sent_or_received} ${activeMessageRowId == id ? 'active-row' : ''}`}>
             {showUserMeta && (
                 isSameSender ? <div className="user-avatar-placeholder img_40_40 mL5" /> :
                     <UserAvatar displayName={displayName} displayPicture={displayPicture} />
@@ -112,7 +113,9 @@ const ChatMessageItem = ({ msg, isSameSender, messageDeletable }) => {
                 {showUserMeta && !isSameSender && <SenderName displayName={displayName} sent_or_received={sent_or_received} is_super_admin={is_super_admin} />}
                 <div className={`message ${sent_or_received}`}>
                     {isMessageDeleted ? <MessageDeleted /> : <>
-                        <MessageActions id={id} isCurrentUser={isCurrentUser} messageDeletable={messageDeletable} />
+                        {isScheduledMessage ?
+                            <ScheduledMessageActions id={id} setActiveMessageRowId={setActiveMessageRowId} updateMessage={updateMessage} deleteMessage={deleteMessage} /> :
+                            <MessageActions id={id} isCurrentUser={isCurrentUser} messageDeletable={messageDeletable} />}
                         <MediaDisplayer media={media} />
                         <div className="message-content">
                             <Message html={message} />

@@ -41,7 +41,7 @@ const ChatHeader = () => {
     const [showGroupMembers, setShowGroupMembers] = useState(false);
     const [showGroupPermission, setShowGroupPermission] = useState(false);
     const [showUpdateGroupModal, setShowUpdateGroupModal] = useState(false);
-    const [showScheduledMessages, setShowScheduledMessages] = useState(true);
+    const [showScheduledMessages, setShowScheduledMessages] = useState(false);
     const [showAddParticipantsModal, setShowAddParticipantsModal] = useState(false);
 
     const { chatId, displayName, displayPicture, userId, participantsCount, groupActive, active, groupChatConfiguration } = currentChatPreview || {};
@@ -248,7 +248,7 @@ const ChatHeader = () => {
             {showGroupPermission && <GroupPermissionModal groupId={chatId} onClose={(e) => setShowGroupPermission(false)} />}
             {showUpdateGroupModal && <UpdateGroupModal setShowCreateGroupModal={setShowUpdateGroupModal} groupData={currentChatPreview} />}
             {showAddParticipantsModal && <AddParticipantsModal groupId={chatId} onClose={(e) => setShowAddParticipantsModal(false)} />}
-            {showScheduledMessages && <ScheduledMessageOverlay onClose={(e) => setShowScheduledMessages(false)} />}
+            {showScheduledMessages && <ScheduledMessageOverlay chatId={chatId} onClose={(e) => setShowScheduledMessages(false)} />}
             <div className='FRCS' id='chat-header-left'>
                 <UserAvatar displayPicture={displayPicture} displayName={displayName} userId={userId} />
                 <p className="name mL10">{displayName}</p>
