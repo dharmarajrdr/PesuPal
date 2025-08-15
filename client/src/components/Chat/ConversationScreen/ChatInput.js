@@ -18,13 +18,17 @@ const ChatInput = ({ clickSendMessageHandler }) => {
     const [showSchedulePicker, setShowSchedulePicker] = useState(false);
 
     const chatId = useSelector((state) => state.chatId);
+    const activeChatTab = useSelector(state => state.activeChatTab);
+    const currentChatPreview = useSelector(state => state.currentChatPreviewSlice);
+    const { groupChatConfiguration } = currentChatPreview || {};
+    const { scheduleMessage } = groupChatConfiguration || {};
 
     const chatInputRef = useRef(null);
     const fileInputRef = useRef(null);
     const scheduleDateTimePickerRef = useRef(null);
 
-    const activeChatTab = useSelector(state => state.activeChatTab);
-    const { retrieveConversationApi } = activeChatTab || {};
+    const { retrieveConversationApi, chatMode } = activeChatTab || {};
+    const messageScheduleable = chatMode === 'GROUP_MESSAGE' ? scheduleMessage : true;
 
     const dispatch = useDispatch();
 
@@ -132,9 +136,9 @@ const ChatInput = ({ clickSendMessageHandler }) => {
             <button onClick={emojiPickerClickHandler} id="emoji-button" title='Emoji Picker'>
                 <i className='fa-regular fa-smile w20' />
             </button>
-            <button onClick={scheduleButtonClicked} id="schedule-message-button" title='Schedule Message'>
+            {messageScheduleable && <button onClick={scheduleButtonClicked} id="schedule-message-button" title='Schedule Message'>
                 <i className='fa-regular fa-clock w20' />
-            </button>
+            </button>}
             <button onClick={handleSend} id="send-button" title='Send Message' disabled={!message.trim() && files.length === 0}>
                 <i className='fa-regular fa-paper-plane w20' />
             </button>
