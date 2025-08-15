@@ -5,6 +5,7 @@ import com.pesupal.server.dto.response.chat.MessageDto;
 import com.pesupal.server.model.chat.group_message.Group;
 import com.pesupal.server.model.chat.group_message.GroupChatMessage;
 import com.pesupal.server.service.interfaces.chat.ChatService;
+import org.springframework.scheduling.annotation.Scheduled;
 
 import java.util.List;
 
@@ -19,6 +20,9 @@ public interface GroupChatMessageService extends ChatService<GroupChatMessage> {
     List<MessageDto> getGroupChatMessages(GetGroupConversationDto getGroupConversationDto);
 
     void markAllGroupMessagesAsRead(String groupId);
+
+    @Scheduled(cron = "0 * * * * *")
+    void broadcastScheduledMessages();
 
     void addSystemMessage(Group group, String message);
 }
