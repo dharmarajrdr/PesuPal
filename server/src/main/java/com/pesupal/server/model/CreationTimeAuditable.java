@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 @MappedSuperclass
 public class CreationTimeAuditable extends BaseModel {
 
-    @Column(updatable = false, nullable = false)
+    @Column(nullable = false)
     private LocalDateTime createdAt;
 
     @PrePersist
