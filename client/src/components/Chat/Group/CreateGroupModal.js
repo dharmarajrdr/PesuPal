@@ -54,8 +54,6 @@ const CreateGroupModal = ({ setShowCreateGroupModal }) => {
             });
         }
 
-        return console.log({ file });
-
         if (file == null) {
             createGroup(groupData);
         } else {
