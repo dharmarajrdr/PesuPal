@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import './SchedulePicker.css';
 import { showPopup } from "../../../store/reducers/PopupSlice";
@@ -13,6 +13,7 @@ const SchedulePicker = ({ onSchedule, onCancel, showPicker, setShowPicker }) => 
 
     const dispatch = useDispatch();
     const pickerRef = useRef(null);
+    const schedulePickerRef = useRef(null);
     const [scheduledTime, setScheduledTime] = useState("");
 
     const handleScheduleClick = () => {
@@ -24,9 +25,18 @@ const SchedulePicker = ({ onSchedule, onCancel, showPicker, setShowPicker }) => 
         }
     };
 
+    useEffect(() => {
+        if (showPicker && pickerRef.current) {
+            const { y: schedulePickerY } = schedulePickerRef.current.getBoundingClientRect();
+            if (schedulePickerY < 0) {
+                schedulePickerRef.current.style.top = `90px`;
+            }
+        }
+    }, [showPicker]);
+
     return showPicker && (
 
-        <div id="schedule-picker-container" className="FCCC">
+        <div id="schedule-picker-container" className="FCCC" ref={schedulePickerRef}>
 
             <input type="datetime-local" onChange={(e) => setScheduledTime(e.target.value)} ref={pickerRef} min={getMinDateTime()} value={scheduledTime} />
 

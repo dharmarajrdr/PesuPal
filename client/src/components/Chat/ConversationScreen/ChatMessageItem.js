@@ -96,7 +96,7 @@ const SenderName = ({ displayName, sent_or_received, is_super_admin }) => {
     </p>
 }
 
-const ChatMessageItem = ({ msg, isSameSender, messageDeletable, isScheduledMessage, activeMessageRowId, setActiveMessageRowId, updateMessage, deleteMessage }) => {
+const ChatMessageItem = ({ msg, isSameSender, messageDeletable, messageEditable, messagePinnable, isScheduledMessage, activeMessageRowId, setActiveMessageRowId, updateMessage, deleteMessage }) => {
 
     const { id, sender, status, createdAt, readReceipt, message, media, chatMode, reactions } = msg;
     const { id: senderId, displayName, displayPicture, is_super_admin } = sender || {};
@@ -123,7 +123,7 @@ const ChatMessageItem = ({ msg, isSameSender, messageDeletable, isScheduledMessa
                     {isMessageDeleted ? <MessageDeleted /> : <>
                         {isScheduledMessage ?
                             <ScheduledMessageActions id={id} setActiveMessageRowId={setActiveMessageRowId} updateMessage={updateMessage} deleteMessage={deleteMessage} /> :
-                            <MessageActions id={id} isCurrentUser={isCurrentUser} messageDeletable={messageDeletable} />}
+                            <MessageActions id={id} messagePinnable={messagePinnable} isCurrentUser={isCurrentUser} messageDeletable={messageDeletable} messageEditable={messageEditable} />}
                         <MediaDisplayer media={media} />
                         <div className="message-content">
                             <Message html={message} />

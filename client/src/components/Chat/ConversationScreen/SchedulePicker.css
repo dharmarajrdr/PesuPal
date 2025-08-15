@@ -7,7 +7,7 @@
     padding: 20px;
     box-shadow: 0 4px 12px var(--box-shadow-color);
     border-radius: 8px;
-    z-index: 1000;
+    z-index: 9;
 }
 
 #schedule-picker-container input {

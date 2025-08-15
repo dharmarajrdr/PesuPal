@@ -320,6 +320,9 @@ public class GroupChatMessageServiceImpl extends CurrentValueRetriever implement
             if (chatMessageDto.getScheduleAt().isBefore(LocalDateTime.now())) {
                 throw new ActionProhibitedException("Messages cannot be scheduled in the past.");
             }
+            if (!groupChatConfiguration.isScheduleMessage()) {
+                throw new ActionProhibitedException("Scheduling message in this group is not allowed.");
+            }
             groupChatMessage.setMessageStatus(MessageStatus.SCHEDULED);
             groupChatMessage.setCreatedAt(chatMessageDto.getScheduleAt());
         }

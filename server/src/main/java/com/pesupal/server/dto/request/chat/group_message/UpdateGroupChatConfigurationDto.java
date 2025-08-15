@@ -41,8 +41,10 @@ public class UpdateGroupChatConfigurationDto {
 
     private Boolean roleUpdate;
 
+    private Boolean scheduleMessage;
+
     public static UpdateGroupChatConfigurationDto fromGroupChatConfiguration(GroupChatConfiguration groupChatConfiguration) {
-        
+
         UpdateGroupChatConfigurationDto dto = new UpdateGroupChatConfigurationDto();
         dto.setAddMember(groupChatConfiguration.isAddMember());
         dto.setRemoveMember(groupChatConfiguration.isRemoveMember());
@@ -58,6 +60,7 @@ public class UpdateGroupChatConfigurationDto {
         dto.setDeleteMessage(groupChatConfiguration.isDeleteMessage());
         dto.setClearChat(groupChatConfiguration.isClearChat());
         dto.setRoleUpdate(groupChatConfiguration.isRoleUpdate());
+        dto.setScheduleMessage(groupChatConfiguration.isScheduleMessage());
         return dto;
     }
 
@@ -104,6 +107,9 @@ public class UpdateGroupChatConfigurationDto {
         }
         if (roleUpdate != null) {
             groupChatConfiguration.setRoleUpdate(roleUpdate);
+        }
+        if (scheduleMessage != null) {
+            groupChatConfiguration.setScheduleMessage(scheduleMessage);
         }
     }
 }

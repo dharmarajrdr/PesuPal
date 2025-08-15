@@ -19,15 +19,19 @@ const SystemMessage = ({ msg }) => {
     );
 }
 
-const ChatMessages = ({ showStartNewConversation, messageDeletable, chatId, retrievingChat, clickSendMessageHandler }) => {
+const ChatMessages = ({ showStartNewConversation, chatId, retrievingChat, clickSendMessageHandler }) => {
 
     let lastDate = null;
     let previousMessageSenderId = null;
     let previousMessageType = null;
 
     const chatContainerRef = useRef(null);
+    const currentChatPreview = useSelector(state => state.currentChatPreviewSlice);
     const conversationInRedux = useSelector(state => state.conversation?.messages || []);
     const [messages, setMessages] = useState(conversationInRedux || []);
+
+    const { groupChatConfiguration } = currentChatPreview || {};
+    const { deleteMessage: messageDeletable, editMessage: messageEditable, pinMessage: messagePinnable } = groupChatConfiguration || {};
 
     useEffect(() => {
         setMessages(conversationInRedux || []);
@@ -62,7 +66,7 @@ const ChatMessages = ({ showStartNewConversation, messageDeletable, chatId, retr
                 return (
                     <div key={msg.id} className='w100'>
                         {showDate && <div className="date-label">{newDate}</div>}
-                        {messageType == 'USER_MESSAGE' && <ChatMessageItem msg={msg} isSameSender={isSameSender} messageDeletable={messageDeletable} />}
+                        {messageType == 'USER_MESSAGE' && <ChatMessageItem msg={msg} isSameSender={isSameSender} messageDeletable={messageDeletable} messageEditable={messageEditable} messagePinnable={messagePinnable} />}
                         {messageType == 'SYSTEM_MESSAGE' && <SystemMessage msg={msg} />}
                     </div>
                 );

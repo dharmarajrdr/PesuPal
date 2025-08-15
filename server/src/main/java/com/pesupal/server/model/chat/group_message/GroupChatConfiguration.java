@@ -53,4 +53,6 @@ public class GroupChatConfiguration extends BaseModel {
     private boolean clearChat;
 
     private boolean roleUpdate;
+
+    private boolean scheduleMessage;
 }
