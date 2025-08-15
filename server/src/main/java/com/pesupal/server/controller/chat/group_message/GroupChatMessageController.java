@@ -12,6 +12,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 
 @RestController
@@ -69,6 +70,13 @@ public class GroupChatMessageController extends CurrentValueRetriever {
 
         groupChatMessageService.reschedule(messageId, rescheduleMessageDto);
         return ResponseEntity.ok(new ApiResponseDto("Message rescheduled successfully"));
+    }
+
+    @PatchMapping("/unschedule/{messageId}")
+    public ResponseEntity<ApiResponseDto> unscheduleGroupChatMessage(@PathVariable Long messageId) {
+
+        groupChatMessageService.unschedule(messageId, new HashMap<>(), getCurrentOrgMember());
+        return ResponseEntity.ok(new ApiResponseDto("Message unscheduled successfully"));
     }
 
     @DeleteMapping("/schedule/{messageId}")
