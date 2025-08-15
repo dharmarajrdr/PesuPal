@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Data
 @ToString
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ChatMessageDto {
+public class ChatMessageDto<T> {
 
     // Not for receiving data, just to broadcast
     private String senderId;
@@ -28,4 +28,7 @@ public class ChatMessageDto {
     private MessageStatus messageStatus = MessageStatus.SENT;
 
     private LocalDateTime scheduleAt;
+
+    // Either `GroupChatMessage` or `DirectMessage`
+    private T messageDto;
 }
