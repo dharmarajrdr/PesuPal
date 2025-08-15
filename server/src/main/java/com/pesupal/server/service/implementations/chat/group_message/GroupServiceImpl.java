@@ -25,6 +25,7 @@ import com.pesupal.server.model.user.User;
 import com.pesupal.server.projections.RecentGroupChatProjection;
 import com.pesupal.server.repository.chat.group_message.GroupChatMemberRepository;
 import com.pesupal.server.repository.chat.group_message.GroupRepository;
+import com.pesupal.server.service.interfaces.MediaService;
 import com.pesupal.server.service.interfaces.UserService;
 import com.pesupal.server.service.interfaces.chat.group_message.*;
 import com.pesupal.server.service.interfaces.org.OrgMemberService;
@@ -40,6 +41,7 @@ import java.util.Optional;
 public class GroupServiceImpl extends CurrentValueRetriever implements GroupService {
 
     private final UserService userService;
+    private final MediaService mediaService;
     private final GroupRepository groupRepository;
     private final OrgMemberService orgMemberService;
     private final GroupChatMemberService groupChatMemberService;
@@ -48,8 +50,9 @@ public class GroupServiceImpl extends CurrentValueRetriever implements GroupServ
     private final GroupChatMemberRepository groupChatMemberRepository;
     private final GroupChatConfigurationService groupChatConfigurationService;
 
-    public GroupServiceImpl(UserService userService, GroupRepository groupRepository, OrgMemberService orgMemberService, GroupChatMemberService groupChatMemberService, GroupChatPinnedService groupchatPinnedService, @Lazy GroupChatMessageService groupChatMessageService, GroupChatMemberRepository groupChatMemberRepository, GroupChatConfigurationService groupChatConfigurationService) {
+    public GroupServiceImpl(UserService userService, GroupRepository groupRepository, OrgMemberService orgMemberService, GroupChatMemberService groupChatMemberService, GroupChatPinnedService groupchatPinnedService, @Lazy GroupChatMessageService groupChatMessageService, GroupChatMemberRepository groupChatMemberRepository, GroupChatConfigurationService groupChatConfigurationService, MediaService mediaService) {
         this.userService = userService;
+        this.mediaService = mediaService;
         this.groupRepository = groupRepository;
         this.orgMemberService = orgMemberService;
         this.groupChatMemberService = groupChatMemberService;
@@ -173,7 +176,10 @@ public class GroupServiceImpl extends CurrentValueRetriever implements GroupServ
             RecentChatDto dto = new RecentChatDto();
             dto.setChatId(proj.getGroupId());
             dto.setName(proj.getGroupName());
-            dto.setImage(proj.getSenderDisplayPicture());
+            try {
+                dto.setImage(mediaService.generatePresignedUrl(proj.getSenderDisplayPicture()).toString());
+            } catch (Exception ignored) {
+            }
             dto.setStatus(proj.getGroupVisibility());
             dto.setRecentMessage(lastMessage);
 
@@ -227,9 +233,12 @@ public class GroupServiceImpl extends CurrentValueRetriever implements GroupServ
         chatPreviewDto.setReopenable(!groupActive && GroupHelper.isGroupOwner(group, orgMember));
         chatPreviewDto.setActive(isActiveGroupMember && optionalGroupChatMember.isPresent());
         chatPreviewDto.setDisplayName(group.getName());
-        chatPreviewDto.setDescription(group.getDescription());
         chatPreviewDto.setVisibility(group.getVisibility());
-        chatPreviewDto.setDisplayPicture(group.getDisplayPicture());
+        chatPreviewDto.setDescription(group.getDescription());
+        try {
+            chatPreviewDto.setDisplayPicture(mediaService.generatePresignedUrl(group.getDisplayPicture()).toString());
+        } catch (Exception ignored) {
+        }
         chatPreviewDto.setGroupChatConfiguration(UpdateGroupChatConfigurationDto.fromGroupChatConfiguration(groupChatConfiguration));
         chatPreviewDto.setParticipantsCount(group.getMembers().stream().filter(GroupChatMember::isActive).toList().size());
         Optional<GroupChatPinned> pinnedGroupChat = groupchatPinnedService.getPinnedGroupByPinnedByAndGroup(orgMember, group);
