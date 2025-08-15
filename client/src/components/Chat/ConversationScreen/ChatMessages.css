@@ -41,6 +41,10 @@
     flex-direction: row;
 }
 
+.chat-messages .row.active-row {
+    background-color: rgba(0, 0, 0, 0.033);
+}
+
 .chat-messages .row .message-wrapper {
     max-width: 50%;
     min-width: 25%;
@@ -211,7 +215,11 @@
     display: none;
 }
 
-.row .message:hover .message-actions {
+.row:not(.active-row) .message:hover .message-actions {
+    display: flex;
+}
+
+.row.row.active-row .message-actions {
     display: flex;
 }
 
@@ -237,10 +245,6 @@
 
 .scheduled-message-actions.sent {
     left: -30px;
-}
-
-.message-actions.active-action {
-    background-color: rgba(0, 0, 0, 0.033);
 }
 
 .reaction-icon {
