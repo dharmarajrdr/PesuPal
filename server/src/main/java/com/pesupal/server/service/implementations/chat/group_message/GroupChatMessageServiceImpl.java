@@ -1,5 +1,7 @@
 package com.pesupal.server.service.implementations.chat.group_message;
 
+import com.pesupal.server.config.StaticConfig;
+import com.pesupal.server.dto.request.chat.RescheduleMessageDto;
 import com.pesupal.server.dto.request.chat.direct_message.ChatMessageDto;
 import com.pesupal.server.dto.request.chat.group_message.GetGroupConversationDto;
 import com.pesupal.server.dto.response.UserPreviewDto;
@@ -226,9 +228,7 @@ public class GroupChatMessageServiceImpl extends CurrentValueRetriever implement
 
         Group group = groupChatMember.getGroup();
         Optional<GroupChatMessage> lastMessageOfGroup = groupChatMessageRepository.findFirstByGroupOrderByCreatedAtDesc(group);
-        if (lastMessageOfGroup.isPresent()) {
-            groupChatMember.setLastReadMessage(lastMessageOfGroup.get());
-        }
+        lastMessageOfGroup.ifPresent(groupChatMember::setLastReadMessage);
 
         groupChatMemberRepository.save(groupChatMember);
     }
@@ -271,7 +271,7 @@ public class GroupChatMessageServiceImpl extends CurrentValueRetriever implement
      */
     @Override
     @Transactional
-    public MessageDto save(ChatMessageDto chatMessageDto) {
+    public MessageDto save(ChatMessageDto<GroupChatMessage> chatMessageDto) {
 
         String token = (String) InputValidator.notNull(chatMessageDto.getToken(), "token");
 
@@ -309,6 +309,11 @@ public class GroupChatMessageServiceImpl extends CurrentValueRetriever implement
         groupChatMessage.setContainsMedia(containsMedia);
         groupChatMessage.setMessageStatus(MessageStatus.SENT);
         if (chatMessageDto.getMessageStatus().equals(MessageStatus.SCHEDULED)) {
+            int maxScheduleLimit = StaticConfig.MAXIMUM_MESSAGES_SCHEDULABLE_PER_CHAT;
+            int numberOfScheduledMessages = groupChatMessageRepository.countByGroup_PublicIdAndMessageStatus(chatMessageDto.getChatId(), MessageStatus.SCHEDULED);
+            if (numberOfScheduledMessages >= maxScheduleLimit) {
+                throw new ActionProhibitedException("You can only schedule a maximum of " + maxScheduleLimit + " messages per group chat at a time.");
+            }
             if (chatMessageDto.getScheduleAt() == null) {
                 throw new ActionProhibitedException("Scheduled messages must have a schedule time.");
             }
@@ -359,7 +364,7 @@ public class GroupChatMessageServiceImpl extends CurrentValueRetriever implement
      *
      * @param chatMessageDto
      */
-    public void schedule(ChatMessageDto chatMessageDto) {
+    public void schedule(ChatMessageDto<GroupChatMessage> chatMessageDto) {
 
         chatMessageDto.setMessageStatus(MessageStatus.SCHEDULED);
         save(chatMessageDto);
@@ -386,6 +391,104 @@ public class GroupChatMessageServiceImpl extends CurrentValueRetriever implement
 
         Map<Long, UserPreviewDto> memo = new HashMap<>();
         return scheduledMessages.stream().map(gm -> toMessageDto(gm, orgId, memo)).sorted(Comparator.comparing(MessageDto::getCreatedAt)).toList();
+    }
+
+    /**
+     * Reschedules a message to be sent at a later time.
+     *
+     * @param messageId
+     * @param rescheduleMessageDto
+     */
+    @Override
+    public void reschedule(Long messageId, RescheduleMessageDto rescheduleMessageDto) {
+
+        OrgMember orgMember = getCurrentOrgMember();
+        GroupChatMessage groupChatMessage = getGroupChatMessageById(messageId);
+
+        if (!groupChatMessage.getSender().getId().equals(orgMember.getId())) {
+            throw new PermissionDeniedException("You do not have permission to reschedule this message.");
+        }
+
+        if (!groupChatMessage.getMessageStatus().equals(MessageStatus.SCHEDULED)) {
+            throw new ActionProhibitedException("This message is not scheduled for rescheduling.");
+        }
+
+        if (rescheduleMessageDto.getScheduleAt() == null) {
+            throw new ActionProhibitedException("Scheduled messages must have a schedule time.");
+        }
+
+        if (rescheduleMessageDto.getScheduleAt().isBefore(LocalDateTime.now())) {
+            throw new ActionProhibitedException("Messages cannot be scheduled in the past.");
+        }
+
+        groupChatMessage.setCreatedAt(rescheduleMessageDto.getScheduleAt());
+        groupChatMessageRepository.save(groupChatMessage);
+    }
+
+    /**
+     * Unschedules a message, removing it from the scheduled state.
+     *
+     * @param messageId
+     */
+    @Override
+    public void unschedule(Long messageId) {
+
+    }
+
+    /**
+     * Deletes a scheduled message.
+     *
+     * @param messageId
+     */
+    @Override
+    public void deleteSchedule(Long messageId) {
+
+        OrgMember orgMember = getCurrentOrgMember();
+        GroupChatMessage groupChatMessage = getGroupChatMessageById(messageId);
+
+        if (!groupChatMessage.getSender().getId().equals(orgMember.getId())) {
+            throw new PermissionDeniedException("You do not have permission to delete this scheduled message.");
+        }
+
+        if (!groupChatMessage.getMessageStatus().equals(MessageStatus.SCHEDULED)) {
+            throw new ActionProhibitedException("This message is not scheduled for deletion.");
+        }
+
+        groupMessageMediaFileService.unlinkMediaFilesByGroupMessage(groupChatMessage);
+        groupChatMessageRepository.delete(groupChatMessage);
+    }
+
+    /**
+     * Deletes all scheduled messages for a specific chat.
+     *
+     * @param groupId
+     */
+    @Override
+    public void deleteAllScheduledMessages(String groupId) {
+
+        OrgMember orgMember = getCurrentOrgMember();
+        Group group = groupService.getGroupByPublicId(groupId);
+
+        GroupChatMember groupChatMember = groupChatMemberService.getGroupMemberByGroupIdAndUserId(groupId, orgMember.getId());
+        if (!groupChatMember.isActive()) {
+            throw new PermissionDeniedException("You are no longer part of this group.");
+        }
+
+        if (!group.isActive()) {
+            throw new ActionProhibitedException("This group is no longer active.");
+        }
+
+        GroupChatConfiguration groupChatConfiguration = groupChatConfigurationService.getConfigurationByGroupAndRole(group, groupChatMember.getRole());
+        if (!groupChatConfiguration.isDeleteMessage()) {
+            throw new PermissionDeniedException("You do not have permission to delete messages from this group.");
+        }
+
+        List<GroupChatMessage> scheduledMessages = groupChatMessageRepository.findAllByGroupAndSenderAndMessageStatus(group, orgMember, MessageStatus.SCHEDULED);
+        for (GroupChatMessage scheduledMessage : scheduledMessages) {
+
+            groupMessageMediaFileService.unlinkMediaFilesByGroupMessage(scheduledMessage);
+            groupChatMessageRepository.delete(scheduledMessage);
+        }
     }
 
     /**

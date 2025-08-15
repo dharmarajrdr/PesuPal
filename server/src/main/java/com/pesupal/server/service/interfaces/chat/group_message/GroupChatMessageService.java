@@ -8,7 +8,7 @@ import com.pesupal.server.service.interfaces.chat.ChatService;
 
 import java.util.List;
 
-public interface GroupChatMessageService extends ChatService {
+public interface GroupChatMessageService extends ChatService<GroupChatMessage> {
 
     GroupChatMessage getGroupChatMessageById(Long messageId);
 
