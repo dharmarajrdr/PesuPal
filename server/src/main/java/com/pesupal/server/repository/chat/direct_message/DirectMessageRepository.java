@@ -88,4 +88,6 @@ public interface DirectMessageRepository extends JpaRepository<DirectMessage, Lo
     Long countRecentChats(@Param("userId") Long userId);
 
     List<DirectMessage> findAllBySenderAndDirectMessageChatAndMessageStatus(OrgMember orgMember, DirectMessageChat directMessageChat, MessageStatus messageStatus);
+
+    int countDirectMessagesByDirectMessageChat_PublicIdAndSender_PublicIdAndMessageStatus(String chatId, String senderId, MessageStatus messageStatus);
 }
