@@ -1,5 +1,6 @@
 package com.pesupal.server.repository.chat.group_message;
 
+import com.pesupal.server.model.chat.MessageStatus;
 import com.pesupal.server.model.chat.group_message.Group;
 import com.pesupal.server.model.chat.group_message.GroupChatMessage;
 import com.pesupal.server.model.chat.group_message.GroupMessageMediaFile;
@@ -13,8 +14,8 @@ import java.util.Optional;
 public interface GroupMessageMediaFileRepository extends JpaRepository<GroupMessageMediaFile, Long> {
 
     Optional<GroupMessageMediaFile> findByGroupChatMessage(GroupChatMessage gm);
-
-    List<GroupMessageMediaFile> findAllByGroupChatMessage_Group(Group groupChatMessageGroup);
-
+    
     List<GroupMessageMediaFile> findAllByGroupChatMessageIsNull();
+
+    List<GroupMessageMediaFile> findAllByGroupChatMessage_GroupAndGroupChatMessage_MessageStatusIn(Group group, List<MessageStatus> sent);
 }

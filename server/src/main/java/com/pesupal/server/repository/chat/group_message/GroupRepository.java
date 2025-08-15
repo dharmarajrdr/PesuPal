@@ -55,6 +55,7 @@ public interface GroupRepository extends JpaRepository<Group, Long> {
             JOIN (
                 SELECT group_id, MAX(created_at) AS latest
                 FROM group_chat_message
+                WHERE message_status IN ('SENT', 'DELETED')
                 GROUP BY group_id
             ) latest_msg
                 ON latest_msg.group_id = g.id
@@ -68,7 +69,6 @@ public interface GroupRepository extends JpaRepository<Group, Long> {
                AND sender.org_id = :orgId
             
             WHERE LOWER(g.name) LIKE LOWER(CONCAT('%', :search, '%'))
-                AND msg.message_status IN ('SENT', 'DELETED')
             
             ORDER BY msg.created_at DESC
             LIMIT :limit OFFSET :offset;

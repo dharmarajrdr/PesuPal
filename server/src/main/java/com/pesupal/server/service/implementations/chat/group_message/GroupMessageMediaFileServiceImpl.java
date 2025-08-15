@@ -1,6 +1,7 @@
 package com.pesupal.server.service.implementations.chat.group_message;
 
 import com.pesupal.server.exceptions.DataNotFoundException;
+import com.pesupal.server.model.chat.MessageStatus;
 import com.pesupal.server.model.chat.group_message.Group;
 import com.pesupal.server.model.chat.group_message.GroupChatMessage;
 import com.pesupal.server.model.chat.group_message.GroupMessageMediaFile;
@@ -52,7 +53,7 @@ public class GroupMessageMediaFileServiceImpl implements GroupMessageMediaFileSe
     @Override
     public void unlinkAllMediaFilesByGroup(Group group) {
 
-        List<GroupMessageMediaFile> groupMessageMediaFiles = groupMessageMediaFileRepository.findAllByGroupChatMessage_Group(group);
+        List<GroupMessageMediaFile> groupMessageMediaFiles = groupMessageMediaFileRepository.findAllByGroupChatMessage_GroupAndGroupChatMessage_MessageStatusIn(group, List.of(MessageStatus.SENT, MessageStatus.DELETED));
         for (GroupMessageMediaFile groupMessageMediaFile : groupMessageMediaFiles) {
             groupMessageMediaFile.setGroupChatMessage(null);
         }
