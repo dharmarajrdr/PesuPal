@@ -17,6 +17,7 @@ import utils from '../../../utils';
 import ChatFooter from './ChatFooter';
 import PageNotFound from '../../Auth/PageNotFound';
 import { addMessage, setMessages } from '../../../store/reducers/ConversationSlice';
+import { useWebSocketContext } from '../../../WebSocketProvider';
 
 const ConversationScreen = ({ activeTabName }) => {
 
@@ -46,74 +47,7 @@ const ConversationScreen = ({ activeTabName }) => {
 	const { displayName, active, groupActive, groupChatConfiguration } = currentChatPreview || {};
 	const { postMessage: messagePostable, deleteMessage: messageDeletable, editMessage: messageEditable } = groupChatConfiguration || {};
 
-	const updateRecentChat = (msg) => {
-
-		const { chatMode, message, sender } = msg || {};
-
-		if (chatMode !== activeChatTab.chatMode) {
-			return; // If the message is not in the current chat mode, ignore it
-		}
-
-		const isChatOpen = chatId == msg.chatId;
-
-		const recentMessage = {
-			chatId: msg.chatId,
-			recentMessage: {
-				sender: sender.displayName,
-				message: message,
-				media: false,
-				createdAt: utils.convertTime(msg.createdAt, 12)
-			}
-		};
-
-		console.log(`Received message in chatId: ${msg.chatId}, and user is ${isChatOpen ? 'in the chat' : 'not in the chat'}. He is actually in ${chatId}.`);
-
-		if (isChatOpen) {	// User is waiting for a response
-
-			console.log(`Since user is in the chat, rendering the message in the chat`);
-
-			dispatch(addMessage(msg));
-
-		} else {	// If the chat is not open, then show the number of unread messages
-
-			console.log(`So, showing the number of unread messages for chatId: ${msg.chatId}`);
-
-			Object.assign(recentMessage, { number_of_unread_messages: 1 });
-		}
-
-		dispatch(updateOrAddRecentChat({ 'chatId': msg.chatId, recentMessage }));
-
-		console.log(`Updating recent chat for chatId: ${msg.chatId}`);
-
-		dispatch(moveRecentChatToTop(msg.chatId));
-
-		console.log(`Moved recent chat to top for chatId: ${msg.chatId}`);
-
-	}
-
-	const { DirectMessage, GroupMessage } = useWebSocket({
-		userId: myProfile.id,
-		onPrivateMessage: (msg) => {
-
-			updateRecentChat(msg);
-			playNotificationSound();
-		},
-		onGroupMessage: (msg) => {
-
-			updateRecentChat(msg);
-			playNotificationSound();
-		},
-		onError: ({ message }) => {
-			dispatch(showPopup({ message, type: 'error' }));
-		},
-		onMessageDelivery: (msg) => {
-
-			updateRecentChat(msg);
-		},
-		onTyping: () => {
-
-		}
-	});
+	const { DirectMessage, GroupMessage } = useWebSocketContext();
 
 	const readAllMessages = ({ chatId, chatPreview }) => {
 

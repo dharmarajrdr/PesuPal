@@ -22,6 +22,7 @@ import AuthModal from './components/Auth/AuthModal';
 import ManageWorkLayout from './components/Team/ManageWork/ManageWorkLayout';
 import NewModuleLayout from './components/Team/ManageWork/CreateModule/NewModuleLayout';
 import ModuleBuilderLayout from './components/Team/ManageWork/ModuleBuilder/ModuleBuilderLayout';
+import WebSocketWrapper from './WebSocketWrapper';
 
 function App() {
 
@@ -39,32 +40,34 @@ function App() {
 
     return (
         <Provider store={store}>
-            <div className="App FRCS">
+            <WebSocketWrapper>
+                <div className="App FRCS">
 
-                {!isAuthPage && <AuthModal />}
-                <CommonContainer />
-                {/* ✅ Only render LeftNavigation if not on /signin or /signup or / */}
-                {!isAuthPage && !inLobby && <LeftNavigation />}
-                <VerticalLoader />
+                    {!isAuthPage && <AuthModal />}
+                    <CommonContainer />
+                    {/* ✅ Only render LeftNavigation if not on /signin or /signup or / */}
+                    {!isAuthPage && !inLobby && <LeftNavigation />}
+                    <VerticalLoader />
 
-                <Routes>
-                    <Route path="/" element={<HomePageLayout />} />
-                    <Route path='/org/create' element={<CreateOrgModal />} />
-                    <Route path="/feeds/*" element={<FeedsLayout />} />
-                    <Route path="/chat/*" element={<ChatLayout />} />
-                    <Route path="/people/*" element={<PeopleLayout />} />
-                    <Route path="/team/*" element={<TeamLayout />} />
-                    <Route path="/manage" element={<Navigate to="/manage/module" />} />
-                    <Route path="/manage/module/create" element={<NewModuleLayout />} />
-                    <Route path="/manage/module/builder/:moduleId" element={<ModuleBuilderLayout />} />
-                    <Route path="/manage/module/*" element={<ManageWorkLayout />} />
-                    <Route path="/settings/*" element={<SettingsLayout />} />
-                    <Route path='/more/*' element={<MoreFeaturesLayout />} />
-                    <Route path="/signup" element={<Signup />} />
-                    <Route path="/signin" element={<Signin />} />
-                    <Route path="*" element={<PageNotFound />} />
-                </Routes>
-            </div>
+                    <Routes>
+                        <Route path="/" element={<HomePageLayout />} />
+                        <Route path='/org/create' element={<CreateOrgModal />} />
+                        <Route path="/feeds/*" element={<FeedsLayout />} />
+                        <Route path="/chat/*" element={<ChatLayout />} />
+                        <Route path="/people/*" element={<PeopleLayout />} />
+                        <Route path="/team/*" element={<TeamLayout />} />
+                        <Route path="/manage" element={<Navigate to="/manage/module" />} />
+                        <Route path="/manage/module/create" element={<NewModuleLayout />} />
+                        <Route path="/manage/module/builder/:moduleId" element={<ModuleBuilderLayout />} />
+                        <Route path="/manage/module/*" element={<ManageWorkLayout />} />
+                        <Route path="/settings/*" element={<SettingsLayout />} />
+                        <Route path='/more/*' element={<MoreFeaturesLayout />} />
+                        <Route path="/signup" element={<Signup />} />
+                        <Route path="/signin" element={<Signin />} />
+                        <Route path="*" element={<PageNotFound />} />
+                    </Routes>
+                </div>
+            </WebSocketWrapper>
         </Provider>
     );
 }
