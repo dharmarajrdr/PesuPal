@@ -50,6 +50,10 @@
   background-color: var(--primary-color-active);
 }
 
+.activeNav i {
+  font-weight: 600;
+}
+
 #closeLeftNav {
   display: none;
 }

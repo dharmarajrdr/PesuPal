@@ -1,4 +1,3 @@
-import React from 'react'
 import './PreviewFolderFileList.css'
 import utils from '../../../utils';
 

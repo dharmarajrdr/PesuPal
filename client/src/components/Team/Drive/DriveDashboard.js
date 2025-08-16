@@ -1,10 +1,7 @@
-import React from 'react'
-import FileManager from './FileManager'
 import FileCategoryShortcut from './FileCategoryShortcut'
 import PreviewFolderFileList from './PreviewFolderFileList'
 import './DriveDashboard.css'
 import DriveDashboardList from './DriveDashboardList';
-import DriveUsageStats from './DriveUsageStats'
 import RecentlyAccessedFiles from './RecentlyAccessedFiles'
 
 const DriveDashboard = () => {
@@ -17,7 +14,6 @@ const DriveDashboard = () => {
                     {DriveDashboardList.map((item, index) => <PreviewFolderFileList key={index} item={item} />)}
                     <RecentlyAccessedFiles />
                 </div>
-                {/* <DriveUsageStats /> */}
             </div>
         </div>
     )

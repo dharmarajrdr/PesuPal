@@ -32,14 +32,6 @@ export default [
         has_access: true
     },
     {
-        title: 'Workdrive',
-        route: '/team/drive',
-        icon: 'fa fa-store',
-        active: false,
-        notify_count: 1,
-        has_access: true
-    },
-    {
         title: 'Knowledge (Learn)',
         route: '/team/knowledge',
         icon: 'fa fa-book',

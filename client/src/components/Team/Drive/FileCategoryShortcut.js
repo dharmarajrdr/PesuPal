@@ -1,4 +1,3 @@
-import React from 'react'
 import utils from '../../../utils.js';
 import FileCategoryShortcutList from './FileCategoryShortcutList.js'
 import './FileCategoryShortcutItem.css';
