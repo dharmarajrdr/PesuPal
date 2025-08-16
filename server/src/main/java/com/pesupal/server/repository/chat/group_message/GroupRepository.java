@@ -19,7 +19,7 @@ public interface GroupRepository extends JpaRepository<Group, Long> {
                 SELECT g.id AS group_id
                 FROM group_chat_member gcm
                 JOIN groups g ON g.id = gcm.group_id AND g.org_id = :orgId
-                JOIN group_chat_message msg ON msg.group_id = g.id AND msg.deleted = false
+                JOIN group_chat_message msg ON msg.group_id = g.id
             
                 WHERE gcm.participant_id = :userId
                   AND gcm.active = true
@@ -41,7 +41,9 @@ public interface GroupRepository extends JpaRepository<Group, Long> {
             
                 msg.message AS content,
                 msg.contains_media AS includedMedia,
-                msg.created_at AS createdAt
+                msg.created_at AS createdAt,
+                msg.message_status AS messageStatus,
+                msg.message_type AS messageType
             
             FROM group_chat_member gcm
             JOIN groups g
@@ -53,7 +55,7 @@ public interface GroupRepository extends JpaRepository<Group, Long> {
             JOIN (
                 SELECT group_id, MAX(created_at) AS latest
                 FROM group_chat_message
-                WHERE deleted = false
+                WHERE message_status IN ('SENT', 'DELETED')
                 GROUP BY group_id
             ) latest_msg
                 ON latest_msg.group_id = g.id
@@ -66,10 +68,12 @@ public interface GroupRepository extends JpaRepository<Group, Long> {
                 ON sender.user_id = msg.sender_id
                AND sender.org_id = :orgId
             
+            WHERE LOWER(g.name) LIKE LOWER(CONCAT('%', :search, '%'))
+            
             ORDER BY msg.created_at DESC
             LIMIT :limit OFFSET :offset;
             """, nativeQuery = true)
-    List<RecentGroupChatProjection> findRecentGroupChatsPaged(@Param("userId") Long userId, @Param("orgId") Long orgId, @Param("limit") int limit, @Param("offset") int offset);
+    List<RecentGroupChatProjection> findRecentGroupChatsPaged(@Param("userId") Long userId, @Param("orgId") Long orgId, @Param("search") String search, @Param("limit") int limit, @Param("offset") int offset);
 
 
     Optional<Group> findByPublicId(String publicId);

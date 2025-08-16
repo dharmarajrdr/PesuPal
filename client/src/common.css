@@ -131,6 +131,10 @@
   justify-content: flex-end;
 }
 
+.w15 {
+  width: 15px;
+}
+
 .w20 {
   width: 20px;
 }
@@ -157,6 +161,10 @@
 
 .pT10 {
   padding-top: 10px;
+}
+
+.mT2 {
+  margin-top: 2px;
 }
 
 .mT5 {
@@ -255,6 +263,10 @@
   color: #aaa;
 }
 
+.color999 {
+  color: #999;
+}
+
 .color555 {
   color: #555;
 }
@@ -322,6 +334,10 @@
 
 .mL15 {
   margin-left: 15px;
+}
+
+.mL20 {
+  margin-left: 20px;
 }
 
 .mB5 {

@@ -35,7 +35,6 @@ const CreateOrgModal = () => {
         };
 
         apiRequest('/api/v1/org', 'POST', orgData).then(({ data }) => {
-            console.log(data);
             dispatch(showPopup({ message: `Organization created successfully!`, type: 'success' }));
             closeCreateOrgModal();
             navigate(`/`);

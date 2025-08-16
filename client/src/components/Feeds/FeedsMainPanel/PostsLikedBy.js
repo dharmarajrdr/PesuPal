@@ -3,8 +3,6 @@ import './PostsLikedBy.css'
 import Loader from '../../Loader'
 import ErrorMessage from '../../ErrorMessage'
 import { apiRequest } from '../../../http_request'
-import utils from '../../../utils'
-import Profile from '../../OthersProfile/Profile'
 import UserPreview from '../../User/UserPreview'
 
 const NoLikesFound = () => {

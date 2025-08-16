@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import './ChatMessages.css'
 import Loader from '../../Loader';
 import StartNewConversation from './StartNewConversation';
@@ -26,13 +26,22 @@ const ChatMessages = ({ showStartNewConversation, chatId, retrievingChat, clickS
     let previousMessageType = null;
 
     const chatContainerRef = useRef(null);
-    const { messages } = useSelector(state => state.conversation) || { 'messages': [] };
+    const currentChatPreview = useSelector(state => state.currentChatPreviewSlice);
+    const conversationInRedux = useSelector(state => state.conversation?.messages || []);
+    const [messages, setMessages] = useState(conversationInRedux || []);
+
+    const { groupChatConfiguration } = currentChatPreview || {};
+    const { deleteMessage: messageDeletable, editMessage: messageEditable, pinMessage: messagePinnable } = groupChatConfiguration || {};
+
+    useEffect(() => {
+        setMessages(conversationInRedux || []);
+    }, [conversationInRedux]);
 
     useEffect(() => {
         if (chatContainerRef.current) {
             chatContainerRef.current.scrollTo({
                 top: chatContainerRef.current.scrollHeight,
-                behavior: 'auto' // or 'smooth'
+                behavior: 'auto'
             });
         }
     }, [chatId, messages]);
@@ -57,7 +66,7 @@ const ChatMessages = ({ showStartNewConversation, chatId, retrievingChat, clickS
                 return (
                     <div key={msg.id} className='w100'>
                         {showDate && <div className="date-label">{newDate}</div>}
-                        {messageType == 'USER_MESSAGE' && <ChatMessageItem msg={msg} isSameSender={isSameSender} />}
+                        {messageType == 'USER_MESSAGE' && <ChatMessageItem msg={msg} isSameSender={isSameSender} messageDeletable={messageDeletable} messageEditable={messageEditable} messagePinnable={messagePinnable} />}
                         {messageType == 'SYSTEM_MESSAGE' && <SystemMessage msg={msg} />}
                     </div>
                 );

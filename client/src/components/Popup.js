@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import "./Popup.css";
 import { useDispatch, useSelector } from "react-redux";
 import { hidePopup } from "../store/reducers/PopupSlice";
@@ -9,12 +9,26 @@ const Popup = () => {
     const { message, type } = useSelector(state => state.popup) || {};
 
     const audioRef = useRef(null);
+    const [hasInteracted, setHasInteracted] = useState(false);
+
+    // Detect first user interaction
+    useEffect(() => {
+        const enableAudio = () => setHasInteracted(true);
+        window.addEventListener("click", enableAudio, { once: true });
+        window.addEventListener("keydown", enableAudio, { once: true });
+        return () => {
+            window.removeEventListener("click", enableAudio);
+            window.removeEventListener("keydown", enableAudio);
+        };
+    }, []);
 
     useEffect(() => {
         if (!message) return;
 
-        if (type == 'error') {
-            audioRef.current.play();
+        if (type === "error" && hasInteracted) {
+            audioRef.current?.play().catch((err) => {
+                console.warn("Audio play blocked:", err);
+            });
         }
 
         const timer = setTimeout(() => {
@@ -22,7 +36,7 @@ const Popup = () => {
         }, duration);
 
         return () => clearTimeout(timer);
-    }, [message]);
+    }, [message, hasInteracted, type, dispatch]);
 
     const iconClass = {
         success: "fa fa-check-circle",

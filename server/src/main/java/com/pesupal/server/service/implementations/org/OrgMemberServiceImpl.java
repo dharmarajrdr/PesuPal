@@ -52,8 +52,8 @@ public class OrgMemberServiceImpl implements OrgMemberService {
         this.designationService = designationService;
         this.orgMemberRepository = orgMemberRepository;
         this.orgConfigurationService = orgConfigurationService;
-        this.orgSubscriptionHistoryService = orgSubscriptionHistoryService;
         this.directMessageChatService = directMessageChatService;
+        this.orgSubscriptionHistoryService = orgSubscriptionHistoryService;
     }
 
     /**
@@ -145,7 +145,13 @@ public class OrgMemberServiceImpl implements OrgMemberService {
     public List<UserBasicInfoDto> getAllMembers(Long departmentId, OrgMember orgMember) {
 
         Department department = departmentService.getDepartmentByIdAndOrg(departmentId, orgMember.getOrg());
-        return orgMemberRepository.findAllByOrgAndDepartmentOrderByDisplayName(orgMember.getOrg(), department).stream().map(UserBasicInfoDto::fromOrgMember).toList();
+        return orgMemberRepository.findAllByOrgAndDepartmentOrderByDisplayName(orgMember.getOrg(), department).stream().map(om -> {
+            UserBasicInfoDto userBasicInfoDto = UserBasicInfoDto.fromOrgMember(om);
+            if (!om.getPublicId().equals(orgMember.getPublicId())) {
+                userBasicInfoDto.setChatId(directMessageChatService.getOrCreateDirectMessageChat(om, orgMember).getPublicId());
+            }
+            return userBasicInfoDto;
+        }).toList();
     }
 
     /**
@@ -325,8 +331,15 @@ public class OrgMemberServiceImpl implements OrgMemberService {
     public List<UserPreviewDto> getSearchedOrgMembers(OrgMember orgMember, String search, int page, int size) {
 
         Long orgId = orgMember.getOrg().getId();
-        List<OrgMember> orgMembers = orgMemberRepository.fuzzySearchOrgMembers(orgId, search, PageRequest.of(page, size)).getContent();
-        return orgMembers.stream().map(UserPreviewDto::fromOrgMember).toList();
+        List<OrgMember> orgMembers = orgMemberRepository.searchOrgMembers(orgId, search, PageRequest.of(page, size)).getContent();
+        return orgMembers.stream().map(om -> {
+            UserPreviewDto userPreviewDto = UserPreviewDto.fromOrgMember(om);
+            DirectMessageChat directMessageChat = directMessageChatService.getOrCreateDirectMessageChat(orgMember, om);
+            if (directMessageChat != null) {
+                userPreviewDto.setChatId(directMessageChat.getPublicId());
+            }
+            return userPreviewDto;
+        }).toList();
     }
 
     /**

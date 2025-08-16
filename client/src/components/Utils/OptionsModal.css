@@ -10,7 +10,7 @@
 }
 
 #options-container .option {
-    padding: 10px 15px;
+    padding: 10px 25px 10px 15px;
     cursor: pointer;
     color: var(--primary-color-active);
     border-bottom: 1px solid #eee;

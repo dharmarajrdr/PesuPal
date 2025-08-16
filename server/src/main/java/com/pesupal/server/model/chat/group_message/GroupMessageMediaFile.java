@@ -20,6 +20,9 @@ public class GroupMessageMediaFile extends PublicAccessModel {
     @JsonIgnore
     private GroupChatMessage groupChatMessage;
 
+    @Column(nullable = false)
+    private String name;
+
     @Column(nullable = false, unique = true)
     private UUID mediaId;
 
@@ -32,7 +35,8 @@ public class GroupMessageMediaFile extends PublicAccessModel {
     public static GroupMessageMediaFile fromMediaUploadDto(MediaUploadDto media) {
 
         GroupMessageMediaFile groupMessageMediaFile = new GroupMessageMediaFile();
-        groupMessageMediaFile.setMediaId(media.getName());
+        groupMessageMediaFile.setMediaId(media.getMediaId());
+        groupMessageMediaFile.setName(media.getName());
         groupMessageMediaFile.setExtension(media.getExtension());
         groupMessageMediaFile.setSize(media.getSize());
         return groupMessageMediaFile;

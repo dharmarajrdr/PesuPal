@@ -1,5 +1,8 @@
 package com.pesupal.server.projections;
 
+import com.pesupal.server.enums.MessageType;
+import com.pesupal.server.model.chat.MessageStatus;
+
 import java.time.LocalDateTime;
 
 public interface RecentPrivateChatProjection {
@@ -21,4 +24,8 @@ public interface RecentPrivateChatProjection {
     String getReadReceipt();
 
     String getChatPublicId();
+
+    MessageStatus getMessageStatus();
+
+    MessageType getMessageType();
 }

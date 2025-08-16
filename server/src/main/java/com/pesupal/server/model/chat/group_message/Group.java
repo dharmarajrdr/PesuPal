@@ -21,7 +21,7 @@ public class Group extends PublicAccessModel {
 
     private String description;
 
-    private String displayPicture;
+    private String displayPicture; // <mediaId>.<extension>
 
     @ManyToOne
     private OrgMember owner;

@@ -1,5 +1,6 @@
 package com.pesupal.server.model.chat.group_message;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.pesupal.server.enums.Role;
 import com.pesupal.server.model.BaseModel;
 import jakarta.persistence.Entity;
@@ -19,6 +20,7 @@ import lombok.experimental.SuperBuilder;
 public class GroupChatConfiguration extends BaseModel {
 
     @ManyToOne
+    @JsonIgnore
     private Group group;
 
     @Enumerated(EnumType.STRING)
@@ -32,6 +34,8 @@ public class GroupChatConfiguration extends BaseModel {
 
     private boolean changeDescription;
 
+    private boolean changeVisibility;
+
     private boolean deleteGroup;
 
     private boolean leaveGroup;
@@ -44,9 +48,13 @@ public class GroupChatConfiguration extends BaseModel {
 
     private boolean pinMessage;
 
+    private boolean editMessage;
+
     private boolean deleteMessage;
 
     private boolean clearChat;
 
     private boolean roleUpdate;
+
+    private boolean scheduleMessage;
 }

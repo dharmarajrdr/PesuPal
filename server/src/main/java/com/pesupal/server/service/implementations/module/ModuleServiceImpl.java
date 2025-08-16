@@ -51,7 +51,7 @@ public class ModuleServiceImpl extends CurrentValueRetriever implements ModuleSe
         module.setCreatedBy(orgMember);
         module.setActive(false);
         moduleRepository.save(module);
-        moduleFieldService.addSystemFieldsIntoModule(module);
+        moduleFieldService.introduceDefaultAndSystemFields(module);
         moduleMemberService.addOrgOwnerToModule(module, orgMember);
         modulePermissionService.initializeModulePermissions(module);
         return module;
