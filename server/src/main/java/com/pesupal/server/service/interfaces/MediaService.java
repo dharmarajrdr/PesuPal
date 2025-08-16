@@ -12,4 +12,6 @@ public interface MediaService {
     byte[] downloadFile(String key);
 
     URL generatePresignedUrl(String key) throws Exception;
+
+    void deleteFile(String key);
 }

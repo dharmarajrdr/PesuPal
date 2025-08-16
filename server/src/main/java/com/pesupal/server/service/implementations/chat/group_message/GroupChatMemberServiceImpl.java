@@ -19,6 +19,7 @@ import com.pesupal.server.service.interfaces.chat.group_message.GroupChatMemberS
 import com.pesupal.server.service.interfaces.chat.group_message.GroupService;
 import com.pesupal.server.service.interfaces.org.OrgMemberService;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
@@ -151,6 +152,65 @@ public class GroupChatMemberServiceImpl extends CurrentValueRetriever implements
     }
 
     /**
+     * Retrieves a list of users who are not participants of a group, optionally filtered by search criteria.
+     *
+     * @param groupId
+     * @param search
+     * @param pageable
+     * @return
+     */
+    @Override
+    public List<UserPreviewDto> getNonParticipantMembers(String groupId, String search, Pageable pageable) {
+
+        OrgMember orgMember = getCurrentOrgMember();
+        GroupChatMember groupChatMember = getGroupMemberByGroupIdAndUserId(groupId, orgMember.getId());
+
+        return groupChatMemberRepository.getNonParticipantMembersByGroupId(groupChatMember.getGroup().getPublicId(), search, pageable).getContent().stream().map(UserPreviewDto::fromOrgMember).toList();
+    }
+
+    /**
+     * Removes a member from a group.
+     *
+     * @param removeGroupMemberDto
+     */
+    @Override
+    public void removeMemberFromGroup(AddGroupMemberDto removeGroupMemberDto) {
+
+        OrgMember orgMember = getCurrentOrgMember();
+        GroupChatMember groupChatMember = getGroupMemberByGroupIdAndUserId(removeGroupMemberDto.getGroupId(), orgMember.getId());
+        Role role = groupChatMember.getRole();
+
+        Group group = groupService.getGroupByPublicId(removeGroupMemberDto.getGroupId());
+        OrgMember memberToRemove = orgMemberService.getOrgMemberByPublicId(removeGroupMemberDto.getUserId());
+
+        GroupChatConfiguration groupChatConfiguration = groupChatConfigurationService.getConfigurationByGroupAndRole(group, groupChatMember.getRole());
+
+        if (!groupChatConfiguration.isRemoveMember()) {
+            throw new PermissionDeniedException("You do not have permission to remove members from this group.");
+        }
+
+        if (orgMember.getPublicId().equals(memberToRemove.getPublicId())) {
+            throw new ActionProhibitedException("You cannot remove yourself from the group.");
+        }
+
+        if (group.getOwner().getPublicId().equals(memberToRemove.getPublicId())) {
+            throw new ActionProhibitedException("You cannot remove the group owner from the group.");
+        }
+
+        GroupChatMember memberToRemoveChatMember = getGroupMemberByGroupIdAndUserId(removeGroupMemberDto.getGroupId(), memberToRemove.getId());
+        Role memberToRemoveRole = memberToRemoveChatMember.getRole();
+
+        if (role.getLevel() < memberToRemoveRole.getLevel()) {
+            throw new PermissionDeniedException("The role of the member you are trying to remove is higher than yours. You do not have permission to remove this member.");
+        }
+
+        memberToRemoveChatMember.setActive(false);
+        groupChatMemberRepository.save(memberToRemoveChatMember);
+
+        groupChatMessageService.addSystemMessage(group, orgMember.getDisplayName() + " removed " + memberToRemove.getDisplayName());
+    }
+
+    /**
      * Adds a member to a group.
      *
      * @param addGroupMemberDto
@@ -175,19 +235,20 @@ public class GroupChatMemberServiceImpl extends CurrentValueRetriever implements
             throw new PermissionDeniedException("You do not have permission to add members to this group.");
         }
 
-        boolean isAlreadyMember = groupChatMemberRepository.existsByGroup_PublicIdAndParticipant_PublicId(addGroupMemberDto.getGroupId(), addGroupMemberDto.getUserId());
-        if (isAlreadyMember) {
+        OrgMember newMember = orgMemberService.getOrgMemberByPublicId(addGroupMemberDto.getUserId());
+
+        GroupChatMember newGroupMember = groupChatMemberRepository.findByGroup_PublicIdAndParticipantId(addGroupMemberDto.getGroupId(), newMember.getId()).orElse(new GroupChatMember());
+
+        if (newGroupMember.isActive()) {
             throw new ActionProhibitedException("User is already a member of this group.");
         }
 
-        OrgMember newMember = orgMemberService.getOrgMemberByPublicId(addGroupMemberDto.getUserId());
-
-        GroupChatMember newGroupMember = new GroupChatMember();
         newGroupMember.setGroup(group);
         newGroupMember.setParticipant(newMember);
         newGroupMember.setRole(Role.USER);
         newGroupMember.setActive(true);
         groupChatMemberRepository.save(newGroupMember);
+        groupChatMessageService.addSystemMessage(group, currentUser.getDisplayName() + " added " + newMember.getDisplayName());
         return UserPreviewDto.fromOrgMember(newMember);
     }
 

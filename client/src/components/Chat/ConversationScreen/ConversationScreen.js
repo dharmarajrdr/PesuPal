@@ -20,13 +20,11 @@ import { addMessage, setMessages } from '../../../store/reducers/ConversationSli
 
 const ConversationScreen = ({ activeTabName }) => {
 
+	const audioRef = useRef(null);
 	const { chatId } = useParams();
-
 	const dispatch = useDispatch();
 
 	dispatch(setActiveChatTab(activeTabName));
-
-	const audioRef = useRef(null);
 
 	const playNotificationSound = () => {
 		if (audioRef.current) {
@@ -42,10 +40,11 @@ const ConversationScreen = ({ activeTabName }) => {
 	const [retrievingChat, setRetrievingChat] = useState(true);
 	const [pivotMessageId, setPivotMessageId] = useState(null);
 
-	const currentChatPreview = useSelector(state => state.currentChatPreviewSlice);
-	const activeChatTab = useSelector(state => state.activeChatTab);
 	const myProfile = useSelector(state => state.myProfile) || {};
-	const { displayName, active, groupActive } = currentChatPreview || {};
+	const activeChatTab = useSelector(state => state.activeChatTab);
+	const currentChatPreview = useSelector(state => state.currentChatPreviewSlice);
+	const { displayName, active, groupActive, groupChatConfiguration } = currentChatPreview || {};
+	const { postMessage: messagePostable, deleteMessage: messageDeletable, editMessage: messageEditable } = groupChatConfiguration || {};
 
 	const updateRecentChat = (msg) => {
 
@@ -130,10 +129,10 @@ const ConversationScreen = ({ activeTabName }) => {
 		});
 	}
 
-	const clickSendMessageHandler = ({ message }) => {
+	const clickSendMessageHandler = ({ message, media }) => {
 
 		const payload = {
-			message, chatId
+			message, chatId, media
 		};
 
 		if (activeChatTab.name === 'directMessage') {
@@ -212,10 +211,9 @@ const ConversationScreen = ({ activeTabName }) => {
 						: currentChatPreview ? <>
 							<ChatHeader />
 							<audio ref={audioRef} src="/audio/on-message.mp3" preload="auto" />
-							<ChatMessages showStartNewConversation={showStartNewConversation} retrievingChat={retrievingChat} chatId={chatId} clickSendMessageHandler={clickSendMessageHandler} />
-							<ChatFooter active={active} groupActive={groupActive} currentTab={activeChatTab.name} displayName={displayName} clickSendMessageHandler={clickSendMessageHandler} />
-						</>
-							: null
+							<ChatMessages messageDeletable={messageDeletable} messageEditable={messageEditable} showStartNewConversation={showStartNewConversation} retrievingChat={retrievingChat} chatId={chatId} clickSendMessageHandler={clickSendMessageHandler} />
+							<ChatFooter messagePostable={messagePostable} active={active} groupActive={groupActive} currentTab={activeChatTab.name} displayName={displayName} clickSendMessageHandler={clickSendMessageHandler} />
+						</> : null
 			}
 		</div>
 	);

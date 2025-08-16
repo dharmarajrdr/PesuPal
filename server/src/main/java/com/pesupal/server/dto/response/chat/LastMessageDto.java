@@ -1,7 +1,9 @@
 package com.pesupal.server.dto.response.chat;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.pesupal.server.enums.MessageType;
 import com.pesupal.server.enums.ReadReceipt;
+import com.pesupal.server.model.chat.MessageStatus;
 import lombok.Data;
 
 @Data
@@ -17,4 +19,8 @@ public class LastMessageDto {
     private String createdAt;
 
     private ReadReceipt readReceipt;
+
+    private MessageStatus messageStatus;
+
+    private MessageType messageType;
 }

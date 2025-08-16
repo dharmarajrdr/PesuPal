@@ -1,8 +1,9 @@
 import utils from '../../../../utils';
-import { Link } from 'react-router-dom';
 import './ListView.css'
 import { useDispatch } from 'react-redux';
 import { showPopup } from '../../../../store/reducers/PopupSlice';
+import { useState } from 'react';
+import DetailView from './DetailView';
 
 const ListviewTopHeader = ({ item, searchParams, setSearchParams }) => {
 
@@ -60,7 +61,11 @@ const widthChart = {
     "USER": "225px",
     "SELECT": "250px",
     "TEXT": "350px",
-    "LINK": "250px"
+    "LINK": "250px",
+    "TRANSITION": "250px",
+    "CURRENCY": "250px",
+    "FILE": "250px",
+    "GEO_LOCATION": "250px",
 }
 
 const ListviewHeader = ({ header }) => {
@@ -83,7 +88,10 @@ const Column = ({ fieldType, data, index }) => {
 
     switch (fieldType) {
         case 'DATE_TIME': {
-            content = data ? <span>{utils.convertDateAndTime(data)}</span> : null;
+            content = data ? <span>
+                <i className='fa-regular fa-clock mR5 colorAAA w15'></i>
+                {utils.convertDateAndTime(data)}
+            </span> : null;
             break;
         }
 
@@ -111,20 +119,52 @@ const Column = ({ fieldType, data, index }) => {
             }
             break;
         }
+
         case 'TEXT': {
             content = <span>{data}</span>;
             break;
         }
-        case 'TRANSITION': {
-            const { name, score } = data || {};
-            content = name ? (
-                <div className='FRCS'>
-                    <i className="fa fa-chart-line fs12 color777 w_30"></i>
-                    <span>{name}</span>
-                </div>
+
+        case 'GEO_LOCATION': {
+            const { latitude, longitude } = data || {};
+            content = (latitude && longitude) ? (
+                <p className='FRCS link-wrapper' onClick={(e) => { e.stopPropagation(); window.open(`https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`, '_blank', 'noopener,noreferrer'); }}>
+                    <i className='fa fa-map-marker-alt mR5 colorAAA w15'></i>
+                    <span>{latitude.toFixed(2)}, {longitude.toFixed(2)}</span>
+                </p>
             ) : null;
             break;
         }
+
+        case 'TRANSITION': {
+            const { name, score } = data || {};
+            content = name ? (
+                <span className='FRCS'>
+                    <i className="fa fa-chart-line fs12 color777 w_30"></i>
+                    <span>{name}</span>
+                </span>
+            ) : null;
+            break;
+        }
+
+        case 'CURRENCY': {
+            const { currency, amount } = data || {};
+            const { code: selectedCurrencyCode } = currency?.find(c => c.selected) || {};
+            content = (amount && selectedCurrencyCode) ? <span>{utils.formatCurrency(amount, selectedCurrencyCode)}</span> : null;
+            break;
+        }
+
+        case 'FILE': {
+            const { mediaId, name, extension } = data || {};
+            content = (mediaId && name) ? (
+                <span className='FRCS'>
+                    <i className={`fa ${utils.getIconByFileExtension(extension)} fs12 color777 w_20`}></i>
+                    <span>{name}.{extension}</span>
+                </span>
+            ) : null;
+            break;
+        }
+
         case 'LINK': {
             const { url, title } = data || {};
             content = url && (
@@ -135,6 +175,7 @@ const Column = ({ fieldType, data, index }) => {
             );
             break;
         }
+
         default: {
             content = <span>Unable to display</span>;
         }
@@ -150,13 +191,26 @@ const Column = ({ fieldType, data, index }) => {
 const Row = ({ item, item_index }) => {
 
     const { moduleId, recordId, fields } = item;
-    const route = `/manage/module/${moduleId}/record/${recordId}`;
+    const [showQuickDetailView, setShowQuickDetailView] = useState(false);
+    // const route = `/manage/module/${moduleId}/record/${recordId}`;
 
-    return <Link to={route} className='rows FRCS' key={item_index}>
+    const showQuickDetailViewHandler = () => {
+        setShowQuickDetailView(true);
+    }
+
+    const QuickDetailViewRecord = ({ subject }) => {
+
+        return <div id='quick-create-record' className='entire-screen-overlay FRCE'>
+            <DetailView recordId={recordId} subject={subject} moduleId={moduleId} setShowQuickDetailView={setShowQuickDetailView} view='list' fieldsList={fields} />
+        </div>
+    }
+
+    return <div className='rows FRCS' key={item_index} onClick={showQuickDetailViewHandler}>
+        {showQuickDetailView && <QuickDetailViewRecord subject={fields[0].data} />}
         {fields?.map(({ data, fieldType }, index) => {
             return <Column fieldType={fieldType} data={data} key={index} />
         })}
-    </Link>
+    </div>
 }
 
 

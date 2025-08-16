@@ -1,6 +1,5 @@
 import { NavLink } from 'react-router-dom';
 import utils from '../../../utils';
-import Profile from '../../OthersProfile/Profile';
 import './Post.css'
 import { useState } from 'react';
 import { apiRequest } from '../../../http_request';
@@ -9,17 +8,20 @@ import PostCommentsLayout from './PostCommentsLayout';
 import Poll from './Poll';
 import PostsLikedBy from './PostsLikedBy';
 import { showPopup } from '../../../store/reducers/PopupSlice';
+import { useDispatch } from 'react-redux';
+import { showProfile } from '../../../store/reducers/ProfileSlice';
 
 const PostDescription = ({ html }) => <div className="post-description html-content-renderer postContent" dangerouslySetInnerHTML={{ __html: html }} />
 
-const PostHeader = ({ displayName, displayPicture, createdAt, setShowProfile, postId, isOptionOpen, onToggleOption, commentable, setCommentable, isCreator, poll }) => {
+const PostHeader = ({ userId, displayName, displayPicture, createdAt, postId, isOptionOpen, onToggleOption, commentable, setCommentable, isCreator, poll }) => {
 
     const [pollUpdatable, setPollUpdatable] = useState(poll?.updatable);
     const [showLikesList, setShowLikesList] = useState(false);
+    const dispatch = useDispatch();
 
     return <div className='PostHeader FRCB'>
         <div className='FRCS'>
-            <img src={displayPicture} alt={displayName} className='img_40_40 user_photo' onClick={() => setShowProfile(true)} />
+            <img src={displayPicture} alt={displayName} className='img_40_40 user_photo' onClick={() => { dispatch(showProfile(userId)); }} />
             <div className='FCSS'>
                 <h3 className='user_name'>{displayName}</h3>
                 <p className='created_at' title={utils.convertDateAndTime(createdAt)}>{utils.agoTimeCalculator(createdAt)}</p>
@@ -119,7 +121,6 @@ const Post = ({ post, isOptionOpen, onToggleOption }) => {
             setFullScreenImage(null);
         };
 
-    const [showProfile, setShowProfile] = useState(false);
     const [commentable, setCommentable] = useState(post.commentable);
     const [likedPost, setLikedPost] = useState(liked);
     const [likesCount, setLikesCount] = useState(likes || 0);
@@ -144,10 +145,9 @@ const Post = ({ post, isOptionOpen, onToggleOption }) => {
     return (
         <div className='Post w100'>
             {fullScreenImage ? <FullScreenImage closeFullScreen={closeFullScreen} fullScreenImage={fullScreenImage} /> : null}
-            <PostHeader isOptionOpen={isOptionOpen} onToggleOption={onToggleOption} postId={id} displayName={displayName} displayPicture={displayPicture} createdAt={createdAt} setShowProfile={setShowProfile} commentable={commentable} setCommentable={setCommentable} isCreator={isCreator} poll={poll} />
+            <PostHeader userId={userId} isOptionOpen={isOptionOpen} onToggleOption={onToggleOption} postId={id} displayName={displayName} displayPicture={displayPicture} createdAt={createdAt} commentable={commentable} setCommentable={setCommentable} isCreator={isCreator} poll={poll} />
             <PostBody title={title} description={description} media={media} toggleMaxHeight={toggleMaxHeight} tags={tags} poll={poll} setPoll={setPoll} />
             <PostFooter postId={id} likedPost={likedPost} likesCount={likesCount} commentsCount={commentsCount} setCommentsCount={setCommentsCount} commentable={commentable} bookmarkable={bookmarkable} bookmarked={bookmarked} likeHandler={likeHandler} />
-            {showProfile && <Profile userId={userId} setShowProfile={setShowProfile} />}
         </div>
     )
 }

@@ -25,6 +25,13 @@ public class GroupController {
         return ResponseEntity.ok().body(new ApiResponseDto("Group message created successfully", groupDto));
     }
 
+    @PutMapping("/{groupId}")
+    public ResponseEntity<ApiResponseDto> updateGroup(@PathVariable String groupId, @RequestBody CreateGroupDto createGroupDto) {
+
+        GroupDto updatedGroup = groupService.updateGroup(groupId, createGroupDto);
+        return ResponseEntity.ok().body(new ApiResponseDto("Group updated successfully", updatedGroup));
+    }
+
     @DeleteMapping("/{groupId}")
     public ResponseEntity<ApiResponseDto> deleteGroup(@PathVariable String groupId) {
 
@@ -33,10 +40,10 @@ public class GroupController {
     }
 
     @GetMapping("/recent")
-    public ResponseEntity<ApiResponseDto> getAllGroups(@RequestParam Integer page, @RequestParam Integer size) {
+    public ResponseEntity<ApiResponseDto> getRecentGroups(@RequestParam(required = false, defaultValue = "") String search, @RequestParam Integer page, @RequestParam Integer size) {
 
         Pageable pageable = Pageable.ofSize(size).withPage(page);
-        RecentChatPagedDto recentChatPagedDto = groupService.getAllGroups(pageable);
+        RecentChatPagedDto recentChatPagedDto = groupService.getRecentGroups(search, pageable);
         return ResponseEntity.ok().body(new ApiResponseDto("Groups retrieved successfully", recentChatPagedDto.getChats(), recentChatPagedDto.getPageable()));
     }
 

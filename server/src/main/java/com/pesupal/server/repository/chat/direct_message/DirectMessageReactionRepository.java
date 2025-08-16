@@ -17,8 +17,6 @@ public interface DirectMessageReactionRepository extends JpaRepository<DirectMes
 
     Optional<DirectMessageReaction> findByDirectMessageAndReactor(DirectMessage directMessage, OrgMember orgMember);
 
-    List<DirectMessageReaction> findByDirectMessage(DirectMessage directMessage);
-
     @Query("SELECT dr.reaction AS reaction, COUNT(dr.id) AS count FROM DirectMessageReaction dr WHERE dr.directMessage.id = :messageId GROUP BY dr.reaction")
     List<ReactionCountProjection> findReactionCountsByMessageId(@Param("messageId") Long messageId);
 

@@ -126,6 +126,22 @@ export default {
         if (minutes > 0) return `${minutes} min${minutes > 1 ? 's' : ''} ago`;
         return `${seconds} sec${seconds > 1 ? 's' : ''} ago`;
     },
+    "futureTimeCalculator": (date) => {
+        const now = new Date();
+        const diff = new Date(date) - now;
+        const seconds = Math.floor(diff / 1000);
+        const minutes = Math.floor(seconds / 60);
+        const hours = Math.floor(minutes / 60);
+        const days = Math.floor(hours / 24);
+        const months = Math.floor(days / 30);
+        const years = Math.floor(months / 12);
+        if (years > 0) return `${years} yr${years > 1 ? 's' : ''} to go`;
+        if (months > 0) return `${months} mnt${months > 1 ? 's' : ''} to go`;
+        if (days > 0) return `${days} day${days > 1 ? 's' : ''} to go`;
+        if (hours > 0) return `${hours} hr${hours > 1 ? 's' : ''} to go`;
+        if (minutes > 0) return `${minutes} min${minutes > 1 ? 's' : ''} to go`;
+        return `${seconds} sec${seconds > 1 ? 's' : ''} to go`;
+    },
     "parseCookie": () => {
         const cookies = document.cookie
             .split(';')
@@ -211,5 +227,95 @@ export default {
 
         const index = Math.abs(hash) % colors.length;
         return colors[index];
+    },
+    "formatCurrency": (amount, currency) => {
+        if (typeof amount !== 'number') return '';
+        return new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: currency || 'USD',
+        }).format(amount);
+    },
+    "getIconByFileExtension": (extension) => {
+
+        const icons = {
+            'pdf': 'fa-file-pdf',
+            'doc': 'fa-file-word',
+            'docx': 'fa-file-word',
+            'xls': 'fa-file-excel',
+            'xlsx': 'fa-file-excel',
+            'ppt': 'fa-file-powerpoint',
+            'pptx': 'fa-file-powerpoint',
+            'txt': 'fa-file-alt',
+            'jpg': 'fa-file-image',
+            'jpeg': 'fa-file-image',
+            'png': 'fa-file-image',
+            'gif': 'fa-file-image',
+            'zip': 'fa-file-archive',
+            'mp3': 'fa-file-audio',
+            'wav': 'fa-file-audio',
+            'mp4': 'fa-file-video',
+            'avi': 'fa-file-video',
+            'mov': 'fa-file-video',
+            'mkv': 'fa-file-video',
+            'json': 'fa-file-code',
+            'html': 'fa-file-code',
+            'css': 'fa-file-code',
+            'js': 'fa-file-code',
+            'xml': 'fa-file-code',
+            'csv': 'fa-file-csv',
+            'md': 'fa-file-alt',
+            'yaml': 'fa-file-code',
+            'yml': 'fa-file-code'
+            // Add more extensions and icons as needed
+        };
+
+        return icons[extension.toLowerCase()] || 'fa-file';
+    },
+    "getFileIcon": (file) => {
+
+        const fileTypeIcons = {
+            image: "fa fa-image",
+            video: "fa fa-video",
+            audio: "fa fa-music",
+            pdf: "fa fa-file-pdf",
+            doc: "fa fa-file-word",
+            docx: "fa fa-file-word",
+            xls: "fa fa-file-excel",
+            xlsx: "fa fa-file-excel",
+            ppt: "fa fa-file-powerpoint",
+            pptx: "fa fa-file-powerpoint",
+            default: "fa fa-file"
+        };
+
+        if (file.type.startsWith("image")) return fileTypeIcons.image;
+        if (file.type.startsWith("video")) return fileTypeIcons.video;
+        if (file.type.startsWith("audio")) return fileTypeIcons.audio;
+        if (file.type.includes("pdf")) return fileTypeIcons.pdf;
+        if (
+            file.type.includes("word") ||
+            file.name.endsWith(".doc") ||
+            file.name.endsWith(".docx")
+        )
+            return fileTypeIcons.doc;
+        if (
+            file.type.includes("excel") ||
+            file.name.endsWith(".xls") ||
+            file.name.endsWith(".xlsx")
+        )
+            return fileTypeIcons.xls;
+        if (
+            file.type.includes("powerpoint") ||
+            file.name.endsWith(".ppt") ||
+            file.name.endsWith(".pptx")
+        )
+            return fileTypeIcons.ppt;
+        return fileTypeIcons.default;
+    },
+    "formatFileSize": (bytes) => {
+        if (bytes === 0) return '0 Bytes';
+        const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(1024));
+        const size = bytes / Math.pow(1024, i);
+        return `${size.toFixed(2)} ${sizes[i]}`;
     }
 }

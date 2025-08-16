@@ -1,21 +1,13 @@
-#RecentChats {
-  max-height: calc(100vh - 110px);
-}
-
 .RecentChatContainer {
   width: 100%;
   overflow: hidden;
   border-bottom: 1px solid #ddd;
   padding: 10px;
   height: 70px;
-  border-top-left-radius: 5px;
-  border-bottom-left-radius: 5px;
-  border-left: 5px solid transparent;
 }
 
 .RecentChatContainer.active {
   background-color: var(--bg-color);
-  border-left: 5px solid var(--primary-color);
 }
 
 .RecentChatContainer:not(.active):hover {
@@ -41,7 +33,7 @@
   font-size: 14px;
   line-height: 24px;
   text-wrap: nowrap;
-  max-width: 75%;
+  max-width: 70%;
   overflow: hidden;
   text-overflow: ellipsis;
   font-weight: 600;

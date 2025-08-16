@@ -9,6 +9,7 @@ import com.pesupal.server.model.chat.group_message.Group;
 import com.pesupal.server.model.chat.group_message.GroupChatPinned;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.repository.chat.group_message.GroupChatPinnedRepository;
+import com.pesupal.server.service.interfaces.MediaService;
 import com.pesupal.server.service.interfaces.chat.group_message.GroupChatPinnedService;
 import com.pesupal.server.service.interfaces.chat.group_message.GroupService;
 import org.springframework.context.annotation.Lazy;
@@ -22,10 +23,12 @@ public class GroupChatPinnedServiceImpl extends CurrentValueRetriever implements
 
     private final GroupService groupService;
     private final GroupChatPinnedRepository groupChatPinnedRepository;
+    private final MediaService mediaService;
 
-    public GroupChatPinnedServiceImpl(@Lazy GroupService groupService, GroupChatPinnedRepository groupChatPinnedRepository) {
+    public GroupChatPinnedServiceImpl(@Lazy GroupService groupService, GroupChatPinnedRepository groupChatPinnedRepository, MediaService mediaService) {
         this.groupService = groupService;
         this.groupChatPinnedRepository = groupChatPinnedRepository;
+        this.mediaService = mediaService;
     }
 
     /**
@@ -52,7 +55,14 @@ public class GroupChatPinnedServiceImpl extends CurrentValueRetriever implements
         OrgMember orgMember = getCurrentOrgMember();
         Long userId = orgMember.getId();
         Long orgId = orgMember.getOrg().getId();
-        return groupChatPinnedRepository.findAllByPinnedByIdAndGroup_Org_IdOrderByOrderIndexAsc(userId, orgId).stream().map(groupChatPinned -> PinnedChatDto.fromUserAndOrgMemberAndPinnedGroupChatMessage(groupChatPinned)).toList();
+        return groupChatPinnedRepository.findAllByPinnedByIdAndGroup_Org_IdOrderByOrderIndexAsc(userId, orgId).stream().map(groupChatPinned -> {
+            PinnedChatDto pinnedChatDto = PinnedChatDto.fromUserAndOrgMemberAndPinnedGroupChatMessage(groupChatPinned);
+            try {
+                pinnedChatDto.setDisplayPicture(mediaService.generatePresignedUrl(groupChatPinned.getGroup().getDisplayPicture()).toString());
+            } catch (Exception ignored) {
+            }
+            return pinnedChatDto;
+        }).toList();
     }
 
     /**

@@ -4,9 +4,9 @@ import { apiRequest } from '../../../http_request';
 import Loader from '../../Loader';
 import ErrorMessage from '../../ErrorMessage';
 import utils from '../../../utils';
-import Profile from '../../OthersProfile/Profile';
 import { useDispatch } from 'react-redux';
 import { showConfirmationPopup } from '../../../store/reducers/ConfirmationPopupSlice';
+import { showProfile } from '../../../store/reducers/ProfileSlice';
 
 const NoCommentsFound = () => {
     return (
@@ -54,7 +54,6 @@ const Comment = ({ comment, setComments, setCommentsCount }) => {
     const { id, userId, displayName, displayPicture, message, createdAt, replyCount, deletable } = comment;
 
     const [showReplies, setShowReplies] = useState(false);
-    const [showProfile, setShowProfile] = useState(false);
     const [showDeleteIcon, setShowDeleteIcon] = useState(false);
 
     const deleteCommentHandler = () => {
@@ -82,8 +81,7 @@ const Comment = ({ comment, setComments, setCommentsCount }) => {
     return (
         <div className='comment-item FRSS w100' onMouseEnter={() => setShowDeleteIcon(true)} onMouseLeave={() => setShowDeleteIcon(false)}>
             <div className='FCCS'>
-                <img src={displayPicture} alt={displayName} className='comment-user-picture img_40_40 mR10' onClick={() => setShowProfile(true)} />
-                {showProfile && <Profile userId={userId} setShowProfile={() => { setShowProfile(false) }} />}
+                <img src={displayPicture} alt={displayName} className='comment-user-picture img_40_40 mR10' onClick={() => { dispatch(showProfile(userId)); }} />
             </div>
             <div className='FCSS comment-content-container'>
                 <div className='comment-user FCSS w100'>

@@ -20,7 +20,7 @@ const NoRecordsAvailable = () => {
     return (
         <div className='FCCC w100' id='no-data-found'>
             <p className='FRCC w100'>
-                <i className='fa fa-exclamation-triangle mR5'></i>
+                <i className='fa fa-exclamation-triangle mR5 w15'></i>
                 No records found
             </p>
         </div>
@@ -71,6 +71,8 @@ const ManageWorkBody = () => {
         setModuleNotFound(false);
         setPermissionDenied(false);
         setInfo({});
+
+        // Fetch records based on the current view
         apiRequest(API[view], 'GET').then(({ data, info }) => {
             setLoader(false);
             setInfo(info);

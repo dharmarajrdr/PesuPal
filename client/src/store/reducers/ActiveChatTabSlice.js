@@ -11,6 +11,7 @@ const details = {
         'retrieveConversationApi': '/api/v1/direct-messages',
         'readAllMessagesApi': '/api/v1/direct-messages',
         'reactMessageApi': '/api/v1/direct-messages',
+        'deleteMessageApi': '/api/v1/direct-messages',
         'showStatusIndicator': true
     },
     'groupMessage': {
@@ -22,6 +23,8 @@ const details = {
         'chatPreviewApi': '/api/v1/group/preview',
         'retrieveConversationApi': '/api/v1/group-chat-message',
         'readAllMessagesApi': '/api/v1/group-chat-message',
+        'reactMessageApi': '/api/v1/group-chat-reactions',
+        'deleteMessageApi': '/api/v1/group-chat-message',
         'showStatusIndicator': false
     }
 }

@@ -17,6 +17,8 @@ public class GroupDto {
 
     private String description;
 
+    private String displayPicture;
+
     private UserPreviewDto owner;
 
     private Visibility visibility;
@@ -37,6 +39,12 @@ public class GroupDto {
 
         GroupDto groupDto = fromGroup(group);
         groupDto.setOwner(UserPreviewDto.fromOrgMember(orgMember));
+        return groupDto;
+    }
+
+    public static GroupDto fromGroupAndOrgMemberAndDisplayPicture(Group group, OrgMember orgMember, String displayPicture) {
+        GroupDto groupDto = fromGroupAndOrgMember(group, orgMember);
+        groupDto.setDisplayPicture(displayPicture);
         return groupDto;
     }
 }

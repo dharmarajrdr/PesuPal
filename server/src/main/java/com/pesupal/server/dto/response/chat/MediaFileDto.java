@@ -11,6 +11,8 @@ public class MediaFileDto {
 
     private Long id;
 
+    private String name;
+
     private String extension;
 
     private URL mediaUrl;
@@ -19,6 +21,7 @@ public class MediaFileDto {
 
         MediaFileDto dto = new MediaFileDto();
         dto.setId(directMessageMediaFile.getId());
+        dto.setName(directMessageMediaFile.getName());
         dto.setExtension(directMessageMediaFile.getExtension());
         return dto;
     }
@@ -27,6 +30,7 @@ public class MediaFileDto {
 
         MediaFileDto dto = new MediaFileDto();
         dto.setId(groupMessageMediaFile.getId());
+        dto.setName(groupMessageMediaFile.getName());
         dto.setExtension(groupMessageMediaFile.getExtension());
         return dto;
     }

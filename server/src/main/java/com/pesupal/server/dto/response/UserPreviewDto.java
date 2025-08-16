@@ -1,9 +1,15 @@
 package com.pesupal.server.dto.response;
 
 import com.pesupal.server.model.user.OrgMember;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class UserPreviewDto {
 
     private String id;
@@ -13,6 +19,8 @@ public class UserPreviewDto {
     private String displayPicture;
 
     private boolean archived;
+
+    private String chatId;
 
     public static UserPreviewDto fromOrgMember(OrgMember orgMember) {
 

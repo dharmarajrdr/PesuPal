@@ -64,9 +64,9 @@ public class OrgMemberController extends OrgSubscriptionManager {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<ApiResponseDto> getSearchedOrgMembers(@RequestParam(name = "q") String search,
-                                                                @RequestParam(name = "page", defaultValue = "0") int page,
-                                                                @RequestParam(name = "size", defaultValue = "10") int size) {
+    public ResponseEntity<ApiResponseDto> getSearchedOrgMembers(@RequestParam(name = "query", defaultValue = "") String search,
+                                                                @RequestParam(defaultValue = "0") int page,
+                                                                @RequestParam(defaultValue = "10") int size) {
 
         List<UserPreviewDto> orgMembers = orgMemberService.getSearchedOrgMembers(getCurrentOrgMember(), search, page, size);
         return ResponseEntity.ok(new ApiResponseDto("List of organization members retrieved successfully.", orgMembers));
@@ -95,13 +95,15 @@ public class OrgMemberController extends OrgSubscriptionManager {
         CustomUserDetails customUserDetails = getCurrentUserDetails();
         String userId = customUserDetails.getUserPublicId();
         String orgMemberId = customUserDetails.getOrgMemberPublicId();
-        OrgMember orgMember = orgMemberService.getOrgMemberByPublicId(orgMemberId);
-        Org org = orgMember.getOrg();
-        OrgSubscriptionHistory orgSubscriptionHistory = orgSubscriptionHistoryService.getLatestSubscription(org.getId()).orElseThrow(() -> new DataNotFoundException("No subscription history found for org with ID " + org.getId()));
         Map<String, String> userDetail = new HashMap<>();
         userDetail.put("userId", userId);
-        userDetail.put("orgMemberId", orgMemberId);
-        userDetail.put("orgStatus", orgSubscriptionHistory.getEndDate().isBefore(LocalDateTime.now()) ? "Inactive" : "Active");
+        if (orgMemberId != null) {
+            OrgMember orgMember = orgMemberService.getOrgMemberByPublicId(orgMemberId);
+            Org org = orgMember.getOrg();
+            OrgSubscriptionHistory orgSubscriptionHistory = orgSubscriptionHistoryService.getLatestSubscription(org.getId()).orElseThrow(() -> new DataNotFoundException("No subscription history found for org with ID " + org.getId()));
+            userDetail.put("orgMemberId", orgMemberId);
+            userDetail.put("orgStatus", orgSubscriptionHistory.getEndDate().isBefore(LocalDateTime.now()) ? "Inactive" : "Active");
+        }
         return ResponseEntity.ok().body(new ApiResponseDto("Token decoded successfully", userDetail));
     }
 }

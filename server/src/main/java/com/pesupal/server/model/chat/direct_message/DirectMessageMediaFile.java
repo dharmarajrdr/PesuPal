@@ -20,6 +20,9 @@ public class DirectMessageMediaFile extends PublicAccessModel {
     @JsonIgnore
     private DirectMessage directMessage;
 
+    @Column(nullable = false)
+    private String name;
+
     @Column(nullable = false, unique = true)
     private UUID mediaId;
 
@@ -31,7 +34,8 @@ public class DirectMessageMediaFile extends PublicAccessModel {
 
     public static DirectMessageMediaFile fromMediaUploadDto(MediaUploadDto mediaUploadDto) {
         DirectMessageMediaFile mediaFile = new DirectMessageMediaFile();
-        mediaFile.setMediaId(mediaUploadDto.getName());
+        mediaFile.setName(mediaUploadDto.getName());
+        mediaFile.setMediaId(mediaUploadDto.getMediaId());
         mediaFile.setExtension(mediaUploadDto.getExtension());
         mediaFile.setSize(mediaUploadDto.getSize());
         return mediaFile;

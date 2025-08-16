@@ -4,6 +4,9 @@ import MessageActions from './MessageActions';
 import MessageMeta from './MessageMeta';
 import { useSelector } from 'react-redux';
 import UserAvatar from '../../User/UserAvatar';
+import FullScreenImageView from '../../FullScreenImageView';
+import { useState } from 'react';
+import ScheduledMessageActions from './ScheduledMessageActions';
 
 const extensionTagMapper = {
     "img": ["jpeg", "jpg", "png", "gif", "avif"],
@@ -13,12 +16,32 @@ const extensionTagMapper = {
     "zip": ["zip", "rar", "tar", "gz"]
 }
 
+const ResourceNotFound = () => {
+    return <div className="image-not-found FRCC">
+        <i className='fa fa-image colorAAA mR5' />
+        <p>Resource not found</p>
+    </div>;
+}
+
 const ImageDisplayer = ({ media }) => {
 
     const { mediaUrl } = media || {};
+    const [imageError, setImageError] = useState(false);
+    const [showFullScreen, setShowFullScreen] = useState(false);
 
     return mediaUrl ? <div className="message-media">
-        <img src={mediaUrl} alt="Media" className="media-image cursP" />
+        {showFullScreen && <FullScreenImageView mediaUrl={mediaUrl} onClose={() => setShowFullScreen(false)} />}
+        {imageError ? <ResourceNotFound /> : <img src={mediaUrl} alt="Media" className="media-image cursP" onError={() => setImageError(true)} onClick={() => setShowFullScreen(true)} />}
+    </div> : null;
+}
+
+const VideoDisplayer = ({ media }) => {
+
+    const { mediaUrl } = media || {};
+    const [videoError, setVideoError] = useState(false);
+
+    return mediaUrl ? <div className="message-media">
+        {videoError ? <ResourceNotFound /> : <video src={mediaUrl} controls className="media-video cursP" onError={() => setVideoError(true)} />}
     </div> : null;
 }
 
@@ -26,7 +49,7 @@ const MediaDisplayer = ({ media }) => {
 
     if (!media) return null;
 
-    const { id, extension, mediaUrl } = media || {};
+    const { id, extension, mediaUrl, name } = media || {};
 
     for (const [tag, extensions] of Object.entries(extensionTagMapper)) {
         if (extensions.includes(extension)) {
@@ -35,16 +58,22 @@ const MediaDisplayer = ({ media }) => {
                 case 'img':
                     return <ImageDisplayer media={media} />;
                 case 'video':
-                    return <div className="message-media">
-                        <video src={mediaUrl} controls className="media-video cursP" />
-                    </div>;
+                    return <VideoDisplayer media={media} />;
                 case 'audio':
                     return <div className="message-media">
                         <audio src={mediaUrl} controls className="media-audio cursP" />
                     </div>;
                 case 'doc':
-                    return <div className="message-media">
-                        <a href={mediaUrl} target="_blank" rel="noopener noreferrer" className="media-doc cursP">Document</a>
+                    return <div className="message-media media-doc FRCB">
+                        <div className='FRCS left-panel'>
+                            <i className="fa fa-file-alt mR5 w10 fs12 colorAAA" />
+                            <span className="media-doc-name">{name}</span>
+                        </div>
+                        <div className='FRCE right-panel'>
+                            <a href={mediaUrl} target="_blank" rel="noopener noreferrer" className="cursP download-link">
+                                <i className="fa fa-download colorDDD" />
+                            </a>
+                        </div>
                     </div>;
                 case 'zip':
                     return <div className="message-media">
@@ -67,10 +96,12 @@ const SenderName = ({ displayName, sent_or_received, is_super_admin }) => {
     </p>
 }
 
-const ChatMessageItem = ({ msg, isSameSender }) => {
+const ChatMessageItem = ({ msg, isSameSender, messageDeletable, messageEditable, messagePinnable, isScheduledMessage, activeMessageRowId, setActiveMessageRowId, updateMessage, deleteMessage }) => {
 
-    const { id, sender, deleted, createdAt, readReceipt, message, media, chatMode, reactions } = msg;
+    const { id, sender, status, createdAt, readReceipt, message, media, chatMode, reactions } = msg;
     const { id: senderId, displayName, displayPicture, is_super_admin } = sender || {};
+
+    const isMessageDeleted = status === 'DELETED';
 
     const showUserMeta = chatMode == 'GROUP_MESSAGE';
 
@@ -80,8 +111,8 @@ const ChatMessageItem = ({ msg, isSameSender }) => {
 
     const sent_or_received = isCurrentUser ? 'sent' : 'received';
 
-    return myProfile ? (
-        <div className={`row w100 FRSS ${sent_or_received}`}>
+    return myProfile && createdAt ? (
+        <div className={`row w100 FRSS ${sent_or_received} ${activeMessageRowId == id ? 'active-row' : ''}`}>
             {showUserMeta && (
                 isSameSender ? <div className="user-avatar-placeholder img_40_40 mL5" /> :
                     <UserAvatar displayName={displayName} displayPicture={displayPicture} />
@@ -89,13 +120,15 @@ const ChatMessageItem = ({ msg, isSameSender }) => {
             <div className={`message-wrapper FCSE ${sent_or_received}`}>
                 {showUserMeta && !isSameSender && <SenderName displayName={displayName} sent_or_received={sent_or_received} is_super_admin={is_super_admin} />}
                 <div className={`message ${sent_or_received}`}>
-                    {deleted ? <MessageDeleted /> : <>
-                        <MessageActions id={id} isCurrentUser={isCurrentUser} />
+                    {isMessageDeleted ? <MessageDeleted /> : <>
+                        {isScheduledMessage ?
+                            <ScheduledMessageActions id={id} setActiveMessageRowId={setActiveMessageRowId} updateMessage={updateMessage} deleteMessage={deleteMessage} /> :
+                            <MessageActions id={id} messagePinnable={messagePinnable} isCurrentUser={isCurrentUser} messageDeletable={messageDeletable} messageEditable={messageEditable} />}
                         <MediaDisplayer media={media} />
                         <div className="message-content">
                             <Message html={message} />
                         </div>
-                        <MessageMeta id={id} createdAt={createdAt} readReceipt={readReceipt} isCurrentUser={isCurrentUser} reactions={reactions} />
+                        <MessageMeta id={id} createdAt={createdAt} readReceipt={readReceipt} isCurrentUser={isCurrentUser} reactions={reactions} isScheduledMessage={isScheduledMessage} />
                     </>}
                 </div>
             </div>

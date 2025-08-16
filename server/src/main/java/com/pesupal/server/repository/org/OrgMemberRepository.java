@@ -38,8 +38,8 @@ public interface OrgMemberRepository extends JpaRepository<OrgMember, Long> {
     @Query("""
                 SELECT o FROM OrgMember o
                 WHERE o.org.id = :orgId
-                  AND (LOWER(o.displayName) LIKE LOWER(CONCAT('%', :search, '%'))
-                       OR LOWER(o.user.email) LIKE LOWER(CONCAT('%', :search, '%')))
+                    AND (LOWER(o.displayName) LIKE LOWER(CONCAT('%', :search, '%')) OR LOWER(o.user.email) LIKE LOWER(CONCAT('%', :search, '%')))
+                ORDER BY o.displayName ASC
             """)
     Page<OrgMember> searchOrgMembers(@Param("orgId") Long orgId, @Param("search") String search, Pageable pageable);
 
