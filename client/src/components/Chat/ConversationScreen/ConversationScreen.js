@@ -66,6 +66,8 @@ const ConversationScreen = ({ activeTabName }) => {
 			}
 		};
 
+		console.log(`Received message in chatId: ${msg.chatId}, and user is ${isChatOpen ? 'in the chat' : 'not in the chat'}. He is actually in ${chatId}.`);
+
 		if (isChatOpen) {	// User is waiting for a response
 
 			console.log(`Since user is in the chat, rendering the message in the chat`);
