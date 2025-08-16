@@ -10,7 +10,7 @@ const DriveDashboard = () => {
 
             <FileCategoryShortcut />
             <div className='FRSB w100' id='previews_stats'>
-                <div id='list_of_previews'>
+                <div id='list_of_previews' className='pT10 mT10'>
                     {DriveDashboardList.map((item, index) => <PreviewFolderFileList key={index} item={item} />)}
                     <RecentlyAccessedFiles />
                 </div>

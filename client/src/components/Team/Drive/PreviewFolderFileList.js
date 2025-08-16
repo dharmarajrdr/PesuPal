@@ -25,7 +25,7 @@ const PreviewFolderFileListItem = ({ item }) => {
 const PreviewFolderFileList = ({ item }) => {
     const { title, subHeadings, items, icon, icon_color } = item;
     return (
-        <div id='PreviewFolderFileList' className='FCSS p20'>
+        <div id='PreviewFolderFileList' className='FCSS pB10'>
             <div className='FRCB w100 mb5'>
                 <h3 className='fs14 mb10'>{title}</h3>
                 {/* <div className='FRSS mb10'>
