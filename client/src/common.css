@@ -486,6 +486,10 @@
   overflow: hidden;
 }
 
+.overflowHidden {
+  overflow: hidden;
+}
+
 span {
   text-wrap: nowrap;
 }
