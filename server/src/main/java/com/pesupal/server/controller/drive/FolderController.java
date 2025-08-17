@@ -28,17 +28,17 @@ public class FolderController extends CurrentValueRetriever {
     }
 
     @GetMapping("/{space}/folders")
-    public ResponseEntity<ApiResponseDto> getAllFoldersInRoot(@PathVariable Workspace space) {
+    public ResponseEntity<ApiResponseDto> getAllFoldersAndFilesInRoot(@PathVariable Workspace space) {
 
         List<FileOrFolderDto> folders = folderService.getAllFolders(space);
-        return ResponseEntity.ok().body(new ApiResponseDto("Folders retrieved successfully", folders));
+        return ResponseEntity.ok().body(new ApiResponseDto("Folders and files retrieved successfully", folders));
     }
 
     @GetMapping("/folders/{folderId}")
-    public ResponseEntity<ApiResponseDto> getAllFolders(@PathVariable String folderId) {
+    public ResponseEntity<ApiResponseDto> getAllFoldersAndFiles(@PathVariable String folderId) {
 
         List<FileOrFolderDto> folders = folderService.getAllFolders(folderId);
-        return ResponseEntity.ok().body(new ApiResponseDto("Folders retrieved successfully", folders));
+        return ResponseEntity.ok().body(new ApiResponseDto("Folders and files retrieved successfully", folders));
     }
 
     @DeleteMapping("/folder/{folderId}")

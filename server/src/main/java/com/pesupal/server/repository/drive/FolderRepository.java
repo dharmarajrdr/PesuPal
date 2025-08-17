@@ -16,7 +16,7 @@ public interface FolderRepository extends JpaRepository<Folder, Long> {
 
     Optional<Folder> findByPublicId(String folderPublicId);
 
-    List<Folder> findAllByCreatedByAndSpaceAndParentFolder(OrgMember createdBy, Workspace space, Folder parentFolder);
+    List<Folder> findAllByCreatedByAndSpaceAndParentFolderOrderByName(OrgMember createdBy, Workspace space, Folder parentFolder);
 
-    List<Folder> findAllBySpaceAndParentFolder(Workspace workspace, Folder parentFolder);
+    List<Folder> findAllBySpaceAndParentFolderOrderByName(Workspace workspace, Folder parentFolder);
 }
