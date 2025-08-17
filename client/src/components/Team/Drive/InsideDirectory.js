@@ -25,6 +25,9 @@ const InsideDirectory = ({ setPageNotFound, setPermissionDenied }) => {
         const { space, folderId } = params || {};
         const findAllFilesAndFolders = folderId ? `/api/v1/workdrive/folders/${folderId}` : `/api/v1/workdrive/${space.toUpperCase()}/folders`;
 
+        setPermissionDenied(false);
+        setPageNotFound(false);
+
         if (!spaces.includes(space)) {
             dispatch(showPopup({ message: `'${space}' does not exist.`, type: 'error' }));
             return navigate('/store/personal_space');
