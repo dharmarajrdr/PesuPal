@@ -49,7 +49,6 @@ public interface GroupRepository extends JpaRepository<Group, Long> {
             JOIN groups g
                 ON g.id = gcm.group_id
                AND gcm.participant_id = :userId
-               AND gcm.active = true
                AND g.org_id = :orgId
             
             JOIN (
