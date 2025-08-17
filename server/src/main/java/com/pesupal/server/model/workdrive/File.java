@@ -6,6 +6,7 @@ import com.pesupal.server.model.user.OrgMember;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -27,9 +28,12 @@ public class File extends PublicAccessModel {
     @Column(nullable = false, unique = true)
     private UUID mediaId;
 
+    @Column(nullable = false)
+    private String extension;
+
     @Enumerated(EnumType.STRING)
     private Security security;
 
-    @OneToMany(mappedBy = "file", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    List<FileAccessStat> accessStats;
+    @OneToMany(mappedBy = "file", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    List<FileAccessStat> accessStats = new ArrayList<>();
 }
