@@ -466,6 +466,11 @@ public class GroupChatMessageServiceImpl extends CurrentValueRetriever implement
         OrgMember sender = groupChatMessage.getSender();
 
         GroupChatMember groupChatMember = groupChatMemberService.getGroupMemberByGroupIdAndUserId(groupId, sender.getId());
+
+        if (!groupChatMember.isActive()) {
+            throw new PermissionDeniedException("You are no longer part of this group.");
+        }
+
         GroupChatConfiguration groupChatConfiguration = groupChatConfigurationService.getConfigurationByGroupAndRole(groupChatMember.getGroup(), groupChatMember.getRole());
         if (!groupChatConfiguration.isPostMessage()) {
             throw new PermissionDeniedException("You do not have permission to post message in this group.");

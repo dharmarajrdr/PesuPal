@@ -1,5 +1,4 @@
 #PreviewFolderFileList {
-  overflow: hidden;
   padding-left: 0;
 }
 
@@ -18,21 +17,20 @@
 
 #PreviewFolderFileList #list_of_items {
   width: 100%;
-  overflow-x: scroll;
+  overflow-x: hidden;
   overflow-y: hidden;
+  flex-wrap: wrap;
 }
 
-#list_of_items_frame {
-  width: fit-content;
-  flex-wrap: nowrap;
-}
 
 .PreviewFolderFileListItem {
   border: 1px solid #aaa;
   background-color: var(--pure-white);
-  border-radius: 10px;
+  border-radius: 5px;
   padding: 15px;
-  width: 250px;
+  width: calc(20% - 10px);
+  margin-right: 10px;
+  margin-bottom: 10px;
   transition-duration: 0.25s;
 }
 

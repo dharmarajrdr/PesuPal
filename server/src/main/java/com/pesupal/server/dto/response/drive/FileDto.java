@@ -24,6 +24,8 @@ public class FileDto extends FileOrFolderDto {
 
     private UUID mediaId;
 
+    private String extension;
+
     private Security security;
 
     private UserBasicInfoDto owner;
@@ -45,6 +47,7 @@ public class FileDto extends FileOrFolderDto {
         fileDto.setCreatedAt(file.getCreatedAt());
         fileDto.setSize(file.getSize());
         fileDto.setMediaId(file.getMediaId());
+        fileDto.setExtension(file.getExtension());
         fileDto.setSecurity(file.getSecurity());
         fileDto.setAccessCount(file.getAccessStats().size());
         return fileDto;

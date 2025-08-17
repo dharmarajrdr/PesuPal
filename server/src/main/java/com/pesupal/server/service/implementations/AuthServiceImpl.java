@@ -19,8 +19,8 @@ import java.util.Map;
 public class AuthServiceImpl implements AuthService {
 
     private final JwtUtil jwtUtil;
-    private final AuthenticationManager authenticationManager;
     private final UserDetailsService userDetailsService;
+    private final AuthenticationManager authenticationManager;
 
     /**
      * Handles user login by authenticating the provided credentials.

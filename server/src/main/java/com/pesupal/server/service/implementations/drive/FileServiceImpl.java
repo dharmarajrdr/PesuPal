@@ -15,6 +15,7 @@ import com.pesupal.server.service.interfaces.drive.FileService;
 import com.pesupal.server.service.interfaces.drive.FolderService;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -35,7 +36,8 @@ public class FileServiceImpl extends CurrentValueRetriever implements FileServic
     @Override
     public List<FileOrFolderDto> findAllByFolderAndOrgMember(Folder parentFolder, OrgMember orgMember) {
 
-        return fileRepository.findAllByFolder(parentFolder).stream().map(file -> {
+        Sort sort = Sort.by(Sort.Order.asc("name").ignoreCase());
+        return fileRepository.findAllByFolder(parentFolder, sort).stream().map(file -> {
             FileOrFolderDto fileDto = FileDto.fromFileAndOrgMember(file, orgMember);
             fileDto.setType(FileOrFolder.FILE);
             return fileDto;
@@ -51,21 +53,17 @@ public class FileServiceImpl extends CurrentValueRetriever implements FileServic
      */
     @Override
     @Transactional
-    public FileDto createFile(CreateFileDto createFileDto) throws Exception {
+    public FileDto createFile(CreateFileDto createFileDto) {
 
         OrgMember orgMember = getCurrentOrgMember();
 
-        Folder folder = folderService.getFolderById(createFileDto.getFolderId());
-
-        // Long size = mediaService.getFileSizeInKB(createFileDto.getMediaId());
-        Long size = 0L;
+        Folder folder = folderService.getFolderByPublicId(createFileDto.getFolderId());
 
         File file = createFileDto.toFile();
         file.setCreator(orgMember);
         file.setFolder(folder);
-        file.setSize(size);
         file = fileRepository.save(file);
-        folderService.updateFolderSizeRecursively(folder, size, Arithmetic.PLUS);
+        folderService.updateFolderSizeRecursively(folder, file.getSize(), Arithmetic.PLUS);
         return FileDto.fromFile(file);
     }
 
