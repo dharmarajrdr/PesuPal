@@ -1,6 +1,6 @@
 import utils from '../../../utils.js';
-import FileCategoryShortcutList from './FileCategoryShortcutList.js'
 import './FileCategoryShortcutItem.css';
+import FileCategoryShortcutList from './FileCategoryShortcutList.js'
 
 const FileCategoryShortcutItem = ({ item }) => {
     const { title, route, active, size, count } = item,
@@ -23,7 +23,7 @@ const FileCategoryShortcutItem = ({ item }) => {
 
 const FileCategoryShortcut = () => {
     return (
-        <div id='FileCategoryShortcut' className='FRCC'>
+        <div id='FileCategoryShortcut' className='FRCC mB10'>
             {FileCategoryShortcutList.map((item, index) => <FileCategoryShortcutItem key={index} item={item} />)}
         </div>
     )
