@@ -78,7 +78,7 @@ public class TeamSpace extends WorkspaceSupportsPublicFolder implements Workdriv
 
         // 1. Retrieve all subfolders in the given folder in the team space
 
-        List<FileOrFolderDto> filesAndFolders = teamFolderRepository.findByDepartmentAndFolder_ParentFolder(department, parentFolder)
+        List<FileOrFolderDto> filesAndFolders = teamFolderRepository.findByDepartmentAndFolder_ParentFolderOrderByFolder_Name(department, parentFolder)
                 .stream()
                 .map(teamFolder -> {
                     Folder folder = teamFolder.getFolder();
