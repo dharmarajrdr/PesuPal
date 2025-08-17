@@ -4,6 +4,7 @@ import com.pesupal.server.dto.request.drive.CreateFolderDto;
 import com.pesupal.server.dto.response.ApiResponseDto;
 import com.pesupal.server.dto.response.drive.FileOrFolderDto;
 import com.pesupal.server.dto.response.drive.FolderDto;
+import com.pesupal.server.dto.response.drive.FolderPreviewDto;
 import com.pesupal.server.enums.Workspace;
 import com.pesupal.server.helpers.CurrentValueRetriever;
 import com.pesupal.server.service.interfaces.drive.FolderService;
@@ -38,7 +39,8 @@ public class FolderController extends CurrentValueRetriever {
     public ResponseEntity<ApiResponseDto> getAllFoldersAndFiles(@PathVariable String folderId) {
 
         List<FileOrFolderDto> folders = folderService.getAllFolders(folderId);
-        return ResponseEntity.ok().body(new ApiResponseDto("Folders and files retrieved successfully", folders));
+        List<FolderPreviewDto> folderPreviewDtos = folderService.getParentFolders(folderId);
+        return ResponseEntity.ok().body(new ApiResponseDto("Folders and files retrieved successfully", folders, folderPreviewDtos));
     }
 
     @DeleteMapping("/folder/{folderId}")

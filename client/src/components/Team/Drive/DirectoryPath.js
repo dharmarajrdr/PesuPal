@@ -1,3 +1,4 @@
+import { useSelector } from 'react-redux';
 import './DirectoryPath.css';
 import { Link } from 'react-router-dom'
 
@@ -22,18 +23,24 @@ const directories = [
     }
 ]
 
-const Item = ({ id, name, security }) => (
-    <Link to={`/store/drive/${id}`} className='FRCC directory-list-item'>
+const Item = ({ id, name, security, space }) => {
+
+    const route = `/store/${space.toLowerCase()}${id ? `/folder/${id}` : ''}`;
+
+    return <Link to={route} className='FRCC directory-list-item'>
         {security === 'SECURED' && <i className='fa fa-lock fs10 color555 w15'></i>}
         <span>{name}</span>
     </Link>
-)
+};
 
 const DirectoryPath = () => {
+
+    const { parents: directories } = useSelector((state) => state.drive) || [];
+
     return (
         <div className='w100 FRCS' id='directory-path'>
-            {directories.map(({ id, name, security }) => (
-                <Item key={id} id={id} name={name} security={security} />
+            {directories.map(({ id, name, security, space }) => (
+                <Item key={id} id={id} name={name} security={security} space={space} />
             ))}
         </div>
     )

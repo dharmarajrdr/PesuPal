@@ -3,6 +3,7 @@ package com.pesupal.server.service.implementations.drive;
 import com.pesupal.server.dto.request.drive.CreateFolderDto;
 import com.pesupal.server.dto.response.drive.FileOrFolderDto;
 import com.pesupal.server.dto.response.drive.FolderDto;
+import com.pesupal.server.dto.response.drive.FolderPreviewDto;
 import com.pesupal.server.enums.Arithmetic;
 import com.pesupal.server.enums.Workspace;
 import com.pesupal.server.exceptions.ActionProhibitedException;
@@ -19,6 +20,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -169,5 +171,31 @@ public class FolderServiceImpl extends CurrentValueRetriever implements FolderSe
         folder.setSize(currentSize + (arithmetic == Arithmetic.PLUS ? size : -size));
         folderRepository.save(folder);
         updateFolderSizeRecursively(folder.getParentFolder(), size, arithmetic);
+    }
+
+    /**
+     * Retrieves the parent folders of a given folder by its ID.
+     *
+     * @param folderId
+     * @return
+     */
+    @Override
+    public List<FolderPreviewDto> getParentFolders(String folderId) {
+
+        if (folderId == null) {
+            return List.of();
+        }
+
+        Folder folder = getFolderByPublicId(folderId);
+        Workspace space = folder.getSpace();
+
+        List<FolderPreviewDto> folderPreviewDtos = new ArrayList<>();
+        while (folder != null) {
+            FolderPreviewDto folderPreviewDto = FolderPreviewDto.fromFolder(folder);
+            folderPreviewDtos.add(0, folderPreviewDto); // Add to the beginning to maintain order
+            folder = folder.getParentFolder();
+        }
+        folderPreviewDtos.add(0, FolderPreviewDto.builder().name(space.getDisplayName()).id(null).space(space).build());
+        return folderPreviewDtos;
     }
 }
