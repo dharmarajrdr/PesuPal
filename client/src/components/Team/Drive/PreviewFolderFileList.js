@@ -5,7 +5,9 @@ import { useSelector } from 'react-redux';
 
 const PreviewFolderFileListItem = ({ item }) => {
 
-    let { id, type, name, size, members, files, extension } = item;
+    let { id, type, name, size, files, extension, owner } = item;
+
+    const { displayName: ownerName } = owner || {};
 
     if (type == 'FOLDER') {
         extension = 'folder';
@@ -25,9 +27,9 @@ const PreviewFolderFileListItem = ({ item }) => {
             <i className='fas fa-ellipsis-v color777' style={{ fontSize: '14px' }}></i>
         </div>
         <div className='FRSS pT5 overflowHidden w100'>
-            <span className='fs10 mR5 color777'>{utils.formatFileSize(size || 0)}</span>
-            <span className='fs10 mR5 color777 bL_line'>{members || 0} Members</span>
-            {files && <span className='fs10 mR5 bL_line color777'>{files || 0} Files</span>}
+            <span className='fs10 mR5 color777'>{ownerName}</span>
+            <span className='fs10 mR5 color777 bL_line'>{utils.formatFileSize(size || 0)}</span>
+            {files > 0 && <span className='fs10 mR5 bL_line color777'>{files || 0} Files</span>}
         </div>
     </Link>
 
