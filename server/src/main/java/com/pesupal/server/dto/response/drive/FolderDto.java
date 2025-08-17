@@ -32,7 +32,7 @@ public class FolderDto extends FileOrFolderDto {
         FolderDto folderDto = new FolderDto();
         folderDto.setId(folder.getPublicId());
         folderDto.setName(folder.getName());
-        folderDto.setSize(folderDto.getSize());
+        folderDto.setSize(folder.getSize());
         folderDto.setOwner(UserBasicInfoDto.fromOrgMember(orgMember));
         return folderDto;
     }
