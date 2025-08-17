@@ -4,14 +4,14 @@ import DirectoryPath from './DirectoryPath';
 import { apiRequest } from '../../../http_request';
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from 'react-router-dom';
-import PreviewFolderFileList from './PreviewFolderFileList'
+import PreviewFolderFileList from './PreviewFolderFileList';
 import { showPopup } from '../../../store/reducers/PopupSlice';
-import { setFolderId, setItems, setSpace } from '../../../store/reducers/DriveSlice';
+import { setFolderId, setItems, setParents, setSpace } from '../../../store/reducers/DriveSlice';
 
 const spaces = ['org_space', 'team_space', 'personal_space'];
 
 const InsideDirectory = () => {
-    
+
     const params = useParams();
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -33,12 +33,14 @@ const InsideDirectory = () => {
         dispatch(setSpace(space.toUpperCase()));
         dispatch(setFolderId(folderId || null));
 
-        apiRequest(findAllFilesAndFolders, 'GET').then(({ data }) => {
+        apiRequest(findAllFilesAndFolders, 'GET').then(({ data, info }) => {
             setLoader(false);
             dispatch(setItems(data));
+            dispatch(setParents(info));
         }).catch(({ message }) => {
             setLoader(false);
             dispatch(setItems([]));
+            dispatch(setParents([]));
             dispatch(showPopup({ message, type: 'error' }));
         });
 
