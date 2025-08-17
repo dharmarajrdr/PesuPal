@@ -8,6 +8,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.ToString;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -32,7 +33,7 @@ public class Folder extends PublicAccessModel {
 
     @OneToMany(mappedBy = "parentFolder", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
-    private List<Folder> subFolders;
+    private List<Folder> subFolders = new ArrayList<>();
 
     @OneToOne(mappedBy = "folder", cascade = CascadeType.ALL)
     @JsonIgnore
@@ -41,5 +42,5 @@ public class Folder extends PublicAccessModel {
 
     @OneToMany(mappedBy = "folder", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
-    private List<File> files;
+    private List<File> files = new ArrayList<>();
 }
