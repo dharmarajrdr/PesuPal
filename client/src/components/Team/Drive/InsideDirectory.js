@@ -10,7 +10,7 @@ import { setFolderId, setItems, setParents, setSpace } from '../../../store/redu
 
 const spaces = ['org_space', 'team_space', 'personal_space'];
 
-const InsideDirectory = () => {
+const InsideDirectory = ({ setPageNotFound, setPermissionDenied }) => {
 
     const params = useParams();
     const navigate = useNavigate();
@@ -37,28 +37,32 @@ const InsideDirectory = () => {
             setLoader(false);
             dispatch(setItems(data));
             dispatch(setParents(info));
-        }).catch(({ message }) => {
+        }).catch(({ message, statusCode }) => {
             setLoader(false);
             dispatch(setItems([]));
             dispatch(setParents([]));
-            dispatch(showPopup({ message, type: 'error' }));
+            if (statusCode == 404) {
+                setPageNotFound(true);
+            } else if (statusCode == 403) {
+                setPermissionDenied(true);
+            } else {
+                dispatch(showPopup({ message, type: 'error' }));
+            }
         });
 
     }, [params.folderId, params.space]);
 
-    return (
-        <div className='mT10 w100'>
-            {params.folderId && <DirectoryPath />}
-            <div className='FCSS mT20 w100' id='previews_stats'>
-                {loader ? <Loader /> :
-                    <>
-                        {folders.length > 0 && <PreviewFolderFileList items={folders} title={"Folders"} />}
-                        {files.length > 0 && <PreviewFolderFileList items={files} title={"Files"} />}
-                    </>
-                }
-            </div>
+    return <div className='mT10 w100 FCSS'>
+        {params.folderId && <DirectoryPath />}
+        <div className='FCSS mT20 w100' id='previews_stats'>
+            {loader ? <Loader /> :
+                <>
+                    {folders.length > 0 && <PreviewFolderFileList items={folders} title={"Folders"} />}
+                    {files.length > 0 && <PreviewFolderFileList items={files} title={"Files"} />}
+                </>
+            }
         </div>
-    )
+    </div>
 }
 
 export default InsideDirectory
