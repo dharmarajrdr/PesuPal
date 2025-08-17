@@ -1,4 +1,3 @@
-import React from 'react'
 import utils from '../../../utils.js';
 import FileCategoryShortcutList from './FileCategoryShortcutList.js'
 import './FileCategoryShortcutItem.css';
@@ -14,8 +13,8 @@ const FileCategoryShortcutItem = ({ item }) => {
             <div className='name_count_size FCSS'>
                 <span className='colorFFF'>{title}</span>
                 <div className='FRSS w100 pT5'>
-                    <b className='fs10 colorFFF mR5 bR_line' style={{ borderColor: '#aaa' }}>{size}</b>
-                    <b className='fs10 colorFFF mR5'>{count} items</b>
+                    <span className='fs10 colorDDD mR5 bR_line' style={{ borderColor: '#aaa' }}>{size}</span>
+                    <span className='fs10 colorDDD mR5'>{count} items</span>
                 </div>
             </div>
         </div>

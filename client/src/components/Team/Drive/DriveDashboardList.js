@@ -91,6 +91,20 @@ export default [
                 "size": "826MB",
                 "members": "2",
                 "category": "Video"
+            },
+            {
+                "id": 6,
+                "title": "Spring Security.mp4",
+                "size": "926MB",
+                "members": "4",
+                "category": "Video"
+            },
+            {
+                "id": 7,
+                "title": "Spring Boot with React.js",
+                "size": "1.2GB",
+                "members": "8",
+                "category": "Video"
             }
         ]
     }

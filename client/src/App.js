@@ -22,6 +22,7 @@ import AuthModal from './components/Auth/AuthModal';
 import ManageWorkLayout from './components/Team/ManageWork/ManageWorkLayout';
 import NewModuleLayout from './components/Team/ManageWork/CreateModule/NewModuleLayout';
 import ModuleBuilderLayout from './components/Team/ManageWork/ModuleBuilder/ModuleBuilderLayout';
+import DriveLayout from './components/Team/Drive/DriveLayout';
 
 function App() {
 
@@ -54,6 +55,7 @@ function App() {
                     <Route path="/chat/*" element={<ChatLayout />} />
                     <Route path="/people/*" element={<PeopleLayout />} />
                     <Route path="/team/*" element={<TeamLayout />} />
+                    <Route path='/store/*' element={<DriveLayout />} />
                     <Route path="/manage" element={<Navigate to="/manage/module" />} />
                     <Route path="/manage/module/create" element={<NewModuleLayout />} />
                     <Route path="/manage/module/builder/:moduleId" element={<ModuleBuilderLayout />} />

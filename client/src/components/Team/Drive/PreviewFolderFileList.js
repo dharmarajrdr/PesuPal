@@ -1,4 +1,3 @@
-import React from 'react'
 import './PreviewFolderFileList.css'
 import utils from '../../../utils';
 
@@ -26,12 +25,12 @@ const PreviewFolderFileListItem = ({ item }) => {
 const PreviewFolderFileList = ({ item }) => {
     const { title, subHeadings, items, icon, icon_color } = item;
     return (
-        <div id='PreviewFolderFileList' className='FCSS p20'>
+        <div id='PreviewFolderFileList' className='FCSS pB10'>
             <div className='FRCB w100 mb5'>
                 <h3 className='fs14 mb10'>{title}</h3>
-                <div className='FRSS mb10'>
+                {/* <div className='FRSS mb10'>
                     {subHeadings.map(({ title, active }, index) => <span key={index} className={'subHeading color777 mL15 fs12 cursP ' + (active ? 'active' : null)}>{title}</span>)}
-                </div>
+                </div> */}
             </div>
             <div id='list_of_items' className='pB10 noScrollbar'>
                 <div className='FRSS' id='list_of_items_frame'>
