@@ -1,20 +1,11 @@
-import FileCategoryShortcut from './FileCategoryShortcut'
-import PreviewFolderFileList from './PreviewFolderFileList'
 import './DriveDashboard.css'
-import DriveDashboardList from './DriveDashboardList';
-import RecentlyAccessedFiles from './RecentlyAccessedFiles'
+import InsideDirectory from './InsideDirectory';
 
 const DriveDashboard = () => {
+
     return (
         <div className='FCSS w100' id='DriveDashboard'>
-
-            <FileCategoryShortcut />
-            <div className='FRSB w100' id='previews_stats'>
-                <div id='list_of_previews' className='pT10 mT10'>
-                    {DriveDashboardList.map((item, index) => <PreviewFolderFileList key={index} item={item} />)}
-                    <RecentlyAccessedFiles />
-                </div>
-            </div>
+            <InsideDirectory />
         </div>
     )
 }

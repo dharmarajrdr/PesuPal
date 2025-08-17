@@ -156,9 +156,10 @@ const Column = ({ fieldType, data, index }) => {
 
         case 'FILE': {
             const { mediaId, name, extension } = data || {};
+            const { icon, color } = utils.getIconByFileExtension(extension || '');
             content = (mediaId && name) ? (
                 <span className='FRCS'>
-                    <i className={`fa ${utils.getIconByFileExtension(extension)} fs12 color777 w_20`}></i>
+                    <i className={`fa ${icon} fs12 color777 w_20`} style={{ color }}></i>
                     <span>{name}.{extension}</span>
                 </span>
             ) : null;

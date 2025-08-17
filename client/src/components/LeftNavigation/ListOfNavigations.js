@@ -50,7 +50,7 @@ export default {
             'title': 'Store',
             'icon': 'fa-regular fa-folder-open',
             "fontWeight": 300,
-            'route': '/store/home',
+            'route': '/store',
             'isActive': false,
             'notifyCount': '0'
         },
