@@ -59,17 +59,20 @@ const HeaderActions = () => {
 
     return (
         <div className='FRCE'>
-            {showCreateFolderModal && <NewFolderLayout onClose={() => { setShowCreateFolderModal(false); }} />}
-            <button className='FRCC mR10' id='newFolderButton' onClick={() => setShowCreateFolderModal(true)}>
+            {currentFolderId && <>
+                <AttachmentPreview files={files} setFiles={setFiles} afterUpload={afterUpload} />
+                <input multiple type="file" ref={fileInputRef} style={{ display: 'none' }} onChange={handleFileChange} accept={"*/*"} />
+                <button className='FRCC mR10' id='uploadButton' onClick={uploadFilesClicked}>
+                    <i className='fa fa-upload pR5 w_20'></i>
+                    <span>Upload Files</span>
+                </button>
+            </>}
+
+            <button className='FRCC' id='newFolderButton' onClick={() => setShowCreateFolderModal(true)}>
                 <i className='fa fa-plus pR5 w_20'></i>
                 <span>New Folder</span>
             </button>
-            <AttachmentPreview files={files} setFiles={setFiles} afterUpload={afterUpload} />
-            <input multiple type="file" ref={fileInputRef} style={{ display: 'none' }} onChange={handleFileChange} accept={"*/*"} />
-            <button className='FRCC' id='uploadButton' onClick={uploadFilesClicked}>
-                <i className='fa fa-upload pR5 w_20'></i>
-                <span>Upload Files</span>
-            </button>
+            {showCreateFolderModal && <NewFolderLayout onClose={() => { setShowCreateFolderModal(false); }} />}
         </div>
     )
 }
