@@ -5,7 +5,8 @@ const DriveSlice = createSlice({
     'initialState': {
         'space': null,
         'folderId': null,
-        'items': []
+        'items': [],
+        'parents': []
     },
     'reducers': {
         'setSpace': (state, action) => {
@@ -23,9 +24,12 @@ const DriveSlice = createSlice({
         },
         'removeItem': (state, action) => {
             state.items = state.items.filter(item => item.id !== action.payload.id);
+        },
+        'setParents': (state, action) => {
+            state.parents = action.payload || [];
         }
     }
 });
 
-export const { setSpace, setFolderId, setItems, addItem, removeItem } = DriveSlice.actions;
+export const { setSpace, setFolderId, setItems, addItem, removeItem, setParents } = DriveSlice.actions;
 export default DriveSlice.reducer;
