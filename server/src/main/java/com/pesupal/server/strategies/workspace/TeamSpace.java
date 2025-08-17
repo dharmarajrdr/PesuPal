@@ -82,7 +82,7 @@ public class TeamSpace extends WorkspaceSupportsPublicFolder implements Workdriv
                 .stream()
                 .map(teamFolder -> {
                     Folder folder = teamFolder.getFolder();
-                    FolderDto folderDto = FolderDto.fromFolderAndOrgMember(folder, orgMember);
+                    FolderDto folderDto = FolderDto.fromFolderAndOrgMember(folder, folder.getCreatedBy());
                     folderDto.setType(FileOrFolder.FOLDER);
                     folderDto.setSecurity(folder.getPublicFolder().getSecurity());
                     return folderDto;

@@ -66,7 +66,7 @@ public class OrgSpace extends WorkspaceSupportsPublicFolder implements Workdrive
         List<FileOrFolderDto> filesAndFolders = folderRepository.findAllBySpaceAndParentFolderOrderByName(Workspace.ORG_SPACE, parentFolder)
                 .stream()
                 .map(folder -> {
-                    FolderDto folderDto = FolderDto.fromFolderAndOrgMember(folder, orgMember);
+                    FolderDto folderDto = FolderDto.fromFolderAndOrgMember(folder, folder.getCreatedBy());
                     folderDto.setSecurity(folder.getPublicFolder().getSecurity());
                     folderDto.setType(FileOrFolder.FOLDER);
                     return folderDto;
