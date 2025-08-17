@@ -12,6 +12,6 @@ public interface TeamFolderRepository extends JpaRepository<TeamFolder, Long> {
 
     Optional<TeamFolder> findByFolder(Folder folder);
 
-    List<TeamFolder> findByDepartmentAndFolder_ParentFolder(Department department, Folder parentFolder);
+    List<TeamFolder> findByDepartmentAndFolder_ParentFolderOrderByFolder_Name(Department department, Folder parentFolder);
 
 }
