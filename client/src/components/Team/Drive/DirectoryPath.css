@@ -7,7 +7,17 @@
     border-bottom-right-radius: 5px;
     margin: 5px 0px;
     height: 37px;
-    border-left: 5px solid var(--primary-color);
+}
+
+#directory-path>i {
+    padding: 0px 5px;
+    width: 25px;
+    color: var(--primary-color);
+}
+
+#directory-path>div {
+    overflow-x: auto;
+    width: calc(100% - 30px);
 }
 
 #directory-path .directory-list-item {
@@ -17,6 +27,8 @@
     transition: background-color 0.3s;
     border-left: 2px solid #aaa;
     transform: skewX(-25deg);
+    position: relative;
+    left: -2px;
 }
 
 #directory-path .directory-list-item i,
