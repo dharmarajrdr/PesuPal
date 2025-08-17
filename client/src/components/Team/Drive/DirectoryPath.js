@@ -38,9 +38,9 @@ const DirectoryPath = () => {
     const { parents: directories } = useSelector((state) => state.drive) || [];
 
     return (
-        <div className='FRCS w100' id='directory-path'>
-            <i className='fa fa-folder w20 mL10 fs20 color555'></i>
-            <div className='FRCS' >
+        <div className='FRCB w100' id='directory-path'>
+            <i className='fa fa-folder mL10 fs20 color555'></i>
+            <div className='FRCS noScrollbar' >
                 {directories.map(({ id, name, security, space }) => (
                     <Item key={id} id={id} name={name} security={security} space={space} />
                 ))}
