@@ -50,7 +50,7 @@ public class PersonalSpace implements WorkdriveSpace {
         List<FileOrFolderDto> filesAndFolders = folderRepository.findAllByCreatedByAndSpaceAndParentFolderOrderByName(orgMember, Workspace.PERSONAL_SPACE, parentFolder)
                 .stream()
                 .map(folder -> {
-                    FolderDto folderDto = FolderDto.fromFolderAndOrgMember(folder, orgMember);
+                    FolderDto folderDto = FolderDto.fromFolderAndOrgMember(folder, folder.getCreatedBy());
                     folderDto.setSecurity(Security.SECURED);    // Personal space folders are always secured
                     folderDto.setType(FileOrFolder.FOLDER);
                     return folderDto;

@@ -5,14 +5,17 @@ import { useSelector } from 'react-redux';
 
 const PreviewFolderFileListItem = ({ item }) => {
 
-    let { id, type, name, size, members, files, extension } = item;
+    const { space } = useSelector((state) => state.drive);
+    let { id, type, name, size, files, extension, owner, security } = item;
+
+    const { displayName: ownerName } = owner || {};
+    const isSecured = security == 'SECURED' && space != 'PERSONAL_SPACE';
 
     if (type == 'FOLDER') {
         extension = 'folder';
     }
 
     const { icon, color } = utils.getIconByFileExtension(extension || '');
-    const { space } = useSelector((state) => state.drive);
 
     const route = `/store/${space.toLowerCase()}/${type.toLowerCase()}/${id}`;
 
@@ -20,14 +23,14 @@ const PreviewFolderFileListItem = ({ item }) => {
         <div className='FRSB w100 mb5'>
             <div className='FRSS icon_foldername'>
                 <i className={'mR10 alignCenter w15 fa ' + icon} style={{ color }}></i>
-                <span className='color333 folderName'>{name}</span>
+                <span className='color333 folderName FRCS'>{name}{isSecured && <i className='fa fa-lock mL5 color777' style={{ fontSize: '10px' }}></i>}</span>
             </div>
             <i className='fas fa-ellipsis-v color777' style={{ fontSize: '14px' }}></i>
         </div>
         <div className='FRSS pT5 overflowHidden w100'>
-            <span className='fs10 mR5 color777'>{utils.formatFileSize(size || 0)}</span>
-            <span className='fs10 mR5 color777 bL_line'>{members || 0} Members</span>
-            {files && <span className='fs10 mR5 bL_line color777'>{files || 0} Files</span>}
+            <span className='fs10 mR5 color777'>{ownerName}</span>
+            {files > 0 && <span className='fs10 mR5 bL_line color777'>{files || 0} Files</span>}
+            {size > 0 && <span className='fs10 mR5 color777 bL_line'>{utils.formatFileSize(size || 0)}</span>}
         </div>
     </Link>
 

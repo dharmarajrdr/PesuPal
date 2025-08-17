@@ -1,15 +1,21 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import FileManager from './FileManager'
 import InsideDirectory from './InsideDirectory'
 import PageNotFound from '../../Auth/PageNotFound'
 import FileCategoryShortcut from './FileCategoryShortcut'
-import { Navigate, Route, Routes } from 'react-router-dom'
+import { Navigate, Route, Routes, useParams } from 'react-router-dom'
 import PermissionDenied from '../../Auth/PermissionDenied'
 
 const DriveLayout = () => {
 
+    const params = useParams();
     const [pageNotFound, setPageNotFound] = useState(false);
     const [permissionDenied, setPermissionDenied] = useState(false);
+
+    useEffect(() => {
+        setPermissionDenied(false);
+        setPageNotFound(false);
+    }, [params]);
 
     return permissionDenied ? <PermissionDenied /> :
         pageNotFound ? <PageNotFound /> :

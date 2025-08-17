@@ -5,6 +5,7 @@
     padding: 10px 2px;
     border-top-right-radius: 5px;
     border-bottom-right-radius: 5px;
+    border-left: 5px solid var(--primary-color);
     margin: 5px 0px;
     height: 37px;
 }

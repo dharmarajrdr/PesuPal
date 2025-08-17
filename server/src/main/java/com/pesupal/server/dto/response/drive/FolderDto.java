@@ -25,7 +25,7 @@ public class FolderDto extends FileOrFolderDto {
 
     private List<FolderDto> subFolders;
 
-    private List<FileDto> files;
+    private int files;
 
     public static FolderDto fromFolderAndOrgMember(Folder folder, OrgMember orgMember) {
 
@@ -34,6 +34,7 @@ public class FolderDto extends FileOrFolderDto {
         folderDto.setName(folder.getName());
         folderDto.setSize(folder.getSize());
         folderDto.setOwner(UserBasicInfoDto.fromOrgMember(orgMember));
+        folderDto.setFiles(folder.getFiles().size());
         return folderDto;
     }
 }

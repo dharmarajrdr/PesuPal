@@ -1,6 +1,7 @@
 package com.pesupal.server.service.implementations.drive;
 
 import com.pesupal.server.dto.request.drive.CreateFileDto;
+import com.pesupal.server.dto.response.UserBasicInfoDto;
 import com.pesupal.server.dto.response.drive.FileDto;
 import com.pesupal.server.dto.response.drive.FileOrFolderDto;
 import com.pesupal.server.enums.Arithmetic;
@@ -38,7 +39,7 @@ public class FileServiceImpl extends CurrentValueRetriever implements FileServic
 
         Sort sort = Sort.by(Sort.Order.asc("name").ignoreCase());
         return fileRepository.findAllByFolder(parentFolder, sort).stream().map(file -> {
-            FileOrFolderDto fileDto = FileDto.fromFileAndOrgMember(file, orgMember);
+            FileOrFolderDto fileDto = FileDto.fromFileAndOrgMember(file, file.getCreator());
             fileDto.setType(FileOrFolder.FILE);
             return fileDto;
         }).toList();
@@ -64,7 +65,9 @@ public class FileServiceImpl extends CurrentValueRetriever implements FileServic
         file.setFolder(folder);
         file = fileRepository.save(file);
         folderService.updateFolderSizeRecursively(folder, file.getSize(), Arithmetic.PLUS);
-        return FileDto.fromFile(file);
+        FileDto fileDto = FileDto.fromFile(file);
+        fileDto.setOwner(UserBasicInfoDto.fromOrgMember(orgMember));
+        return fileDto;
     }
 
     /**
