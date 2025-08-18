@@ -34,8 +34,8 @@ const AuthModal = ({ setIsSubscriptionExpired, setAuthenticated }) => {
             // navigate('/signin');
             dispatch(showPopup({ message, type: 'error' }));
         }).finally(() => {
-            setAuthenticated(false);
-        })
+            setAuthenticated(true);
+        });
     }, []);
 
     return null;

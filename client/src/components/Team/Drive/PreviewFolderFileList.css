@@ -1,5 +1,5 @@
 #files_and_folders_list {
-  height: calc(100vh - 240px);
+  height: calc(100vh - 245px);
   overflow-y: auto;
 }
 
@@ -33,17 +33,19 @@
   background-color: var(--pure-white);
   border-radius: 5px;
   padding: 15px;
+  padding-right: 10px;
   width: calc(20% - 10px);
   margin-right: 10px;
   margin-bottom: 10px;
   transition-duration: 0.25s;
 }
 
-.PreviewFolderFileListItem div div .folderName {
+.PreviewFolderFileListItem>div .folderName {
   width: calc(100% - 30px);
+  overflow: hidden;
 }
 
-.PreviewFolderFileListItem div div .folderName span {
+.PreviewFolderFileListItem>div .folderName span {
   max-width: calc(100% - 20px);
   text-overflow: ellipsis;
   overflow: hidden;
@@ -53,6 +55,18 @@
 .PreviewFolderFileListItem:hover {
   border-color: #777;
   background-color: var(--pure-white-hover);
+}
+
+.PreviewFolderFileListItem>div .options-icon {
+  width: 20px;
+  text-align: center;
+  color: #aaa;
+  border-radius: 5px;
+}
+
+.PreviewFolderFileListItem>div .options-icon:hover {
+  color: #666;
+  background-color: #aaaaaa11;
 }
 
 .icon_foldername {

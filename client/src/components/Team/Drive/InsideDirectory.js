@@ -1,4 +1,5 @@
 import Loader from '../../Loader';
+import EmptyFolder from './EmptyFolder';
 import { useEffect, useState } from 'react';
 import DirectoryPath from './DirectoryPath';
 import { apiRequest } from '../../../http_request';
@@ -59,11 +60,10 @@ const InsideDirectory = ({ setPageNotFound, setPermissionDenied }) => {
         {params.folderId && <DirectoryPath />}
         <div className='FCSS mT20 w100' id='files_and_folders_list'>
             {loader ? <Loader /> :
-                <>
+                items.length ? <>
                     {folders.length > 0 && <PreviewFolderFileList items={folders} title={"Folders"} />}
                     {files.length > 0 && <PreviewFolderFileList items={files} title={"Files"} />}
-                </>
-            }
+                </> : <EmptyFolder />}
         </div>
     </div>
 }
