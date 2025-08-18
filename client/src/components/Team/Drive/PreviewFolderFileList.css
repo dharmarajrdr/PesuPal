@@ -40,7 +40,11 @@
 }
 
 .PreviewFolderFileListItem div div .folderName {
-  width: calc(100% - 40px);
+  width: calc(100% - 30px);
+}
+
+.PreviewFolderFileListItem div div .folderName span {
+  max-width: calc(100% - 20px);
   text-overflow: ellipsis;
   overflow: hidden;
   font-size: 14px;

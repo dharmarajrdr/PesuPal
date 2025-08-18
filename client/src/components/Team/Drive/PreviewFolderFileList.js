@@ -21,9 +21,12 @@ const PreviewFolderFileListItem = ({ item }) => {
 
     return <Link to={route} className='FCSS PreviewFolderFileListItem p10 cursP'>
         <div className='FRSB w100 mb5'>
-            <div className='FRSS icon_foldername'>
+            <div className='FRCS icon_foldername' title={name}>
                 <i className={'mR10 alignCenter w15 fa ' + icon} style={{ color }}></i>
-                <span className='color333 folderName FRCS'>{name}{isSecured && <i className='fa fa-lock mL5 color777' style={{ fontSize: '10px' }}></i>}</span>
+                <p className='color333 folderName FRCS'>
+                    <span>{name}</span>
+                    {isSecured && <i className='fa fa-lock mL5 color777' style={{ fontSize: '10px' }}></i>}
+                </p>
             </div>
             <i className='fas fa-ellipsis-v color777' style={{ fontSize: '14px' }}></i>
         </div>
