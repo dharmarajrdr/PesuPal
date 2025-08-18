@@ -22,7 +22,11 @@ public interface FolderService {
 
     List<FileOrFolderDto> getAllFolders(Workspace space);
 
-    void deleteFolder(Long folderId);
+    void deleteFolder(String folderId);
+
+    void restoreFolder(String folderId);
+
+    void clearFolder(String folderId);
 
     void updateFolderSizeRecursively(Folder folder, Long size, Arithmetic arithmetic);
 
