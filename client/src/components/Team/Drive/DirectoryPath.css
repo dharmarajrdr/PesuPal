@@ -16,9 +16,9 @@
     color: var(--primary-color);
 }
 
-#directory-path>div {
+#directory-path #directory-list {
     overflow-x: auto;
-    width: calc(100% - 30px);
+    width: calc(100% - 75px);
 }
 
 #directory-path .directory-list-item {
@@ -55,4 +55,18 @@
 
 #directory-path .directory-list-item span:hover {
     color: #222;
+}
+
+#directory-path #directory-settings {
+    width: 30px;
+    height: 30px;
+    line-height: 30px;
+    padding: 0px;
+    text-align: center;
+    cursor: pointer;
+    margin-right: 5px;
+}
+
+#directory-path #directory-settings:hover {
+    color: var(--primary-color-active);
 }
