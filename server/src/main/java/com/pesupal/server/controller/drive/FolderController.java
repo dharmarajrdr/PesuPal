@@ -43,8 +43,22 @@ public class FolderController extends CurrentValueRetriever {
         return ResponseEntity.ok().body(new ApiResponseDto("Folders and files retrieved successfully", folders, folderPreviewDtos));
     }
 
+    @DeleteMapping("/clear/{folderId}")
+    public ResponseEntity<ApiResponseDto> clearFolder(@PathVariable String folderId) {
+
+        folderService.clearFolder(folderId);
+        return ResponseEntity.ok().body(new ApiResponseDto("Folder cleared successfully"));
+    }
+
+    @PatchMapping("/restore/{folderId}")
+    public ResponseEntity<ApiResponseDto> restoreFolder(@PathVariable String folderId) {
+
+        folderService.restoreFolder(folderId);
+        return ResponseEntity.ok().body(new ApiResponseDto("Folder restored successfully"));
+    }
+
     @DeleteMapping("/folder/{folderId}")
-    public ResponseEntity<ApiResponseDto> deleteFolder(@PathVariable Long folderId) {
+    public ResponseEntity<ApiResponseDto> deleteFolder(@PathVariable String folderId) {
 
         folderService.deleteFolder(folderId);
         return ResponseEntity.ok().body(new ApiResponseDto("Folder deleted successfully"));

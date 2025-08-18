@@ -34,6 +34,9 @@ public class File extends PublicAccessModel {
     @Enumerated(EnumType.STRING)
     private Security security;
 
+    @Column(nullable = false)
+    private boolean deleted;
+
     @OneToMany(mappedBy = "file", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     List<FileAccessStat> accessStats = new ArrayList<>();
 }

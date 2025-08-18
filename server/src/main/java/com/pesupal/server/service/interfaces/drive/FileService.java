@@ -11,9 +11,11 @@ import java.util.List;
 
 public interface FileService {
 
-    List<FileOrFolderDto> findAllByFolderAndOrgMember(Folder parentFolder, OrgMember orgMember);
+    List<FileOrFolderDto> findAllByFolderAndOrgMemberAndDeleted(Folder parentFolder, OrgMember orgMember, boolean deleted);
 
     FileDto createFile(CreateFileDto createFileDto) throws Exception;
 
     File getFileByIdAndOrgId(Long fileId, Long orgId);
+
+    File getFileByPublicId(String publicId);
 }

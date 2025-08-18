@@ -21,6 +21,7 @@ public class CreateFolderDto {
         Folder folder = new Folder();
         folder.setName(this.name);
         folder.setSpace(this.space);
+        folder.setDeleted(false);
         return folder;
     }
 }

@@ -35,10 +35,10 @@ public class FileServiceImpl extends CurrentValueRetriever implements FileServic
      * @return
      */
     @Override
-    public List<FileOrFolderDto> findAllByFolderAndOrgMember(Folder parentFolder, OrgMember orgMember) {
+    public List<FileOrFolderDto> findAllByFolderAndOrgMemberAndDeleted(Folder parentFolder, OrgMember orgMember, boolean deleted) {
 
         Sort sort = Sort.by(Sort.Order.asc("name").ignoreCase());
-        return fileRepository.findAllByFolder(parentFolder, sort).stream().map(file -> {
+        return fileRepository.findAllByFolderAndDeleted(parentFolder, deleted, sort).stream().map(file -> {
             FileOrFolderDto fileDto = FileDto.fromFileAndOrgMember(file, file.getCreator());
             fileDto.setType(FileOrFolder.FILE);
             return fileDto;
@@ -81,6 +81,18 @@ public class FileServiceImpl extends CurrentValueRetriever implements FileServic
     public File getFileByIdAndOrgId(Long fileId, Long orgId) {
 
         return fileRepository.findByIdAndCreator_OrgId(fileId, orgId).orElseThrow(() -> new DataNotFoundException("File with ID " + fileId + " not found."));
+    }
+
+    /**
+     * Retrieves a file by its public ID.
+     *
+     * @param publicId
+     * @return
+     */
+    @Override
+    public File getFileByPublicId(String publicId) {
+
+        return fileRepository.findByPublicId(publicId).orElseThrow(() -> new DataNotFoundException("File with public ID " + publicId + " not found."));
     }
 
 }
