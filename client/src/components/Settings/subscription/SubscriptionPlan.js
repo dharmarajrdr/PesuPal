@@ -1,15 +1,15 @@
 import Plan from './Plan';
 import './SubscriptionPlan.css';
-import { useEffect, useState } from 'react';
-import { apiRequest } from '../../../http_request';
 import Loader from '../../Loader';
+import { useEffect, useState } from 'react';
 import ErrorMessage from '../../ErrorMessage';
+import { apiRequest } from '../../../http_request';
 
 const SubscriptionPlan = () => {
 
     const [plans, setPlans] = useState([]);
-    const [loader, setLoader] = useState(true);
     const [error, setError] = useState(null);
+    const [loader, setLoader] = useState(true);
 
     useEffect(() => {
         apiRequest('/api/v1/subscription-plan', 'GET').then(({ data }) => {
