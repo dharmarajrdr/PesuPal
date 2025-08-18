@@ -1,5 +1,4 @@
 #files_and_folders_list {
-  height: calc(100vh - 245px);
   overflow-y: auto;
 }
 

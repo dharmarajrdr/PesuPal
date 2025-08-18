@@ -58,7 +58,7 @@ const InsideDirectory = ({ setPageNotFound, setPermissionDenied }) => {
 
     return <div className='mT10 w100 FCSS'>
         {params.folderId && <DirectoryPath />}
-        <div className='FCSS mT20 w100' id='files_and_folders_list'>
+        <div className='FCSS mT20 w100' id='files_and_folders_list' style={{ 'height': params.folderId ? 'calc(100vh - 245px)' : 'calc(100vh - 200px)' }}>
             {loader ? <Loader /> :
                 items.length ? <>
                     {folders.length > 0 && <PreviewFolderFileList items={folders} title={"Folders"} />}
