@@ -12,7 +12,9 @@ import java.util.Optional;
 @Repository
 public interface FileRepository extends JpaRepository<File, Long> {
 
-    List<File> findAllByFolder(Folder folder, Sort sort);
-
     Optional<File> findByIdAndCreator_OrgId(Long id, Long orgId);
+
+    Optional<File> findByPublicId(String publicId);
+
+    List<File> findAllByFolderAndDeleted(Folder parentFolder, boolean deleted, Sort sort);
 }
