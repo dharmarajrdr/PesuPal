@@ -40,6 +40,9 @@ public class Folder extends PublicAccessModel {
     @ToString.Exclude
     private PublicFolder publicFolder;
 
+    @Column(nullable = false)
+    private boolean deleted;
+
     @OneToMany(mappedBy = "folder", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
     private List<File> files = new ArrayList<>();
