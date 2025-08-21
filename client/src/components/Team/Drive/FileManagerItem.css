@@ -1,3 +1,4 @@
+#newFolderButton,
 #uploadButton {
   background-color: rgb(153, 103, 11);
   padding: 10px 20px;
@@ -6,6 +7,8 @@
   cursor: pointer;
 }
 
+#newFolderButton i,
+#newFolderButton span,
 #uploadButton i,
 #uploadButton span {
   color: var(--pure-white);
@@ -16,6 +19,11 @@
   border: 1px solid #aaa;
   padding: 7px 15px;
   border-radius: 10px;
+}
+
+.FileManagerItem i {
+  width: 25px;
+  text-align: left;
 }
 
 .FileManagerItem i,

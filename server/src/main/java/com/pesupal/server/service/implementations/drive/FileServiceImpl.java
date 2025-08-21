@@ -1,6 +1,7 @@
 package com.pesupal.server.service.implementations.drive;
 
 import com.pesupal.server.dto.request.drive.CreateFileDto;
+import com.pesupal.server.dto.response.UserBasicInfoDto;
 import com.pesupal.server.dto.response.drive.FileDto;
 import com.pesupal.server.dto.response.drive.FileOrFolderDto;
 import com.pesupal.server.enums.Arithmetic;
@@ -15,6 +16,7 @@ import com.pesupal.server.service.interfaces.drive.FileService;
 import com.pesupal.server.service.interfaces.drive.FolderService;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -33,10 +35,11 @@ public class FileServiceImpl extends CurrentValueRetriever implements FileServic
      * @return
      */
     @Override
-    public List<FileOrFolderDto> findAllByFolderAndOrgMember(Folder parentFolder, OrgMember orgMember) {
+    public List<FileOrFolderDto> findAllByFolderAndOrgMemberAndDeleted(Folder parentFolder, OrgMember orgMember, boolean deleted) {
 
-        return fileRepository.findAllByFolder(parentFolder).stream().map(file -> {
-            FileOrFolderDto fileDto = FileDto.fromFileAndOrgMember(file, orgMember);
+        Sort sort = Sort.by(Sort.Order.asc("name").ignoreCase());
+        return fileRepository.findAllByFolderAndDeleted(parentFolder, deleted, sort).stream().map(file -> {
+            FileOrFolderDto fileDto = FileDto.fromFileAndOrgMember(file, file.getCreator());
             fileDto.setType(FileOrFolder.FILE);
             return fileDto;
         }).toList();
@@ -51,22 +54,20 @@ public class FileServiceImpl extends CurrentValueRetriever implements FileServic
      */
     @Override
     @Transactional
-    public FileDto createFile(CreateFileDto createFileDto) throws Exception {
+    public FileDto createFile(CreateFileDto createFileDto) {
 
         OrgMember orgMember = getCurrentOrgMember();
 
-        Folder folder = folderService.getFolderById(createFileDto.getFolderId());
-
-        // Long size = mediaService.getFileSizeInKB(createFileDto.getMediaId());
-        Long size = 0L;
+        Folder folder = folderService.getFolderByPublicId(createFileDto.getFolderId());
 
         File file = createFileDto.toFile();
         file.setCreator(orgMember);
         file.setFolder(folder);
-        file.setSize(size);
         file = fileRepository.save(file);
-        folderService.updateFolderSizeRecursively(folder, size, Arithmetic.PLUS);
-        return FileDto.fromFile(file);
+        folderService.updateFolderSizeRecursively(folder, file.getSize(), Arithmetic.PLUS);
+        FileDto fileDto = FileDto.fromFile(file);
+        fileDto.setOwner(UserBasicInfoDto.fromOrgMember(orgMember));
+        return fileDto;
     }
 
     /**
@@ -80,6 +81,18 @@ public class FileServiceImpl extends CurrentValueRetriever implements FileServic
     public File getFileByIdAndOrgId(Long fileId, Long orgId) {
 
         return fileRepository.findByIdAndCreator_OrgId(fileId, orgId).orElseThrow(() -> new DataNotFoundException("File with ID " + fileId + " not found."));
+    }
+
+    /**
+     * Retrieves a file by its public ID.
+     *
+     * @param publicId
+     * @return
+     */
+    @Override
+    public File getFileByPublicId(String publicId) {
+
+        return fileRepository.findByPublicId(publicId).orElseThrow(() -> new DataNotFoundException("File with public ID " + publicId + " not found."));
     }
 
 }

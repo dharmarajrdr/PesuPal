@@ -25,8 +25,8 @@ const SubTabs = () => {
                 <span className={activeChatTabName === 'groupMessage' ? 'active' : ''}>Groups</span>
                 <b className='notifyCount'>12</b>
             </Link>
-            <Link to='/chat/channels' className='subtabs' onClick={() => tabsClickHandler('channelMessage')}>
-                <span className={activeChatTabName === 'channelMessage' ? 'active' : ''}>Folders</span>
+            <Link to='/chat/bots' className='subtabs' onClick={() => tabsClickHandler('botMessage')}>
+                <span className={activeChatTabName === 'botMessage' ? 'active' : ''}>Bots</span>
                 <b className='notifyCount'>15</b>
             </Link>
         </div>

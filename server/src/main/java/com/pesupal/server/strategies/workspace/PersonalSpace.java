@@ -12,6 +12,7 @@ import com.pesupal.server.repository.drive.FolderRepository;
 import com.pesupal.server.service.interfaces.drive.FileService;
 import com.pesupal.server.service.interfaces.drive.WorkdriveSpace;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -47,10 +48,11 @@ public class PersonalSpace implements WorkdriveSpace {
 
         // 1. Retrieve all subfolders in the given folder in the personal space
 
-        List<FileOrFolderDto> filesAndFolders = folderRepository.findAllByCreatedByAndSpaceAndParentFolder(orgMember, Workspace.PERSONAL_SPACE, parentFolder)
+        Sort sort = Sort.by(Sort.Order.asc("name").ignoreCase());
+        List<FileOrFolderDto> filesAndFolders = folderRepository.findAllByCreatedByAndSpaceAndParentFolderAndDeleted(orgMember, Workspace.PERSONAL_SPACE, parentFolder, false, sort)
                 .stream()
                 .map(folder -> {
-                    FolderDto folderDto = FolderDto.fromFolderAndOrgMember(folder, orgMember);
+                    FolderDto folderDto = FolderDto.fromFolderAndOrgMember(folder, folder.getCreatedBy());
                     folderDto.setSecurity(Security.SECURED);    // Personal space folders are always secured
                     folderDto.setType(FileOrFolder.FOLDER);
                     return folderDto;
@@ -58,7 +60,7 @@ public class PersonalSpace implements WorkdriveSpace {
 
         // 2. Retrieve all files in the given folder in the personal space
 
-        filesAndFolders.addAll(fileService.findAllByFolderAndOrgMember(parentFolder, orgMember));
+        filesAndFolders.addAll(fileService.findAllByFolderAndOrgMemberAndDeleted(parentFolder, orgMember, false));
 
         return filesAndFolders;
     }

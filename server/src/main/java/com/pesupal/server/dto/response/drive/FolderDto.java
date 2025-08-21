@@ -13,7 +13,7 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class FolderDto extends FileOrFolderDto {
 
-    private Long id;
+    private String id;
 
     private String name;
 
@@ -25,15 +25,16 @@ public class FolderDto extends FileOrFolderDto {
 
     private List<FolderDto> subFolders;
 
-    private List<FileDto> files;
+    private int files;
 
     public static FolderDto fromFolderAndOrgMember(Folder folder, OrgMember orgMember) {
 
         FolderDto folderDto = new FolderDto();
-        folderDto.setId(folder.getId());
+        folderDto.setId(folder.getPublicId());
         folderDto.setName(folder.getName());
-        folderDto.setSize(folderDto.getSize());
+        folderDto.setSize(folder.getSize());
         folderDto.setOwner(UserBasicInfoDto.fromOrgMember(orgMember));
+        folderDto.setFiles(folder.getFiles().size());
         return folderDto;
     }
 }

@@ -21,6 +21,7 @@ import com.pesupal.server.service.interfaces.drive.PublicFolderService;
 import com.pesupal.server.service.interfaces.drive.SecuredFolderPermissionService;
 import com.pesupal.server.service.interfaces.drive.WorkdriveSpace;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -78,11 +79,12 @@ public class TeamSpace extends WorkspaceSupportsPublicFolder implements Workdriv
 
         // 1. Retrieve all subfolders in the given folder in the team space
 
-        List<FileOrFolderDto> filesAndFolders = teamFolderRepository.findByDepartmentAndFolder_ParentFolder(department, parentFolder)
+        Sort sort = Sort.by(Sort.Order.asc("folder.name").ignoreCase());
+        List<FileOrFolderDto> filesAndFolders = teamFolderRepository.findByDepartmentAndFolder_ParentFolderAndFolder_Deleted(department, parentFolder, false, sort)
                 .stream()
                 .map(teamFolder -> {
                     Folder folder = teamFolder.getFolder();
-                    FolderDto folderDto = FolderDto.fromFolderAndOrgMember(folder, orgMember);
+                    FolderDto folderDto = FolderDto.fromFolderAndOrgMember(folder, folder.getCreatedBy());
                     folderDto.setType(FileOrFolder.FOLDER);
                     folderDto.setSecurity(folder.getPublicFolder().getSecurity());
                     return folderDto;
@@ -90,7 +92,7 @@ public class TeamSpace extends WorkspaceSupportsPublicFolder implements Workdriv
 
         // 2. Retrieve all files in the given folder in the team space
 
-        filesAndFolders.addAll(fileService.findAllByFolderAndOrgMember(parentFolder, orgMember));
+        filesAndFolders.addAll(fileService.findAllByFolderAndOrgMemberAndDeleted(parentFolder, orgMember, false));
 
         return filesAndFolders;
     }

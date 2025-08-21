@@ -1,0 +1,33 @@
+.splash-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    width: 100%;
+    background: var(--bg-color);
+}
+
+.splash-text {
+    font-size: 25px;
+    font-weight: 700;
+    color: var(--primary-color);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    font-family: 'system-ui';
+    opacity: 0;
+    transform: scale(0.95);
+    animation: fadeInScale 2s ease forwards;
+}
+
+/* Fade + scale */
+@keyframes fadeInScale {
+    0% {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
