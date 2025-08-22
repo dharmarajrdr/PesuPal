@@ -4,7 +4,7 @@ import { useDispatch } from "react-redux";
 import { hideConfirmationPopup, showConfirmationPopup } from '../../../store/reducers/ConfirmationPopupSlice';
 import { apiRequest } from '../../../http_request';
 import { showPopup } from '../../../store/reducers/PopupSlice';
-import { increaseParticipantsCount, updateCurrentChatPreview } from '../../../store/reducers/CurrentChatPreviewSlice';
+import { increaseParticipantsCount } from '../../../store/reducers/CurrentChatPreviewSlice';
 import Loader from '../../Loader';
 import { showProfile } from '../../../store/reducers/ProfileSlice';
 
