@@ -6,6 +6,8 @@ import com.pesupal.server.model.user.OrgMember;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.List;
+
 @Entity
 @Data
 public class Module extends PublicAccessModel {
@@ -28,4 +30,8 @@ public class Module extends PublicAccessModel {
     private boolean openToRelation;
 
     private boolean active;
+
+    @OneToMany(mappedBy = "module", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JsonIgnore
+    private List<ModuleMember> members;
 }

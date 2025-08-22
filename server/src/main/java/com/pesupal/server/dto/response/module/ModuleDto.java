@@ -32,6 +32,8 @@ public class ModuleDto {
 
     private Boolean accessModuleBuilder;
 
+    private Integer memberCount;
+
     public static ModuleDto fromModule(Module module) {
 
         ModuleDto moduleDto = new ModuleDto();
@@ -42,6 +44,7 @@ public class ModuleDto {
         moduleDto.setCreatedAt(module.getCreatedAt());
         moduleDto.setPublicId(module.getPublicId());
         moduleDto.setAllowDuplicateSubject(module.isAllowDuplicateSubject());
+        moduleDto.setMemberCount(module.getMembers().size());
         return moduleDto;
     }
 
