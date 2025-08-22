@@ -1,8 +1,9 @@
 import './CreateNewPost.css';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
-import { useState, useRef, useEffect } from 'react';
+import { useState } from 'react';
 import { apiRequest } from '../../../http_request';
+import { useSelector } from 'react-redux';
 
 const ShareWithSchedule = ({ onShare, onSchedule }) => {
 
@@ -25,6 +26,8 @@ const ShareWithSchedule = ({ onShare, onSchedule }) => {
 const CreateNewPost = () => {
 
     const [content, setContent] = useState("");
+    const myProfile = useSelector(state => state.myProfile);
+
     const [isFullScreen, setIsFullScreen] = useState(false);
 
     const handlePostSubmit = () => {
@@ -74,7 +77,7 @@ const CreateNewPost = () => {
                 </div>
 
                 <div className='FRSS w100 post-input-section'>
-                    <img src='/images/Users/user_10.jpg' className='img_40_40 user-avatar' alt='User' />
+                    <img src={myProfile?.displayPicture} className='img_40_40 user-avatar' alt='User' />
                     <ReactQuill theme="snow" value={content} onChange={setContent} className='w100 post-input' placeholder='What do you want to share?' />
                 </div>
 
