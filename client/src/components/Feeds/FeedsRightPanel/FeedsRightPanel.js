@@ -24,11 +24,13 @@ const Header = () => {
 
 const FeedsRightPanel = () => {
     return (
-        <div id='FeedsRightPanel' className='noScrollbar'>
+        <div id='FeedsRightPanel'>
             <Header />
-            <TrendingTags />
-            <TrendingPosts />
-            <Quote quote="One day, you'll leave this world behind So live a life you will remember." author="Avicii" />
+            <div id='FeedsRightPanelContent' className='noScrollbar'>
+                <TrendingTags />
+                <TrendingPosts />
+                <Quote quote="One day, you'll leave this world behind So live a life you will remember." author="Avicii" />
+            </div>
         </div>
     )
 }
