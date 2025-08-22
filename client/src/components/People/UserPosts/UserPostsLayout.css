@@ -1,0 +1,9 @@
+#user-posts-layout {
+    overflow: auto;
+    padding-bottom: 100px;
+}
+
+#user-posts-layout #postsList {
+    width: 50%;
+    padding-bottom: 50px;
+}

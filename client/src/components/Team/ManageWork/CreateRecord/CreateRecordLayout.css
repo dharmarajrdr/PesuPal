@@ -1,0 +1,48 @@
+#create-new-record {
+    background-color: var(--pure-white);
+}
+
+#subject-as-header,
+#new-record-title {
+    margin: 0;
+    font-size: 20px;
+    font-family: 'system-ui';
+    text-wrap: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+#new-record-actions button {
+    padding: 10px 20px;
+    margin-left: 10px;
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-size: 14px;
+    border-radius: 5px;
+}
+
+#new-record-actions #cancel-button {
+    background-color: #aaa;
+}
+
+#new-record-actions #cancel-button:hover {
+    background-color: #888;
+}
+
+#new-record-actions #create-button {
+    background-color: var(--primary-color);
+}
+
+#new-record-actions #create-button:hover {
+    background-color: var(--primary-color-active);
+}
+
+#expand-create-record-page {
+    cursor: pointer;
+    color: #777;
+}
+
+#expand-create-record-page:hover {
+    color: var(--primary-color);
+}

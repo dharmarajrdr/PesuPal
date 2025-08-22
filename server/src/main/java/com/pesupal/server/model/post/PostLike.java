@@ -1,7 +1,7 @@
 package com.pesupal.server.model.post;
 
 import com.pesupal.server.model.CreationTimeAuditable;
-import com.pesupal.server.model.user.User;
+import com.pesupal.server.model.user.OrgMember;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
 import lombok.Data;
@@ -14,5 +14,5 @@ public class PostLike extends CreationTimeAuditable {
     private Post post;
 
     @ManyToOne
-    private User liker;
+    private OrgMember liker;
 }

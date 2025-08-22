@@ -6,16 +6,15 @@
 }
 
 #FeedsLeftPanelItem:hover {
-  background-color: #f0f0f0;
+  background-color: var(--pure-white-hover);
 }
 
 #FeedsLeftPanelItem.active {
-  background-color: #f0f0f0;
+  background-color: var(--primary-color);
   cursor: default;
 }
 
 #FeedsLeftPanelItem i {
-  color: #555;
   width: 40px;
 }
 
@@ -23,4 +22,9 @@
   color: #555;
   font-size: 14px;
   overflow: hidden;
+}
+
+#FeedsLeftPanelItem.active i,
+#FeedsLeftPanelItem.active span {
+  color: var(--pure-white);
 }

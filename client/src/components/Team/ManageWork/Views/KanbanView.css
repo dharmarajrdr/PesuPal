@@ -25,12 +25,12 @@
   padding: 0px 15%;
   left: 0px;
   top: 0px;
-  background-color: #fff;
+  background-color: var(--pure-white);
   clip-path: polygon(97% 0, 100% 50%, 97% 100%, 0% 100%, 4% 51%, 0% 0%);
 }
 
 .kanbanviewStage .columnCount {
-  border: 1px solid #fff;
+  border: 1px solid var(--pure-white);
   border-radius: 5px;
   width: 20px;
   height: 20px;
@@ -41,7 +41,7 @@
 
 .kanbanviewStage span {
   text-align: center;
-  color: #fff;
+  color: var(--pure-white);
 }
 
 .kanbanviewColumn:first-child .kanbanviewStage {
@@ -76,7 +76,7 @@
 }
 
 .kanbanviewItem {
-  background-color: #fff;
+  background-color: var(--pure-white);
   border: 1px solid #ccc;
   border-radius: 10px;
   margin: 15px;
@@ -128,7 +128,7 @@
   font-weight: bold;
   text-transform: uppercase;
   clip-path: polygon(0% 0%, 100% 0%, 80% 100%, 15% 100%);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 4px var(--box-shadow-color);
   border-radius: 100%;
 }
 

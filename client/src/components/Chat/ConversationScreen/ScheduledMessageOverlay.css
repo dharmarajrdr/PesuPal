@@ -1,0 +1,72 @@
+#schedule-messages-container {
+    background-color: #fff;
+    width: 50%;
+    height: 100%;
+    position: absolute;
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+    animation: slideIn 0.3s ease-in-out forwards;
+}
+
+@keyframes slideIn {
+    from {
+        left: 100%;
+    }
+
+    to {
+        left: 50%;
+    }
+}
+
+#scheduled-messages-header {
+    height: 50px;
+    line-height: 50px;
+    padding: 0px 20px;
+    box-shadow: 0 2px 4px var(--box-shadow-color);
+}
+
+#scheduled-messages-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #555;
+}
+
+#scheduled-messages-list {
+    height: calc(100% - 50px);
+    overflow-y: auto;
+}
+
+#schedule-messages-container .message-wrapper {
+    max-width: 75%;
+    min-width: 35%;
+}
+
+#schedule-messages-container #schedule-picker-container {
+    right: -200px;
+}
+
+#scheduled-messages-header button {
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 8px 15px;
+    cursor: pointer;
+}
+
+#send-all-messages {
+    background-color: var(--secondary-color);
+    color: #fff;
+}
+
+#send-all-messages:hover {
+    background-color: var(--secondary-color-active);
+}
+
+#delete-all-messages {
+    background-color: gray;
+    color: #fff;
+}
+
+#delete-all-messages:hover {
+    background-color: #666;
+}

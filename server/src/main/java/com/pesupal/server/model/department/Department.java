@@ -1,9 +1,9 @@
 package com.pesupal.server.model.department;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.pesupal.server.model.CreationTimeAuditable;
+import com.pesupal.server.model.PublicAccessModel;
 import com.pesupal.server.model.org.Org;
-import com.pesupal.server.model.user.User;
+import com.pesupal.server.model.user.OrgMember;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -12,7 +12,7 @@ import lombok.Data;
 
 @Data
 @Entity
-public class Department extends CreationTimeAuditable {
+public class Department extends PublicAccessModel {
 
     @Column(nullable = false)
     private String name;
@@ -25,5 +25,5 @@ public class Department extends CreationTimeAuditable {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore
-    private User head;
+    private OrgMember head;
 }

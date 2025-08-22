@@ -1,0 +1,55 @@
+.chat-input {
+    padding: 10px;
+    background-color: var(--pure-white);
+    min-height: 90px;
+    max-height: 200px;
+    width: 100%;
+    border-top: 2px solid #ddd;
+}
+
+.chat-input textarea {
+    flex: 1;
+    padding: 8px;
+    border-radius: 4px;
+    border: none;
+    resize: none;
+    max-height: 200px;
+}
+
+.chat-input:has(textarea:focus) {
+    border-top: 2px solid var(--primary-color);
+    transition-duration: 0.25s;
+}
+
+.chat-input #emoji-picker {
+    box-shadow: 0 2px 5px var(--box-shadow-color);
+    border-radius: 5px;
+    position: absolute;
+    bottom: 100px;
+    right: 10px;
+}
+
+.file-upload {
+    margin-left: 10px;
+}
+
+#schedule-message-button,
+#send-button,
+#emoji-button,
+#insert-file-button {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    margin-left: 10px;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#schedule-message-button i,
+#send-button i,
+#emoji-button i, 
+#insert-file-button i {
+    font-size: 16px;
+    color: #fff;
+}

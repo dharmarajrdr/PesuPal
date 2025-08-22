@@ -22,3 +22,9 @@
 | 2  | 1          | video     | 1048576   | https://example.com/video1.mp4 | 2023-10-01 10:00:00 |
 | 3  | 3          | audio     | 512000    | https://example.com/audio1.mp3 | 2023-10-01 10:02:00 |
 
+### Pinned chats Table
+
+| id | org_id | user_id | pinned_user_id | order_index |
+|----|--------|---------|----------------|-------------|
+| 1  | 1      | 101     | 102            | 1           |
+| 2  | 1      | 101     | 103            | 2           |

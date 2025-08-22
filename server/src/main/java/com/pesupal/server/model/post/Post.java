@@ -2,9 +2,9 @@ package com.pesupal.server.model.post;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.pesupal.server.enums.PostStatus;
-import com.pesupal.server.model.CreationTimeAuditable;
+import com.pesupal.server.model.PublicAccessModel;
 import com.pesupal.server.model.org.Org;
-import com.pesupal.server.model.user.User;
+import com.pesupal.server.model.user.OrgMember;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -13,21 +13,24 @@ import java.util.List;
 
 @Data
 @Entity
-public class Post extends CreationTimeAuditable {
+public class Post extends PublicAccessModel {
 
     @ManyToOne
     @JsonIgnore
     private Org org;
 
     @ManyToOne
-    private User user;
+    @JsonIgnore
+    private OrgMember creator;
 
     private String title;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 3000)
     private String description;
 
     private boolean media;
+
+    private boolean hasPoll;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

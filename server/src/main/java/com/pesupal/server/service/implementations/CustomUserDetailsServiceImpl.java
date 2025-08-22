@@ -1,11 +1,12 @@
 package com.pesupal.server.service.implementations;
 
-import com.pesupal.server.dto.response.UserLoginCheckDto;
+import com.pesupal.server.enums.Role;
+import com.pesupal.server.model.user.User;
+import com.pesupal.server.security.CustomUserDetails;
 import com.pesupal.server.service.interfaces.CustomUserDetailsService;
 import com.pesupal.server.service.interfaces.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -28,7 +29,8 @@ public class CustomUserDetailsServiceImpl implements CustomUserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 
-        UserLoginCheckDto user = userService.getUserLoginCheckByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User with email " + email + " not found"));
-        return new User(user.getEmail(), user.getPassword(), Collections.singleton(new SimpleGrantedAuthority(user.getRole())));
+        User user = userService.getUserByEmail(email);
+        return new CustomUserDetails(user.getEmail(), user.getPassword(), user.getPublicId(), null, Collections.singleton(new SimpleGrantedAuthority(Role.USER.name())));
     }
+
 }

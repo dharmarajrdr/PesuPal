@@ -1,5 +1,6 @@
 #SearchUserQuickAction {
   padding: 10px;
+  position: relative;
 }
 
 .searchBox {
@@ -10,7 +11,7 @@
 .searchBox i {
   position: absolute;
   left: 15px;
-  top: 55%;
+  top: 50%;
   color: #888;
   font-size: 12px;
   transform: translateY(-50%);
