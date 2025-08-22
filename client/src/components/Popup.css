@@ -1,0 +1,45 @@
+.popup-container {
+    position: fixed;
+    top: -100px;
+    left: 50%;
+    transform: translateX(-50%);
+    min-width: 300px;
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    color: white;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 4px 12px var(--box-shadow-color);
+    z-index: 9999;
+    animation: slideDown 0.4s ease forwards;
+}
+
+.popup-container.success {
+    background-color: var(--success-color);
+}
+
+.popup-container.error {
+    background-color: var(--error-color);
+}
+
+.popup-container.info {
+    background-color: var(--info-color);
+}
+
+.popup-container .icon {
+    font-size: 1.5rem;
+    color: var(--pure-white);
+}
+
+.popup-container span {
+    color: var(--pure-white);
+}
+
+/* Slide down animation */
+@keyframes slideDown {
+    to {
+        top: 20px;
+    }
+}

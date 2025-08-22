@@ -1,0 +1,107 @@
+#reach-support-layout #left-panel {
+    background-color: #fff;
+    width: 30%;
+    border-right: 1px solid #ddd;
+}
+
+#reach-support-layout #right-panel {
+    width: 70%;
+}
+
+#support-tickets-header {
+    font-size: 18px;
+    padding: 15px 15px;
+    font-weight: bold;
+    background-color: #fff;
+    box-shadow: 0 1px 3px var(--box-shadow-color);
+}
+
+#support-tickets-header>p {
+    color: var(--primary-color);
+}
+
+#support-ticket-list {
+    width: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+    margin-top: 5px;
+    height: calc(100vh - 50px);
+}
+
+.support-ticket-preview {
+    padding: 15px;
+    width: 100%;
+    border-bottom: 1px solid #ddd;
+}
+
+.support-ticket-preview.active {
+    background-color: #f0f0f0;
+}
+
+.support-ticket-preview:not(.active):hover {
+    background-color: #f9f9f9;
+    cursor: pointer;
+}
+
+.support-ticket-preview .ticket-subject {
+    text-wrap: nowrap;
+    overflow: hidden;
+    font-size: 14px;
+    text-overflow: ellipsis;
+    font-family: 'system-ui';
+    font-weight: 500;
+}
+
+.support-ticket-preview .ticket-description {
+    font-size: 13px;
+    color: #666;
+    margin: 5px 0;
+    max-lines: 3;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    line-height: 1.3;
+    -webkit-box-orient: vertical;
+}
+
+.support-ticket-preview .ticket-meta .ticket-created-at {
+    color: #999;
+    font-size: 12px;
+}
+
+.support-ticket-preview .ticket-meta .ticket-status {
+    color: #777;
+    font-size: 12px;
+}
+
+#ticket-placeholder {
+    width: 100%;
+    background-color: #ecedfe;
+}
+
+#ticket-placeholder #ticket-placeholder-image {
+    height: 300px;
+}
+
+#ticket-placeholder-image img {
+    height: 100%;
+    animation: dropdown 0.25s ease-in 1 alternate;
+    user-select: none;
+}
+
+@keyframes dropdown {
+    from {
+        transform: translateY(-20px);
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+#ticket-placeholder>p {
+    color: var(--primary-color);
+    font-family: 'system-ui';
+}

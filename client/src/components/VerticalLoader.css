@@ -1,0 +1,33 @@
+#vertical-loader {
+    background-color: rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+}
+
+.top-progress-loader-bar {
+    position: relative;
+    height: 5px;
+    overflow: hidden;
+    background-color: rgba(0, 0, 0, 0.025);
+}
+
+.top-progress-loader-bar::before {
+    content: "";
+    position: absolute;
+    left: -40%;
+    top: 0;
+    height: 100%;
+    width: 40%;
+    background-color: var(--secondary-color);
+    animation: loader-slide 1.2s linear infinite;
+}
+
+@keyframes loader-slide {
+
+    0% {
+        left: -40%;
+    }
+
+    100% {
+        left: 100%;
+    }
+}

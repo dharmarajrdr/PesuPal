@@ -1,5 +1,13 @@
 #ManageWorkLayout {
-    width: 100%;
+    width: calc(100% - 75px);
     height: 100vh;
     padding: 20px;
+}
+
+#ManageWorkLayout .notfound-container {
+    height: calc(100% - 50px);
+}
+
+#ManageWorkLayout #no-data-found {
+    height: calc(100% - 50px);
 }

@@ -15,6 +15,20 @@ public class SecurityUtil {
     private final UserService userService;
 
     /**
+     * Retrieves the current authenticated principal.
+     *
+     * @return
+     */
+    private Object getCurrentPrincipal() {
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new PermissionDeniedException("User not authenticated.");
+        }
+        return authentication.getPrincipal();
+    }
+
+    /**
      * Retrieves the email of the currently authenticated user.
      *
      * @return String - the email of the current user
@@ -22,21 +36,33 @@ public class SecurityUtil {
      */
     public String getCurrentUserEmail() {
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Object principal = getCurrentPrincipal();
 
-        if (authentication == null || !authentication.isAuthenticated()) {
-            throw new PermissionDeniedException("User not authenticated.");
-        }
-
-        Object principal = authentication.getPrincipal();
-
-        if (principal instanceof UserDetails) {
+        if (principal instanceof CustomUserDetails) {
+            return ((CustomUserDetails) principal).getUsername();
+        } else if (principal instanceof UserDetails) {
             return ((UserDetails) principal).getUsername(); // usually the email
         } else if (principal instanceof String) {
             return (String) principal; // in case JWT stores email directly as subject
         }
 
         throw new PermissionDeniedException("Unable to retrieve user email from authentication principal.");
+    }
+
+    /**
+     * Retrieves the current user details from the authentication principal.
+     *
+     * @return
+     */
+    public CustomUserDetails getCurrentUserDetails() {
+
+        Object principal = getCurrentPrincipal();
+
+        if (principal instanceof CustomUserDetails) {
+            return (CustomUserDetails) principal;
+        }
+
+        throw new PermissionDeniedException("Unable to retrieve user details from authentication principal.");
     }
 
     /**
