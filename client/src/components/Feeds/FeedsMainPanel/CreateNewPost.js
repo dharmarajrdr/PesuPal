@@ -1,8 +1,9 @@
 import './CreateNewPost.css';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
-import { useState, useRef, useEffect } from 'react';
+import { useState } from 'react';
 import { apiRequest } from '../../../http_request';
+import { useSelector } from 'react-redux';
 
 const ShareWithSchedule = ({ onShare, onSchedule }) => {
 
@@ -22,10 +23,12 @@ const ShareWithSchedule = ({ onShare, onSchedule }) => {
     );
 };
 
-const CreateNewPost = () => {
+const CreateNewPost = ({ onMinimize }) => {
 
     const [content, setContent] = useState("");
-    const [isFullScreen, setIsFullScreen] = useState(false);
+    const myProfile = useSelector(state => state.myProfile);
+
+    const [isFullScreen, setIsFullScreen] = useState(true);
 
     const handlePostSubmit = () => {
 
@@ -38,17 +41,17 @@ const CreateNewPost = () => {
             "title": "New Post",
             "description": content,
             "tags": [
-                "#new_post"
+
             ],
             "mediaIds": [
 
             ],
-            "poll": {
-                "question": "Which company are you targeting?",
-                "options": [
-                    "Microsoft", "PayPal", "Google", "Amazon"
-                ]
-            }
+            // "poll": {
+            //     "question": "Which company are you targeting?",
+            //     "options": [
+            //         "Microsoft", "PayPal", "Google", "Amazon"
+            //     ]
+            // }
         }).then(({ data }) => {
             setIsFullScreen(false);
             content("");
@@ -66,15 +69,15 @@ const CreateNewPost = () => {
     }
 
     return (
-        <div id='create-new-post-overlay' className={isFullScreen ? "fullscreen-post-creation" : ""}>
+        <div id='create-new-post-overlay' className='entire-screen-overlay fullscreen-post-creation FRCC'>
             <div id='CreateNewPost' className='FCSS post-container'>
                 <div className='FRCB w100'>
                     <label className='post-label'>Post Something</label>
-                    <i className="fa-solid fa-up-right-and-down-left-from-center" id='expand-post-creation' onClick={fullScreenPostCreationHandler}></i>
+                    {/* <i className="fa-solid fa-down-left-and-up-right-to-center" id='expand-post-creation' onClick={onMinimize}></i> */}
                 </div>
 
                 <div className='FRSS w100 post-input-section'>
-                    <img src='/images/Users/user_10.jpg' className='img_40_40 user-avatar' alt='User' />
+                    <img src={myProfile?.displayPicture} className='img_40_40 user-avatar' alt='User' />
                     <ReactQuill theme="snow" value={content} onChange={setContent} className='w100 post-input' placeholder='What do you want to share?' />
                 </div>
 
@@ -88,6 +91,7 @@ const CreateNewPost = () => {
                         <PostAction icon='fa-regular fa-calendar-days' label='Schedule' />
                     </div>
                     <div className='FRCE'>
+                        <button id='cancel-post-button' onClick={onMinimize}>Cancel</button>
                         <ShareWithSchedule onShare={handlePostSubmit} onSchedule={handlePostSchedule} />
                     </div>
                 </div>

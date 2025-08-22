@@ -1,12 +1,12 @@
-import { useEffect, useState } from 'react';
-import './AddParticipantsModal.css';
-import { useDispatch } from "react-redux";
-import { hideConfirmationPopup, showConfirmationPopup } from '../../../store/reducers/ConfirmationPopupSlice';
-import { apiRequest } from '../../../http_request';
-import { showPopup } from '../../../store/reducers/PopupSlice';
-import { increaseParticipantsCount } from '../../../store/reducers/CurrentChatPreviewSlice';
-import Loader from '../../Loader';
-import { showProfile } from '../../../store/reducers/ProfileSlice';
+import Loader from '../../../Loader';
+import { useDispatch } from 'react-redux';
+import { useEffect, useState } from 'react'
+import { apiRequest } from '../../../../http_request';
+import { showPopup } from '../../../../store/reducers/PopupSlice';
+import { showProfile } from '../../../../store/reducers/ProfileSlice';
+import { incrementModuleMemberCount } from '../../../../store/reducers/CurrentModuleSlice';
+import { hideConfirmationPopup, showConfirmationPopup } from '../../../../store/reducers/ConfirmationPopupSlice';
+
 
 const SearchUsers = ({ searchQuery, setSearchQuery }) => {
     return (
@@ -17,7 +17,7 @@ const SearchUsers = ({ searchQuery, setSearchQuery }) => {
     );
 }
 
-const AddUser = ({ user, groupId }) => {
+const AddUser = ({ user, moduleId, onClose }) => {
 
     const dispatch = useDispatch();
     const { id, displayPicture, displayName, email } = user || {};
@@ -30,10 +30,13 @@ const AddUser = ({ user, groupId }) => {
                     title: 'Add',
                     color: 'green',
                     onClick: () => {
-                        apiRequest(`/api/v1/group-chat-member/add-member`, 'POST', { userId: id, groupId }).then(({ message }) => {
+                        apiRequest(`/api/v1/module/${moduleId}/member`, 'POST', {
+                            'userId': id, moduleId, 'role': 'MEMBER'
+                        }).then(({ message }) => {
                             dispatch(hideConfirmationPopup());
-                            dispatch(increaseParticipantsCount());
                             dispatch(showPopup({ message, type: 'success' }));
+                            dispatch(incrementModuleMemberCount());
+                            onClose();
                         }).catch(({ message }) => {
                             dispatch(showPopup({ message, type: 'error' }));
                         });
@@ -72,16 +75,16 @@ const NoUserFound = () => {
     )
 }
 
-const UsersList = ({ users, groupId }) => {
+const UsersList = ({ users, moduleId, onClose }) => {
 
     return <div className='w100' id='add-participants-users-list'>
         {users.length ?
-            users.map((user, index) => <AddUser key={index} user={user} groupId={groupId} />) :
+            users.map((user, index) => <AddUser key={index} user={user} moduleId={moduleId} onClose={onClose} />) :
             <NoUserFound />}
     </div>
 }
 
-const AddParticipantsModal = ({ groupId, onClose }) => {
+const AddParticipantsModal = ({ moduleId, onClose }) => {
 
     const debounceDelay = 1000; // Delay in milliseconds
     const dispatch = useDispatch();
@@ -92,7 +95,7 @@ const AddParticipantsModal = ({ groupId, onClose }) => {
     const [size, setSize] = useState(10);
 
     const getUsers = () => {
-        apiRequest(`/api/v1/group-chat-member/non-participants/${groupId}?search=${searchQuery}&page=${page}&size=${size}`, 'GET').then(({ data }) => {
+        apiRequest(`/api/v1/module/${moduleId}/non-members?search=${searchQuery}&page=${page}&size=${size}`, 'GET').then(({ data }) => {
             setUsers(data);
             setLoader(false);
         }).catch(({ message }) => {
@@ -118,14 +121,15 @@ const AddParticipantsModal = ({ groupId, onClose }) => {
             }
         }}>
             <div id='add-participants-modal-content' className='FCCS centerMe'>
-                <h3 id='add-participants-title' className='w100'>Add Participants</h3>
+                <h3 id='add-participants-title' className='w100'>Add Members</h3>
                 {loader ? <Loader /> : <>
-                    <SearchUsers groupId={groupId} setSearchQuery={setSearchQuery} />
-                    <UsersList users={users} groupId={groupId} />
+                    <SearchUsers moduleId={moduleId} setSearchQuery={setSearchQuery} />
+                    <UsersList users={users} moduleId={moduleId} onClose={onClose} />
                 </>}
             </div>
         </div>
     )
 }
+
 
 export default AddParticipantsModal

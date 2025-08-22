@@ -4,7 +4,7 @@
     box-shadow: 0 2px 4px var(--box-shadow-color);
 }
 
-#create-module-header i {
+#create-module-header>i {
     width: 20px;
     height: 20px;
     text-align: center;
@@ -53,4 +53,22 @@
 
 #more-options-button:hover {
     border-color: #eee;
+}
+
+#module-members-icon {
+    background-color: #eee;
+    margin-left: 10px;
+    border-radius: 5px;
+    padding: 5px 5px 5px 10px;
+    cursor: pointer;
+}
+
+#module-members-icon i,
+#module-members-icon #module-member-count {
+    color: var(--primary-color);
+}
+
+#module-members-icon #module-member-count {
+    font-size: 12px;
+    padding-right: 4px;
 }
