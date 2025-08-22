@@ -1,4 +1,4 @@
-#FeedsRightPanel{
+#FeedsRightPanel {
     width: 25%;
     height: 80%;
     position: sticky;
@@ -7,9 +7,44 @@
     overflow-y: scroll;
 }
 
+#FeedsRightPanel #FeedsRightPanelHeader>button {
+    width: calc(50% - 4px);
+    padding: 8px 10px;
+    outline: none;
+    border: none;
+    margin: 0px 2px;
+    border: 1px solid #bbb;
+    cursor: pointer;
+    border-radius: 5px;
+    background-color: #fff;
+    color: #555;
+}
+
+#FeedsRightPanel #FeedsRightPanelHeader>button i {
+    margin-right: 5px;
+    color: #555;
+}
+
+#FeedsRightPanel #FeedsRightPanelHeader #create-post-button {
+    background-color: var(--primary-color);
+}
+
+#FeedsRightPanel #FeedsRightPanelHeader #create-post-button,
+#FeedsRightPanel #FeedsRightPanelHeader #create-post-button i {
+    color: #fff;
+}
+
+#FeedsRightPanel #FeedsRightPanelHeader #create-post-button:hover {
+    background-color: var(--primary-color-active);
+}
+
+#FeedsRightPanel #FeedsRightPanelHeader #my-posts-button:hover {
+    background-color: #aaa;
+}
+
 @media screen and (max-width: 768px) {
     #FeedsRightPanel {
         display: none;
     }
-    
+
 }
