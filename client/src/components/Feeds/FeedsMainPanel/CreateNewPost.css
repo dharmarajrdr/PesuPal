@@ -24,7 +24,7 @@
 
 .post-container {
   width: 100%;
-  padding: 20px;
+  padding: 20px 25px;
   background-color: var(--pure-white);
   box-shadow: 0 4px 8px var(--box-shadow-color);
   border-radius: 12px;
@@ -38,6 +38,7 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+  margin: 0;
 }
 
 .post-label {
@@ -186,6 +187,22 @@
 
 .schedule-btn:hover {
   background-color: var(--primary-color-active);
+}
+
+#cancel-post-button {
+  background-color: #eee;
+  border: none;
+  color: #333;
+  font-weight: 500;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 12px;
+  margin-right: 10px;
+}
+
+#cancel-post-button:hover {
+  background-color: #ddd;
 }
 
 @media screen and (max-width: 768px) {
