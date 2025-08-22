@@ -3,10 +3,11 @@ import OptionsModal from '../../../Utils/OptionsModal'
 import { useDispatch, useSelector } from 'react-redux';
 import './ModuleBuilderHeader.css'
 import MyModulesListOverlay from '../CreateModule/MyModulesListOverlay'
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { apiRequest } from '../../../../http_request';
 import { showPopup } from '../../../../store/reducers/PopupSlice';
 import { hideConfirmationPopup, showConfirmationPopup } from '../../../../store/reducers/ConfirmationPopupSlice';
+import AddParticipantsModal from './AddParticipantsModal';
 
 const PublishButton = () => {
     return (
@@ -86,9 +87,14 @@ const MoreOptionsButton = ({ moduleId }) => {
 
 const ModuleMembersIcon = () => {
 
+    const [showAddParticipantsModal, setShowAddParticipantsModal] = useState(false);
+
+    const { moduleId } = useParams();
+
     return (
-        <div id='module-members-icon' className='FRCC'>
-            <i className='fa fa-user w20 fs10'></i>
+        <div id='module-members-icon' className='FRCC' onClick={() => setShowAddParticipantsModal(true)}>
+            {showAddParticipantsModal && <AddParticipantsModal moduleId={moduleId} onClose={() => setShowAddParticipantsModal(false)} />}
+            <i className='fa fa-user w15 fs10'></i>
             <div id='module-member-count'>5000</div>
         </div>
     )
@@ -102,9 +108,9 @@ const ModuleBuilderHeader = () => {
     return (
         <div id='create-module-header' className='w100 FRCB'>
             <div className='FRCS'>
-                <i className='fa fa-arrow-left fs16 mR10' onClick={() => window.history.back()}></i>
+                <i className='fa fa-arrow-left fs16 mR10 w15' onClick={() => window.history.back()}></i>
                 <h4 id='module-name'>{name}</h4>
-                <i className='fa fa-info-circle fs12 mL10 colorDDD' title={description || 'No description found'}></i>
+                <i className='fa fa-info-circle fs12 mL10 w15 colorDDD' title={description || 'No description found'}></i>
                 <ModuleMembersIcon />
             </div>
             <div className='FRCE'>

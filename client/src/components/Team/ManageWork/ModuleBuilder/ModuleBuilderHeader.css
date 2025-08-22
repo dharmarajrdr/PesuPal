@@ -4,7 +4,7 @@
     box-shadow: 0 2px 4px var(--box-shadow-color);
 }
 
-#create-module-header i {
+#create-module-header>i {
     width: 20px;
     height: 20px;
     text-align: center;
@@ -59,7 +59,7 @@
     background-color: #eee;
     margin-left: 10px;
     border-radius: 5px;
-    padding: 3px;
+    padding: 5px 5px 5px 10px;
     cursor: pointer;
 }
 
