@@ -29,6 +29,7 @@ const CreateNewPost = ({ onMinimize }) => {
     const dispatch = useDispatch();
     const [tags, setTags] = useState([]);
     const [content, setContent] = useState("");
+    const [postTitle, setPostTitle] = useState("");
     const myProfile = useSelector(state => state.myProfile);
 
     const [isFullScreen, setIsFullScreen] = useState(true);
@@ -41,7 +42,7 @@ const CreateNewPost = ({ onMinimize }) => {
         }
 
         apiRequest(`/api/v1/post/create`, 'POST', {
-            "title": "New Post",
+            "title": postTitle,
             "description": content,
             "tags": tags,
             "mediaIds": [
@@ -98,7 +99,8 @@ const CreateNewPost = ({ onMinimize }) => {
 
                 <div className='FRSS w100' id='post-input-section'>
                     <img src={myProfile?.displayPicture} className='img_40_40 user-avatar' alt='User' />
-                    <div className='FCSB w100' id='post-input-wrapper'>
+                    <div className='FCSS w100' id='post-input-wrapper'>
+                        <input type='text' placeholder='Title' id='post-title-input' autoComplete='off' onChange={(e) => setPostTitle(e.target.value)} />
                         <ReactQuill theme="snow" value={content} onChange={setContent} className='w100' id='post-input' placeholder='What do you want to share?' />
                         <div className='FRCS' id='create-post-tags'>
                             {tags.map(tag => (
@@ -115,9 +117,9 @@ const CreateNewPost = ({ onMinimize }) => {
                 <div className='w100 FRCB post-footer'>
                     <div className='FRCS post-actions'>
                         <PostAction icon='fa-regular fa-image' label='Attachment' />
-                        <PostAction icon='fa-regular fa-hashtag' label='Tag' />
+                        {/* <PostAction icon='fa-regular fa-hashtag' label='Tag' /> */}
                         {/* <PostAction icon='fa-regular fa-at' label='Mention' /> */}
-                        <PostAction icon='fa-solid fa-t' label='Title' />
+                        {/* <PostAction icon='fa-solid fa-t' label='Title' /> */}
                         <PostAction icon='fa-solid fa-square-poll-vertical' label='Poll' />
                         <PostAction icon='fa-regular fa-calendar-days' label='Schedule' />
                     </div>
