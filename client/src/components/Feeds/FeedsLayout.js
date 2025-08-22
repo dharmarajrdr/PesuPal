@@ -1,11 +1,9 @@
-import { useState } from 'react'
 import './FeedsLayout.css'
-import Popup from '../Popup'
-import { UsePopupFromSession } from '../../UsePopupFromSession'
 import Feeds from './Feeds'
-import { Route, Routes } from 'react-router-dom'
-import PageNotFound from '../Auth/PageNotFound'
+import { useState } from 'react'
 import TagPostsLayout from './TagPostsLayout'
+import PageNotFound from '../Auth/PageNotFound'
+import { Route, Routes } from 'react-router-dom'
 
 const FeedsLayout = () => {
 
@@ -13,7 +11,7 @@ const FeedsLayout = () => {
         [leftNavOpened,] = leftNavigationState,
         width = {
             'leftNavOpened': "24.5%",
-            "leftNavClosed": "85px"
+            "leftNavClosed": "90px"
         }
     return (
         <div id='FeedsLayout' className='Layout FRCS'>
