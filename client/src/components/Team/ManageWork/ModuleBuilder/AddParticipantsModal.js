@@ -1,10 +1,10 @@
-import { useEffect, useState } from 'react'
-import { useDispatch } from 'react-redux';
-import { hideConfirmationPopup, showConfirmationPopup } from '../../../../store/reducers/ConfirmationPopupSlice';
-import { apiRequest } from '../../../../http_request';
-import { showProfile } from '../../../../store/reducers/ProfileSlice';
 import Loader from '../../../Loader';
+import { useDispatch } from 'react-redux';
+import { useEffect, useState } from 'react'
+import { apiRequest } from '../../../../http_request';
 import { showPopup } from '../../../../store/reducers/PopupSlice';
+import { showProfile } from '../../../../store/reducers/ProfileSlice';
+import { hideConfirmationPopup, showConfirmationPopup } from '../../../../store/reducers/ConfirmationPopupSlice';
 
 
 const SearchUsers = ({ searchQuery, setSearchQuery }) => {
@@ -16,7 +16,7 @@ const SearchUsers = ({ searchQuery, setSearchQuery }) => {
     );
 }
 
-const AddUser = ({ user, moduleId }) => {
+const AddUser = ({ user, moduleId, onClose }) => {
 
     const dispatch = useDispatch();
     const { id, displayPicture, displayName, email } = user || {};
@@ -29,7 +29,15 @@ const AddUser = ({ user, moduleId }) => {
                     title: 'Add',
                     color: 'green',
                     onClick: () => {
-                        // add member api call
+                        apiRequest(`/api/v1/module/${moduleId}/member`, 'POST', {
+                            'userId': id, moduleId, 'role': 'MEMBER'
+                        }).then(({ message }) => {
+                            dispatch(hideConfirmationPopup());
+                            dispatch(showPopup({ message, type: 'success' }));
+                            onClose();
+                        }).catch(({ message }) => {
+                            dispatch(showPopup({ message, type: 'error' }));
+                        });
                     }
                 },
                 {
@@ -65,11 +73,11 @@ const NoUserFound = () => {
     )
 }
 
-const UsersList = ({ users, moduleId }) => {
+const UsersList = ({ users, moduleId, onClose }) => {
 
     return <div className='w100' id='add-participants-users-list'>
         {users.length ?
-            users.map((user, index) => <AddUser key={index} user={user} moduleId={moduleId} />) :
+            users.map((user, index) => <AddUser key={index} user={user} moduleId={moduleId} onClose={onClose} />) :
             <NoUserFound />}
     </div>
 }
@@ -114,7 +122,7 @@ const AddParticipantsModal = ({ moduleId, onClose }) => {
                 <h3 id='add-participants-title' className='w100'>Add Members</h3>
                 {loader ? <Loader /> : <>
                     <SearchUsers moduleId={moduleId} setSearchQuery={setSearchQuery} />
-                    <UsersList users={users} moduleId={moduleId} />
+                    <UsersList users={users} moduleId={moduleId} onClose={onClose} />
                 </>}
             </div>
         </div>
