@@ -1,6 +1,7 @@
 package com.pesupal.server.service.implementations.module;
 
 import com.pesupal.server.dto.request.module.AddModuleMemberDto;
+import com.pesupal.server.dto.response.UserPreviewDto;
 import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.exceptions.PermissionDeniedException;
@@ -12,11 +13,12 @@ import com.pesupal.server.model.module.ModulePermission;
 import com.pesupal.server.model.module.ModuleRole;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.repository.module.ModuleMemberRepository;
-import com.pesupal.server.service.interfaces.org.OrgMemberService;
 import com.pesupal.server.service.interfaces.module.ModuleMemberService;
 import com.pesupal.server.service.interfaces.module.ModulePermissionService;
 import com.pesupal.server.service.interfaces.module.ModuleService;
+import com.pesupal.server.service.interfaces.org.OrgMemberService;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -134,5 +136,25 @@ public class ModuleMemberServiceImpl extends CurrentValueRetriever implements Mo
     public void deleteAllMembersInModule(String moduleId) {
 
         moduleMemberRepository.deleteAllByModule_PublicId(moduleId);
+    }
+
+    /**
+     * Retrieves a list of users who are not members of a specific module.
+     *
+     * @param moduleId
+     * @param search
+     * @param pageable
+     * @return
+     */
+    @Override
+    public List<UserPreviewDto> getNonMembersOfModule(String moduleId, String search, Pageable pageable) {
+
+        OrgMember orgMember = getCurrentOrgMember();
+        Module module = moduleService.getModuleById(moduleId);
+        if (!ModuleHelper.isModuleOwner(module, orgMember)) {
+            throw new PermissionDeniedException("Only module owner has permission to perform this action.");
+        }
+
+        return moduleMemberRepository.getNonMembersOfModule(moduleId, search, pageable).map(UserPreviewDto::fromOrgMember).toList();
     }
 }
