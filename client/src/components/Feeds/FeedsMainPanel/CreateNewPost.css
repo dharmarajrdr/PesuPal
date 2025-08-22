@@ -59,17 +59,76 @@
   color: var(--primary-color);
 }
 
-.post-input {
-  height: calc(100% - 50px);
-}
-
-.post-input-section {
+#post-input-section {
   gap: 15px;
+  height: calc(100% - 100px);
   margin-bottom: 15px;
 }
 
-.fullscreen-post-creation .post-input-section {
-  height: calc(100% - 100px);
+#post-input-wrapper {
+  height: 100%;
+}
+
+#post-title-input {
+  width: 100%;
+  border: none;
+  outline: none;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 10px;
+  padding: 10px 15px;
+  border-radius: 8px;
+  font-family: 'system-ui';
+  background-color: var(--pure-white);
+  border: 1px solid #ccc;
+}
+
+#post-title-input:focus {
+  background-color: #fafafa;
+}
+
+#post-input {
+  height: calc(100% - 85px);
+}
+
+#create-post-tags {
+  gap: 3px;
+  flex-wrap: wrap;
+  margin-top: 55px;
+}
+
+.create-post-tag {
+  background-color: var(--pure-white-hover);
+  color: var(--primary-color);
+  padding: 3px 8px;
+  border-radius: 10px;
+  font-size: 12px;
+  margin-right: 3px;
+  cursor: pointer;
+}
+
+.create-post-tag i {
+  font-size: 10px;
+  color: #aaa;
+  width: 12px;
+  text-align: center;
+}
+
+.create-post-tag:hover {
+  background-color: #eee;
+  color: var(--primary-color-active);
+}
+
+.create-post-tag i:hover {
+  color: #333;
+}
+
+#create-tag-input {
+  border: none;
+  outline: none;
+  padding: 3px 8px;
+  font-size: 12px;
+  max-width: max-content;
 }
 
 .user-avatar {

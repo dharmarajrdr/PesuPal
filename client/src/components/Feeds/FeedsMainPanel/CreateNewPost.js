@@ -3,7 +3,8 @@ import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { useState } from 'react';
 import { apiRequest } from '../../../http_request';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { showPopup } from '../../../store/reducers/PopupSlice';
 
 const ShareWithSchedule = ({ onShare, onSchedule }) => {
 
@@ -25,7 +26,10 @@ const ShareWithSchedule = ({ onShare, onSchedule }) => {
 
 const CreateNewPost = ({ onMinimize }) => {
 
+    const dispatch = useDispatch();
+    const [tags, setTags] = useState([]);
     const [content, setContent] = useState("");
+    const [postTitle, setPostTitle] = useState("");
     const myProfile = useSelector(state => state.myProfile);
 
     const [isFullScreen, setIsFullScreen] = useState(true);
@@ -38,11 +42,9 @@ const CreateNewPost = ({ onMinimize }) => {
         }
 
         apiRequest(`/api/v1/post/create`, 'POST', {
-            "title": "New Post",
+            "title": postTitle,
             "description": content,
-            "tags": [
-
-            ],
+            "tags": tags,
             "mediaIds": [
 
             ],
@@ -52,11 +54,11 @@ const CreateNewPost = ({ onMinimize }) => {
             //         "Microsoft", "PayPal", "Google", "Amazon"
             //     ]
             // }
-        }).then(({ data }) => {
-            setIsFullScreen(false);
-            content("");
+        }).then(({ data, message }) => {
+            onMinimize();
+            dispatch(showPopup({ message, type: 'success' }));
         }).catch(({ message }) => {
-
+            dispatch(showPopup({ message, type: 'error' }));
         });
     };
 
@@ -68,6 +70,25 @@ const CreateNewPost = ({ onMinimize }) => {
         setIsFullScreen(!isFullScreen);
     }
 
+    const addTagHandler = (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            const newTag = `#${e.target.value.trim()}`;
+            if (newTag.match(/^#[\w-]+$/) === null) {
+                return dispatch(showPopup({ message: "Invalid tag format! Tags can only contain letters, numbers, underscores, and hyphens.", type: 'error' }));
+            }
+            if (newTag && !tags.includes(newTag)) {
+                setTags([...tags, newTag]);
+                e.target.value = '';
+            }
+        }
+    }
+
+    const removeTagHandler = (e) => {
+        const tagToRemove = e.target.previousSibling.textContent;
+        setTags(tags.filter(tag => tag !== tagToRemove));
+    }
+
     return (
         <div id='create-new-post-overlay' className='entire-screen-overlay fullscreen-post-creation FRCC'>
             <div id='CreateNewPost' className='FCSS post-container'>
@@ -76,17 +97,29 @@ const CreateNewPost = ({ onMinimize }) => {
                     {/* <i className="fa-solid fa-down-left-and-up-right-to-center" id='expand-post-creation' onClick={onMinimize}></i> */}
                 </div>
 
-                <div className='FRSS w100 post-input-section'>
+                <div className='FRSS w100' id='post-input-section'>
                     <img src={myProfile?.displayPicture} className='img_40_40 user-avatar' alt='User' />
-                    <ReactQuill theme="snow" value={content} onChange={setContent} className='w100 post-input' placeholder='What do you want to share?' />
+                    <div className='FCSS w100' id='post-input-wrapper'>
+                        <input type='text' placeholder='Title' id='post-title-input' autoComplete='off' onChange={(e) => setPostTitle(e.target.value)} />
+                        <ReactQuill theme="snow" value={content} onChange={setContent} className='w100' id='post-input' placeholder='What do you want to share?' />
+                        <div className='FRCS' id='create-post-tags'>
+                            {tags.map(tag => (
+                                <div className='create-post-tag FRCC' key={tag}>
+                                    <span>{tag}</span>
+                                    <i className="fa-solid fa-xmark" onClick={removeTagHandler}></i>
+                                </div>
+                            ))}
+                            <input type='text' placeholder='Add Tag' autoComplete='off' id='create-tag-input' onKeyDown={addTagHandler} />
+                        </div>
+                    </div>
                 </div>
 
                 <div className='w100 FRCB post-footer'>
                     <div className='FRCS post-actions'>
                         <PostAction icon='fa-regular fa-image' label='Attachment' />
-                        <PostAction icon='fa-regular fa-hashtag' label='Tag' />
+                        {/* <PostAction icon='fa-regular fa-hashtag' label='Tag' /> */}
                         {/* <PostAction icon='fa-regular fa-at' label='Mention' /> */}
-                        <PostAction icon='fa-solid fa-t' label='Title' />
+                        {/* <PostAction icon='fa-solid fa-t' label='Title' /> */}
                         <PostAction icon='fa-solid fa-square-poll-vertical' label='Poll' />
                         <PostAction icon='fa-regular fa-calendar-days' label='Schedule' />
                     </div>

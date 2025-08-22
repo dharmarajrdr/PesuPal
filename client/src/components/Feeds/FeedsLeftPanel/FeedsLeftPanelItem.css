@@ -16,6 +16,7 @@
 
 #FeedsLeftPanelItem i {
   width: 40px;
+  margin-right: 10px;
 }
 
 #FeedsLeftPanelItem span {
