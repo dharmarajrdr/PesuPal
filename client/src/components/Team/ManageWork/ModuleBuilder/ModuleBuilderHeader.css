@@ -54,3 +54,21 @@
 #more-options-button:hover {
     border-color: #eee;
 }
+
+#module-members-icon {
+    background-color: #eee;
+    margin-left: 10px;
+    border-radius: 5px;
+    padding: 3px;
+    cursor: pointer;
+}
+
+#module-members-icon i,
+#module-members-icon #module-member-count {
+    color: var(--primary-color);
+}
+
+#module-members-icon #module-member-count {
+    font-size: 12px;
+    padding-right: 2px;
+}

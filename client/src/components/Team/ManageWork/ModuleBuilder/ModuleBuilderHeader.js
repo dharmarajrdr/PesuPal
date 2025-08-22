@@ -84,6 +84,16 @@ const MoreOptionsButton = ({ moduleId }) => {
     )
 }
 
+const ModuleMembersIcon = () => {
+
+    return (
+        <div id='module-members-icon' className='FRCC'>
+            <i className='fa fa-user w20 fs10'></i>
+            <div id='module-member-count'>5000</div>
+        </div>
+    )
+}
+
 const ModuleBuilderHeader = () => {
 
     const module = useSelector(state => state.currentModule.data);
@@ -95,6 +105,7 @@ const ModuleBuilderHeader = () => {
                 <i className='fa fa-arrow-left fs16 mR10' onClick={() => window.history.back()}></i>
                 <h4 id='module-name'>{name}</h4>
                 <i className='fa fa-info-circle fs12 mL10 colorDDD' title={description || 'No description found'}></i>
+                <ModuleMembersIcon />
             </div>
             <div className='FRCE'>
                 <PublishButton />
