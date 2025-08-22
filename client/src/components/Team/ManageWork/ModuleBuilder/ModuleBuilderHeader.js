@@ -85,17 +85,17 @@ const MoreOptionsButton = ({ moduleId }) => {
     )
 }
 
-const ModuleMembersIcon = () => {
+const ModuleMembersIcon = ({ memberCount }) => {
 
     const [showAddParticipantsModal, setShowAddParticipantsModal] = useState(false);
 
     const { moduleId } = useParams();
 
-    return (
+    return memberCount && (
         <div id='module-members-icon' className='FRCC' onClick={() => setShowAddParticipantsModal(true)}>
             {showAddParticipantsModal && <AddParticipantsModal moduleId={moduleId} onClose={() => setShowAddParticipantsModal(false)} />}
             <i className='fa fa-user w15 fs10'></i>
-            <div id='module-member-count'>5000</div>
+            <div id='module-member-count'>{memberCount}</div>
         </div>
     )
 }
@@ -103,7 +103,7 @@ const ModuleMembersIcon = () => {
 const ModuleBuilderHeader = () => {
 
     const module = useSelector(state => state.currentModule.data);
-    const { publicId, name, description } = module || {};
+    const { publicId, name, description, memberCount } = module || {};
 
     return (
         <div id='create-module-header' className='w100 FRCB'>
@@ -111,7 +111,7 @@ const ModuleBuilderHeader = () => {
                 <i className='fa fa-arrow-left fs16 mR10 w15' onClick={() => window.history.back()}></i>
                 <h4 id='module-name'>{name}</h4>
                 <i className='fa fa-info-circle fs12 mL10 w15 colorDDD' title={description || 'No description found'}></i>
-                <ModuleMembersIcon />
+                <ModuleMembersIcon memberCount={memberCount} />
             </div>
             <div className='FRCE'>
                 <PublishButton />

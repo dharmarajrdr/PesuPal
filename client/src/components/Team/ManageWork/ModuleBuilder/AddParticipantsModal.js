@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { apiRequest } from '../../../../http_request';
 import { showPopup } from '../../../../store/reducers/PopupSlice';
 import { showProfile } from '../../../../store/reducers/ProfileSlice';
+import { incrementModuleMemberCount } from '../../../../store/reducers/CurrentModuleSlice';
 import { hideConfirmationPopup, showConfirmationPopup } from '../../../../store/reducers/ConfirmationPopupSlice';
 
 
@@ -34,6 +35,7 @@ const AddUser = ({ user, moduleId, onClose }) => {
                         }).then(({ message }) => {
                             dispatch(hideConfirmationPopup());
                             dispatch(showPopup({ message, type: 'success' }));
+                            dispatch(incrementModuleMemberCount());
                             onClose();
                         }).catch(({ message }) => {
                             dispatch(showPopup({ message, type: 'error' }));
