@@ -4,6 +4,7 @@ import com.pesupal.server.dto.request.post.CreatePostDto;
 import com.pesupal.server.dto.response.ApiResponseDto;
 import com.pesupal.server.dto.response.post.PostDto;
 import com.pesupal.server.dto.response.post.PostsListDto;
+import com.pesupal.server.enums.PostStatus;
 import com.pesupal.server.enums.SortOrder;
 import com.pesupal.server.model.post.Post;
 import com.pesupal.server.service.interfaces.post.PostService;
@@ -21,8 +22,17 @@ public class PostController {
     @PostMapping("/create")
     public ResponseEntity<ApiResponseDto> createPost(@RequestBody CreatePostDto createPostDto) {
 
+        createPostDto.setStatus(PostStatus.PUBLISHED);
         Post post = postService.createPost(createPostDto);
         return ResponseEntity.ok().body(new ApiResponseDto("Post created successfully", post));
+    }
+
+    @PostMapping("/schedule")
+    public ResponseEntity<ApiResponseDto> schedulePost(@RequestBody CreatePostDto createPostDto) {
+
+        createPostDto.setStatus(PostStatus.SCHEDULED);
+        Post post = postService.schedulePost(createPostDto);
+        return ResponseEntity.ok().body(new ApiResponseDto("Post scheduled successfully", post));
     }
 
     @GetMapping("/{postId}")

@@ -12,7 +12,6 @@ import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.exceptions.PermissionDeniedException;
 import com.pesupal.server.helpers.CurrentValueRetriever;
-import com.pesupal.server.model.org.Org;
 import com.pesupal.server.model.post.Post;
 import com.pesupal.server.model.post.PostLike;
 import com.pesupal.server.model.post.PostMedia;
@@ -65,7 +64,6 @@ public class PostServiceImpl extends CurrentValueRetriever implements PostServic
         Post post = createPostDto.toPost();
         post.setOrg(creator.getOrg());
         post.setCreator(creator);
-        post.setStatus(PostStatus.PUBLISHED);
         List<PostMedia> postMedia = createPostDto.getMediaIds().stream().map(mediaId -> PostMedia.builder().post(post).mediaId(mediaId.getId()).extension(mediaId.getExtension()).build()).collect(Collectors.toList());
         post.setMedia(!postMedia.isEmpty());
         post.setPostMedia(postMedia);
@@ -76,6 +74,20 @@ public class PostServiceImpl extends CurrentValueRetriever implements PostServic
         if (hasPoll) {
             pollService.createPoll(createPostDto.getPoll(), post);
         }
+        return post;
+    }
+
+    /**
+     * Schedules a post for future publication.
+     *
+     * @param createPostDto
+     * @return
+     */
+    @Override
+    public Post schedulePost(CreatePostDto createPostDto) {
+        
+        Post post = createPost(createPostDto);
+
         return post;
     }
 
@@ -118,19 +130,6 @@ public class PostServiceImpl extends CurrentValueRetriever implements PostServic
     public Post getPostByIdAndOrgId(Long postId, Long orgId) {
 
         return postRepository.findByIdAndOrgId(postId, orgId).orElseThrow(() -> new DataNotFoundException("Post with ID " + postId + " does not exist."));
-    }
-
-    /**
-     * Retrieves a post by its ID.
-     *
-     * @param postId
-     * @param org
-     * @return Post
-     */
-    @Override
-    public Post getPostByIdAndOrg(Long postId, Org org) {
-
-        return postRepository.findByIdAndOrg(postId, org).orElseThrow(() -> new DataNotFoundException("Post with ID " + postId + " does not exist."));
     }
 
     /**
