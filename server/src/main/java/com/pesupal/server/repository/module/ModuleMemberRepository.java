@@ -20,7 +20,7 @@ public interface ModuleMemberRepository extends JpaRepository<ModuleMember, Long
     int countAllByModule(Module module);
 
     boolean existsByModule_PublicIdAndOrgMember_PublicId(String moduleId, String userId);
-    
+
     List<ModuleMember> findAllByOrgMember(OrgMember orgMember);
 
     void deleteAllByModule_PublicId(String moduleId);
@@ -40,4 +40,17 @@ public interface ModuleMemberRepository extends JpaRepository<ModuleMember, Long
                     ORDER BY u.displayName ASC
             """)
     Page<OrgMember> getNonMembersOfModule(String moduleId, String search, Pageable pageable);
+
+    @Query("""
+                    SELECT mm
+                    FROM ModuleMember mm
+                    WHERE (
+                        LOWER(mm.orgMember.displayName) LIKE LOWER(CONCAT('%', :search, '%'))
+                        OR LOWER(mm.orgMember.userName) LIKE LOWER(CONCAT('%', :search, '%'))
+                    )
+                    AND mm.module.publicId = :moduleId
+                    AND mm.role IN ('MAINTAINER', 'MEMBER')
+                    ORDER BY mm.orgMember.displayName ASC
+            """)
+    Page<ModuleMember> getMembersOfModule(String moduleId, String search, Pageable pageable);
 }
