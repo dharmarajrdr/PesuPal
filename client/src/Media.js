@@ -8,7 +8,10 @@ async function uploadSingleMedia(file) {
 
 async function uploadMultipleMedia(files, setFiles) {
 
+    if (!files || !files.length) return;
+
     setFiles(prevFiles => prevFiles.map(f => ({ ...f, 'uploading': true })));
+
     for (const file of files) {
         try {
             const { data } = await uploadSingleMedia(file);
