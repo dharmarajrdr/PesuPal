@@ -1,12 +1,10 @@
-import { useEffect, useState } from 'react'
 import './Header.css'
+import { useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux';
 import FilterComponentItem from './FilterComponentItem';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import { toggleFilterBox } from '../../../store/reducers/ModuleFilterSlice';
 import CreateRecordLayout from './CreateRecord/CreateRecordLayout';
-import { apiRequest } from '../../../http_request';
-import { showPopup } from '../../../store/reducers/PopupSlice';
+import { toggleFilterBox } from '../../../store/reducers/ModuleFilterSlice';
 
 const GetParams = () => {
     const params = useParams();
@@ -70,7 +68,7 @@ const ModuleBuilder = () => {
     }
 
     return accessModuleBuilder && (
-        <div className="FRCC mL10" id='moduleBuilderIcon' title='Module Builder' onClick={clickHandler}>
+        <div className="FRCC mR10" id='moduleBuilderIcon' title='Module Builder' onClick={clickHandler}>
             <i className='fa fa-wrench'></i>
         </div>
     )
@@ -135,6 +133,8 @@ const ViewsList = () => {
 
 const Header = ({ modules }) => {
 
+    const { records } = useSelector((state) => state.currentModule);
+
     return (
         <div id='task_header' className='FCSS w100'>
             <div className='FRCB w100 mB10'>
@@ -142,9 +142,8 @@ const Header = ({ modules }) => {
                 <div className='FRCS' id='modulesList-filter-view'>
                     {modules.length > 0 && <>
                         <ModulesList modules={modules} />
-                        <FilterIcon />
-                        <ViewsList />
                         <ModuleBuilder />
+                        {records.length > 0 && <><FilterIcon /><ViewsList /></>}
                     </>}
                 </div>
                 <CreateButtons />
