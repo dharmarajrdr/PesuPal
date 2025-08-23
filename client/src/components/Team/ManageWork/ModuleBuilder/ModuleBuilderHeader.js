@@ -172,9 +172,9 @@ const ModuleVisibility = ({ accessibility, moduleId }) => {
 
     return (
         <select value={value} onChange={handleVisibilityChange} id='module-visibility-select' className='mR10'>
-            <option value="ONLY_ME">Only Me</option>
-            <option value="SELECTIVE_MEMBERS">Selective Members</option>
-            <option value="ANYONE_IN_ORG">Anyone in Org</option>
+            <option value="ONLY_ME" title='Only you can access this module'>Only Me</option>
+            <option value="SELECTIVE_MEMBERS" title='Only selected members can access this module'>Selective Members</option>
+            <option value="ANYONE_IN_ORG" title='Anyone in the organization can access this module'>Anyone in Org</option>
         </select>
     )
 }
