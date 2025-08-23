@@ -1,7 +1,7 @@
 import './CreateNewPost.css';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { apiRequest } from '../../../http_request';
 import { useDispatch, useSelector } from 'react-redux';
 import { showPopup } from '../../../store/reducers/PopupSlice';
@@ -33,6 +33,35 @@ const CreateNewPost = ({ onMinimize }) => {
     const myProfile = useSelector(state => state.myProfile);
 
     const [isFullScreen, setIsFullScreen] = useState(true);
+
+    useEffect(() => {
+
+        const quillEditor = document.querySelector('.ql-container.ql-snow');
+        const quillToolbar = document.querySelector('.ql-toolbar.ql-snow');
+        const fullscreenQuillEditor = document.querySelector('.fullscreen-post-creation .ql-editor');
+        const inputWrapper = document.getElementById('post-content-input-wrapper');
+        const createPostTags = document.getElementById('create-post-tags');
+        const postInput = document.getElementById('post-input');
+
+        if (quillEditor) {
+            quillEditor.style.border = 'none';
+        }
+        if (quillToolbar) {
+            quillToolbar.style.border = 'none';
+            quillToolbar.style.borderBottom = '1px solid #ccc';
+        }
+        if (postInput) {
+            // postInput.style.border = '1px solid blue';
+            postInput.style.height = `calc(100% - ${createPostTags.offsetHeight}px)`;
+        }
+        if (fullscreenQuillEditor) {
+            // fullscreenQuillEditor.style.border = '1px solid orange';
+            fullscreenQuillEditor.style.height = `calc(100% - 40px)`;
+        }
+        if (inputWrapper) {
+            inputWrapper.style.height = '470px';
+        }
+    }, []);
 
     const handlePostSubmit = () => {
 
@@ -101,27 +130,29 @@ const CreateNewPost = ({ onMinimize }) => {
                     <img src={myProfile?.displayPicture} className='img_40_40 user-avatar' alt='User' />
                     <div className='FCSS w100' id='post-input-wrapper'>
                         <input type='text' placeholder='Title' id='post-title-input' autoComplete='off' onChange={(e) => setPostTitle(e.target.value)} />
-                        <ReactQuill theme="snow" value={content} onChange={setContent} className='w100' id='post-input' placeholder='What do you want to share?' />
-                        <div className='FRCS' id='create-post-tags'>
-                            {tags.map(tag => (
-                                <div className='create-post-tag FRCC' key={tag}>
-                                    <span>{tag}</span>
-                                    <i className="fa-solid fa-xmark" onClick={removeTagHandler}></i>
-                                </div>
-                            ))}
-                            <input type='text' placeholder='Add Tag' autoComplete='off' id='create-tag-input' onKeyDown={addTagHandler} />
+                        <div className='FCSS w100' id='post-content-input-wrapper'>
+                            <ReactQuill theme="snow" value={content} onChange={setContent} className='w100' id='post-input' placeholder='What do you want to share?' />
+                            <div className='FRCS' id='create-post-tags'>
+                                {tags.map(tag => (
+                                    <div className='create-post-tag FRCC' key={tag}>
+                                        <span>{tag}</span>
+                                        <i className="fa-solid fa-xmark" onClick={removeTagHandler}></i>
+                                    </div>
+                                ))}
+                                <input type='text' placeholder='Add Tag' autoComplete='off' id='create-tag-input' onKeyDown={addTagHandler} />
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 <div className='w100 FRCB post-footer'>
                     <div className='FRCS post-actions'>
+                        <PostAction icon='fa-solid fa-square-poll-vertical' label='Poll' />
                         <PostAction icon='fa-regular fa-image' label='Attachment' />
                         {/* <PostAction icon='fa-regular fa-hashtag' label='Tag' /> */}
                         {/* <PostAction icon='fa-regular fa-at' label='Mention' /> */}
                         {/* <PostAction icon='fa-solid fa-t' label='Title' /> */}
-                        <PostAction icon='fa-solid fa-square-poll-vertical' label='Poll' />
-                        <PostAction icon='fa-regular fa-calendar-days' label='Schedule' />
+                        {/* <PostAction icon='fa-regular fa-calendar-days' label='Schedule' /> */}
                     </div>
                     <div className='FRCE'>
                         <button id='cancel-post-button' onClick={onMinimize}>Cancel</button>

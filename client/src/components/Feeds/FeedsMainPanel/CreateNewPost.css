@@ -45,7 +45,7 @@
   font-size: 18px;
   font-weight: 500;
   color: var(--primary-color);
-  margin-bottom: 10px;
+  margin-bottom: 15px;
 }
 
 #expand-post-creation {
@@ -87,14 +87,20 @@
   background-color: #fafafa;
 }
 
-#post-input {
-  height: calc(100% - 85px);
+#post-content-input-wrapper {
+  border: 1px solid #ccc;
+  position: relative;
+  border-radius: 8px;
 }
 
 #create-post-tags {
-  gap: 3px;
+  gap: 3px; 
   flex-wrap: wrap;
-  margin-top: 55px;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  min-height: 40px;
+  padding: 10px 10px;
 }
 
 .create-post-tag {
