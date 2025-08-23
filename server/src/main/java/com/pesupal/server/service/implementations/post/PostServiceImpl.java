@@ -21,10 +21,7 @@ import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.model.user.User;
 import com.pesupal.server.repository.post.PostRepository;
 import com.pesupal.server.service.interfaces.org.OrgMemberService;
-import com.pesupal.server.service.interfaces.post.PollService;
-import com.pesupal.server.service.interfaces.post.PostService;
-import com.pesupal.server.service.interfaces.post.PostTagService;
-import com.pesupal.server.service.interfaces.post.TagService;
+import com.pesupal.server.service.interfaces.post.*;
 import com.pesupal.server.strategies.media_storage.S3Service;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -50,6 +47,7 @@ public class PostServiceImpl extends CurrentValueRetriever implements PostServic
     private final PostRepository postRepository;
     private final PostTagService postTagService;
     private final OrgMemberService orgMemberService;
+    private final PostMediaService postMediaService;
 
     /**
      * Creates a new post.
@@ -289,6 +287,9 @@ public class PostServiceImpl extends CurrentValueRetriever implements PostServic
         }
         if (post.isHasPoll()) {
             pollService.deleteByPost(post);
+        }
+        if (post.isMedia()) {
+            postMediaService.unlinkMediaFromPost(post);
         }
         postRepository.delete(post);
     }

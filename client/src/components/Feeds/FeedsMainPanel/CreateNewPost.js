@@ -7,6 +7,7 @@ import { apiRequest } from '../../../http_request';
 import { useDispatch, useSelector } from 'react-redux';
 import { showPopup } from '../../../store/reducers/PopupSlice';
 import { showFullScreenImage } from '../../../store/reducers/FullScreenImageSlice';
+import { hideLoader, showLoader } from '../../../store/reducers/VerticalLoaderSlice';
 
 const ShareWithSchedule = ({ onShare, onSchedule }) => {
 
@@ -78,6 +79,8 @@ const CreateNewPost = ({ onMinimize }) => {
             return;
         }
 
+        dispatch(showLoader());
+
         Media.uploadMultipleMedia(files, setFiles).then(() => {
 
             apiRequest(`/api/v1/post/create`, 'POST', {
@@ -98,12 +101,15 @@ const CreateNewPost = ({ onMinimize }) => {
             }).then(({ data, message }) => {
                 onMinimize();
                 dispatch(showPopup({ message, type: 'success' }));
+                dispatch(hideLoader());
             }).catch(({ message }) => {
                 dispatch(showPopup({ message, type: 'error' }));
+                dispatch(hideLoader());
             });
 
         }).catch(({ message }) => {
             dispatch(showPopup({ message, type: 'error' }));
+            dispatch(hideLoader());
         });
 
     };
