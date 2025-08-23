@@ -117,6 +117,7 @@ public class PostServiceImpl extends CurrentValueRetriever implements PostServic
             throw new ActionProhibitedException("Post is not scheduled.");
         }
 
+        post.setCreatedAt(LocalDateTime.now());
         post.setStatus(PostStatus.PUBLISHED);
         return postRepository.save(post);
     }
