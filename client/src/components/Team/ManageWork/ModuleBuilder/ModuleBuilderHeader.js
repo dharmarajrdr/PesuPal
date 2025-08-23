@@ -5,6 +5,7 @@ import OptionsModal from '../../../Utils/OptionsModal';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import AddParticipantsModal from './AddParticipantsModal';
+import ModulePermissionModal from './ModulePermissionModal';
 import ManageParticipantsModal from './ManageParticipantsModal';
 import { showPopup } from '../../../../store/reducers/PopupSlice';
 import MyModulesListOverlay from '../CreateModule/MyModulesListOverlay'
@@ -171,6 +172,7 @@ const ModuleVisibility = ({ accessibility, moduleId }) => {
 
 const ModuleBuilderHeader = () => {
 
+    const [showPermissionModal, setShowPermissionModal] = useState(true);
     const module = useSelector(state => state.currentModule.data);
     const { publicId, name, description, memberCount, accessibility } = module || {};
 
@@ -188,6 +190,7 @@ const ModuleBuilderHeader = () => {
                 <PublishButton />
                 <MoreOptionsButton moduleId={publicId} />
             </div>
+            {showPermissionModal && <ModulePermissionModal onClose={() => setShowPermissionModal(false)} moduleId={publicId} />}
         </div>
     )
 }
