@@ -13,10 +13,16 @@ public class UpdateModuleMemberDto {
 
     private ModuleRole role;
 
+    private Boolean active;
+
     public void applyToModuleMember(ModuleMember moduleMember) {
 
         if (role != null) {
             moduleMember.setRole(role);
+        }
+
+        if (active != null) {
+            moduleMember.setActive(active);
         }
     }
 }
