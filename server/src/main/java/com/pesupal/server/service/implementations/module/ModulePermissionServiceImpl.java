@@ -2,6 +2,7 @@ package com.pesupal.server.service.implementations.module;
 
 import com.pesupal.server.dto.request.module.UpdateModulePermissionDto;
 import com.pesupal.server.dto.response.module.ModulePermissionDto;
+import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.exceptions.PermissionDeniedException;
 import com.pesupal.server.helpers.CurrentValueRetriever;
@@ -93,14 +94,19 @@ public class ModulePermissionServiceImpl extends CurrentValueRetriever implement
                 if (!module.getCreatedBy().getPublicId().equals(orgMember.getPublicId())) {
                     throw new PermissionDeniedException("You do not have permission to access this module.");
                 }
+                return ModulePermission.builder().role(ModuleRole.OWNER).createRecord(true).readRecord(true).deleteRecord(true).manageMembers(true).clearRecords(true).build();
             }
             case ANYONE_IN_ORG: {
                 if (!module.getCreatedBy().getOrg().getId().equals(orgMember.getOrg().getId())) {
                     throw new PermissionDeniedException("Module does not exist in your organization.");
                 }
+                return ModulePermission.builder().createRecord(true).readRecord(true).deleteRecord(true).manageMembers(true).clearRecords(true).build();
             }
             case SELECTIVE_MEMBERS: {
                 ModuleMember moduleMember = moduleMemberService.getModuleMemberByOrgMemberAndModule(orgMember, module);
+                if (!moduleMember.isActive()) {
+                    throw new PermissionDeniedException("You are no longer part of this module.");
+                }
                 return getModulePermissionByModuleAndRole(module, moduleMember.getRole());
             }
             default: {
@@ -166,6 +172,10 @@ public class ModulePermissionServiceImpl extends CurrentValueRetriever implement
 
         if (!ModuleHelper.isModuleOwner(module, orgMember)) {
             throw new PermissionDeniedException("You do not have permission to update permissions in this module.");
+        }
+
+        if (!module.getAccessibility().equals(ModuleAccessibility.SELECTIVE_MEMBERS)) {
+            throw new ActionProhibitedException("Permissions can only be updated for modules with 'Selective Members' accessibility.");
         }
 
         String fieldName = StringHelper.toCamelCase(updateModulePermissionDto.getName());

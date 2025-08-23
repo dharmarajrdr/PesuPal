@@ -16,15 +16,19 @@ const ModuleBuilderLayout = () => {
     const dispatch = useDispatch();
     const { moduleId } = params || {};
 
-    const [loading, setLoading] = useState(true);
     const [error, setError] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [moduleNotFound, setModuleNotFound] = useState(false);
     const [permissionDenied, setPermissionDenied] = useState(false);
 
     useEffect(() => {
         apiRequest(`/api/v1/module/${moduleId}`, "GET").then(({ data }) => {
+            const { accessModuleBuilder } = data || {};
             setLoading(false);
             dispatch(setCurrentModuleData(data));
+            if (!accessModuleBuilder) {
+                setPermissionDenied(true);
+            }
         }).catch(({ message, statusCode }) => {
             setLoading(false);
             if (statusCode == 404) {

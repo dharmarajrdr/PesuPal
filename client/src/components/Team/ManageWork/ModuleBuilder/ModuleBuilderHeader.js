@@ -18,7 +18,7 @@ const PublishButton = () => {
     )
 }
 
-const MoreOptionsButton = ({ moduleId }) => {
+const MoreOptionsButton = ({ moduleId, accessibility }) => {
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -64,7 +64,7 @@ const MoreOptionsButton = ({ moduleId }) => {
         },
         {
             icon: 'fa fa-users-cog',
-            name: 'Permissions',
+            name: accessibility == 'SELECTIVE_MEMBERS' && 'Permissions',
             onClick: () => {
                 setShowPermissionModal(true);
             }
@@ -105,7 +105,7 @@ const AddModuleMember = ({ accessibility }) => {
     const isModuleAccessibleForSelectiveMembers = accessibility === 'SELECTIVE_MEMBERS';
 
     return isModuleAccessibleForSelectiveMembers && (
-        <div id='module-members-icon' className='FRCC' onClick={() => setShowAddParticipantsModal(true)}>
+        <div className='FRCC module-members-icon' onClick={() => setShowAddParticipantsModal(true)}>
             {showAddParticipantsModal && <AddParticipantsModal moduleId={moduleId} onClose={() => setShowAddParticipantsModal(false)} />}
             <i className='fa fa-user-plus w15 fs10'></i>
             <span>Add Members</span>
@@ -121,7 +121,7 @@ const ManageModuleMember = ({ memberCount, accessibility }) => {
     const isModuleAccessibleForSelectiveMembers = accessibility === 'SELECTIVE_MEMBERS';
 
     return isModuleAccessibleForSelectiveMembers && memberCount > 1 && (
-        <div id='module-members-icon' className='FRCC' onClick={() => setShowAddParticipantsModal(true)}>
+        <div className='FRCC module-members-icon' onClick={() => setShowAddParticipantsModal(true)}>
             {showAddParticipantsModal && <ManageParticipantsModal moduleId={moduleId} onClose={() => setShowAddParticipantsModal(false)} />}
             <i className='fa fa-user w15 fs10'></i>
             <span>{memberCount - 1}</span>  {/* Exclude the creator from the count */}
@@ -172,9 +172,9 @@ const ModuleVisibility = ({ accessibility, moduleId }) => {
 
     return (
         <select value={value} onChange={handleVisibilityChange} id='module-visibility-select' className='mR10'>
-            <option value="ONLY_ME">Only Me</option>
-            <option value="SELECTIVE_MEMBERS">Selective Members</option>
-            <option value="ANYONE_IN_ORG">Anyone in Org</option>
+            <option value="ONLY_ME" title='Only you can access this module'>Only Me</option>
+            <option value="SELECTIVE_MEMBERS" title='Only selected members can access this module'>Selective Members</option>
+            <option value="ANYONE_IN_ORG" title='Anyone in the organization can access this module'>Anyone in Org</option>
         </select>
     )
 }
@@ -196,7 +196,7 @@ const ModuleBuilderHeader = () => {
             <div className='FRCE'>
                 <ModuleVisibility accessibility={accessibility} moduleId={publicId} />
                 <PublishButton />
-                <MoreOptionsButton moduleId={publicId} />
+                <MoreOptionsButton moduleId={publicId} accessibility={accessibility} />
             </div>
         </div>
     )

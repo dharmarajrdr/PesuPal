@@ -21,7 +21,7 @@ const UpdateMemberRole = ({ user, moduleId, onClose }) => {
 
     const dispatch = useDispatch();
     const { id, member, role } = user || {};
-    const { displayPicture, displayName, email } = member || {};
+    const { displayPicture, displayName, email, id: userId } = member || {};
     const [newRole, setNewRole] = useState(role);
 
     const updateUserHandler = (e) => {
@@ -94,7 +94,7 @@ const UpdateMemberRole = ({ user, moduleId, onClose }) => {
 
     return <div key={id} className='user-preview FRCB w100'>
         <div className='FRCS'>
-            <img src={displayPicture} alt={displayName} className='img_30_30 mR10' onClick={() => { dispatch(showProfile(id)); }} />
+            <img src={displayPicture} alt={displayName} className='img_30_30 mR10' onClick={() => { dispatch(showProfile(userId)); }} />
             <div className='FCSS'>
                 <h6>{displayName}</h6>
                 <span className='fs10 mT2 color999'>{email}</span>
