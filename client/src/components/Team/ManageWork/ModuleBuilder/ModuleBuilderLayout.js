@@ -39,7 +39,7 @@ const ModuleBuilderLayout = () => {
         return () => {
             dispatch(setCurrentModuleData({}));
         }
-    }, []);
+    }, [moduleId]);
 
     return loading ? <Loader /> :
         moduleNotFound ? <PageNotFound /> :

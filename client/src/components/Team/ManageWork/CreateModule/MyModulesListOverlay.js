@@ -1,9 +1,9 @@
-import { useEffect, useState } from 'react';
 import './MyModulesList.css';
-import utils from '../../../../utils';
-import { apiRequest } from '../../../../http_request';
 import Loader from '../../../Loader';
+import utils from '../../../../utils';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { apiRequest } from '../../../../http_request';
 
 const MyModulePreview = ({ module }) => {
 
