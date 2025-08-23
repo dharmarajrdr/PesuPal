@@ -1,7 +1,9 @@
 package com.pesupal.server.service.implementations.module;
 
 import com.pesupal.server.dto.request.module.AddModuleMemberDto;
+import com.pesupal.server.dto.request.module.UpdateModuleMemberDto;
 import com.pesupal.server.dto.response.UserPreviewDto;
+import com.pesupal.server.dto.response.module.ModuleMemberDto;
 import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.exceptions.PermissionDeniedException;
@@ -98,18 +100,20 @@ public class ModuleMemberServiceImpl extends CurrentValueRetriever implements Mo
             }
         }
 
-        // 4. Check if the user is already a member of the module
-        if (moduleMemberRepository.existsByModule_PublicIdAndOrgMember_PublicId(moduleId, addModuleMemberDto.getUserId())) {
-            throw new ActionProhibitedException("This user is already a member of the module.");
-        }
-
-        // 5. Check if the user to be added is part of the organization
+        // 4. Check if the user to be added is part of the organization
         OrgMember memberToAdd = orgMemberService.getOrgMemberByPublicId(addModuleMemberDto.getUserId());
         if (!memberToAdd.getOrg().getId().equals(orgMember.getOrg().getId())) {
             throw new ActionProhibitedException("The member that you are trying to add does not belong to your organization.");
         }
 
-        ModuleMember moduleMember = addModuleMemberDto.toModuleMember();
+        // 5. Check if the user is already a member of the module
+        if (moduleMemberRepository.existsByModule_PublicIdAndOrgMember_PublicIdAndActive(moduleId, addModuleMemberDto.getUserId(), true)) {
+            throw new ActionProhibitedException("This user is already a member of the module.");
+        }
+
+        ModuleMember moduleMember = moduleMemberRepository.findByOrgMemberAndModule(memberToAdd, module).orElse(new ModuleMember());
+        addModuleMemberDto.applyModuleMember(moduleMember);
+        moduleMember.setActive(true);
         moduleMember.setOrgMember(memberToAdd);
         moduleMember.setModule(module);
         moduleMemberRepository.save(moduleMember);
@@ -156,5 +160,57 @@ public class ModuleMemberServiceImpl extends CurrentValueRetriever implements Mo
         }
 
         return moduleMemberRepository.getNonMembersOfModule(moduleId, search, pageable).map(UserPreviewDto::fromOrgMember).toList();
+    }
+
+    /**
+     * Retrieves a list of users who are members of a specific module.
+     *
+     * @param moduleId
+     * @param search
+     * @param pageable
+     * @return
+     */
+    @Override
+    public List<ModuleMemberDto> getMembersOfModule(String moduleId, String search, Pageable pageable) {
+
+        OrgMember orgMember = getCurrentOrgMember();
+        Module module = moduleService.getModuleById(moduleId);
+        if (!ModuleHelper.isModuleOwner(module, orgMember)) {
+            throw new PermissionDeniedException("Only module owner has permission to perform this action.");
+        }
+
+        return moduleMemberRepository.getMembersOfModule(moduleId, search, pageable).map(ModuleMemberDto::fromModuleMember).toList();
+    }
+
+    /**
+     * Updates a module member's details.
+     *
+     * @param moduleId
+     * @param updateModuleMemberDto
+     */
+    @Override
+    public void updateModuleMember(String moduleId, UpdateModuleMemberDto updateModuleMemberDto) {
+
+        OrgMember orgMember = getCurrentOrgMember();
+        Module module = moduleService.getModuleById(moduleId);
+        if (!ModuleHelper.isModuleOwner(module, orgMember)) {
+            throw new PermissionDeniedException("You don't have permission to perform this action.");
+        }
+
+        ModuleMember moduleMember = getModuleMemberById(updateModuleMemberDto.getId());
+        updateModuleMemberDto.applyToModuleMember(moduleMember);
+
+        moduleMemberRepository.save(moduleMember);
+    }
+
+    /**
+     * Retrieves a ModuleMember by its ID.
+     *
+     * @param id
+     * @return
+     */
+    private ModuleMember getModuleMemberById(Long id) {
+
+        return moduleMemberRepository.findById(id).orElseThrow(() -> new DataNotFoundException("Module member not found."));
     }
 }

@@ -1,7 +1,9 @@
 package com.pesupal.server.service.interfaces.module;
 
 import com.pesupal.server.dto.request.module.AddModuleMemberDto;
+import com.pesupal.server.dto.request.module.UpdateModuleMemberDto;
 import com.pesupal.server.dto.response.UserPreviewDto;
+import com.pesupal.server.dto.response.module.ModuleMemberDto;
 import com.pesupal.server.model.module.Module;
 import com.pesupal.server.model.module.ModuleMember;
 import com.pesupal.server.model.user.OrgMember;
@@ -22,4 +24,8 @@ public interface ModuleMemberService {
     void deleteAllMembersInModule(String moduleId);
 
     List<UserPreviewDto> getNonMembersOfModule(String moduleId, String search, Pageable pageable);
+
+    List<ModuleMemberDto> getMembersOfModule(String moduleId, String search, Pageable pageable);
+
+    void updateModuleMember(String moduleId, UpdateModuleMemberDto updateModuleMemberDto);
 }

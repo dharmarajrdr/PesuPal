@@ -19,25 +19,46 @@ public interface ModuleMemberRepository extends JpaRepository<ModuleMember, Long
 
     int countAllByModule(Module module);
 
-    boolean existsByModule_PublicIdAndOrgMember_PublicId(String moduleId, String userId);
-    
     List<ModuleMember> findAllByOrgMember(OrgMember orgMember);
 
     void deleteAllByModule_PublicId(String moduleId);
 
     @Query("""
-                    SELECT u
-                    FROM OrgMember u
+                    SELECT om
+                    FROM OrgMember om
                     WHERE (
-                        LOWER(u.displayName) LIKE LOWER(CONCAT('%', :search, '%'))
-                        OR LOWER(u.userName) LIKE LOWER(CONCAT('%', :search, '%'))
+                        LOWER(om.displayName) LIKE LOWER(CONCAT('%', :search, '%'))
+                        OR LOWER(om.userName) LIKE LOWER(CONCAT('%', :search, '%'))
                     )
-                    AND u.id NOT IN (
-                        SELECT mm.orgMember.id
-                        FROM ModuleMember mm
-                        WHERE mm.module.publicId = :moduleId
+                    AND (
+                            om.id NOT IN (
+                                SELECT mm.orgMember.id
+                                FROM ModuleMember mm
+                                WHERE mm.module.publicId = :moduleId
+                            ) OR om.id IN (
+                                select mm.orgMember.id
+                                from ModuleMember mm
+                                where mm.module.publicId = :moduleId
+                                AND mm.active = false
+                            )
                     )
-                    ORDER BY u.displayName ASC
+                    ORDER BY om.displayName ASC
             """)
     Page<OrgMember> getNonMembersOfModule(String moduleId, String search, Pageable pageable);
+
+    @Query("""
+                    SELECT mm
+                    FROM ModuleMember mm
+                    WHERE (
+                        LOWER(mm.orgMember.displayName) LIKE LOWER(CONCAT('%', :search, '%'))
+                        OR LOWER(mm.orgMember.userName) LIKE LOWER(CONCAT('%', :search, '%'))
+                    )
+                    AND mm.module.publicId = :moduleId
+                    AND mm.role IN ('MAINTAINER', 'MEMBER')
+                    AND mm.active = true
+                    ORDER BY mm.orgMember.displayName ASC
+            """)
+    Page<ModuleMember> getMembersOfModule(String moduleId, String search, Pageable pageable);
+
+    boolean existsByModule_PublicIdAndOrgMember_PublicIdAndActive(String moduleId, String userId, boolean active);
 }
