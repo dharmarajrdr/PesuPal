@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 import { apiRequest } from '../../../http_request';
 import { useDispatch, useSelector } from 'react-redux';
 import { showPopup } from '../../../store/reducers/PopupSlice';
+import { showFullScreenImage } from '../../../store/reducers/FullScreenImageSlice';
 
 const ShareWithSchedule = ({ onShare, onSchedule }) => {
 
@@ -186,8 +187,14 @@ const CreateNewPost = ({ onMinimize }) => {
 
 const FilePreview = ({ file, removeSelectedFileHandler }) => {
 
+    const dispatch = useDispatch();
+
+    const showFullScreenImageHandler = () => {
+        dispatch(showFullScreenImage(URL.createObjectURL(file)));
+    }
+
     return <div className='post-attachment-preview FRCC' key={file.name}>
-        <img src={URL.createObjectURL(file)} alt={file.name} className='post-attachment-image' />
+        <img src={URL.createObjectURL(file)} alt={file.name} className='post-attachment-image' onClick={showFullScreenImageHandler} />
         <i className="fa-solid fa-xmark post-attachment-remove" onClick={() => removeSelectedFileHandler(file)}></i>
     </div>
 }
