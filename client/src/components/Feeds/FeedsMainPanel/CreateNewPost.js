@@ -1,4 +1,5 @@
 import './CreateNewPost.css';
+import Media from '../../../Media';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { useEffect, useRef, useState } from 'react';
@@ -29,14 +30,13 @@ const CreateNewPost = ({ onMinimize }) => {
 
     const dispatch = useDispatch();
     const fileInputRef = useRef(null);
-    const [tags, setTags] = useState([]);
+    const [tags, setTags] = useState(["#firstpost", "#virat"]);
     const [files, setFiles] = useState([]);
-    const [content, setContent] = useState("");
-    const [postTitle, setPostTitle] = useState("");
+    const [content, setContent] = useState("This is my first post");
+    const [postTitle, setPostTitle] = useState("My first post with images");
     const myProfile = useSelector(state => state.myProfile);
-    const [isFullScreen, setIsFullScreen] = useState(true);
 
-    const allowedTypes = ['image/*'];
+    const allowedTypes = ['image/png', 'image/jpeg', 'image/gif'];
 
     useEffect(() => {
 
@@ -68,47 +68,85 @@ const CreateNewPost = ({ onMinimize }) => {
         }
     }, []);
 
-    const handlePostSubmit = () => {
+    const handlePostSubmit = (e) => {
+
+        e.preventDefault();
+        e.stopPropagation();
 
         if (content.trim().length == 0) {
             alert("Post content cannot be empty!");
             return;
         }
 
-        apiRequest(`/api/v1/post/create`, 'POST', {
-            "title": postTitle,
-            "description": content,
-            "tags": tags,
-            "mediaIds": [
+        Media.uploadMultipleMedia(files, setFiles).then(() => {
 
-            ],
-            // "poll": {
-            //     "question": "Which company are you targeting?",
-            //     "options": [
-            //         "Microsoft", "PayPal", "Google", "Amazon"
-            //     ]
-            // }
-        }).then(({ data, message }) => {
-            onMinimize();
-            dispatch(showPopup({ message, type: 'success' }));
+            apiRequest(`/api/v1/post/create`, 'POST', {
+                "title": postTitle,
+                "description": content,
+                "tags": tags,
+                "mediaIds": files.map(({ mediaId, extension, file }) => {
+                    return {
+                        'id': mediaId, extension
+                    }
+                }),
+                // "poll": {
+                //     "question": "Which company are you targeting?",
+                //     "options": [
+                //         "Microsoft", "PayPal", "Google", "Amazon"
+                //     ]
+                // }
+            }).then(({ data, message }) => {
+                onMinimize();
+                dispatch(showPopup({ message, type: 'success' }));
+            }).catch(({ message }) => {
+                dispatch(showPopup({ message, type: 'error' }));
+            });
+
         }).catch(({ message }) => {
             dispatch(showPopup({ message, type: 'error' }));
         });
+
     };
 
     const handlePostSchedule = () => {
         console.log(content);
     };
 
-    const fullScreenPostCreationHandler = () => {
-        setIsFullScreen(!isFullScreen);
-    }
+    const handleFileChange = (e) => {
 
-    const selectFilesHandler = (e) => {
         const selectedFiles = Array.from(e.target.files);
-        setFiles([...files, ...selectedFiles]);
-        e.target.value = null;
-    }
+
+        const maxFiles = 5;
+        const maxFileSize = 1 * 1024 * 1024; // 1 MB
+
+        if (maxFiles && selectedFiles.length + files.length > maxFiles) {
+            return dispatch(showPopup({ message: `You can only upload a maximum of ${maxFiles} files.`, type: 'error' }));
+        }
+
+        const filtered = allowedTypes.length
+            ? selectedFiles.filter((file) =>
+                allowedTypes.some((type) => file.type.includes(type))
+            )
+            : selectedFiles;
+
+        if (filtered.length < selectedFiles.length) {
+            return dispatch(showPopup({ message: "Some files were not allowed based on file type restrictions.", type: 'error' }));
+        }
+
+        if (maxFileSize && filtered.some((file) => file.size > maxFileSize)) {
+            return dispatch(showPopup({ message: `File size exceeds the maximum limit of ${maxFileSize / 1024 / 1024} MB.`, type: 'error' }));
+        }
+
+        const withPreview = filtered.map((file) => ({
+            file,
+            preview: file.type.startsWith("image")
+                ? URL.createObjectURL(file)
+                : null
+        }));
+
+        setFiles((prev) => [...prev, ...withPreview]);
+        e.target.value = ""; // Reset file input
+    };
 
     const addTagHandler = (e) => {
         if (e.key === 'Enter') {
@@ -144,12 +182,12 @@ const CreateNewPost = ({ onMinimize }) => {
                 <div className='FRSS w100' id='post-input-section'>
                     <img src={myProfile?.displayPicture} className='img_40_40 user-avatar' alt='User' />
                     <div className='FCSS w100' id='post-input-wrapper'>
-                        <input type='text' placeholder='Title' id='post-title-input' autoComplete='off' onChange={(e) => setPostTitle(e.target.value)} />
+                        <input type='text' placeholder='Title' id='post-title-input' autoComplete='off' value={postTitle} onChange={(e) => setPostTitle(e.target.value)} />
                         <div className='FCSS w100' id='post-content-input-wrapper'>
                             <ReactQuill theme="snow" value={content} onChange={setContent} className='w100' id='post-input' placeholder='What do you want to share?' />
                             <div className='FRCS' id='create-post-tags'>
-                                {tags.map(tag => (
-                                    <div className='create-post-tag FRCC' key={tag}>
+                                {tags.map((tag, index) => (
+                                    <div className='create-post-tag FRCC' key={index}>
                                         <span>{tag}</span>
                                         <i className="fa-solid fa-xmark" onClick={removeTagHandler}></i>
                                     </div>
@@ -158,8 +196,8 @@ const CreateNewPost = ({ onMinimize }) => {
                             </div>
                         </div>
                         {files.length > 0 && <div id='post-attachments' className='FRCS w100'>
-                            {files.map(file => (
-                                <FilePreview key={file.name} file={file} removeSelectedFileHandler={removeSelectedFileHandler} />
+                            {files.map((file, index) => (
+                                <FilePreview key={index} file={file} removeSelectedFileHandler={removeSelectedFileHandler} />
                             ))}
                         </div>}
                     </div>
@@ -169,7 +207,7 @@ const CreateNewPost = ({ onMinimize }) => {
                     <div className='FRCS post-actions'>
                         <PostAction icon='fa-solid fa-square-poll-vertical' label='Poll' />
                         <PostAction icon='fa-regular fa-image' label='Attachment' onClick={() => fileInputRef.current.click()} />
-                        <input type='file' multiple style={{ display: 'none' }} ref={fileInputRef} onChange={selectFilesHandler} accept={allowedTypes.length ? allowedTypes.join(",") : "*/*"} />
+                        <input type='file' multiple style={{ display: 'none' }} ref={fileInputRef} onChange={handleFileChange} accept={allowedTypes.length ? allowedTypes.join(",") : "*/*"} />
                         {/* <PostAction icon='fa-regular fa-hashtag' label='Tag' /> */}
                         {/* <PostAction icon='fa-regular fa-at' label='Mention' /> */}
                         {/* <PostAction icon='fa-solid fa-t' label='Title' /> */}
@@ -191,11 +229,11 @@ const FilePreview = ({ file, removeSelectedFileHandler }) => {
     const dispatch = useDispatch();
 
     const showFullScreenImageHandler = () => {
-        dispatch(showFullScreenImage(URL.createObjectURL(file)));
+        dispatch(showFullScreenImage(file.preview));
     }
 
     return <div className='post-attachment-preview FRCC' key={file.name}>
-        <img src={URL.createObjectURL(file)} alt={file.name} className='post-attachment-image' onClick={showFullScreenImageHandler} />
+        <img src={file.preview} alt={file.name} className='post-attachment-image' onClick={showFullScreenImageHandler} />
         <i className="fa-solid fa-xmark post-attachment-remove" onClick={() => removeSelectedFileHandler(file)}></i>
     </div>
 }
