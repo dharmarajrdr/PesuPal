@@ -1,7 +1,8 @@
 import './PostOptions.css';
+import { useDispatch } from 'react-redux';
 import { apiRequest } from '../../../http_request';
 import { showPopup } from '../../../store/reducers/PopupSlice';
-import { useDispatch } from 'react-redux';
+import { deletePost } from '../../../store/reducers/PostSlice';
 import { hideConfirmationPopup, showConfirmationPopup } from '../../../store/reducers/ConfirmationPopupSlice';
 
 const PostOptions = ({ postId, commentable, setCommentable, isCreator, poll, pollUpdatable, setPollUpdatable, setShowLikesList }) => {
@@ -39,22 +40,24 @@ const PostOptions = ({ postId, commentable, setCommentable, isCreator, poll, pol
 
     const deletePopupOptions = [
         {
-            title: "Yes",
-            color: "green",
+            title: "Delete",
+            color: "red",
             onClick: () => {
-                apiRequest(`/api/v1/post/${postId}`, "DELETE").then(() => {
+                apiRequest(`/api/v1/post/${postId}`, "DELETE").then(({ message }) => {
                     dispatch(hideConfirmationPopup());
+                    dispatch(showPopup({ message, type: 'success' }));
+                    dispatch(deletePost(postId));
                     closeOptionsModal();
-                    window.location.reload();
                 }).catch(({ message }) => {
                     closeOptionsModal();
+                    dispatch(showPopup({ message, type: 'error' }));
                     console.error({ message }); // eslint-disable-line no-console
                 });
             }
         },
         {
-            title: "No",
-            color: "red",
+            title: "Cancel",
+            color: "gray",
             onClick: () => dispatch(hideConfirmationPopup())
         }
     ];
