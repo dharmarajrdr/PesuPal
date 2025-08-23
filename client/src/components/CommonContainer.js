@@ -1,7 +1,8 @@
-import Profile from './OthersProfile/Profile'
 import Popup from './Popup'
-import ConfirmationPopup from './Utils/ConfirmationPopup'
+import Profile from './OthersProfile/Profile'
 import VerticalLoader from './VerticalLoader'
+import FullScreenImageView from './FullScreenImageView'
+import ConfirmationPopup from './Utils/ConfirmationPopup'
 
 const CommonContainer = () => {
 
@@ -11,6 +12,7 @@ const CommonContainer = () => {
             <ConfirmationPopup />
             <VerticalLoader />
             <Profile />
+            <FullScreenImageView />
         </div>
     )
 }
