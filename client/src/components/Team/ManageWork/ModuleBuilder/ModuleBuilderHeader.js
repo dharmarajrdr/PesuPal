@@ -1,14 +1,15 @@
 import { useState } from 'react'
-import OptionsModal from '../../../Utils/OptionsModal'
-import { useDispatch, useSelector } from 'react-redux';
-import './ModuleBuilderHeader.css'
-import MyModulesListOverlay from '../CreateModule/MyModulesListOverlay'
-import { useNavigate, useParams } from 'react-router-dom';
+import './ModuleBuilderHeader.css';
 import { apiRequest } from '../../../../http_request';
-import { showPopup } from '../../../../store/reducers/PopupSlice';
-import { hideConfirmationPopup, showConfirmationPopup } from '../../../../store/reducers/ConfirmationPopupSlice';
+import OptionsModal from '../../../Utils/OptionsModal';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate, useParams } from 'react-router-dom';
 import AddParticipantsModal from './AddParticipantsModal';
+import ManageParticipantsModal from './ManageParticipantsModal';
+import { showPopup } from '../../../../store/reducers/PopupSlice';
+import MyModulesListOverlay from '../CreateModule/MyModulesListOverlay'
 import { updateModuleData } from '../../../../store/reducers/CurrentModuleSlice';
+import { hideConfirmationPopup, showConfirmationPopup } from '../../../../store/reducers/ConfirmationPopupSlice';
 
 const PublishButton = () => {
     return (
@@ -86,7 +87,23 @@ const MoreOptionsButton = ({ moduleId }) => {
     )
 }
 
-const ModuleMembersIcon = ({ memberCount, accessibility }) => {
+const AddModuleMember = ({ accessibility }) => {
+
+    const [showAddParticipantsModal, setShowAddParticipantsModal] = useState(false);
+
+    const { moduleId } = useParams();
+    const isModuleAccessibleForSelectiveMembers = accessibility === 'SELECTIVE_MEMBERS';
+
+    return isModuleAccessibleForSelectiveMembers && (
+        <div id='module-members-icon' className='FRCC' onClick={() => setShowAddParticipantsModal(true)}>
+            {showAddParticipantsModal && <AddParticipantsModal moduleId={moduleId} onClose={() => setShowAddParticipantsModal(false)} />}
+            <i className='fa fa-user-plus w15 fs10'></i>
+            <span>Add Members</span>
+        </div>
+    )
+}
+
+const ManageModuleMember = ({ memberCount, accessibility }) => {
 
     const [showAddParticipantsModal, setShowAddParticipantsModal] = useState(false);
 
@@ -95,9 +112,9 @@ const ModuleMembersIcon = ({ memberCount, accessibility }) => {
 
     return isModuleAccessibleForSelectiveMembers && memberCount && (
         <div id='module-members-icon' className='FRCC' onClick={() => setShowAddParticipantsModal(true)}>
-            {showAddParticipantsModal && <AddParticipantsModal moduleId={moduleId} onClose={() => setShowAddParticipantsModal(false)} />}
+            {showAddParticipantsModal && <ManageParticipantsModal moduleId={moduleId} onClose={() => setShowAddParticipantsModal(false)} />}
             <i className='fa fa-user w15 fs10'></i>
-            <div id='module-member-count'>{memberCount}</div>
+            <span>{memberCount - 1}</span>  {/* Exclude the creator from the count */}
         </div>
     )
 }
@@ -163,7 +180,8 @@ const ModuleBuilderHeader = () => {
                 <i className='fa fa-arrow-left fs16 mR10 w15' onClick={() => window.history.back()}></i>
                 <h4 id='module-name'>{name}</h4>
                 <i className='fa fa-info-circle fs12 mL10 w15 colorDDD' title={description || 'No description found'}></i>
-                <ModuleMembersIcon memberCount={memberCount} accessibility={accessibility} />
+                <ManageModuleMember memberCount={memberCount} accessibility={accessibility} />
+                <AddModuleMember memberCount={memberCount} accessibility={accessibility} />
             </div>
             <div className='FRCE'>
                 <ModuleVisibility accessibility={accessibility} moduleId={publicId} />

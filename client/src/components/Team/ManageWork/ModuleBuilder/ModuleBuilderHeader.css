@@ -64,12 +64,12 @@
 }
 
 #module-members-icon i,
-#module-members-icon #module-member-count {
+#module-members-icon span {
     color: var(--primary-color);
 }
 
-#module-members-icon #module-member-count {
-    font-size: 12px;
+#module-members-icon span {
+    font-size: 13px;
     padding-right: 4px;
 }
 
@@ -83,6 +83,22 @@
 }
 
 #module-visibility-select:focus {
+    border-color: var(--primary-color);
+    outline: none;
+}
+
+#user-role-select {
+    padding: 2px 5px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    background-color: var(--pure-white);
+    cursor: pointer;
+    transition-duration: 0.2s;
+    font-size: 12px;
+    color: #555;
+}
+
+#user-role-select:focus {
     border-color: var(--primary-color);
     outline: none;
 }
