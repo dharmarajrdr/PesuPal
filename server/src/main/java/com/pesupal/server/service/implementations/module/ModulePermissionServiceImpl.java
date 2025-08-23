@@ -2,6 +2,7 @@ package com.pesupal.server.service.implementations.module;
 
 import com.pesupal.server.dto.request.module.UpdateModulePermissionDto;
 import com.pesupal.server.dto.response.module.ModulePermissionDto;
+import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.exceptions.PermissionDeniedException;
 import com.pesupal.server.helpers.CurrentValueRetriever;
@@ -171,6 +172,10 @@ public class ModulePermissionServiceImpl extends CurrentValueRetriever implement
 
         if (!ModuleHelper.isModuleOwner(module, orgMember)) {
             throw new PermissionDeniedException("You do not have permission to update permissions in this module.");
+        }
+
+        if (!module.getAccessibility().equals(ModuleAccessibility.SELECTIVE_MEMBERS)) {
+            throw new ActionProhibitedException("Permissions can only be updated for modules with 'Selective Members' accessibility.");
         }
 
         String fieldName = StringHelper.toCamelCase(updateModulePermissionDto.getName());
