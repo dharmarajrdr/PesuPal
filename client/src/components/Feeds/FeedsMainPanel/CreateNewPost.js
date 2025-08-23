@@ -34,8 +34,9 @@ const CreateNewPost = ({ onMinimize }) => {
     const [content, setContent] = useState("");
     const [postTitle, setPostTitle] = useState("");
     const myProfile = useSelector(state => state.myProfile);
-
     const [isFullScreen, setIsFullScreen] = useState(true);
+
+    const allowedTypes = ['image/*'];
 
     useEffect(() => {
 
@@ -168,7 +169,7 @@ const CreateNewPost = ({ onMinimize }) => {
                     <div className='FRCS post-actions'>
                         <PostAction icon='fa-solid fa-square-poll-vertical' label='Poll' />
                         <PostAction icon='fa-regular fa-image' label='Attachment' onClick={() => fileInputRef.current.click()} />
-                        <input type='file' multiple style={{ display: 'none' }} ref={fileInputRef} onChange={selectFilesHandler} />
+                        <input type='file' multiple style={{ display: 'none' }} ref={fileInputRef} onChange={selectFilesHandler} accept={allowedTypes.length ? allowedTypes.join(",") : "*/*"} />
                         {/* <PostAction icon='fa-regular fa-hashtag' label='Tag' /> */}
                         {/* <PostAction icon='fa-regular fa-at' label='Mention' /> */}
                         {/* <PostAction icon='fa-solid fa-t' label='Title' /> */}
