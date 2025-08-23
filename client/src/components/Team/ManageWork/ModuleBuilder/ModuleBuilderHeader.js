@@ -18,7 +18,7 @@ const PublishButton = () => {
     )
 }
 
-const MoreOptionsButton = ({ moduleId }) => {
+const MoreOptionsButton = ({ moduleId, accessibility }) => {
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -64,7 +64,7 @@ const MoreOptionsButton = ({ moduleId }) => {
         },
         {
             icon: 'fa fa-users-cog',
-            name: 'Permissions',
+            name: accessibility == 'SELECTIVE_MEMBERS' && 'Permissions',
             onClick: () => {
                 setShowPermissionModal(true);
             }
@@ -196,7 +196,7 @@ const ModuleBuilderHeader = () => {
             <div className='FRCE'>
                 <ModuleVisibility accessibility={accessibility} moduleId={publicId} />
                 <PublishButton />
-                <MoreOptionsButton moduleId={publicId} />
+                <MoreOptionsButton moduleId={publicId} accessibility={accessibility} />
             </div>
         </div>
     )
