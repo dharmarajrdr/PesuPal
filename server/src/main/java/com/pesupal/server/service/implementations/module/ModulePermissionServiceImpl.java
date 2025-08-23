@@ -93,14 +93,19 @@ public class ModulePermissionServiceImpl extends CurrentValueRetriever implement
                 if (!module.getCreatedBy().getPublicId().equals(orgMember.getPublicId())) {
                     throw new PermissionDeniedException("You do not have permission to access this module.");
                 }
+                return ModulePermission.builder().role(ModuleRole.OWNER).createRecord(true).readRecord(true).deleteRecord(true).manageMembers(true).clearRecords(true).build();
             }
             case ANYONE_IN_ORG: {
                 if (!module.getCreatedBy().getOrg().getId().equals(orgMember.getOrg().getId())) {
                     throw new PermissionDeniedException("Module does not exist in your organization.");
                 }
+                return ModulePermission.builder().createRecord(true).readRecord(true).deleteRecord(true).manageMembers(true).clearRecords(true).build();
             }
             case SELECTIVE_MEMBERS: {
                 ModuleMember moduleMember = moduleMemberService.getModuleMemberByOrgMemberAndModule(orgMember, module);
+                if (!moduleMember.isActive()) {
+                    throw new PermissionDeniedException("You are no longer part of this module.");
+                }
                 return getModulePermissionByModuleAndRole(module, moduleMember.getRole());
             }
             default: {

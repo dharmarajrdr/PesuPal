@@ -44,7 +44,7 @@ public class ModuleMemberServiceImpl extends CurrentValueRetriever implements Mo
     @Override
     public ModuleMember getModuleMemberByOrgMemberAndModule(OrgMember orgMember, Module module) {
 
-        return moduleMemberRepository.findByOrgMemberAndModule(orgMember, module).orElseThrow(() -> new DataNotFoundException("You are not part of this module."));
+        return moduleMemberRepository.findByOrgMemberAndModule(orgMember, module).orElseThrow(() -> new PermissionDeniedException("You are not part of this module."));
     }
 
     /**
