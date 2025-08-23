@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.pesupal.server.dto.response.UserPreviewDto;
 import com.pesupal.server.model.module.Module;
 import com.pesupal.server.model.module.ModuleAccessibility;
+import com.pesupal.server.model.module.ModuleMember;
 import com.pesupal.server.model.user.OrgMember;
 import lombok.Data;
 
@@ -49,7 +50,7 @@ public class ModuleDto {
         moduleDto.setCreatedAt(module.getCreatedAt());
         moduleDto.setPublicId(module.getPublicId());
         moduleDto.setAllowDuplicateSubject(module.isAllowDuplicateSubject());
-        moduleDto.setMemberCount(module.getMembers().size());
+        moduleDto.setMemberCount(module.getMembers().stream().filter(ModuleMember::isActive).toList().size());
         moduleDto.setAccessibility(module.getAccessibility());
         return moduleDto;
     }

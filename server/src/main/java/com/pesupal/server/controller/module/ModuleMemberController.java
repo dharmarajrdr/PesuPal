@@ -56,4 +56,14 @@ public class ModuleMemberController {
         moduleMemberService.updateModuleMember(moduleId, updateModuleMemberDto);
         return ResponseEntity.ok(new ApiResponseDto("Member updated successfully"));
     }
+
+    @DeleteMapping("/{moduleId}/member/{moduleMemberId}")
+    public ResponseEntity<ApiResponseDto> removeMemberFromModule(@PathVariable String moduleId, @PathVariable Long moduleMemberId) {
+
+        UpdateModuleMemberDto updateModuleMemberDto = new UpdateModuleMemberDto();
+        updateModuleMemberDto.setId(moduleMemberId);
+        updateModuleMemberDto.setActive(false);
+        moduleMemberService.updateModuleMember(moduleId, updateModuleMemberDto);
+        return ResponseEntity.ok(new ApiResponseDto("Member removed from module successfully"));
+    }
 }
