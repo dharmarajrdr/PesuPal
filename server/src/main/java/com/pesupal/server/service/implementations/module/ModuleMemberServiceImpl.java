@@ -1,6 +1,7 @@
 package com.pesupal.server.service.implementations.module;
 
 import com.pesupal.server.dto.request.module.AddModuleMemberDto;
+import com.pesupal.server.dto.request.module.UpdateModuleMemberDto;
 import com.pesupal.server.dto.response.UserPreviewDto;
 import com.pesupal.server.dto.response.module.ModuleMemberDto;
 import com.pesupal.server.exceptions.ActionProhibitedException;
@@ -177,5 +178,37 @@ public class ModuleMemberServiceImpl extends CurrentValueRetriever implements Mo
         }
 
         return moduleMemberRepository.getMembersOfModule(moduleId, search, pageable).map(moduleMember -> ModuleMemberDto.fromModuleMember(moduleMember)).toList();
+    }
+
+    /**
+     * Updates a module member's details.
+     *
+     * @param moduleId
+     * @param updateModuleMemberDto
+     */
+    @Override
+    public void updateModuleMember(String moduleId, UpdateModuleMemberDto updateModuleMemberDto) {
+
+        OrgMember orgMember = getCurrentOrgMember();
+        Module module = moduleService.getModuleById(moduleId);
+        if (!ModuleHelper.isModuleOwner(module, orgMember)) {
+            throw new PermissionDeniedException("You don't have permission to perform this action.");
+        }
+
+        ModuleMember moduleMember = getModuleMemberById(updateModuleMemberDto.getId());
+        updateModuleMemberDto.applyToModuleMember(moduleMember);
+
+        moduleMemberRepository.save(moduleMember);
+    }
+
+    /**
+     * Retrieves a ModuleMember by its ID.
+     *
+     * @param id
+     * @return
+     */
+    private ModuleMember getModuleMemberById(Long id) {
+
+        return moduleMemberRepository.findById(id).orElseThrow(() -> new DataNotFoundException("Module member not found."));
     }
 }
