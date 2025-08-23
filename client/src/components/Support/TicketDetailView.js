@@ -8,7 +8,7 @@ import { apiRequest } from '../../http_request';
 import { useParams } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { showPopup } from '../../store/reducers/PopupSlice';
-import FullScreenImageView from '../FullScreenImageView';
+import { showFullScreenImage } from '../../store/reducers/FullScreenImageSlice';
 
 const TicketDescription = ({ html }) => <div id='ticket-description' className="html-content-renderer postContent" dangerouslySetInnerHTML={{ __html: html }} />
 
@@ -63,15 +63,11 @@ const TicketDetailView = ({ ticket, ticketColor }) => {
     const { ticketId, subject, description, status, createdAt, attachments } = ticketDetails || {};
 
     const [comments, setComments] = useState([]);
-    const [fullScreenAttachment, setFullScreenAttachment] = useState(null);
 
     const viewAttachmentFullScreen = (mediaUrl) => {
-        setFullScreenAttachment(mediaUrl);
+        dispatch(showFullScreenImage(mediaUrl));
     }
 
-    const closeFullScreenView = () => {
-        setFullScreenAttachment(null);
-    }
 
     return <div id='ticket-detail-view-layout' className='FCSS w100 h100'>
         {
@@ -89,7 +85,6 @@ const TicketDetailView = ({ ticket, ticketColor }) => {
                         </div>
                         <TicketDescription html={description} />
                         <div id='ticket-attachments' className='FRSS w100 mT10'>
-                            <FullScreenImageView mediaUrl={fullScreenAttachment} onClose={closeFullScreenView} />
                             {attachments?.map(({ mediaUrl, fileName }, index) => (
                                 <div className='attachment' key={index} onClick={() => viewAttachmentFullScreen(mediaUrl)}>
                                     <img src={mediaUrl} alt={fileName} />

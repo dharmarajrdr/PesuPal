@@ -10,6 +10,7 @@ import PostsLikedBy from './PostsLikedBy';
 import { showPopup } from '../../../store/reducers/PopupSlice';
 import { useDispatch } from 'react-redux';
 import { showProfile } from '../../../store/reducers/ProfileSlice';
+import { showFullScreenImage } from '../../../store/reducers/FullScreenImageSlice';
 
 const PostDescription = ({ html }) => <div className="post-description html-content-renderer postContent" dangerouslySetInnerHTML={{ __html: html }} />
 
@@ -52,18 +53,15 @@ const TagsContainer = ({ tags }) => {
 }
 
 const MediaContainer = ({ media, toggleMaxHeight }) => {
-    return <div className='mediaContainer FCSS w100' onClick={toggleMaxHeight}>
-        {media.map((media, index) => <img key={index} src={media} className='media_image w100' />)}
-    </div>
-}
 
-const FullScreenImage = ({ closeFullScreen, fullScreenImage }) => {
-    return <div id='view_image_full_screen' className='FRCC'>
-        <div id='closeFullScreen' className='FRCC' onClick={closeFullScreen}>
-            <span className='mR5'>Close</span>
-            <i className="fa-solid fa-xmark"></i>
-        </div>
-        <img src={fullScreenImage} />
+    const dispatch = useDispatch();
+
+    const showFullScreenImageHandler = (mediaItem) => {
+        dispatch(showFullScreenImage(mediaItem));
+    }
+
+    return <div className='mediaContainer FCSS w100' onClick={toggleMaxHeight}>
+        {media.map((mediaItem, index) => <img key={index} src={mediaItem} className='media_image w100' onClick={() => showFullScreenImageHandler(mediaItem)} />)}
     </div>
 }
 
@@ -99,17 +97,18 @@ const PostFooter = ({ postId, likedPost, likesCount, commentsCount, setCommentsC
 
 const Post = ({ post, isOptionOpen, onToggleOption }) => {
 
+    const dispatch = useDispatch();
+
     const { id, title, owner, description, createdAt, impression, media, mentions, liked, bookmarked, tags, bookmarkable, creator: isCreator } = post,
         { likes, comments } = impression || {},
         { userId, displayName, displayPicture } = owner,
-        [fullScreenImage, setFullScreenImage] = useState(null),
         toggleMaxHeight = function (e) {
             const { target } = e;
             try {
                 if (target.classList.contains('media_image')) {
                     const mediaContainer = target.parentNode;
                     if (mediaContainer.style.maxHeight === '100%') {
-                        setFullScreenImage(target.src)
+                        dispatch(showFullScreenImage(target.src));
                     } else {
                         mediaContainer.style.maxHeight = '100%';
                     }
@@ -117,8 +116,6 @@ const Post = ({ post, isOptionOpen, onToggleOption }) => {
             } catch (error) {
                 console.error({ 'module': toggleMaxHeight, error });  //eslint-disable-line no-console
             }
-        }, closeFullScreen = function () {
-            setFullScreenImage(null);
         };
 
     const [commentable, setCommentable] = useState(post.commentable);
@@ -126,7 +123,6 @@ const Post = ({ post, isOptionOpen, onToggleOption }) => {
     const [likesCount, setLikesCount] = useState(likes || 0);
     const [commentsCount, setCommentsCount] = useState(comments || 0);
     const [poll, setPoll] = useState(post.poll);
-
 
     const likeHandler = () => {
 
@@ -144,7 +140,6 @@ const Post = ({ post, isOptionOpen, onToggleOption }) => {
 
     return (
         <div className='Post w100'>
-            {fullScreenImage ? <FullScreenImage closeFullScreen={closeFullScreen} fullScreenImage={fullScreenImage} /> : null}
             <PostHeader userId={userId} isOptionOpen={isOptionOpen} onToggleOption={onToggleOption} postId={id} displayName={displayName} displayPicture={displayPicture} createdAt={createdAt} commentable={commentable} setCommentable={setCommentable} isCreator={isCreator} poll={poll} />
             <PostBody title={title} description={description} media={media} toggleMaxHeight={toggleMaxHeight} tags={tags} poll={poll} setPoll={setPoll} />
             <PostFooter postId={id} likedPost={likedPost} likesCount={likesCount} commentsCount={commentsCount} setCommentsCount={setCommentsCount} commentable={commentable} bookmarkable={bookmarkable} bookmarked={bookmarked} likeHandler={likeHandler} />
