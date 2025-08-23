@@ -61,4 +61,15 @@ public interface ModuleMemberRepository extends JpaRepository<ModuleMember, Long
     Page<ModuleMember> getMembersOfModule(String moduleId, String search, Pageable pageable);
 
     boolean existsByModule_PublicIdAndOrgMember_PublicIdAndActive(String moduleId, String userId, boolean active);
+
+    @Query("""
+            select m from Module m
+            join OrgMember om on om.id = m.createdBy.id
+            join Org o on o.id = om.org.id
+            where m.accessibility = 'ANYONE_IN_ORG'
+                  OR m.createdBy.id = 5
+                  OR m.id in (select mm.module.id from ModuleMember mm where mm.orgMember.id = :id and mm.active = true)
+            order by m.name, m.createdAt
+            """)
+    List<Module> getAllModulesUserIsPartOf(Long id);    // get public modules as well
 }

@@ -128,7 +128,7 @@ public class ModuleMemberServiceImpl extends CurrentValueRetriever implements Mo
     @Override
     public List<Module> getAllModulesOfOrgMember(OrgMember orgMember) {
 
-        return moduleMemberRepository.findAllByOrgMember(orgMember).stream().map(ModuleMember::getModule).toList();
+        return moduleMemberRepository.getAllModulesUserIsPartOf(orgMember.getId());
     }
 
     /**
