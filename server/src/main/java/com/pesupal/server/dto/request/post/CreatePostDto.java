@@ -5,6 +5,7 @@ import com.pesupal.server.dto.response.MediaDto;
 import com.pesupal.server.model.post.Post;
 import lombok.Data;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -28,6 +29,8 @@ public class CreatePostDto {
 
     private Boolean media = false;
 
+    private LocalDateTime scheduledAt;
+
     private CreatePollDto poll;
 
     public Post toPost() {
@@ -39,6 +42,7 @@ public class CreatePostDto {
         post.setCommentable(this.commentable);
         post.setShareable(this.shareable);
         post.setBookmarkable(this.bookmarkable);
+        post.setCreatedAt(this.scheduledAt);
         return post;
     }
 
@@ -60,6 +64,9 @@ public class CreatePostDto {
         }
         if (this.media != null) {
             post.setMedia(this.media);
+        }
+        if (this.scheduledAt != null) {
+            post.setCreatedAt(this.scheduledAt);
         }
     }
 }
