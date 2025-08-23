@@ -110,7 +110,7 @@ const ManageModuleMember = ({ memberCount, accessibility }) => {
     const { moduleId } = useParams();
     const isModuleAccessibleForSelectiveMembers = accessibility === 'SELECTIVE_MEMBERS';
 
-    return isModuleAccessibleForSelectiveMembers && memberCount && (
+    return isModuleAccessibleForSelectiveMembers && memberCount > 1 && (
         <div id='module-members-icon' className='FRCC' onClick={() => setShowAddParticipantsModal(true)}>
             {showAddParticipantsModal && <ManageParticipantsModal moduleId={moduleId} onClose={() => setShowAddParticipantsModal(false)} />}
             <i className='fa fa-user w15 fs10'></i>
