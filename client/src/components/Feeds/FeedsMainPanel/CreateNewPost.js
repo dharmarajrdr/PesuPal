@@ -1,7 +1,7 @@
 import './CreateNewPost.css';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { apiRequest } from '../../../http_request';
 import { useDispatch, useSelector } from 'react-redux';
 import { showPopup } from '../../../store/reducers/PopupSlice';
@@ -27,7 +27,9 @@ const ShareWithSchedule = ({ onShare, onSchedule }) => {
 const CreateNewPost = ({ onMinimize }) => {
 
     const dispatch = useDispatch();
+    const fileInputRef = useRef(null);
     const [tags, setTags] = useState([]);
+    const [files, setFiles] = useState([]);
     const [content, setContent] = useState("");
     const [postTitle, setPostTitle] = useState("");
     const myProfile = useSelector(state => state.myProfile);
@@ -42,6 +44,7 @@ const CreateNewPost = ({ onMinimize }) => {
         const inputWrapper = document.getElementById('post-content-input-wrapper');
         const createPostTags = document.getElementById('create-post-tags');
         const postInput = document.getElementById('post-input');
+        const postAttachments = document.getElementById('post-attachments');
 
         if (quillEditor) {
             quillEditor.style.border = 'none';
@@ -59,7 +62,7 @@ const CreateNewPost = ({ onMinimize }) => {
             fullscreenQuillEditor.style.height = `calc(100% - 40px)`;
         }
         if (inputWrapper) {
-            inputWrapper.style.height = '470px';
+            inputWrapper.style.height = `calc(470px - ${postAttachments ? postAttachments.offsetHeight : 0}px)`;
         }
     }, []);
 
@@ -99,6 +102,12 @@ const CreateNewPost = ({ onMinimize }) => {
         setIsFullScreen(!isFullScreen);
     }
 
+    const selectFilesHandler = (e) => {
+        const selectedFiles = Array.from(e.target.files);
+        setFiles([...files, ...selectedFiles]);
+        e.target.value = null;
+    }
+
     const addTagHandler = (e) => {
         if (e.key === 'Enter') {
             e.preventDefault();
@@ -111,6 +120,10 @@ const CreateNewPost = ({ onMinimize }) => {
                 e.target.value = '';
             }
         }
+    }
+
+    const removeSelectedFileHandler = (file) => {
+        setFiles(files.filter(f => f.name !== file.name));
     }
 
     const removeTagHandler = (e) => {
@@ -142,13 +155,19 @@ const CreateNewPost = ({ onMinimize }) => {
                                 <input type='text' placeholder='Add Tag' autoComplete='off' id='create-tag-input' onKeyDown={addTagHandler} />
                             </div>
                         </div>
+                        {files.length > 0 && <div id='post-attachments' className='FRCS w100'>
+                            {files.map(file => (
+                                <FilePreview key={file.name} file={file} removeSelectedFileHandler={removeSelectedFileHandler} />
+                            ))}
+                        </div>}
                     </div>
                 </div>
 
                 <div className='w100 FRCB post-footer'>
                     <div className='FRCS post-actions'>
                         <PostAction icon='fa-solid fa-square-poll-vertical' label='Poll' />
-                        <PostAction icon='fa-regular fa-image' label='Attachment' />
+                        <PostAction icon='fa-regular fa-image' label='Attachment' onClick={() => fileInputRef.current.click()} />
+                        <input type='file' multiple style={{ display: 'none' }} ref={fileInputRef} onChange={selectFilesHandler} />
                         {/* <PostAction icon='fa-regular fa-hashtag' label='Tag' /> */}
                         {/* <PostAction icon='fa-regular fa-at' label='Mention' /> */}
                         {/* <PostAction icon='fa-solid fa-t' label='Title' /> */}
@@ -165,8 +184,16 @@ const CreateNewPost = ({ onMinimize }) => {
     );
 };
 
-const PostAction = ({ icon, label }) => (
-    <span className='actions_post_creation FRCC'>
+const FilePreview = ({ file, removeSelectedFileHandler }) => {
+
+    return <div className='post-attachment-preview FRCC' key={file.name}>
+        <img src={URL.createObjectURL(file)} alt={file.name} className='post-attachment-image' />
+        <i className="fa-solid fa-xmark post-attachment-remove" onClick={() => removeSelectedFileHandler(file)}></i>
+    </div>
+}
+
+const PostAction = ({ icon, label, onClick }) => (
+    <span className='actions_post_creation FRCC' onClick={onClick ? onClick : null}>
         <i className={`${icon} mR5`}></i>
         <span>{label}</span>
     </span>
