@@ -18,6 +18,7 @@ import LeftNavigationSlice from './store/reducers/LeftNavigationSlice';
 import ConversationSlice from './store/reducers/ConversationSlice';
 import ConfirmationPopupSlice from './store/reducers/ConfirmationPopupSlice';
 import CurrentModuleSlice from './store/reducers/CurrentModuleSlice';
+import FullScreenImageSlice from './store/reducers/FullScreenImageSlice';
 import SupportTicketsSlice from './store/reducers/SupportTicketsSlice';
 import CurrentChatPreviewSlice from './store/reducers/CurrentChatPreviewSlice';
 import ShowChatHeaderOptionsModalSlice from './store/reducers/ShowChatHeaderOptionsModalSlice';
@@ -40,6 +41,7 @@ const store = configureStore({
         supportTickets: SupportTicketsSlice,
         leftNavigation: LeftNavigationSlice,
         VerticalLoader: VerticalLoaderSlice,
+        fullScreenImage: FullScreenImageSlice,
         activeRecentChat: ActiveRecentChatSlice,
         confirmationPopup: ConfirmationPopupSlice,
         pinnedDirectMessage: PinnedDirectMessageSlice,
