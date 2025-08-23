@@ -125,7 +125,7 @@ const ChatHeader = () => {
         },
         {
             name: activeChatTab.name == 'groupMessage' && active && groupActive ? 'Permissions' : null,
-            icon: 'fa fa-lock',
+            icon: 'fa fa-users-cog',
             onClick: () => {
                 setShowGroupPermission(true);
                 dispatch(setShowChatHeaderOptionsModal(false));

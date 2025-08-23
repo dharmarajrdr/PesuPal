@@ -63,6 +63,13 @@ const MoreOptionsButton = ({ moduleId }) => {
             onClick: deleteModuleHandler
         },
         {
+            icon: 'fa fa-users-cog',
+            name: 'Permissions',
+            onClick: () => {
+                setShowPermissionModal(true);
+            }
+        },
+        {
             icon: 'fa fa-folder',
             name: 'My Modules',
             onClick: () => {
@@ -78,12 +85,14 @@ const MoreOptionsButton = ({ moduleId }) => {
 
     const [showOptions, setShowOptions] = useState(false);
     const [showMyModulesList, setShowMyModulesList] = useState(false);
+    const [showPermissionModal, setShowPermissionModal] = useState(false);
 
     return (
         <div id='more-options-button' className='FRCC mL10' onClick={() => setShowOptions(!showOptions)}>
             <i className='fa fa-ellipsis-vertical fs16'></i>
             {showOptions && <OptionsModal options={options} style={{ position: 'relative', top: '10px', right: '160px', width: '200px' }} />}
             {showMyModulesList && <MyModulesListOverlay onCloseModal={() => setShowMyModulesList(false)} />}
+            {showPermissionModal && <ModulePermissionModal onClose={() => setShowPermissionModal(false)} moduleId={moduleId} />}
         </div>
     )
 }
@@ -172,7 +181,6 @@ const ModuleVisibility = ({ accessibility, moduleId }) => {
 
 const ModuleBuilderHeader = () => {
 
-    const [showPermissionModal, setShowPermissionModal] = useState(true);
     const module = useSelector(state => state.currentModule.data);
     const { publicId, name, description, memberCount, accessibility } = module || {};
 
@@ -190,7 +198,6 @@ const ModuleBuilderHeader = () => {
                 <PublishButton />
                 <MoreOptionsButton moduleId={publicId} />
             </div>
-            {showPermissionModal && <ModulePermissionModal onClose={() => setShowPermissionModal(false)} moduleId={publicId} />}
         </div>
     )
 }
