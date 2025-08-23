@@ -2,92 +2,22 @@ import './CreateNewPost.css';
 import Media from '../../../Media';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
-import { useEffect, useRef, useState } from 'react';
 import { apiRequest } from '../../../http_request';
+import { useEffect, useRef, useState } from 'react';
+import ShareWithSchedule from './ShareWithSchedule';
 import { useDispatch, useSelector } from 'react-redux';
 import { showPopup } from '../../../store/reducers/PopupSlice';
-import SchedulePicker from '../../Chat/ConversationScreen/SchedulePicker';
 import { showFullScreenImage } from '../../../store/reducers/FullScreenImageSlice';
 import { hideLoader, showLoader } from '../../../store/reducers/VerticalLoaderSlice';
-import { hideConfirmationPopup, showConfirmationPopup } from '../../../store/reducers/ConfirmationPopupSlice';
-
-const ShareWithSchedule = ({ onShare, onSchedule }) => {
-
-    const dispatch = useDispatch();
-    const [showPicker, setShowPicker] = useState(false);
-    const [showSchedule, setShowSchedule] = useState(false);
-
-    const shareClickHandler = () => {
-        dispatch(showConfirmationPopup({
-            message: 'Are you sure you want to post this?',
-            options: [
-                {
-                    title: 'Post',
-                    color: 'green',
-                    onClick: () => {
-                        onShare(() => {
-                            dispatch(hideConfirmationPopup());
-                        }, () => {
-                            dispatch(hideConfirmationPopup());
-                        });
-                    }
-                },
-                {
-                    title: 'Cancel',
-                    color: 'gray',
-                    onClick: () => dispatch(hideConfirmationPopup())
-                }
-            ]
-        }));
-    }
-
-    const scheduleClickHandler = (scheduledAt) => {
-        dispatch(showConfirmationPopup({
-            message: 'Are you sure you want to schedule this post?',
-            options: [
-                {
-                    title: 'Schedule',
-                    color: 'green',
-                    onClick: () => {
-                        onSchedule(scheduledAt, () => {
-                            dispatch(hideConfirmationPopup());
-                        }, () => {
-                            dispatch(hideConfirmationPopup());
-                        });
-                    }
-                },
-                {
-                    title: 'Cancel',
-                    color: 'gray',
-                    onClick: () => dispatch(hideConfirmationPopup())
-                }
-            ]
-        }));
-    }
-
-    return (
-        <div className="share-wrapper FCSS w100">
-            <div className="FRCC w100" id='share-post-button-wrapper'>
-                <button className="share-main" onClick={shareClickHandler}>Share</button>
-                <i className={`fa ${showSchedule ? 'fa-chevron-up' : 'fa-chevron-down'}`} id="share-chevron" onClick={() => setShowSchedule(prev => !prev)}></i>
-            </div>
-
-            {showPicker && <SchedulePicker onSchedule={scheduleClickHandler} showPicker={showPicker} setShowPicker={setShowPicker} />}
-            <div className={`w100 schedule-slide ${showSchedule ? 'slide-visible' : ''}`}>
-                <button className="schedule-btn" onClick={() => setShowPicker(!showPicker)}>Schedule</button>
-            </div>
-        </div>
-    );
-};
 
 const CreateNewPost = ({ onMinimize }) => {
 
     const dispatch = useDispatch();
     const fileInputRef = useRef(null);
-    const [tags, setTags] = useState(["#firstpost", "#virat"]);
+    const [tags, setTags] = useState([]);
     const [files, setFiles] = useState([]);
-    const [content, setContent] = useState("This is my first post");
-    const [postTitle, setPostTitle] = useState("My first post with images");
+    const [content, setContent] = useState("");
+    const [postTitle, setPostTitle] = useState("");
     const myProfile = useSelector(state => state.myProfile);
 
     const allowedTypes = ['image/png', 'image/jpeg', 'image/gif'];
@@ -246,7 +176,6 @@ const CreateNewPost = ({ onMinimize }) => {
             <div id='CreateNewPost' className='FCSS post-container'>
                 <div className='FRCB w100'>
                     <label className='post-label'>Post Something</label>
-                    {/* <i className="fa-solid fa-down-left-and-up-right-to-center" id='expand-post-creation' onClick={onMinimize}></i> */}
                 </div>
 
                 <div className='FRSS w100' id='post-input-section'>

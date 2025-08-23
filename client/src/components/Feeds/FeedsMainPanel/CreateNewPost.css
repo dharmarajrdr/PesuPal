@@ -106,6 +106,10 @@
   padding: 10px 10px;
 }
 
+#create-post-tags input:focus {
+  background-color: #fafafa;
+}
+
 .create-post-tag {
   background-color: #eee;
   color: var(--primary-color);
@@ -247,6 +251,8 @@
 
 #share-post-button-wrapper {
   background-color: var(--primary-color);
+  border-radius: 5px;
+  overflow: hidden;
 }
 
 .share-main,
