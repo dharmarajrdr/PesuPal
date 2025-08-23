@@ -20,6 +20,9 @@ const CurrentModuleSlice = createSlice({
         incrementModuleMemberCount: (state) => {
             return { ...state, 'data': { ...state.data, 'memberCount': (state.data.memberCount || 0) + 1 } }
         },
+        updateModuleData: (state, action) => {
+            return { ...state, 'data': { ...state.data, ...action.payload } }
+        },
         resetCurrentModuleView: () => {
             return {
                 view: null,
@@ -30,6 +33,6 @@ const CurrentModuleSlice = createSlice({
     }
 })
 
-export const { setCurrentModuleView, setCurrentModuleId, setCurrentModuleData, incrementModuleMemberCount, resetCurrentModuleView } = CurrentModuleSlice.actions;
+export const { setCurrentModuleView, setCurrentModuleId, setCurrentModuleData, incrementModuleMemberCount, updateModuleData, resetCurrentModuleView } = CurrentModuleSlice.actions;
 
 export default CurrentModuleSlice.reducer;

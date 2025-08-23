@@ -8,6 +8,7 @@ import { apiRequest } from '../../../../http_request';
 import { showPopup } from '../../../../store/reducers/PopupSlice';
 import { hideConfirmationPopup, showConfirmationPopup } from '../../../../store/reducers/ConfirmationPopupSlice';
 import AddParticipantsModal from './AddParticipantsModal';
+import { updateModuleData } from '../../../../store/reducers/CurrentModuleSlice';
 
 const PublishButton = () => {
     return (
@@ -85,13 +86,14 @@ const MoreOptionsButton = ({ moduleId }) => {
     )
 }
 
-const ModuleMembersIcon = ({ memberCount }) => {
+const ModuleMembersIcon = ({ memberCount, accessibility }) => {
 
     const [showAddParticipantsModal, setShowAddParticipantsModal] = useState(false);
 
     const { moduleId } = useParams();
+    const isModuleAccessibleForSelectiveMembers = accessibility === 'SELECTIVE_MEMBERS';
 
-    return memberCount && (
+    return isModuleAccessibleForSelectiveMembers && memberCount && (
         <div id='module-members-icon' className='FRCC' onClick={() => setShowAddParticipantsModal(true)}>
             {showAddParticipantsModal && <AddParticipantsModal moduleId={moduleId} onClose={() => setShowAddParticipantsModal(false)} />}
             <i className='fa fa-user w15 fs10'></i>
@@ -100,10 +102,60 @@ const ModuleMembersIcon = ({ memberCount }) => {
     )
 }
 
+const ModuleVisibility = ({ accessibility, moduleId }) => {
+
+    const dispatch = useDispatch();
+    const [value, setValue] = useState(accessibility);
+
+    const handleVisibilityChange = (e) => {
+
+        const newValue = e.target.value;
+        setValue(newValue);
+        if (newValue == accessibility) return;
+
+        dispatch(showConfirmationPopup({
+            message: 'Are you sure you want to update the visibility of this module?',
+            options: [
+                {
+                    title: 'Update',
+                    color: 'green',
+                    onClick: () => {
+                        apiRequest(`/api/v1/module/${moduleId}`, 'PATCH', {
+                            'accessibility': newValue
+                        }).then(({ message }) => {
+                            dispatch(updateModuleData({ accessibility: newValue }));
+                            dispatch(hideConfirmationPopup());
+                            dispatch(showPopup({ message, type: 'success' }));
+                        }).catch(({ message }) => {
+                            dispatch(showPopup({ message, type: 'error' }));
+                        });
+                    }
+                },
+                {
+                    title: 'Cancel',
+                    color: 'gray',
+                    onClick: () => {
+                        dispatch(hideConfirmationPopup());
+                        setValue(accessibility);
+                    }
+                }
+            ]
+        }));
+    }
+
+    return (
+        <select value={value} onChange={handleVisibilityChange} id='module-visibility-select' className='mR10'>
+            <option value="ONLY_ME">Only Me</option>
+            <option value="SELECTIVE_MEMBERS">Selective Members</option>
+            <option value="ANYONE_IN_ORG">Anyone in Org</option>
+        </select>
+    )
+}
+
 const ModuleBuilderHeader = () => {
 
     const module = useSelector(state => state.currentModule.data);
-    const { publicId, name, description, memberCount } = module || {};
+    const { publicId, name, description, memberCount, accessibility } = module || {};
 
     return (
         <div id='create-module-header' className='w100 FRCB'>
@@ -111,9 +163,10 @@ const ModuleBuilderHeader = () => {
                 <i className='fa fa-arrow-left fs16 mR10 w15' onClick={() => window.history.back()}></i>
                 <h4 id='module-name'>{name}</h4>
                 <i className='fa fa-info-circle fs12 mL10 w15 colorDDD' title={description || 'No description found'}></i>
-                <ModuleMembersIcon memberCount={memberCount} />
+                <ModuleMembersIcon memberCount={memberCount} accessibility={accessibility} />
             </div>
             <div className='FRCE'>
+                <ModuleVisibility accessibility={accessibility} moduleId={publicId} />
                 <PublishButton />
                 <MoreOptionsButton moduleId={publicId} />
             </div>
