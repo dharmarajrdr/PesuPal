@@ -1,6 +1,7 @@
 package com.pesupal.server.controller.module;
 
 import com.pesupal.server.dto.request.module.AddModuleMemberDto;
+import com.pesupal.server.dto.request.module.UpdateModuleMemberDto;
 import com.pesupal.server.dto.response.ApiResponseDto;
 import com.pesupal.server.dto.response.UserPreviewDto;
 import com.pesupal.server.dto.response.module.ModuleMemberDto;
@@ -47,5 +48,12 @@ public class ModuleMemberController {
         Pageable pageable = Pageable.ofSize(size).withPage(page);
         List<ModuleMemberDto> participantMembers = moduleMemberService.getMembersOfModule(moduleId, search, pageable);
         return ResponseEntity.ok(new ApiResponseDto("Member users retrieved successfully", participantMembers));
+    }
+
+    @PatchMapping("/{moduleId}/member")
+    public ResponseEntity<ApiResponseDto> updateModuleMember(@PathVariable String moduleId, @RequestBody UpdateModuleMemberDto updateModuleMemberDto) {
+
+        moduleMemberService.updateModuleMember(moduleId, updateModuleMemberDto);
+        return ResponseEntity.ok(new ApiResponseDto("Member updated successfully"));
     }
 }
