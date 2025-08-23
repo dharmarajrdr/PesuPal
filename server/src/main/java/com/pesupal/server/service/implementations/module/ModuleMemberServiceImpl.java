@@ -100,18 +100,20 @@ public class ModuleMemberServiceImpl extends CurrentValueRetriever implements Mo
             }
         }
 
-        // 4. Check if the user is already a member of the module
-        if (moduleMemberRepository.existsByModule_PublicIdAndOrgMember_PublicId(moduleId, addModuleMemberDto.getUserId())) {
-            throw new ActionProhibitedException("This user is already a member of the module.");
-        }
-
-        // 5. Check if the user to be added is part of the organization
+        // 4. Check if the user to be added is part of the organization
         OrgMember memberToAdd = orgMemberService.getOrgMemberByPublicId(addModuleMemberDto.getUserId());
         if (!memberToAdd.getOrg().getId().equals(orgMember.getOrg().getId())) {
             throw new ActionProhibitedException("The member that you are trying to add does not belong to your organization.");
         }
 
-        ModuleMember moduleMember = addModuleMemberDto.toModuleMember();
+        // 5. Check if the user is already a member of the module
+        if (moduleMemberRepository.existsByModule_PublicIdAndOrgMember_PublicIdAndActive(moduleId, addModuleMemberDto.getUserId(), true)) {
+            throw new ActionProhibitedException("This user is already a member of the module.");
+        }
+
+        ModuleMember moduleMember = moduleMemberRepository.findByOrgMemberAndModule(memberToAdd, module).orElse(new ModuleMember());
+        addModuleMemberDto.applyModuleMember(moduleMember);
+        moduleMember.setActive(true);
         moduleMember.setOrgMember(memberToAdd);
         moduleMember.setModule(module);
         moduleMemberRepository.save(moduleMember);
@@ -177,7 +179,7 @@ public class ModuleMemberServiceImpl extends CurrentValueRetriever implements Mo
             throw new PermissionDeniedException("Only module owner has permission to perform this action.");
         }
 
-        return moduleMemberRepository.getMembersOfModule(moduleId, search, pageable).map(moduleMember -> ModuleMemberDto.fromModuleMember(moduleMember)).toList();
+        return moduleMemberRepository.getMembersOfModule(moduleId, search, pageable).map(ModuleMemberDto::fromModuleMember).toList();
     }
 
     /**
