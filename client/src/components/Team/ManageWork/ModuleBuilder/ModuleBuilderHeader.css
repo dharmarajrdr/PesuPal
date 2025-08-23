@@ -55,22 +55,27 @@
     border-color: #eee;
 }
 
-#module-members-icon {
+.module-members-icon {
     background-color: #eee;
     margin-left: 10px;
     border-radius: 5px;
     padding: 5px 5px 5px 10px;
     cursor: pointer;
+    transition-duration: 0.2s;
 }
 
-#module-members-icon i,
-#module-members-icon span {
+.module-members-icon i,
+.module-members-icon span {
     color: var(--primary-color);
 }
 
-#module-members-icon span {
+.module-members-icon span {
     font-size: 13px;
     padding-right: 4px;
+}
+
+.module-members-icon:hover {
+    background-color: #ddd;
 }
 
 #module-visibility-select {

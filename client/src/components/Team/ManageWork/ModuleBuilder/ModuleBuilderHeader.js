@@ -105,7 +105,7 @@ const AddModuleMember = ({ accessibility }) => {
     const isModuleAccessibleForSelectiveMembers = accessibility === 'SELECTIVE_MEMBERS';
 
     return isModuleAccessibleForSelectiveMembers && (
-        <div id='module-members-icon' className='FRCC' onClick={() => setShowAddParticipantsModal(true)}>
+        <div className='FRCC module-members-icon' onClick={() => setShowAddParticipantsModal(true)}>
             {showAddParticipantsModal && <AddParticipantsModal moduleId={moduleId} onClose={() => setShowAddParticipantsModal(false)} />}
             <i className='fa fa-user-plus w15 fs10'></i>
             <span>Add Members</span>
@@ -121,7 +121,7 @@ const ManageModuleMember = ({ memberCount, accessibility }) => {
     const isModuleAccessibleForSelectiveMembers = accessibility === 'SELECTIVE_MEMBERS';
 
     return isModuleAccessibleForSelectiveMembers && memberCount > 1 && (
-        <div id='module-members-icon' className='FRCC' onClick={() => setShowAddParticipantsModal(true)}>
+        <div className='FRCC module-members-icon' onClick={() => setShowAddParticipantsModal(true)}>
             {showAddParticipantsModal && <ManageParticipantsModal moduleId={moduleId} onClose={() => setShowAddParticipantsModal(false)} />}
             <i className='fa fa-user w15 fs10'></i>
             <span>{memberCount - 1}</span>  {/* Exclude the creator from the count */}
