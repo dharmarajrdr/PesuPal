@@ -2,6 +2,7 @@ package com.pesupal.server.service.implementations.module;
 
 import com.pesupal.server.dto.request.module.AddModuleMemberDto;
 import com.pesupal.server.dto.response.UserPreviewDto;
+import com.pesupal.server.dto.response.module.ModuleMemberDto;
 import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.exceptions.PermissionDeniedException;
@@ -156,5 +157,25 @@ public class ModuleMemberServiceImpl extends CurrentValueRetriever implements Mo
         }
 
         return moduleMemberRepository.getNonMembersOfModule(moduleId, search, pageable).map(UserPreviewDto::fromOrgMember).toList();
+    }
+
+    /**
+     * Retrieves a list of users who are members of a specific module.
+     *
+     * @param moduleId
+     * @param search
+     * @param pageable
+     * @return
+     */
+    @Override
+    public List<ModuleMemberDto> getMembersOfModule(String moduleId, String search, Pageable pageable) {
+
+        OrgMember orgMember = getCurrentOrgMember();
+        Module module = moduleService.getModuleById(moduleId);
+        if (!ModuleHelper.isModuleOwner(module, orgMember)) {
+            throw new PermissionDeniedException("Only module owner has permission to perform this action.");
+        }
+
+        return moduleMemberRepository.getMembersOfModule(moduleId, search, pageable).map(moduleMember -> ModuleMemberDto.fromModuleMember(moduleMember)).toList();
     }
 }
