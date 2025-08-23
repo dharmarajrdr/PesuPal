@@ -90,7 +90,7 @@
 #user-role-select {
     padding: 2px 5px;
     border-radius: 5px;
-    border: 1px solid #ccc;
+    border: 1px solid #ddd;
     background-color: var(--pure-white);
     cursor: pointer;
     transition-duration: 0.2s;

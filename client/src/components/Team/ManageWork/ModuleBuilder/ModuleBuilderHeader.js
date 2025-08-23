@@ -5,6 +5,7 @@ import OptionsModal from '../../../Utils/OptionsModal';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import AddParticipantsModal from './AddParticipantsModal';
+import ModulePermissionModal from './ModulePermissionModal';
 import ManageParticipantsModal from './ManageParticipantsModal';
 import { showPopup } from '../../../../store/reducers/PopupSlice';
 import MyModulesListOverlay from '../CreateModule/MyModulesListOverlay'
@@ -62,6 +63,13 @@ const MoreOptionsButton = ({ moduleId }) => {
             onClick: deleteModuleHandler
         },
         {
+            icon: 'fa fa-users-cog',
+            name: 'Permissions',
+            onClick: () => {
+                setShowPermissionModal(true);
+            }
+        },
+        {
             icon: 'fa fa-folder',
             name: 'My Modules',
             onClick: () => {
@@ -77,12 +85,14 @@ const MoreOptionsButton = ({ moduleId }) => {
 
     const [showOptions, setShowOptions] = useState(false);
     const [showMyModulesList, setShowMyModulesList] = useState(false);
+    const [showPermissionModal, setShowPermissionModal] = useState(false);
 
     return (
         <div id='more-options-button' className='FRCC mL10' onClick={() => setShowOptions(!showOptions)}>
             <i className='fa fa-ellipsis-vertical fs16'></i>
             {showOptions && <OptionsModal options={options} style={{ position: 'relative', top: '10px', right: '160px', width: '200px' }} />}
             {showMyModulesList && <MyModulesListOverlay onCloseModal={() => setShowMyModulesList(false)} />}
+            {showPermissionModal && <ModulePermissionModal onClose={() => setShowPermissionModal(false)} moduleId={moduleId} />}
         </div>
     )
 }

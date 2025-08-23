@@ -1,8 +1,8 @@
-#group-permission-modal {
+#permission-modal {
     position: fixed;
 }
 
-#group-permission-modal-content {
+#permission-modal-content {
     background-color: var(--pure-white);
     width: 500px;
     height: 100%;
@@ -24,7 +24,7 @@
     }
 }
 
-#group-permission-modal-content #title {
+#permission-modal-content #title {
     font-size: 17px;
     font-weight: 600;
     border-top-left-radius: 5px;
