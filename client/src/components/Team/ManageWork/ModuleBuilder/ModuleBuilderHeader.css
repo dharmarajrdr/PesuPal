@@ -72,3 +72,17 @@
     font-size: 12px;
     padding-right: 4px;
 }
+
+#module-visibility-select {
+    padding: 5px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    background-color: var(--pure-white);
+    cursor: pointer;
+    transition-duration: 0.2s;
+}
+
+#module-visibility-select:focus {
+    border-color: var(--primary-color);
+    outline: none;
+}
