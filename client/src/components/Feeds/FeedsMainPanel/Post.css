@@ -109,46 +109,6 @@ i.bookmarked {
   color: #1a4bb8;
 }
 
-.media_image {
-  padding-bottom: 25px;
-  max-height: 450px;
-  height: 100%;
-  object-fit: scale-down;
-  object-position: top;
-  cursor: pointer;
-}
-
-#closeFullScreen {
-  position: fixed;
-  top: 50px;
-  right: 50px;
-  font-size: 15px;
-  color: #333;
-  cursor: pointer;
-  background-color: var(--primary-color);
-  padding: 8px 12px 8px 20px;
-  border-radius: 10px;
-  box-shadow: 5px 5px 5px var(--box-shadow-color);
-}
-
-#closeFullScreen i {
-  width: 20px;
-  height: 20px;
-  line-height: 20px;
-  text-align: center;
-  color: var(--pure-white);
-}
-
-#closeFullScreen span {
-  color: var(--pure-white);
-  line-height: 20px;
-}
-
-#closeFullScreen:hover {
-  color: #000;
-  transition-duration: 0.25s;
-}
-
 @media screen and (max-width: 768px) {
 
   #closeFullScreen {
