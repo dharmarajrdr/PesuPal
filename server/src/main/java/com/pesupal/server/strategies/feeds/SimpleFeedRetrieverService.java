@@ -8,7 +8,7 @@ import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.repository.post.PostRepository;
 import com.pesupal.server.service.interfaces.post.FeedRetrieverService;
 import com.pesupal.server.service.interfaces.post.PostService;
-import lombok.AllArgsConstructor;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -20,11 +20,15 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-@AllArgsConstructor
 public class SimpleFeedRetrieverService implements FeedRetrieverService {
 
     private final PostService postService;
     private final PostRepository postRepository;
+
+    public SimpleFeedRetrieverService(@Lazy PostService postService, PostRepository postRepository) {
+        this.postService = postService;
+        this.postRepository = postRepository;
+    }
 
     /**
      * A simple feed retriever that returns the list of posts user has not liked or commented on yet on the particular org in descending order of creation.
@@ -42,9 +46,9 @@ public class SimpleFeedRetrieverService implements FeedRetrieverService {
         Sort sort = Sort.by(sortOrder == SortOrder.ASC ? Sort.Direction.ASC : Sort.Direction.DESC, "createdAt");
         Pageable pageable = PageRequest.of(page, size, sort);
 
-        Page<Post> posts = postRepository.getUnlikedPostsByOrgMember(orgMember, pageable);
+        Page<Post> posts = postRepository.getUnlikedPostsByOrgMember(orgMember.getOrg(), orgMember, pageable);
         List<PostDto> postDtos = new ArrayList<>(posts.getContent().stream().map(post -> {
-            PostDto postDto = postService.getPostDtoFromPostAndOrgMember(post, orgMember);
+            PostDto postDto = postService.getPostDtoFromPostAndOrgMember(post, post.getCreator());
             postDto.setCreator(post.getCreator().getId().equals(orgMember.getId()));
             postDto.setLiked(false);
             return postDto;
