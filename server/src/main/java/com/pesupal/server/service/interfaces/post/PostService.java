@@ -29,4 +29,6 @@ public interface PostService {
     void deletePost(String postId);
 
     Post getPostByPublicId(String postId);
+
+    PostsListDto getScheduledPosts(int page, int size, SortOrder sortOrder);
 }
