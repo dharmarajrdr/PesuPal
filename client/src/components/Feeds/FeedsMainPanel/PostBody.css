@@ -1,0 +1,53 @@
+.html-content-renderer {
+    width: 100%;
+    word-break: break-word;
+}
+
+.html-content-renderer b {
+    font-weight: 600;
+}
+
+.html-content-renderer u {
+    text-decoration: underline;
+}
+
+.html-content-renderer a,
+.html-content-renderer a * {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.html-content-renderer a:hover {
+    text-decoration: underline;
+    color: #000bff;
+}
+
+.html-content-renderer em {
+    font-style: italic;
+}
+
+.html-content-renderer s,
+.html-content-renderer strike,
+.html-content-renderer del {
+    text-decoration: line-through;
+}
+
+.html-content-renderer ol,
+.html-content-renderer ul {
+    padding: 5px 20px;
+}
+
+.html-content-renderer code,
+.html-content-renderer code p {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.95em;
+}
+
+.html-content-renderer code {
+    background-color: #f5f5f5;
+    display: block;
+    border-radius: 4px;
+    overflow-x: auto;
+    width: 100%;
+    padding: 20px;
+}

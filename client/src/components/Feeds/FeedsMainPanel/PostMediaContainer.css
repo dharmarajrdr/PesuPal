@@ -3,6 +3,25 @@
     overflow: hidden;
 }
 
+.mediaContainer .resource-not-found {
+    width: 100%;
+    height: 100%;
+    background-color: #f0f0f0;
+    text-align: center;
+    font-size: 12px;
+    border-radius: 5px;
+    max-height: 350px;
+    min-height: 100px;
+    user-select: none;
+    overflow: hidden;
+    margin: 2.5px;
+}
+
+.mediaContainer .resource-not-found i,
+.mediaContainer .resource-not-found span {
+    color: #888;
+}
+
 .media_image {
     max-height: 350px;
     height: 100%;
@@ -60,6 +79,7 @@
 
 .more_than_two_images_container .small-image-container {
     margin-left: 5px;
+    width: 100%;
 }
 
 .more_than_two_images_container .small-image-container:first-child {

@@ -1,3 +1,4 @@
+import './PostHeader.css';
 import utils from '../../../utils';
 import PostsLikedBy from './PostsLikedBy';
 import { useEffect, useState } from 'react';

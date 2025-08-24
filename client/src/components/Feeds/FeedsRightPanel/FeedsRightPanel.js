@@ -1,16 +1,12 @@
 import Quote from './Quote'
 import './FeedsRightPanel.css'
-import { useState } from 'react'
 import TrendingTags from './TrendingTags'
 import TrendingPosts from './TrendingPosts'
-import CreateNewPost from '../FeedsMainPanel/CreateNewPost'
 
-const Header = () => {
-
-    const [showCreatePostModal, setShowCreatePostModal] = useState(false);
+const Header = ({ setShowCreatePostModal }) => {
 
     return <div className='FRCB w100 pR' id='FeedsRightPanelHeader'>
-        {showCreatePostModal && <CreateNewPost onMinimize={() => setShowCreatePostModal(false)} />}
+
         <button id='create-post-button' onClick={() => setShowCreatePostModal(true)}>
             <i className="fa-solid fa-plus w15"></i>
             Create Post
@@ -22,10 +18,10 @@ const Header = () => {
     </div>
 }
 
-const FeedsRightPanel = () => {
+const FeedsRightPanel = ({ setShowCreatePostModal }) => {
     return (
         <div id='FeedsRightPanel'>
-            <Header />
+            <Header setShowCreatePostModal={setShowCreatePostModal} />
             <div id='FeedsRightPanelContent' className='noScrollbar'>
                 <TrendingTags />
                 <TrendingPosts />
