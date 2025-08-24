@@ -101,17 +101,12 @@ public class PostServiceImpl extends CurrentValueRetriever implements PostServic
     }
 
     /**
-     * Unschedules a scheduled post.
+     * Unschedules a scheduled post - Internal use only.
      *
-     * @param postId
+     * @param post
      * @return
      */
-    public Post unschedulePost(Long postId, OrgMember triggeredBy) {
-
-        Post post = getPostById(postId);
-        if (triggeredBy != null && post.getCreator().getPublicId().equals(triggeredBy.getPublicId())) {
-            throw new PermissionDeniedException("You do not have permission to perform this action.");
-        }
+    private Post unschedulePostInternal(Post post) {
 
         if (!post.getStatus().equals(PostStatus.SCHEDULED)) {
             throw new ActionProhibitedException("Post is not scheduled.");
@@ -120,6 +115,37 @@ public class PostServiceImpl extends CurrentValueRetriever implements PostServic
         post.setCreatedAt(LocalDateTime.now());
         post.setStatus(PostStatus.PUBLISHED);
         return postRepository.save(post);
+    }
+
+    /**
+     * Unschedules a scheduled post - Internal use only.
+     *
+     * @param postId
+     * @return
+     */
+    private void unschedulePost(Long postId) {
+
+        Post post = getPostById(postId);
+        unschedulePostInternal(post);
+    }
+
+    /**
+     * Unschedules a scheduled post - External use.
+     *
+     * @param postId
+     * @param triggeredBy
+     * @return
+     */
+    @Override
+    public void unschedulePost(String postId, OrgMember triggeredBy) {
+
+        Post post = getPostByPublicId(postId);
+
+        if (!post.getCreator().getPublicId().equals(triggeredBy.getPublicId())) {
+            throw new PermissionDeniedException("You do not have permission to perform this action.");
+        }
+
+        unschedulePostInternal(post);
     }
 
     /**
@@ -135,7 +161,7 @@ public class PostServiceImpl extends CurrentValueRetriever implements PostServic
             try {
                 redisTemplate.opsForZSet().remove(SCHEDULED_POST_KEY, postId);
                 Long id = Long.parseLong(postId.toString());
-                unschedulePost(id, null);
+                unschedulePost(id);
                 // TODO: Send Post Published Notification in Bot
             } catch (Exception ignored) {
             }

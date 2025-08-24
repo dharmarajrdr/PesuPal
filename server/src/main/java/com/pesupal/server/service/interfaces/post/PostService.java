@@ -5,12 +5,15 @@ import com.pesupal.server.dto.response.post.PostDto;
 import com.pesupal.server.dto.response.post.PostsListDto;
 import com.pesupal.server.enums.SortOrder;
 import com.pesupal.server.model.post.Post;
+import com.pesupal.server.model.user.OrgMember;
 
 public interface PostService {
 
     Post createPost(CreatePostDto createPostDto);
 
     Post schedulePost(CreatePostDto createPostDto);
+
+    void unschedulePost(String postId, OrgMember triggeredBy);
 
     Post getPostByIdAndOrgId(Long postId, Long orgId);
 
