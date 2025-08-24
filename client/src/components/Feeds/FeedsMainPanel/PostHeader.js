@@ -18,8 +18,9 @@ const PostHeader = ({ userId, displayName, displayPicture, createdAt, postId, co
     const [pollUpdatable, setPollUpdatable] = useState(poll?.updatable);
 
     const onToggleOption = () => {
-        dispatch(setActivePostId(postId));
-    }
+        const newValue = activePostId === postId ? null : postId;
+        dispatch(setActivePostId(newValue));
+    };
 
     useEffect(() => {
         setIsOptionOpen(activePostId === postId);
