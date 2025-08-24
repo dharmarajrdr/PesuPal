@@ -9,11 +9,13 @@ import com.pesupal.server.model.user.OrgMember;
 
 public interface PostService {
 
-    Post createPost(CreatePostDto createPostDto);
+    PostDto createPost(CreatePostDto createPostDto);
 
-    Post schedulePost(CreatePostDto createPostDto);
+    PostDto schedulePost(CreatePostDto createPostDto);
 
     void unschedulePost(String postId, OrgMember triggeredBy);
+
+    PostDto getPostDtoFromPostAndOrgMember(Post post, OrgMember orgMember);
 
     Post getPostByIdAndOrgId(Long postId, Long orgId);
 
@@ -34,4 +36,6 @@ public interface PostService {
     Post getPostByPublicId(String postId);
 
     PostsListDto getScheduledPosts(int page, int size, SortOrder sortOrder);
+
+    PostsListDto getFeeds(int page, int size, SortOrder sortOrder);
 }

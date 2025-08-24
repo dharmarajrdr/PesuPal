@@ -1,7 +1,7 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { useDispatch } from 'react-redux';
-import { hideConfirmationPopup, showConfirmationPopup } from '../../../store/reducers/ConfirmationPopupSlice';
 import SchedulePicker from '../../Chat/ConversationScreen/SchedulePicker';
+import { hideConfirmationPopup, showConfirmationPopup } from '../../../store/reducers/ConfirmationPopupSlice';
 
 const ShareWithSchedule = ({ onShare, onSchedule }) => {
 
@@ -16,13 +16,7 @@ const ShareWithSchedule = ({ onShare, onSchedule }) => {
                 {
                     title: 'Post',
                     color: 'green',
-                    onClick: () => {
-                        onShare(() => {
-                            dispatch(hideConfirmationPopup());
-                        }, () => {
-                            dispatch(hideConfirmationPopup());
-                        });
-                    }
+                    onClick: onShare
                 },
                 {
                     title: 'Cancel',
@@ -40,13 +34,7 @@ const ShareWithSchedule = ({ onShare, onSchedule }) => {
                 {
                     title: 'Schedule',
                     color: 'green',
-                    onClick: () => {
-                        onSchedule(scheduledAt, () => {
-                            dispatch(hideConfirmationPopup());
-                        }, () => {
-                            dispatch(hideConfirmationPopup());
-                        });
-                    }
+                    onClick: () => onSchedule(scheduledAt)
                 },
                 {
                     title: 'Cancel',

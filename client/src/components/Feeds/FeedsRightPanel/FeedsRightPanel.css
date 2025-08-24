@@ -1,8 +1,8 @@
 #FeedsRightPanel {
     width: 25%;
-    height: 90%;
+    height: 100%;
     position: sticky;
-    top: 5%;
+    top: 0;
     margin: 0px 10px;
     overflow-y: scroll;
 }

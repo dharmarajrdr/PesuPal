@@ -24,7 +24,7 @@ public class PostController extends CurrentValueRetriever {
     public ResponseEntity<ApiResponseDto> createPost(@RequestBody CreatePostDto createPostDto) {
 
         createPostDto.setStatus(PostStatus.PUBLISHED);
-        Post post = postService.createPost(createPostDto);
+        PostDto post = postService.createPost(createPostDto);
         return ResponseEntity.ok().body(new ApiResponseDto("Post created successfully", post));
     }
 
@@ -32,7 +32,7 @@ public class PostController extends CurrentValueRetriever {
     public ResponseEntity<ApiResponseDto> schedulePost(@RequestBody CreatePostDto createPostDto) {
 
         createPostDto.setStatus(PostStatus.SCHEDULED);
-        Post post = postService.schedulePost(createPostDto);
+        PostDto post = postService.schedulePost(createPostDto);
         return ResponseEntity.ok().body(new ApiResponseDto("Post scheduled successfully", post));
     }
 
@@ -41,6 +41,15 @@ public class PostController extends CurrentValueRetriever {
 
         postService.unschedulePost(postId, getCurrentOrgMember());
         return ResponseEntity.ok().body(new ApiResponseDto("Post unscheduled successfully"));
+    }
+
+    @GetMapping("/feeds")
+    public ResponseEntity<ApiResponseDto> getFeeds(@RequestParam(defaultValue = "0") int page,
+                                                   @RequestParam(defaultValue = "10") int size,
+                                                   @RequestParam(name = "sort_order", defaultValue = "DESC") String sortOrder) {
+
+        PostsListDto posts = postService.getFeeds(page, size, SortOrder.valueOf(sortOrder));
+        return ResponseEntity.ok().body(new ApiResponseDto("Posts retrieved successfully.", posts.getPosts(), posts.getInfo()));
     }
 
     @GetMapping("/{postId}")

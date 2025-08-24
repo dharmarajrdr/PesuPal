@@ -29,7 +29,9 @@ public abstract class PublicAccessModel extends BaseModel {
     private LocalDateTime createdAt;
 
     protected void setCreationTime() {
-        this.createdAt = LocalDateTime.now();
+        if (this.createdAt == null) {
+            this.createdAt = LocalDateTime.now();
+        }
     }
 
     @PrePersist
