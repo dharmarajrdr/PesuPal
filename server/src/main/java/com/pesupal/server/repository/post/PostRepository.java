@@ -1,13 +1,14 @@
 package com.pesupal.server.repository.post;
 
 import com.pesupal.server.enums.PostStatus;
-import com.pesupal.server.model.org.Org;
 import com.pesupal.server.model.post.Post;
+import com.pesupal.server.model.user.OrgMember;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Repository
@@ -19,7 +20,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     Optional<Post> findByPublicId(String publicId);
 
-    Optional<Post> findByIdAndOrg(Long postId, Org org);
-
     Optional<Post> findByPublicIdAndOrgId(String postId, Long orgId);
+
+    Page<Post> findAllByCreatorAndStatusAndCreatedAtAfterOrderByCreatedAt(OrgMember orgMember, PostStatus postStatus, LocalDateTime now, Pageable pageable);
 }

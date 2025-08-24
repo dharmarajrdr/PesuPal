@@ -2,6 +2,7 @@ package com.pesupal.server.dto.response.post;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.pesupal.server.dto.response.UserBasicInfoDto;
+import com.pesupal.server.enums.PostStatus;
 import com.pesupal.server.model.post.Post;
 import lombok.Data;
 
@@ -43,6 +44,8 @@ public class PostDto {
 
     private PollDto poll;
 
+    private PostStatus status;
+
     public static PostDto fromPost(Post post) {
 
         PostDto postDto = new PostDto();
@@ -53,6 +56,7 @@ public class PostDto {
         postDto.setCommentable(post.isCommentable());
         postDto.setBookmarkable(post.isBookmarkable());
         postDto.setShareable(post.isShareable());
+        postDto.setStatus(post.getStatus());
         return postDto;
     }
 }

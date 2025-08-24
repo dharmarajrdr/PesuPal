@@ -228,7 +228,7 @@ public class PostServiceImpl extends CurrentValueRetriever implements PostServic
         OrgMember creator = orgMemberService.getOrgMemberByPublicId(creatorId);
 
         Sort sort = Sort.by(sortOrder == SortOrder.ASC ? Sort.Direction.ASC : Sort.Direction.DESC, "createdAt");
-        Pageable pageable = PageRequest.of(page, size + 1, sort);
+        Pageable pageable = PageRequest.of(page, size, sort);
         Page<Post> postPage = postRepository.findAllByOrgIdAndCreator_PublicIdAndStatus(orgId, creatorId, pageable, PostStatus.PUBLISHED);
 
         List<PostDto> postDtos = new ArrayList<>(postPage.getContent().stream().map(post -> {
@@ -239,11 +239,38 @@ public class PostServiceImpl extends CurrentValueRetriever implements PostServic
         }).toList());
         PostsListDto postsListDto = new PostsListDto();
         postsListDto.setInfo(Map.of(
-                "hasMoreRecords", postDtos.size() == size + 1
+                "hasMoreRecords", postPage.hasNext()
         ));
-        if (!postDtos.isEmpty() && postDtos.size() > size) {
-            postDtos.remove(postDtos.size() - 1); // Remove the extra post if it exists
-        }
+        postsListDto.setPosts(postDtos);
+        return postsListDto;
+    }
+
+    /**
+     * Get scheduled posts
+     *
+     * @param page
+     * @param size
+     * @param sortOrder
+     * @return
+     */
+    @Override
+    public PostsListDto getScheduledPosts(int page, int size, SortOrder sortOrder) {
+
+        OrgMember orgMember = getCurrentOrgMember();
+
+        Sort sort = Sort.by(sortOrder == SortOrder.ASC ? Sort.Direction.ASC : Sort.Direction.DESC, "createdAt");
+        Pageable pageable = PageRequest.of(page, size + 1, sort);
+
+        Page<Post> posts = postRepository.findAllByCreatorAndStatusAndCreatedAtAfterOrderByCreatedAt(orgMember, PostStatus.SCHEDULED, LocalDateTime.now(), pageable);
+        List<PostDto> postDtos = new ArrayList<>(posts.getContent().stream().map(post -> {
+            PostDto postDto = getPostDtoFromPostAndOrgMember(post, orgMember);
+            postDto.setCreator(true);
+            postDto.setLiked(false);
+            return postDto;
+        }).toList());
+
+        PostsListDto postsListDto = new PostsListDto();
+        postsListDto.setInfo(Map.of("hasMoreRecords", posts.hasNext()));
         postsListDto.setPosts(postDtos);
         return postsListDto;
     }
@@ -320,13 +347,14 @@ public class PostServiceImpl extends CurrentValueRetriever implements PostServic
         Post post = getPostByPublicIdAndOrgId(postId, orgMember.getOrg().getId());
 
         if (post.getStatus().equals(PostStatus.PUBLISHED)) {
-            if (createPostDto.getScheduledAt() != null || createPostDto.getStatus().equals(PostStatus.SCHEDULED)) {
+            if (createPostDto.getScheduledAt() != null || PostStatus.SCHEDULED.equals(createPostDto.getStatus())) {
                 throw new ActionProhibitedException("Cannot schedule a post that is already published.");
             }
         }
 
         createPostDto.applyToPost(post);
         postRepository.save(post);
+
         if (createPostDto.getScheduledAt() != null) {
             redisTemplate.opsForZSet().remove(SCHEDULED_POST_KEY, post.getId());
             redisTemplate.opsForZSet().add(SCHEDULED_POST_KEY, post.getId(), DateTimeUtil.toEpochMilli(createPostDto.getScheduledAt()));

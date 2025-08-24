@@ -1,13 +1,9 @@
 import Post from './Post';
 
-const PostList = ({ posts, activePostId, setActivePostId }) => {
+const PostList = ({ posts }) => {
 
     return <>
-        {posts.map((post, index) =>
-            <Post isOptionOpen={activePostId === post.id}
-                onToggleOption={() => {
-                    setActivePostId((prev) => (prev === post.id ? null : post.id));
-                }} key={index} post={post} />)}
+        {posts.map((post, index) => <Post key={index} post={post} />)}
     </>
 }
 

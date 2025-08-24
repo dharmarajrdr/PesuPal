@@ -42,6 +42,15 @@ public class PostController {
         return ResponseEntity.ok().body(new ApiResponseDto("Post retrieved successfully.", post));
     }
 
+    @GetMapping("/scheduled")
+    public ResponseEntity<ApiResponseDto> getScheduledPosts(@RequestParam(defaultValue = "0") int page,
+                                                            @RequestParam(defaultValue = "10") int size,
+                                                            @RequestParam(name = "sort_order", defaultValue = "DESC") String sortOrder) {
+
+        PostsListDto posts = postService.getScheduledPosts(page, size, SortOrder.valueOf(sortOrder));
+        return ResponseEntity.ok().body(new ApiResponseDto("Scheduled posts retrieved successfully.", posts.getPosts(), posts.getInfo()));
+    }
+
     @GetMapping("/user/{userId}")
     public ResponseEntity<ApiResponseDto> getPostsByUserId(@PathVariable(name = "userId") String postOwnerId,
                                                            @RequestParam(defaultValue = "0") int page,
