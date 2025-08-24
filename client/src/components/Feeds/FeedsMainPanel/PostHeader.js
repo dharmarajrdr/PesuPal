@@ -45,7 +45,7 @@ const PostHeader = ({ userId, displayName, displayPicture, createdAt, postId, co
             }
         },
         {
-            name: isCreator && `View Likes`,
+            name: isCreator && !isScheduledPost && `View Likes`,
             icon: `fa fa-users`,
             onClick: (e) => {
                 e.stopPropagation();
@@ -54,7 +54,7 @@ const PostHeader = ({ userId, displayName, displayPicture, createdAt, postId, co
             }
         },
         {
-            name: 'Copy Link',
+            name: !isScheduledPost && 'Copy Link',
             icon: 'fa fa-link',
             onClick: (e) => {
                 e.stopPropagation();
