@@ -1,3 +1,7 @@
+#full-screen-ticket-attachment-overlay {
+    z-index: 20;
+}
+
 #full-screen-image-viewer {
     width: 80%;
     height: 80%;
