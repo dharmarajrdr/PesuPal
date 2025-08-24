@@ -76,10 +76,11 @@ public class PostServiceImpl extends CurrentValueRetriever implements PostServic
         post.setPostMedia(postMedia);
         post.setHasPoll(hasPoll);
         postRepository.save(post);
-        postTagService.saveAll(createPostDto.getTags(), post);
+        List<PostTag> postTags = postTagService.saveAll(createPostDto.getTags(), post);
         if (hasPoll) {
             pollService.createPoll(createPostDto.getPoll(), post);
         }
+        post.setTags(postTags);
         return post;
     }
 

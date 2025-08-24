@@ -12,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -41,6 +42,10 @@ public class PostTagServiceImpl implements PostTagService {
     @Override
     @Transactional
     public List<PostTag> saveAll(Set<String> tags, Post post) {
+
+        if (tags.isEmpty()) {
+            return new ArrayList<>();
+        }
 
         List<PostTag> postTags = tags.stream().map(tagName -> {
             PostTag postTag = new PostTag();
