@@ -12,7 +12,7 @@ import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.exceptions.PermissionDeniedException;
 import com.pesupal.server.helpers.CurrentValueRetriever;
-import com.pesupal.server.model.org.Org;
+import com.pesupal.server.helpers.DateTimeUtil;
 import com.pesupal.server.model.post.Post;
 import com.pesupal.server.model.post.PostLike;
 import com.pesupal.server.model.post.PostMedia;
@@ -29,12 +29,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.time.LocalDateTime;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -48,6 +48,9 @@ public class PostServiceImpl extends CurrentValueRetriever implements PostServic
     private final PostTagService postTagService;
     private final OrgMemberService orgMemberService;
     private final PostMediaService postMediaService;
+    private final RedisTemplate<String, Object> redisTemplate;
+
+    private final static String SCHEDULED_POST_KEY = "scheduled_posts";
 
     /**
      * Creates a new post.
@@ -65,7 +68,6 @@ public class PostServiceImpl extends CurrentValueRetriever implements PostServic
         Post post = createPostDto.toPost();
         post.setOrg(creator.getOrg());
         post.setCreator(creator);
-        post.setStatus(PostStatus.PUBLISHED);
         List<PostMedia> postMedia = createPostDto.getMediaIds().stream().map(mediaId -> PostMedia.builder().post(post).mediaId(mediaId.getId()).extension(mediaId.getExtension()).build()).collect(Collectors.toList());
         post.setMedia(!postMedia.isEmpty());
         post.setPostMedia(postMedia);
@@ -77,6 +79,67 @@ public class PostServiceImpl extends CurrentValueRetriever implements PostServic
             pollService.createPoll(createPostDto.getPoll(), post);
         }
         return post;
+    }
+
+    /**
+     * Schedules a post for future publication.
+     *
+     * @param createPostDto
+     * @return
+     */
+    @Override
+    public Post schedulePost(CreatePostDto createPostDto) {
+
+        if (createPostDto.getScheduledAt().isBefore(LocalDateTime.now())) {
+            throw new ActionProhibitedException("Scheduled time must be in the future.");
+        }
+
+        Post post = createPost(createPostDto);
+        long currentTimeMillis = DateTimeUtil.toEpochMilli(createPostDto.getScheduledAt());
+        redisTemplate.opsForZSet().add(SCHEDULED_POST_KEY, post.getId(), currentTimeMillis);
+        return post;
+    }
+
+    /**
+     * Unschedules a scheduled post.
+     *
+     * @param postId
+     * @return
+     */
+    public Post unschedulePost(Long postId, OrgMember triggeredBy) {
+
+        Post post = getPostById(postId);
+        if (triggeredBy != null && post.getCreator().getPublicId().equals(triggeredBy.getPublicId())) {
+            throw new PermissionDeniedException("You do not have permission to perform this action.");
+        }
+
+        if (!post.getStatus().equals(PostStatus.SCHEDULED)) {
+            throw new ActionProhibitedException("Post is not scheduled.");
+        }
+
+        post.setCreatedAt(LocalDateTime.now());
+        post.setStatus(PostStatus.PUBLISHED);
+        return postRepository.save(post);
+    }
+
+    /**
+     * Publishes a scheduled post immediately.
+     */
+    @Scheduled(cron = "0 * * * * *")
+    public void publishScheduledPost() {
+
+        long currentTimeMillis = DateTimeUtil.toEpochMilli(LocalDateTime.now());
+        Set<Object> postIds = redisTemplate.opsForZSet().rangeByScore(SCHEDULED_POST_KEY, 0, currentTimeMillis);
+
+        for (Object postId : Objects.requireNonNull(postIds)) {
+            try {
+                redisTemplate.opsForZSet().remove(SCHEDULED_POST_KEY, postId);
+                Long id = Long.parseLong(postId.toString());
+                unschedulePost(id, null);
+                // TODO: Send Post Published Notification in Bot
+            } catch (Exception ignored) {
+            }
+        }
     }
 
     private boolean isLiked(List<PostLike> likes, User user) {
@@ -118,19 +181,6 @@ public class PostServiceImpl extends CurrentValueRetriever implements PostServic
     public Post getPostByIdAndOrgId(Long postId, Long orgId) {
 
         return postRepository.findByIdAndOrgId(postId, orgId).orElseThrow(() -> new DataNotFoundException("Post with ID " + postId + " does not exist."));
-    }
-
-    /**
-     * Retrieves a post by its ID.
-     *
-     * @param postId
-     * @param org
-     * @return Post
-     */
-    @Override
-    public Post getPostByIdAndOrg(Long postId, Org org) {
-
-        return postRepository.findByIdAndOrg(postId, org).orElseThrow(() -> new DataNotFoundException("Post with ID " + postId + " does not exist."));
     }
 
     /**
@@ -268,8 +318,20 @@ public class PostServiceImpl extends CurrentValueRetriever implements PostServic
         OrgMember orgMember = getCurrentOrgMember();
 
         Post post = getPostByPublicIdAndOrgId(postId, orgMember.getOrg().getId());
+
+        if (post.getStatus().equals(PostStatus.PUBLISHED)) {
+            if (createPostDto.getScheduledAt() != null || createPostDto.getStatus().equals(PostStatus.SCHEDULED)) {
+                throw new ActionProhibitedException("Cannot schedule a post that is already published.");
+            }
+        }
+
         createPostDto.applyToPost(post);
-        return postRepository.save(post);
+        postRepository.save(post);
+        if (createPostDto.getScheduledAt() != null) {
+            redisTemplate.opsForZSet().remove(SCHEDULED_POST_KEY, post.getId());
+            redisTemplate.opsForZSet().add(SCHEDULED_POST_KEY, post.getId(), DateTimeUtil.toEpochMilli(createPostDto.getScheduledAt()));
+        }
+        return post;
     }
 
     /**
@@ -292,6 +354,10 @@ public class PostServiceImpl extends CurrentValueRetriever implements PostServic
             postMediaService.unlinkMediaFromPost(post);
         }
         postRepository.delete(post);
+
+        if (post.getStatus().equals(PostStatus.SCHEDULED)) {
+            redisTemplate.opsForZSet().remove(SCHEDULED_POST_KEY, post.getId());
+        }
     }
 
     /**
@@ -304,5 +370,15 @@ public class PostServiceImpl extends CurrentValueRetriever implements PostServic
     public Post getPostByPublicId(String postId) {
 
         return postRepository.findByPublicId(postId).orElseThrow(() -> new DataNotFoundException("Post with id " + postId + " does not exist."));
+    }
+
+    /**
+     * Get the post by its id
+     *
+     * @param postId
+     * @return
+     */
+    public Post getPostById(Long postId) {
+        return postRepository.findById(postId).orElseThrow(() -> new DataNotFoundException("Post with id " + postId + " does not exist."));
     }
 }

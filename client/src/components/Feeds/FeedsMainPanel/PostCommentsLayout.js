@@ -1,12 +1,13 @@
-import { useEffect, useState } from 'react';
 import './PostCommentsLayout.css';
-import { apiRequest } from '../../../http_request';
 import Loader from '../../Loader';
-import ErrorMessage from '../../ErrorMessage';
 import utils from '../../../utils';
 import { useDispatch } from 'react-redux';
-import { showConfirmationPopup } from '../../../store/reducers/ConfirmationPopupSlice';
+import { useEffect, useState } from 'react';
+import ErrorMessage from '../../ErrorMessage';
+import { apiRequest } from '../../../http_request';
+import { showPopup } from '../../../store/reducers/PopupSlice';
 import { showProfile } from '../../../store/reducers/ProfileSlice';
+import { showConfirmationPopup } from '../../../store/reducers/ConfirmationPopupSlice';
 
 const NoCommentsFound = () => {
     return (
@@ -22,6 +23,7 @@ const NoCommentsFound = () => {
 const CreateCommentContainer = ({ postId, setComments, setCommentsCount }) => {
 
     const [comment, setComment] = useState('');
+    const dispatch = useDispatch();
 
     const submitCommentHandler = () => {
         if (!comment.trim()) { return; }
@@ -30,6 +32,7 @@ const CreateCommentContainer = ({ postId, setComments, setCommentsCount }) => {
             setComments(prevComments => [data, ...prevComments]);
             setCommentsCount(prevCount => prevCount + 1);
         }).catch(({ message }) => {
+            dispatch(showPopup({ message, type: 'error' }));
             console.error('Error creating comment:', message);
         });
     }

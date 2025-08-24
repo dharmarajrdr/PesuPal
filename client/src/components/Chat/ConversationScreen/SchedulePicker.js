@@ -19,7 +19,6 @@ const SchedulePicker = ({ onSchedule, onCancel, showPicker, setShowPicker }) => 
     const handleScheduleClick = () => {
         if (scheduledTime) {
             onSchedule(scheduledTime);
-            setShowPicker(false);
         } else {
             dispatch(showPopup({ message: "Please select a date and time to schedule.", 'type': "error" }));
         }

@@ -2,39 +2,22 @@ import './CreateNewPost.css';
 import Media from '../../../Media';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
-import { useEffect, useRef, useState } from 'react';
 import { apiRequest } from '../../../http_request';
+import { useEffect, useRef, useState } from 'react';
+import ShareWithSchedule from './ShareWithSchedule';
 import { useDispatch, useSelector } from 'react-redux';
 import { showPopup } from '../../../store/reducers/PopupSlice';
 import { showFullScreenImage } from '../../../store/reducers/FullScreenImageSlice';
 import { hideLoader, showLoader } from '../../../store/reducers/VerticalLoaderSlice';
 
-const ShareWithSchedule = ({ onShare, onSchedule }) => {
-
-    const [showSchedule, setShowSchedule] = useState(false);
-
-    return (
-        <div className="share-wrapper FCSS w100">
-            <div className="FRCC w100" id='share-post-button-wrapper'>
-                <button className="share-main" onClick={onShare}>Share</button>
-                <i className={`fa ${showSchedule ? 'fa-chevron-up' : 'fa-chevron-down'}`} id="share-chevron" onClick={() => setShowSchedule(prev => !prev)}></i>
-            </div>
-
-            <div className={`w100 schedule-slide ${showSchedule ? 'slide-visible' : ''}`}>
-                <button className="schedule-btn" onClick={onSchedule}>Schedule</button>
-            </div>
-        </div>
-    );
-};
-
 const CreateNewPost = ({ onMinimize }) => {
 
     const dispatch = useDispatch();
     const fileInputRef = useRef(null);
-    const [tags, setTags] = useState(["#firstpost", "#virat"]);
+    const [tags, setTags] = useState([]);
     const [files, setFiles] = useState([]);
-    const [content, setContent] = useState("This is my first post");
-    const [postTitle, setPostTitle] = useState("My first post with images");
+    const [content, setContent] = useState("");
+    const [postTitle, setPostTitle] = useState("");
     const myProfile = useSelector(state => state.myProfile);
 
     const allowedTypes = ['image/png', 'image/jpeg', 'image/gif'];
@@ -69,10 +52,7 @@ const CreateNewPost = ({ onMinimize }) => {
         }
     }, []);
 
-    const handlePostSubmit = (e) => {
-
-        e.preventDefault();
-        e.stopPropagation();
+    const postCreation = (api, options, { onSuccess, onFailure }) => {
 
         if (content.trim().length == 0) {
             alert("Post content cannot be empty!");
@@ -83,7 +63,7 @@ const CreateNewPost = ({ onMinimize }) => {
 
         Media.uploadMultipleMedia(files, setFiles).then(() => {
 
-            apiRequest(`/api/v1/post/create`, 'POST', {
+            const payload = {
                 "title": postTitle,
                 "description": content,
                 "tags": tags,
@@ -98,24 +78,38 @@ const CreateNewPost = ({ onMinimize }) => {
                 //         "Microsoft", "PayPal", "Google", "Amazon"
                 //     ]
                 // }
-            }).then(({ data, message }) => {
+            };
+
+            Object.assign(payload, options || {});
+
+            apiRequest(api, 'POST', payload).then(({ data, message }) => {
                 onMinimize();
                 dispatch(showPopup({ message, type: 'success' }));
                 dispatch(hideLoader());
+                onSuccess && onSuccess(data);
             }).catch(({ message }) => {
                 dispatch(showPopup({ message, type: 'error' }));
                 dispatch(hideLoader());
+                onFailure && onFailure(message);
             });
 
         }).catch(({ message }) => {
             dispatch(showPopup({ message, type: 'error' }));
             dispatch(hideLoader());
+            onFailure && onFailure(message);
         });
+
+    }
+
+    const handlePostSubmit = (onSuccess, onFailure) => {
+
+        postCreation(`/api/v1/post/create`, { 'status': 'PUBLISHED' }, { onSuccess, onFailure });
 
     };
 
-    const handlePostSchedule = () => {
-        console.log(content);
+    const handlePostSchedule = (scheduledAt, onSuccess, onFailure) => {
+
+        postCreation(`/api/v1/post/schedule`, { 'status': 'SCHEDULED', scheduledAt }, { onSuccess, onFailure });
     };
 
     const handleFileChange = (e) => {
@@ -182,7 +176,6 @@ const CreateNewPost = ({ onMinimize }) => {
             <div id='CreateNewPost' className='FCSS post-container'>
                 <div className='FRCB w100'>
                     <label className='post-label'>Post Something</label>
-                    {/* <i className="fa-solid fa-down-left-and-up-right-to-center" id='expand-post-creation' onClick={onMinimize}></i> */}
                 </div>
 
                 <div className='FRSS w100' id='post-input-section'>
