@@ -37,7 +37,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -71,16 +70,16 @@ public class PostServiceImpl extends CurrentValueRetriever implements PostServic
         Post post = createPostDto.toPost();
         post.setOrg(creator.getOrg());
         post.setCreator(creator);
-        List<PostMedia> postMedia = createPostDto.getMediaIds().stream().map(mediaId -> PostMedia.builder().post(post).mediaId(mediaId.getId()).extension(mediaId.getExtension()).build()).collect(Collectors.toList());
-        post.setMedia(!postMedia.isEmpty());
-        post.setPostMedia(postMedia);
+        post.setMedia(!createPostDto.getMediaIds().isEmpty());
         post.setHasPoll(hasPoll);
         postRepository.save(post);
+        List<PostMedia> postMedia = postMediaService.saveAll(createPostDto.getMediaIds(), post);
         List<PostTag> postTags = postTagService.saveAll(createPostDto.getTags(), post);
         if (hasPoll) {
             pollService.createPoll(createPostDto.getPoll(), post);
         }
         post.setTags(postTags);
+        post.setPostMedia(postMedia);
         return post;
     }
 
