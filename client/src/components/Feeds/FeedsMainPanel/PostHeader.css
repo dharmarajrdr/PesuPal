@@ -1,0 +1,28 @@
+.Post .PostHeader {
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    position: sticky;
+    top: 0px;
+    z-index: 10;
+    padding-top: 10px;
+    background-color: var(--pure-white);
+}
+
+.Post .PostHeader .user_name {
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 2px;
+    cursor: pointer;
+}
+
+.Post .PostHeader .user_photo {
+    margin-right: 10px;
+    cursor: pointer;
+}
+
+.Post .PostHeader .created_at {
+    font-size: 12px;
+    color: #999;
+    margin-top: 2px;
+}
