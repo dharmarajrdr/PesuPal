@@ -25,13 +25,11 @@ public abstract class PublicAccessModel extends BaseModel {
     @Column(unique = true, updatable = false, nullable = false)
     private String publicId;
 
-    @Column(updatable = false, nullable = false)
+    @Column(nullable = false)
     private LocalDateTime createdAt;
 
     protected void setCreationTime() {
-        if (this.createdAt == null) {
-            this.createdAt = LocalDateTime.now();
-        }
+        this.createdAt = LocalDateTime.now();
     }
 
     @PrePersist
