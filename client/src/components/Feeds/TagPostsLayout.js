@@ -1,10 +1,12 @@
-import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
 import './TagPostsLayout.css'; // Assuming you have a CSS file for styling
-import PostList from "./FeedsMainPanel/PostList";
 import Loader from "../Loader";
 import ErrorMessage from "../ErrorMessage";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import { apiRequest } from "../../http_request";
+import PostList from "./FeedsMainPanel/PostList";
+import { useDispatch, useSelector } from "react-redux";
+import { setActivePostId, setPosts } from "../../store/reducers/PostSlice";
 
 const NoPostsAvailable = () => {
 
@@ -28,11 +30,11 @@ const TagsPageHeader = ({ tag }) => {
     )
 }
 
-const TagsPage = ({ tag, posts, activePostId, setActivePostId }) => {
+const TagsPage = ({ tag }) => {
 
     return <>
         <TagsPageHeader tag={tag} />
-        <PostList posts={posts} activePostId={activePostId} setActivePostId={setActivePostId} />
+        <PostList />
     </>
 }
 
@@ -41,11 +43,12 @@ const TagPostsLayout = () => {
     const size = 10; // Number of posts per page
     const sortOrder = 'DESC'; // Sorting order for posts, can be 'ASC'
     const { tag } = useParams();
-    const [posts, setPosts] = useState([]);
+    const dispatch = useDispatch();
     const [page, setPage] = useState(0);
-    const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [loading, setLoading] = useState(true);
     const [hasMore, setHasMore] = useState(false);
+    const { list: posts } = useSelector(state => state.posts);
 
     useEffect(() => {
 
@@ -55,22 +58,21 @@ const TagPostsLayout = () => {
 
         apiRequest(`/api/v1/post/tag/${tag}?page=${page}&size=${size}&sort_order=${sortOrder}`, 'GET').then(({ data, info }) => {
             setLoading(false);
-            setPosts(prevPosts => [...prevPosts, ...data]);
-            setPage(prevPage => prevPage + 1);
             setHasMore(info.hasMoreRecords);
+            setPage(prevPage => prevPage + 1);
+            dispatch(setPosts(data));
         }).catch(({ message }) => {
             setLoading(false);
             setError(message);
             setHasMore(false);
+            dispatch(setPosts([]));
         });
 
     }, [tag]);
 
-    const [activePostId, setActivePostId] = useState(null); // only one can be open
-
     const overlayClickHandler = (e) => {
         if (e.target.id === 'tag-posts-layout') {
-            setActivePostId(null); // Close the active post options when clicking outside
+            dispatch(setActivePostId(null)); // Close the active post options when clicking outside
         }
     }
 
@@ -79,7 +81,7 @@ const TagPostsLayout = () => {
             <div id="postsList">
                 {loading ? <Loader /> :
                     error ? <ErrorMessage /> :
-                        posts.length ? <TagsPage tag={tag} posts={posts} activePostId={activePostId} setActivePostId={setActivePostId} /> : <NoPostsAvailable />}
+                        posts.length ? <TagsPage tag={tag} /> : <NoPostsAvailable />}
             </div>
             {hasMore && <Loader />}
         </div>

@@ -1,11 +1,11 @@
 import Loader from "../../Loader";
 import PostList from "./PostList";
 import './ScheduledPostsLayout.css';
-import { useDispatch } from "react-redux";
 import { useEffect, useState } from "react";
 import ErrorMessage from "../../ErrorMessage";
 import { apiRequest } from "../../../http_request";
-import { setActivePostId } from "../../../store/reducers/PostSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { clearPosts, setActivePostId, setPosts } from "../../../store/reducers/PostSlice";
 
 const NoPostsAvailable = () => {
 
@@ -20,36 +20,28 @@ const NoPostsAvailable = () => {
     )
 }
 
-const ScheduledPosts = ({ posts }) => {
-
-    return <>
-        <PostList posts={posts} />
-    </>
-}
-
 const ScheduledPostsLayout = () => {
 
     const size = 10; // Number of posts per page
     const sortOrder = 'DESC'; // Sorting order for posts, can be 'ASC'
     const dispatch = useDispatch();
     const [page, setPage] = useState(0);
-    const [posts, setPosts] = useState([]);
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(true);
     const [hasMore, setHasMore] = useState(false);
-
+    const { list: posts } = useSelector(state => state.posts);
 
     useEffect(() => {
 
         setPage(-1);
-        setPosts([]); // reset posts when 
+        dispatch(clearPosts([])); // reset posts when 
         setLoading(true);
 
         apiRequest(`/api/v1/post/scheduled?page=${page}&size=${size}&sort_order=${sortOrder}`, 'GET').then(({ data, info }) => {
             setLoading(false);
-            setPosts(prevPosts => [...prevPosts, ...data]);
-            setPage(prevPage => prevPage + 1);
+            dispatch(setPosts(data));
             setHasMore(info.hasMoreRecords);
+            setPage(prevPage => prevPage + 1);
         }).catch(({ message }) => {
             setLoading(false);
             setError(message);
@@ -69,7 +61,7 @@ const ScheduledPostsLayout = () => {
             <div id="postsList">
                 {loading ? <Loader /> :
                     error ? <ErrorMessage /> :
-                        posts.length ? <ScheduledPosts posts={posts} /> : <NoPostsAvailable />}
+                        posts.length ? <PostList /> : <NoPostsAvailable />}
             </div>
             {hasMore && <Loader />}
         </div>

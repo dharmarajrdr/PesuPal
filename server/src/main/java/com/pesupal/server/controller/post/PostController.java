@@ -6,6 +6,7 @@ import com.pesupal.server.dto.response.post.PostDto;
 import com.pesupal.server.dto.response.post.PostsListDto;
 import com.pesupal.server.enums.PostStatus;
 import com.pesupal.server.enums.SortOrder;
+import com.pesupal.server.helpers.CurrentValueRetriever;
 import com.pesupal.server.model.post.Post;
 import com.pesupal.server.service.interfaces.post.PostService;
 import lombok.AllArgsConstructor;
@@ -15,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @AllArgsConstructor
 @RequestMapping("/api/v1/post")
-public class PostController {
+public class PostController extends CurrentValueRetriever {
 
     private final PostService postService;
 
@@ -33,6 +34,13 @@ public class PostController {
         createPostDto.setStatus(PostStatus.SCHEDULED);
         Post post = postService.schedulePost(createPostDto);
         return ResponseEntity.ok().body(new ApiResponseDto("Post scheduled successfully", post));
+    }
+
+    @PatchMapping("/unschedule/{postId}")
+    public ResponseEntity<ApiResponseDto> unschedulePost(@PathVariable String postId) {
+
+        postService.unschedulePost(postId, getCurrentOrgMember());
+        return ResponseEntity.ok().body(new ApiResponseDto("Post unscheduled successfully"));
     }
 
     @GetMapping("/{postId}")

@@ -5,7 +5,7 @@ const AllPosts = () => {
 
     return (
         <div className='FCSS AllPosts'>
-            <PostList posts={[]} />
+            <PostList />
         </div>
     )
 }
