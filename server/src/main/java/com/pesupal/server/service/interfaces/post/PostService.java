@@ -9,9 +9,9 @@ import com.pesupal.server.model.user.OrgMember;
 
 public interface PostService {
 
-    Post createPost(CreatePostDto createPostDto);
+    PostDto createPost(CreatePostDto createPostDto);
 
-    Post schedulePost(CreatePostDto createPostDto);
+    PostDto schedulePost(CreatePostDto createPostDto);
 
     void unschedulePost(String postId, OrgMember triggeredBy);
 

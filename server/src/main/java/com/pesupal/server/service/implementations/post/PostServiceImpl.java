@@ -57,13 +57,12 @@ public class PostServiceImpl extends CurrentValueRetriever implements PostServic
     private final static FeedRetriever feedRetrieverAlgorithm = FeedRetriever.SIMPLE_FEED_RETRIEVER_ALGORITHM;
 
     /**
-     * Creates a new post.
+     * Creates a new post - Internal use only.
      *
      * @param createPostDto
      */
-    @Override
     @Transactional
-    public Post createPost(CreatePostDto createPostDto) {
+    public Post createPostInternal(CreatePostDto createPostDto) {
 
         OrgMember creator = getCurrentOrgMember();
 
@@ -86,22 +85,45 @@ public class PostServiceImpl extends CurrentValueRetriever implements PostServic
     }
 
     /**
+     * Creates a new post - External use.
+     *
+     * @param createPostDto
+     * @return
+     */
+    @Override
+    public PostDto createPost(CreatePostDto createPostDto) {
+
+        OrgMember orgMember = getCurrentOrgMember();
+
+        Post post = createPostInternal(createPostDto);
+        PostDto postDto = getPostDtoFromPostAndOrgMember(post, orgMember);
+        postDto.setCreator(true);
+        postDto.setLiked(false);
+        return postDto;
+    }
+
+    /**
      * Schedules a post for future publication.
      *
      * @param createPostDto
      * @return
      */
     @Override
-    public Post schedulePost(CreatePostDto createPostDto) {
+    public PostDto schedulePost(CreatePostDto createPostDto) {
 
         if (createPostDto.getScheduledAt().isBefore(LocalDateTime.now())) {
             throw new ActionProhibitedException("Scheduled time must be in the future.");
         }
 
-        Post post = createPost(createPostDto);
+        OrgMember orgMember = getCurrentOrgMember();
+
+        Post post = createPostInternal(createPostDto);
         long currentTimeMillis = DateTimeUtil.toEpochMilli(createPostDto.getScheduledAt());
         redisTemplate.opsForZSet().add(SCHEDULED_POST_KEY, post.getId(), currentTimeMillis);
-        return post;
+        PostDto postDto = getPostDtoFromPostAndOrgMember(post, orgMember);
+        postDto.setCreator(true);
+        postDto.setLiked(false);
+        return postDto;
     }
 
     /**
@@ -451,7 +473,7 @@ public class PostServiceImpl extends CurrentValueRetriever implements PostServic
      * @return
      */
     public Post getPostById(Long postId) {
-        
+
         return postRepository.findById(postId).orElseThrow(() -> new DataNotFoundException("Post with id " + postId + " does not exist."));
     }
 }

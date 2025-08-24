@@ -24,7 +24,7 @@ public class PostController extends CurrentValueRetriever {
     public ResponseEntity<ApiResponseDto> createPost(@RequestBody CreatePostDto createPostDto) {
 
         createPostDto.setStatus(PostStatus.PUBLISHED);
-        Post post = postService.createPost(createPostDto);
+        PostDto post = postService.createPost(createPostDto);
         return ResponseEntity.ok().body(new ApiResponseDto("Post created successfully", post));
     }
 
@@ -32,7 +32,7 @@ public class PostController extends CurrentValueRetriever {
     public ResponseEntity<ApiResponseDto> schedulePost(@RequestBody CreatePostDto createPostDto) {
 
         createPostDto.setStatus(PostStatus.SCHEDULED);
-        Post post = postService.schedulePost(createPostDto);
+        PostDto post = postService.schedulePost(createPostDto);
         return ResponseEntity.ok().body(new ApiResponseDto("Post scheduled successfully", post));
     }
 
