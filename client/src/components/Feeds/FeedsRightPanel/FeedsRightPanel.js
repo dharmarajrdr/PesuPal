@@ -1,9 +1,9 @@
+import Quote from './Quote'
 import './FeedsRightPanel.css'
+import { useState } from 'react'
 import TrendingTags from './TrendingTags'
 import TrendingPosts from './TrendingPosts'
-import Quote from './Quote'
 import CreateNewPost from '../FeedsMainPanel/CreateNewPost'
-import { useState } from 'react'
 
 const Header = () => {
 
