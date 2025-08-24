@@ -1,9 +1,10 @@
 import Loader from "../../Loader";
 import PostList from "./PostList";
+import './ScheduledPostsLayout.css';
+import { useDispatch } from "react-redux";
 import { useEffect, useState } from "react";
 import ErrorMessage from "../../ErrorMessage";
 import { apiRequest } from "../../../http_request";
-import { useDispatch } from "react-redux";
 import { setActivePostId } from "../../../store/reducers/PostSlice";
 
 const NoPostsAvailable = () => {
@@ -44,7 +45,7 @@ const ScheduledPostsLayout = () => {
         setPosts([]); // reset posts when 
         setLoading(true);
 
-        apiRequest(`/api/v1/post/tag/hello?page=${page}&size=${size}&sort_order=${sortOrder}`, 'GET').then(({ data, info }) => {
+        apiRequest(`/api/v1/post/scheduled?page=${page}&size=${size}&sort_order=${sortOrder}`, 'GET').then(({ data, info }) => {
             setLoading(false);
             setPosts(prevPosts => [...prevPosts, ...data]);
             setPage(prevPage => prevPage + 1);
