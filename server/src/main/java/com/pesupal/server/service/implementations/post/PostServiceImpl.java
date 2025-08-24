@@ -6,11 +6,13 @@ import com.pesupal.server.dto.response.post.PollDto;
 import com.pesupal.server.dto.response.post.PostDto;
 import com.pesupal.server.dto.response.post.PostImpressionDto;
 import com.pesupal.server.dto.response.post.PostsListDto;
+import com.pesupal.server.enums.FeedRetriever;
 import com.pesupal.server.enums.PostStatus;
 import com.pesupal.server.enums.SortOrder;
 import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.exceptions.PermissionDeniedException;
+import com.pesupal.server.factory.FeedRetrieverServiceFactory;
 import com.pesupal.server.helpers.CurrentValueRetriever;
 import com.pesupal.server.helpers.DateTimeUtil;
 import com.pesupal.server.model.post.Post;
@@ -49,8 +51,10 @@ public class PostServiceImpl extends CurrentValueRetriever implements PostServic
     private final OrgMemberService orgMemberService;
     private final PostMediaService postMediaService;
     private final RedisTemplate<String, Object> redisTemplate;
+    private final FeedRetrieverServiceFactory feedRetrieverServiceFactory;
 
     private final static String SCHEDULED_POST_KEY = "scheduled_posts";
+    private final static FeedRetriever feedRetrieverAlgorithm = FeedRetriever.SIMPLE_FEED_RETRIEVER_ALGORITHM;
 
     /**
      * Creates a new post.
@@ -299,6 +303,21 @@ public class PostServiceImpl extends CurrentValueRetriever implements PostServic
         postsListDto.setInfo(Map.of("hasMoreRecords", posts.hasNext()));
         postsListDto.setPosts(postDtos);
         return postsListDto;
+    }
+
+    /**
+     * Retrieves the feed for the current user.
+     *
+     * @param page
+     * @param size
+     * @param sortOrder
+     * @return
+     */
+    @Override
+    public PostsListDto getFeeds(int page, int size, SortOrder sortOrder) {
+
+        FeedRetrieverService feedRetrieverService = feedRetrieverServiceFactory.getFeedRetrieverService(feedRetrieverAlgorithm);
+        return feedRetrieverService.getFeeds(page, size, sortOrder, getCurrentOrgMember());
     }
 
     /**
