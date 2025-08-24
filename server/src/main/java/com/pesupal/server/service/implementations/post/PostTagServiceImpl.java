@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -46,6 +47,13 @@ public class PostTagServiceImpl implements PostTagService {
         if (tags.isEmpty()) {
             return new ArrayList<>();
         }
+
+        tags = tags.stream().map(tag -> {
+            if (!tag.startsWith("#")) {
+                return "#" + tag;
+            }
+            return tag;
+        }).collect(Collectors.toSet());
 
         List<PostTag> postTags = tags.stream().map(tagName -> {
             PostTag postTag = new PostTag();
