@@ -6,18 +6,24 @@ import com.pesupal.server.model.PublicAccessModel;
 import com.pesupal.server.model.department.Department;
 import com.pesupal.server.model.org.Org;
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
-@Data
+@Getter
+@Setter
 @Entity
+@EqualsAndHashCode(callSuper = false)
 public class OrgMember extends PublicAccessModel {
 
     @ManyToOne
+    @JsonIgnore
     private Org org;
 
     @ManyToOne
+    @JsonIgnore
     private User user;
 
     @Column(nullable = false)
