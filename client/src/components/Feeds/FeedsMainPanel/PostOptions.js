@@ -16,8 +16,15 @@ const PostOptions = ({ postId, commentable, setCommentable, isCreator, poll, pol
         }
     }
 
-    const toggleCommentSectionHandler = () => {
-        apiRequest(`/api/v1/post/${postId}`, "PATCH", { commentable: !commentable }).then(({ data }) => {
+    const showPostLikesHandler = (e) => {
+        e.stopPropagation();
+        setShowLikesList(true);
+        closeOptionsModal();
+    }
+
+    const toggleCommentSectionHandler = (e) => {
+        e.stopPropagation();
+        apiRequest(`/api/v1/post/${postId}`, "PATCH", { 'commentable': !commentable }).then(({ data }) => {
             setCommentable(!commentable);
             dispatch(showPopup({ message: `Post comments ${!commentable ? 'enabled' : 'disabled'}`, type: 'success' }));
             closeOptionsModal();
@@ -27,7 +34,8 @@ const PostOptions = ({ postId, commentable, setCommentable, isCreator, poll, pol
         });
     }
 
-    const pollUpdateHandler = () => {
+    const pollUpdateHandler = (e) => {
+        e.stopPropagation();
         apiRequest(`/api/v1/post/poll/${poll.id}`, "PATCH", { "votesUpdatable": !pollUpdatable }).then(({ data }) => {
             setPollUpdatable(!pollUpdatable);
             dispatch(showPopup({ message: `Poll update ${!pollUpdatable ? 'enabled' : 'disabled'}`, type: 'success' }));
@@ -38,47 +46,46 @@ const PostOptions = ({ postId, commentable, setCommentable, isCreator, poll, pol
         });
     }
 
-    const deletePopupOptions = [
-        {
-            title: "Delete",
-            color: "red",
-            onClick: () => {
-                apiRequest(`/api/v1/post/${postId}`, "DELETE").then(({ message }) => {
-                    dispatch(hideConfirmationPopup());
-                    dispatch(showPopup({ message, type: 'success' }));
-                    dispatch(deletePost(postId));
-                    closeOptionsModal();
-                }).catch(({ message }) => {
-                    closeOptionsModal();
-                    dispatch(showPopup({ message, type: 'error' }));
-                    console.error({ message }); // eslint-disable-line no-console
-                });
-            }
-        },
-        {
-            title: "Cancel",
-            color: "gray",
-            onClick: () => dispatch(hideConfirmationPopup())
-        }
-    ];
-
-    const copyPostHandler = () => {
+    const copyPostHandler = (e) => {
+        e.stopPropagation();
         navigator.clipboard.writeText(`${window.location.origin}/post/${postId}`);
         closeOptionsModal();
         dispatch(showPopup({ message: 'Post link copied to clipboard', type: 'success' }));
     }
 
-    const deletePostHandler = () => {
+    const deletePostHandler = (e) => {
+        e.stopPropagation();
         dispatch(showConfirmationPopup({
             message: 'Are you sure you want to delete this post? This action cannot be undone.',
-            options: deletePopupOptions
+            options: [
+                {
+                    title: "Delete",
+                    color: "red",
+                    onClick: () => {
+                        apiRequest(`/api/v1/post/${postId}`, "DELETE").then(({ message }) => {
+                            dispatch(hideConfirmationPopup());
+                            dispatch(showPopup({ message, type: 'success' }));
+                            dispatch(deletePost(postId));
+                            closeOptionsModal();
+                        }).catch(({ message }) => {
+                            closeOptionsModal();
+                            dispatch(showPopup({ message, type: 'error' }));
+                        });
+                    }
+                },
+                {
+                    title: "Cancel",
+                    color: "gray",
+                    onClick: () => dispatch(hideConfirmationPopup())
+                }
+            ]
         }));
     }
 
     return (
         <div className="FCSS" id="post-options" >
 
-            <div className='option' onClick={() => { setShowLikesList(true); closeOptionsModal(); }}>Show Post Likes</div>
+            <div className='option' onClick={showPostLikesHandler}>Show Post Likes</div>
 
             <div className='option' onClick={copyPostHandler}>Copy Link</div>
 

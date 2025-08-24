@@ -34,7 +34,7 @@ public class CreatePostDto {
 
     private CreatePollDto poll;
 
-    private PostStatus status = PostStatus.PUBLISHED;
+    private PostStatus status;
 
     public Post toPost() {
 

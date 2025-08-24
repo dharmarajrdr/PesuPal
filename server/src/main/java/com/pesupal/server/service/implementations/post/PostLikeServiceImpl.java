@@ -21,8 +21,8 @@ import java.util.List;
 public class PostLikeServiceImpl extends CurrentValueRetriever implements PostLikeService {
 
     private final PostService postService;
-    private final PostLikeRepository postLikeRepository;
     private final OrgMemberService orgMemberService;
+    private final PostLikeRepository postLikeRepository;
 
     /**
      * Likes a post by the current user in the current organization.

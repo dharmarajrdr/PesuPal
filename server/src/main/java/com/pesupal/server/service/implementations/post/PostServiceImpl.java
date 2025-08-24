@@ -354,6 +354,7 @@ public class PostServiceImpl extends CurrentValueRetriever implements PostServic
 
         createPostDto.applyToPost(post);
         postRepository.save(post);
+        
         if (createPostDto.getScheduledAt() != null) {
             redisTemplate.opsForZSet().remove(SCHEDULED_POST_KEY, post.getId());
             redisTemplate.opsForZSet().add(SCHEDULED_POST_KEY, post.getId(), DateTimeUtil.toEpochMilli(createPostDto.getScheduledAt()));
