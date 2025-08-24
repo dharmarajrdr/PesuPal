@@ -37,7 +37,7 @@ const AllPosts = () => {
         if (page == 0) {
             dispatch(clearPosts());
         }
-        apiRequest(`/api/v1/post/scheduled?page=${page}&size=${size}&sort_order=${sortOrder}`, 'GET').then(({ data, info }) => {
+        apiRequest(`/api/v1/post/feeds?page=${page}&size=${size}&sort_order=${sortOrder}`, 'GET').then(({ data, info }) => {
             setLoading(false);
             dispatch(appendPosts(data));
             setHasMore(info.hasMoreRecords);
@@ -48,10 +48,10 @@ const AllPosts = () => {
             setError(message);
             setHasMore(false);
         });
-    }, [dispatch, page]);
+    }, []);
 
     return (
-        <div className='FCCS AllPosts'>
+        <div className='FCCS' id='AllPosts'>
             <div id="postsList">
                 {loading ? <Loader /> :
                     error ? <ErrorMessage /> :
