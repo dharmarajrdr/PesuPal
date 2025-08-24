@@ -1,9 +1,9 @@
 import './AllPosts.css'
 import PostList from './PostList';
 import Loader from '../../Loader';
-import { useEffect, useState } from 'react'
 import ErrorMessage from '../../ErrorMessage';
 import { apiRequest } from '../../../http_request';
+import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { showPopup } from '../../../store/reducers/PopupSlice';
 import { appendPosts, clearPosts } from '../../../store/reducers/PostSlice';
@@ -30,9 +30,11 @@ const AllPosts = () => {
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(true);
     const [hasMore, setHasMore] = useState(false);
+    const [fetching, setFetching] = useState(false);
     const { list: posts } = useSelector(state => state.posts);
 
-    // TODO: Temporarily fetching scheduled posts, change to fetch all posts later
+    const loadMorePostsRef = useRef(null);
+
     useEffect(() => {
         if (page == 0) {
             dispatch(clearPosts());
@@ -41,14 +43,34 @@ const AllPosts = () => {
             setLoading(false);
             dispatch(appendPosts(data));
             setHasMore(info.hasMoreRecords);
-            setPage(prevPage => prevPage + 1);
+            setFetching(false);
         }).catch(({ message }) => {
             dispatch(showPopup({ message, type: 'error' }));
             setLoading(false);
             setError(message);
             setHasMore(false);
+            setFetching(false);
         });
-    }, []);
+    }, [page]);
+
+    useEffect(() => {
+
+        if (!hasMore || fetching) return;
+
+        const observer = new IntersectionObserver((entries) => {
+            if (entries[0].isIntersecting && !loading) {
+                setPage(prev => prev + 1);
+                setFetching(true);
+            }
+        }, { threshold: 1.0 });
+
+        const target = loadMorePostsRef.current;
+        if (target) observer.observe(target);
+
+        return () => {
+            if (target) observer.unobserve(target);
+        };
+    }, [hasMore, fetching, loading]);
 
     return (
         <div className='FCCS' id='AllPosts'>
@@ -57,7 +79,9 @@ const AllPosts = () => {
                     error ? <ErrorMessage /> :
                         posts.length ? <PostList /> : <NoPostsAvailable />}
             </div>
-            {hasMore && <Loader />}
+            {hasMore && <div id='load-more-posts' ref={loadMorePostsRef} className='FCCC mT20'>
+                <Loader />
+            </div>}
         </div>
     )
 }
