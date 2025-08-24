@@ -347,14 +347,14 @@ public class PostServiceImpl extends CurrentValueRetriever implements PostServic
         Post post = getPostByPublicIdAndOrgId(postId, orgMember.getOrg().getId());
 
         if (post.getStatus().equals(PostStatus.PUBLISHED)) {
-            if (createPostDto.getScheduledAt() != null || createPostDto.getStatus().equals(PostStatus.SCHEDULED)) {
+            if (createPostDto.getScheduledAt() != null || PostStatus.SCHEDULED.equals(createPostDto.getStatus())) {
                 throw new ActionProhibitedException("Cannot schedule a post that is already published.");
             }
         }
 
         createPostDto.applyToPost(post);
         postRepository.save(post);
-        
+
         if (createPostDto.getScheduledAt() != null) {
             redisTemplate.opsForZSet().remove(SCHEDULED_POST_KEY, post.getId());
             redisTemplate.opsForZSet().add(SCHEDULED_POST_KEY, post.getId(), DateTimeUtil.toEpochMilli(createPostDto.getScheduledAt()));
