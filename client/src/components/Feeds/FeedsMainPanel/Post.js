@@ -1,24 +1,36 @@
-import { NavLink } from 'react-router-dom';
-import utils from '../../../utils';
 import './Post.css'
-import { useState } from 'react';
-import { apiRequest } from '../../../http_request';
-import PostOptions from './PostOptions';
-import PostCommentsLayout from './PostCommentsLayout';
 import Poll from './Poll';
+import utils from '../../../utils';
+import PostOptions from './PostOptions';
 import PostsLikedBy from './PostsLikedBy';
+import { NavLink } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { apiRequest } from '../../../http_request';
+import PostCommentsLayout from './PostCommentsLayout';
+import { useDispatch, useSelector } from 'react-redux';
 import { showPopup } from '../../../store/reducers/PopupSlice';
-import { useDispatch } from 'react-redux';
 import { showProfile } from '../../../store/reducers/ProfileSlice';
+import { setActivePostId } from '../../../store/reducers/PostSlice';
 import { showFullScreenImage } from '../../../store/reducers/FullScreenImageSlice';
 
 const PostDescription = ({ html }) => <div className="post-description html-content-renderer postContent" dangerouslySetInnerHTML={{ __html: html }} />
 
-const PostHeader = ({ userId, displayName, displayPicture, createdAt, postId, isOptionOpen, onToggleOption, commentable, setCommentable, isCreator, poll }) => {
+const PostHeader = ({ userId, displayName, displayPicture, createdAt, postId, commentable, setCommentable, isCreator, poll }) => {
 
-    const [pollUpdatable, setPollUpdatable] = useState(poll?.updatable);
-    const [showLikesList, setShowLikesList] = useState(false);
     const dispatch = useDispatch();
+    const [showLikesList, setShowLikesList] = useState(false);
+    const { activePostId } = useSelector(state => state.posts); // only one can be open
+    const [pollUpdatable, setPollUpdatable] = useState(poll?.updatable);
+
+    const [isOptionOpen, setIsOptionOpen] = useState(false);
+
+    const onToggleOption = () => {
+        dispatch(setActivePostId(postId));
+    }
+
+    useEffect(() => {
+        setIsOptionOpen(activePostId === postId);
+    }, [activePostId, postId]);
 
     return <div className='PostHeader FRCB'>
         <div className='FRCS'>
@@ -30,7 +42,7 @@ const PostHeader = ({ userId, displayName, displayPicture, createdAt, postId, is
         </div>
         <i className='fa-solid fa-ellipsis cursP' onClick={onToggleOption}></i>
         {showLikesList && <PostsLikedBy postId={postId} closeShowLikesList={() => setShowLikesList(false)} showLikesList={showLikesList} />}
-        {isOptionOpen && <PostOptions pollUpdatable={pollUpdatable} setPollUpdatable={setPollUpdatable} isOptionOpen={isOptionOpen} postId={postId} commentable={commentable} setCommentable={setCommentable} isCreator={isCreator} poll={poll} setShowLikesList={setShowLikesList} />}
+        {isOptionOpen && <PostOptions pollUpdatable={pollUpdatable} setPollUpdatable={setPollUpdatable} postId={postId} commentable={commentable} setCommentable={setCommentable} isCreator={isCreator} poll={poll} setShowLikesList={setShowLikesList} />}
     </div>
 }
 
@@ -95,7 +107,7 @@ const PostFooter = ({ postId, likedPost, likesCount, commentsCount, setCommentsC
     </div>
 }
 
-const Post = ({ post, isOptionOpen, onToggleOption }) => {
+const Post = ({ post }) => {
 
     const dispatch = useDispatch();
 
@@ -140,7 +152,7 @@ const Post = ({ post, isOptionOpen, onToggleOption }) => {
 
     return (
         <div className='Post w100'>
-            <PostHeader userId={userId} isOptionOpen={isOptionOpen} onToggleOption={onToggleOption} postId={id} displayName={displayName} displayPicture={displayPicture} createdAt={createdAt} commentable={commentable} setCommentable={setCommentable} isCreator={isCreator} poll={poll} />
+            <PostHeader userId={userId} postId={id} displayName={displayName} displayPicture={displayPicture} createdAt={createdAt} commentable={commentable} setCommentable={setCommentable} isCreator={isCreator} poll={poll} />
             <PostBody title={title} description={description} media={media} toggleMaxHeight={toggleMaxHeight} tags={tags} poll={poll} setPoll={setPoll} />
             <PostFooter postId={id} likedPost={likedPost} likesCount={likesCount} commentsCount={commentsCount} setCommentsCount={setCommentsCount} commentable={commentable} bookmarkable={bookmarkable} bookmarked={bookmarked} likeHandler={likeHandler} />
         </div>
