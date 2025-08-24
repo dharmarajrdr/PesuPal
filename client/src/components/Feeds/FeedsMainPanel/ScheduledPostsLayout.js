@@ -23,7 +23,7 @@ const NoPostsAvailable = () => {
 const ScheduledPostsLayout = () => {
 
     const size = 10; // Number of posts per page
-    const sortOrder = 'DESC'; // Sorting order for posts, can be 'ASC'
+    const sortOrder = 'ASC'; // Sorting order for posts, can be 'ASC'
     const dispatch = useDispatch();
     const [page, setPage] = useState(0);
     const [error, setError] = useState(null);

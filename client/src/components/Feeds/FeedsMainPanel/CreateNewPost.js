@@ -6,9 +6,11 @@ import { apiRequest } from '../../../http_request';
 import { useEffect, useRef, useState } from 'react';
 import ShareWithSchedule from './ShareWithSchedule';
 import { useDispatch, useSelector } from 'react-redux';
+import { addPost } from '../../../store/reducers/PostSlice';
 import { showPopup } from '../../../store/reducers/PopupSlice';
 import { showFullScreenImage } from '../../../store/reducers/FullScreenImageSlice';
 import { hideLoader, showLoader } from '../../../store/reducers/VerticalLoaderSlice';
+import { hideConfirmationPopup } from '../../../store/reducers/ConfirmationPopupSlice';
 
 const CreateNewPost = ({ onMinimize }) => {
 
@@ -52,7 +54,7 @@ const CreateNewPost = ({ onMinimize }) => {
         }
     }, []);
 
-    const postCreation = (api, options, { onSuccess, onFailure }) => {
+    const postCreation = (api, options) => {
 
         if (content.trim().length == 0) {
             alert("Post content cannot be empty!");
@@ -83,33 +85,33 @@ const CreateNewPost = ({ onMinimize }) => {
             Object.assign(payload, options || {});
 
             apiRequest(api, 'POST', payload).then(({ data, message }) => {
+                dispatch(addPost(data));
                 onMinimize();
                 dispatch(showPopup({ message, type: 'success' }));
                 dispatch(hideLoader());
-                onSuccess && onSuccess(data);
+                dispatch(hideConfirmationPopup());
             }).catch(({ message }) => {
                 dispatch(showPopup({ message, type: 'error' }));
                 dispatch(hideLoader());
-                onFailure && onFailure(message);
+                dispatch(hideConfirmationPopup());
             });
 
         }).catch(({ message }) => {
             dispatch(showPopup({ message, type: 'error' }));
             dispatch(hideLoader());
-            onFailure && onFailure(message);
+            dispatch(hideConfirmationPopup());
         });
 
     }
 
-    const handlePostSubmit = (onSuccess, onFailure) => {
+    const handlePostSubmit = () => {
 
-        postCreation(`/api/v1/post/create`, { 'status': 'PUBLISHED' }, { onSuccess, onFailure });
-
+        postCreation(`/api/v1/post/create`, { 'status': 'PUBLISHED' });
     };
 
-    const handlePostSchedule = (scheduledAt, onSuccess, onFailure) => {
+    const handlePostSchedule = (scheduledAt) => {
 
-        postCreation(`/api/v1/post/schedule`, { 'status': 'SCHEDULED', scheduledAt }, { onSuccess, onFailure });
+        postCreation(`/api/v1/post/schedule`, { 'status': 'SCHEDULED', scheduledAt });
     };
 
     const handleFileChange = (e) => {
