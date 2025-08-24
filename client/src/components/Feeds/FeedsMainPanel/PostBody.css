@@ -1,3 +1,8 @@
+.html-content-renderer {
+    width: 100%;
+    word-break: break-word;
+}
+
 .html-content-renderer b {
     font-weight: 600;
 }
@@ -32,13 +37,17 @@
     padding: 5px 20px;
 }
 
-.html-content-renderer code {
+.html-content-renderer code,
+.html-content-renderer code p {
     font-family: 'Courier New', Courier, monospace;
     font-size: 0.95em;
+}
+
+.html-content-renderer code {
     background-color: #f5f5f5;
-    width: 100%;
     display: block;
-    padding: 20px;
     border-radius: 4px;
     overflow-x: auto;
+    width: 100%;
+    padding: 20px;
 }
