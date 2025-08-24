@@ -3,18 +3,30 @@ import { createSlice } from "@reduxjs/toolkit";
 const FullScreenImageSlice = createSlice({
     'name': 'fullScreenImage',
     'initialState': {
-        mediaUrl: null
+        mediaUrls: [],
+        currentIndex: 0
     },
     'reducers': {
         'showFullScreenImage': (state, action) => {
-            state.mediaUrl = action.payload;
+            state.mediaUrls = [action.payload];
+        },
+        'showFullScreenImages': (state, action) => {
+            state.mediaUrls = [...action.payload];
+        },
+        'showImageAt': (state, action) => {
+            state.currentIndex = action.payload;
+        },
+        'showFullScreenImageAt': (state, action) => {
+            state.mediaUrls = [...action.payload.mediaUrls];
+            state.currentIndex = action.payload.currentIndex;
         },
         'hideFullScreenImage': (state) => {
-            state.mediaUrl = null;
+            state.mediaUrls = [];
+            state.currentIndex = 0;
         }
     }
 })
 
-export const { showFullScreenImage, hideFullScreenImage } = FullScreenImageSlice.actions;
+export const { showFullScreenImage, showFullScreenImages, hideFullScreenImage, showFullScreenImageAt, showImageAt } = FullScreenImageSlice.actions;
 
 export default FullScreenImageSlice.reducer;

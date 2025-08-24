@@ -1,44 +1,10 @@
 import './Post.css'
-import Poll from './Poll';
 import { useState } from 'react';
+import PostBody from './PostBody';
 import PostHeader from './PostHeader';
 import PostFooter from './PostFooter';
 import { useDispatch } from 'react-redux';
-import { NavLink } from 'react-router-dom';
 import { showFullScreenImage } from '../../../store/reducers/FullScreenImageSlice';
-
-const PostDescription = ({ html }) => <div className="post-description html-content-renderer postContent" dangerouslySetInnerHTML={{ __html: html }} />
-
-const PostBody = ({ title, description, media, toggleMaxHeight, tags, poll, setPoll }) => {
-    return <div className='PostBody FCSS'>
-        {title ? <h4 className='postTitle'>{title}</h4> : null}
-        <PostDescription html={description} />
-        <TagsContainer tags={tags} />
-        {poll && <Poll poll={poll} setPoll={setPoll} />}
-        {media ? <MediaContainer media={media} toggleMaxHeight={toggleMaxHeight} key={media.id} /> : null}
-    </div>
-}
-
-const TagsContainer = ({ tags }) => {
-    return <div className='FRCS tagsContainer'>
-        {tags && tags.map((tag, index) => (
-            <NavLink to={`/feeds/tag/${tag.replace(/^#/m, '')}`} key={index} className='tagNavLink'>{tag}</NavLink>
-        ))}
-    </div>
-}
-
-const MediaContainer = ({ media, toggleMaxHeight }) => {
-
-    const dispatch = useDispatch();
-
-    const showFullScreenImageHandler = (mediaItem) => {
-        dispatch(showFullScreenImage(mediaItem));
-    }
-
-    return <div className='mediaContainer FCSS w100' onClick={toggleMaxHeight}>
-        {media.map((mediaItem, index) => <img key={index} src={mediaItem} className='media_image w100' onClick={() => showFullScreenImageHandler(mediaItem)} />)}
-    </div>
-}
 
 const Post = ({ post }) => {
 

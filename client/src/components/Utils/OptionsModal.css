@@ -14,6 +14,7 @@
     cursor: pointer;
     color: var(--primary-color-active);
     border-bottom: 1px solid #eee;
+    user-select: none;
 }
 
 #options-container .option:hover {
