@@ -1,8 +1,17 @@
+import './PostBody.css';
 import Poll from "./Poll"
 import { NavLink } from "react-router-dom"
 import PostMediaContainer from "./PostMediaContainer"
 
-const PostDescription = ({ html }) => <div className="post-description html-content-renderer postContent" dangerouslySetInnerHTML={{ __html: html }} />
+const PostDescription = ({ html }) => {
+
+    html = html?.replace(/\t/mg, '<span style="padding-left: 2em;"></span>');   // `\t` -> indentation spaces
+    html = html?.replace(/\n/mg, '<br/>');  // `\n` -> line breaks
+
+    return (
+        <div className="post-description html-content-renderer postContent" dangerouslySetInnerHTML={{ __html: html }} />
+    );
+};
 
 const TagsContainer = ({ tags }) => {
     return <div className='FRCS tagsContainer'>

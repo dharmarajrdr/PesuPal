@@ -1,0 +1,44 @@
+.html-content-renderer b {
+    font-weight: 600;
+}
+
+.html-content-renderer u {
+    text-decoration: underline;
+}
+
+.html-content-renderer a,
+.html-content-renderer a * {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.html-content-renderer a:hover {
+    text-decoration: underline;
+    color: #000bff;
+}
+
+.html-content-renderer em {
+    font-style: italic;
+}
+
+.html-content-renderer s,
+.html-content-renderer strike,
+.html-content-renderer del {
+    text-decoration: line-through;
+}
+
+.html-content-renderer ol,
+.html-content-renderer ul {
+    padding: 5px 20px;
+}
+
+.html-content-renderer code {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.95em;
+    background-color: #f5f5f5;
+    width: 100%;
+    display: block;
+    padding: 20px;
+    border-radius: 4px;
+    overflow-x: auto;
+}
