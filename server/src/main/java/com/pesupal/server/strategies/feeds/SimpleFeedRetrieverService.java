@@ -24,6 +24,6 @@ public class SimpleFeedRetrieverService implements FeedRetrieverService {
     @Override
     public PostsListDto getFeeds(int page, int size, SortOrder sortOrder, OrgMember orgMember) {
 
-        return null;
+        return new PostsListDto();
     }
 }

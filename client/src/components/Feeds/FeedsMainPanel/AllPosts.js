@@ -19,7 +19,7 @@ const AllPosts = () => {
 
     // TODO: Temporarily fetching scheduled posts, change to fetch all posts later
     useEffect(() => {
-        apiRequest(`/api/v1/post/scheduled?page=${page}&size=${size}&sort_order=${sortOrder}`, 'GET').then(({ data, info }) => {
+        apiRequest(`/api/v1/post/feeds?page=${page}&size=${size}&sort_order=${sortOrder}`, 'GET').then(({ data, info }) => {
             setLoading(false);
             dispatch(setPosts(data));
             setHasMore(info.hasMoreRecords);
