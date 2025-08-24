@@ -1,10 +1,25 @@
 import './AllPosts.css'
-import PostList from './PostList'
+import PostList from './PostList';
+import Loader from '../../Loader';
 import { useEffect, useState } from 'react'
+import ErrorMessage from '../../ErrorMessage';
 import { apiRequest } from '../../../http_request';
 import { useDispatch, useSelector } from 'react-redux';
-import { setPosts } from '../../../store/reducers/PostSlice';
 import { showPopup } from '../../../store/reducers/PopupSlice';
+import { appendPosts, clearPosts } from '../../../store/reducers/PostSlice';
+
+const NoPostsAvailable = () => {
+
+    return (
+        <div className='FCCC w100 h100' id='no-data-found'>
+            <p className='FRCC w100'>
+                <i className='fa fa-exclamation-triangle mR5 w15'></i>
+                No posts available
+            </p>
+            <p className='w100 alignCenter'>Start creating posts to see them here.</p>
+        </div>
+    )
+}
 
 const AllPosts = () => {
 
@@ -19,9 +34,12 @@ const AllPosts = () => {
 
     // TODO: Temporarily fetching scheduled posts, change to fetch all posts later
     useEffect(() => {
-        apiRequest(`/api/v1/post/feeds?page=${page}&size=${size}&sort_order=${sortOrder}`, 'GET').then(({ data, info }) => {
+        if (page == 0) {
+            dispatch(clearPosts());
+        }
+        apiRequest(`/api/v1/post/scheduled?page=${page}&size=${size}&sort_order=${sortOrder}`, 'GET').then(({ data, info }) => {
             setLoading(false);
-            dispatch(setPosts(data));
+            dispatch(appendPosts(data));
             setHasMore(info.hasMoreRecords);
             setPage(prevPage => prevPage + 1);
         }).catch(({ message }) => {
@@ -30,11 +48,16 @@ const AllPosts = () => {
             setError(message);
             setHasMore(false);
         });
-    }, []);
+    }, [dispatch, page]);
 
     return (
-        <div className='FCSS AllPosts'>
-            <PostList />
+        <div className='FCCS AllPosts'>
+            <div id="postsList">
+                {loading ? <Loader /> :
+                    error ? <ErrorMessage /> :
+                        posts.length ? <PostList /> : <NoPostsAvailable />}
+            </div>
+            {hasMore && <Loader />}
         </div>
     )
 }
