@@ -9,9 +9,7 @@ const PostDescription = ({ html }) => {
     html = html?.replace(/\n/mg, '<br/>');  // `\n` -> line breaks
     html = html?.replace(/```(.*?)```/mg, (match, p1) => `<code><pre>${p1}</pre></code>`); // triple backticks -> code block
 
-    return (
-        <div className="post-description html-content-renderer postContent" content={html} dangerouslySetInnerHTML={{ __html: html }} />
-    );
+    return <div className="post-description html-content-renderer postContent" dangerouslySetInnerHTML={{ __html: html }} />
 };
 
 const TagsContainer = ({ tags }) => {
