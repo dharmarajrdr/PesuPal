@@ -74,10 +74,9 @@ public class PostServiceImpl extends CurrentValueRetriever implements PostServic
         List<PostMedia> postMedia = createPostDto.getMediaIds().stream().map(mediaId -> PostMedia.builder().post(post).mediaId(mediaId.getId()).extension(mediaId.getExtension()).build()).collect(Collectors.toList());
         post.setMedia(!postMedia.isEmpty());
         post.setPostMedia(postMedia);
-        List<PostTag> postTags = createPostDto.getTags().stream().map(tagName -> PostTag.builder().post(post).tag(tagService.createOrGet(tagName)).build()).collect(Collectors.toList());
-        post.setTags(postTags);
         post.setHasPoll(hasPoll);
         postRepository.save(post);
+        postTagService.saveAll(createPostDto.getTags(), post);
         if (hasPoll) {
             pollService.createPoll(createPostDto.getPoll(), post);
         }
