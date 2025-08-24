@@ -183,7 +183,8 @@ public class PostServiceImpl extends CurrentValueRetriever implements PostServic
      * @param orgMember
      * @return PostDto
      */
-    private PostDto getPostDtoFromPostAndOrgMember(Post post, OrgMember orgMember) {
+    @Override
+    public PostDto getPostDtoFromPostAndOrgMember(Post post, OrgMember orgMember) {
 
         PostDto postDto = PostDto.fromPost(post);
         postDto.setTags(post.getTags().stream().map(postTag -> postTag.getTag().getName()).toList());
@@ -289,9 +290,9 @@ public class PostServiceImpl extends CurrentValueRetriever implements PostServic
         OrgMember orgMember = getCurrentOrgMember();
 
         Sort sort = Sort.by(sortOrder == SortOrder.ASC ? Sort.Direction.ASC : Sort.Direction.DESC, "createdAt");
-        Pageable pageable = PageRequest.of(page, size + 1, sort);
+        Pageable pageable = PageRequest.of(page, size, sort);
 
-        Page<Post> posts = postRepository.findAllByCreatorAndStatusAndCreatedAtAfterOrderByCreatedAt(orgMember, PostStatus.SCHEDULED, LocalDateTime.now(), pageable);
+        Page<Post> posts = postRepository.findAllByCreatorAndStatusAndCreatedAtAfter(orgMember, PostStatus.SCHEDULED, LocalDateTime.now(), pageable);
         List<PostDto> postDtos = new ArrayList<>(posts.getContent().stream().map(post -> {
             PostDto postDto = getPostDtoFromPostAndOrgMember(post, orgMember);
             postDto.setCreator(true);
@@ -356,7 +357,7 @@ public class PostServiceImpl extends CurrentValueRetriever implements PostServic
         Long orgMemberId = orgMember.getId();
         Long orgId = orgMember.getId();
 
-        Pageable pageable = PageRequest.of(page, size + 1);
+        Pageable pageable = PageRequest.of(page, size);
         Page<PostTag> postPage = postTagService.findAllByTagAndOrgId(tag, orgId, pageable);
         List<PostDto> postDtos = new ArrayList<>(postPage.getContent().stream().map(postTag -> {
             Post post = postTag.getPost();
@@ -367,9 +368,7 @@ public class PostServiceImpl extends CurrentValueRetriever implements PostServic
             return postDto;
         }).toList());
         PostsListDto postsListDto = new PostsListDto();
-        postsListDto.setInfo(Map.of(
-                "hasMoreRecords", postDtos.size() == size + 1
-        ));
+        postsListDto.setInfo(Map.of("hasMoreRecords", postPage.hasNext()));
         if (!postDtos.isEmpty() && postDtos.size() > size) {
             postDtos.remove(postDtos.size() - 1); // Remove the extra post if it exists
         }
@@ -452,6 +451,7 @@ public class PostServiceImpl extends CurrentValueRetriever implements PostServic
      * @return
      */
     public Post getPostById(Long postId) {
+        
         return postRepository.findById(postId).orElseThrow(() -> new DataNotFoundException("Post with id " + postId + " does not exist."));
     }
 }

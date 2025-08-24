@@ -15,6 +15,8 @@ public interface PostService {
 
     void unschedulePost(String postId, OrgMember triggeredBy);
 
+    PostDto getPostDtoFromPostAndOrgMember(Post post, OrgMember orgMember);
+
     Post getPostByIdAndOrgId(Long postId, Long orgId);
 
     PostDto getPostByIdAndOrgId(String postId);
