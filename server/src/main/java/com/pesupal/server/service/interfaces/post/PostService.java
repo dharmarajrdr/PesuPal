@@ -34,4 +34,6 @@ public interface PostService {
     Post getPostByPublicId(String postId);
 
     PostsListDto getScheduledPosts(int page, int size, SortOrder sortOrder);
+
+    PostsListDto getFeeds(int page, int size, SortOrder sortOrder);
 }
