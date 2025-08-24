@@ -25,7 +25,7 @@ const AllPosts = () => {
             setHasMore(info.hasMoreRecords);
             setPage(prevPage => prevPage + 1);
         }).catch(({ message }) => {
-            dispatch(showPopup(message, { type: 'error' }));
+            dispatch(showPopup({ message, type: 'error' }));
             setLoading(false);
             setError(message);
             setHasMore(false);
