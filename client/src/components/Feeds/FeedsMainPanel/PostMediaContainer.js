@@ -1,16 +1,20 @@
+import './PostMediaContainer.css';
 import { useDispatch } from "react-redux";
-import { showFullScreenImage } from "../../../store/reducers/FullScreenImageSlice";
+import { showFullScreenImageAt } from "../../../store/reducers/FullScreenImageSlice";
 
 const PostMediaContainer = ({ media, toggleMaxHeight }) => {
 
     const dispatch = useDispatch();
 
-    const showFullScreenImageHandler = (mediaItem) => {
-        dispatch(showFullScreenImage(mediaItem));
+    const showFullScreenImageHandler = (index) => {
+        dispatch(showFullScreenImageAt({
+            mediaUrls: media,
+            currentIndex: index
+        }));
     }
 
-    return <div className='mediaContainer FCSS w100' onClick={toggleMaxHeight}>
-        {media.map((mediaItem, index) => <img key={index} src={mediaItem} className='media_image w100' onClick={() => showFullScreenImageHandler(mediaItem)} />)}
+    return <div className='mediaContainer FCSS w100'>
+        {media.map((mediaItem, index) => <img key={index} src={mediaItem} className='media_image w100' onClick={() => showFullScreenImageHandler(index)} />)}
     </div>
 }
 
