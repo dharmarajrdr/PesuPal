@@ -2,7 +2,7 @@ import './PostMediaContainer.css';
 import { useDispatch } from "react-redux";
 import { showFullScreenImageAt } from "../../../store/reducers/FullScreenImageSlice";
 
-const PostMediaContainer = ({ media, toggleMaxHeight }) => {
+const PostMediaContainer = ({ media }) => {
 
     const dispatch = useDispatch();
 
