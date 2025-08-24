@@ -40,8 +40,31 @@ const PostHeader = ({ userId, displayName, displayPicture, createdAt, postId, co
             icon: `fa fa-paper-plane`,
             onClick: (e) => {
                 e.stopPropagation();
-                closeOptionsModal();
-
+                dispatch(showConfirmationPopup({
+                    message: `Are you sure you want to post this now?`,
+                    options: [
+                        {
+                            title: 'Post',
+                            color: 'green',
+                            onClick: () => {
+                                apiRequest(`/api/v1/post/unschedule/${postId}`, "PATCH").then(({ message }) => {
+                                    dispatch(deletePost(postId));
+                                    dispatch(showPopup({ message, type: 'success' }));
+                                    closeOptionsModal();
+                                    dispatch(hideConfirmationPopup());
+                                }).catch(({ message }) => {
+                                    dispatch(showPopup({ message, type: 'error' }));
+                                    dispatch(hideConfirmationPopup());
+                                });
+                            }
+                        },
+                        {
+                            title: "Cancel",
+                            color: "gray",
+                            onClick: () => dispatch(hideConfirmationPopup())
+                        }
+                    ]
+                }));
             }
         },
         {
