@@ -23,20 +23,28 @@ public class PostMediaServiceImpl implements PostMediaService {
     private final PostMediaRepository postMediaRepository;
 
     /**
+     * Deletes a single post media.
+     *
+     * @param postMedia
+     */
+    private void deletePostMedia(PostMedia postMedia) {
+        UUID mediaId = postMedia.getMediaId();
+        String extension = postMedia.getExtension();
+        String key = mediaId + "." + extension;
+        s3Service.deleteFile(key);
+        postMedia.setPost(null);
+        postMediaRepository.save(postMedia);
+    }
+
+    /**
      * Unlink media from a post.
      *
      * @param post
      */
     @Override
     public void unlinkMediaFromPost(Post post) {
-        post.getPostMedia().forEach(postMedia -> {
-            UUID mediaId = postMedia.getMediaId();
-            String extension = postMedia.getExtension();
-            String key = mediaId + "." + extension;
-            s3Service.deleteFile(key);
-            postMedia.setPost(null);
-            postMediaRepository.save(postMedia);
-        });
+
+        post.getPostMedia().forEach(this::deletePostMedia);
     }
 
     /**
@@ -58,5 +66,34 @@ public class PostMediaServiceImpl implements PostMediaService {
             PostMedia postMedia = PostMedia.builder().post(post).mediaId(mediaId.getId()).extension(mediaId.getExtension()).build();
             return postMediaRepository.save(postMedia);
         }).collect(Collectors.toList());
+    }
+
+    /**
+     * Updates media associated with a post.
+     *
+     * @param post
+     * @param mediaIds
+     * @return
+     */
+    @Override
+    public List<PostMedia> updatePostMedia(Post post, Set<MediaDto> mediaIds) {
+
+        List<PostMedia> existingMedia = post.getPostMedia(); // managed collection
+
+        // 1. Remove old media
+        existingMedia.stream().filter(postMedia -> mediaIds.stream().noneMatch(mediaDto -> mediaDto.getId().equals(postMedia.getMediaId()))).forEach(this::deletePostMedia);
+
+        // 2. Add new mentions
+        if (mediaIds != null) {
+            for (MediaDto mediaId : mediaIds) {
+                boolean exists = existingMedia.stream().anyMatch(em -> em.getMediaId().equals(mediaId.getId()));
+                if (!exists) {
+                    PostMedia postMedia = PostMedia.builder().post(post).mediaId(mediaId.getId()).extension(mediaId.getExtension()).build();
+                    existingMedia.add(postMediaRepository.save(postMedia));
+                }
+            }
+        }
+
+        return existingMedia;
     }
 }

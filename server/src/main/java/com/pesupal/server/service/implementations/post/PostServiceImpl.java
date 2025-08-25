@@ -466,6 +466,7 @@ public class PostServiceImpl extends CurrentValueRetriever implements PostServic
 
         post.setTags(postTagService.updateTags(post, createPostDto.getTags()));
         post.setMentions(postMentionService.updateMentions(post, createPostDto.getMentions()));
+        post.setPostMedia(postMediaService.updatePostMedia(post, createPostDto.getMediaIds()));
 
         if (createPostDto.getScheduledAt() != null) {
             redisTemplate.opsForZSet().remove(SCHEDULED_POST_KEY, post.getId());
