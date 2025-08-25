@@ -65,7 +65,7 @@ public class PostServiceImpl extends CurrentValueRetriever implements PostServic
         }
 
         CreatePostMentionsDto createPostMentionsDto = createPostDto.getMentions();
-        if (createPostMentionsDto != null) {
+        if (createPostMentionsDto != null && createPostMentionsDto.getLabel() != null) {
             String label = createPostMentionsDto.getLabel().trim();
             Set<String> data = createPostMentionsDto.getData();
             if (!data.isEmpty() && label.isEmpty()) {

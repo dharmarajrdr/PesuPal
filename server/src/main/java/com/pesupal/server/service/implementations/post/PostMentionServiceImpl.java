@@ -76,18 +76,20 @@ public class PostMentionServiceImpl extends CurrentValueRetriever implements Pos
         existingMentions.removeIf(em -> !orgMemberIds.contains(em.getMentionedMember().getPublicId()));
 
         // 2. Add new mentions
-        for (String memberId : orgMemberIds) {
-            boolean exists = existingMentions.stream()
-                    .anyMatch(em -> em.getMentionedMember().getPublicId().equals(memberId));
-            if (!exists) {
-                PostMention postMention = new PostMention();
-                postMention.setPost(post);
-                postMention.setMentionedMember(orgMemberService.getOrgMemberByPublicId(memberId));
-                existingMentions.add(postMention);
+        if (mentions.getLabel() != null) {
+            for (String memberId : orgMemberIds) {
+                boolean exists = existingMentions.stream().anyMatch(em -> em.getMentionedMember().getPublicId().equals(memberId));
+                if (!exists) {
+                    PostMention postMention = new PostMention();
+                    postMention.setPost(post);
+                    postMention.setMentionedMember(orgMemberService.getOrgMemberByPublicId(memberId));
+                    existingMentions.add(postMention);
+                }
             }
+            post.setPostMentionLabel(mentions.getLabel());
+        } else {
+            post.setPostMentionLabel(null);
         }
-
-        post.setPostMentionLabel(mentions.getLabel());
 
         return existingMentions;
     }
