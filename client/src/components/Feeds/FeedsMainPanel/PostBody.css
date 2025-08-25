@@ -51,3 +51,27 @@
     width: 100%;
     padding: 20px;
 }
+
+.post-mentions {
+    font-family: 'system-ui';
+    font-size: 13px;
+}
+
+.post-mentions label {
+    color: #333;
+    margin-right: 5px;
+}
+
+.post-mentions .mentioned-member {
+    margin-right: 5px;
+}
+
+.post-mentions .more-mentioned-members,
+.post-mentions .mentioned-member .display-name {
+    color: #007bff;
+    cursor: pointer;
+}
+
+.post-mentions .mentioned-member .display-name:not(:last-child)::after {
+    content: ',';
+}
