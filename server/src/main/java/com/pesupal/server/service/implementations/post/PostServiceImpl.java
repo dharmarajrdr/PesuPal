@@ -290,7 +290,7 @@ public class PostServiceImpl extends CurrentValueRetriever implements PostServic
         Long orgId = orgMember.getOrg().getId();
         Post post = getPostByPublicIdAndOrgId(postId, orgId);
         OrgMember postOwner = orgMemberService.getOrgMemberByUserIdAndOrgId(post.getCreator().getId(), orgId);
-        return getPostDtoFromPostAndOrgMember(post, postOwner);
+        return getPostDtoFromPostAndOrgMember(post, orgMember);
     }
 
     /**
@@ -323,7 +323,7 @@ public class PostServiceImpl extends CurrentValueRetriever implements PostServic
         Pageable pageable = PageRequest.of(page, size, sort);
         Page<Post> postPage = postRepository.findAllByOrgIdAndCreator_PublicIdAndStatus(orgId, creatorId, pageable, PostStatus.PUBLISHED);
 
-        List<PostDto> postDtos = new ArrayList<>(postPage.getContent().stream().map(post -> getPostDtoFromPostAndOrgMember(post, creator)).toList());
+        List<PostDto> postDtos = new ArrayList<>(postPage.getContent().stream().map(post -> getPostDtoFromPostAndOrgMember(post, orgMember)).toList());
         PostsListDto postsListDto = new PostsListDto();
         postsListDto.setInfo(Map.of(
                 "hasMoreRecords", postPage.hasNext()
@@ -413,7 +413,7 @@ public class PostServiceImpl extends CurrentValueRetriever implements PostServic
         List<PostDto> postDtos = new ArrayList<>(postPage.getContent().stream().map(postTag -> {
             Post post = postTag.getPost();
             OrgMember postOwnerOrgMember = orgMemberService.getOrgMemberByUserIdAndOrgId(post.getCreator().getId(), orgId);
-            PostDto postDto = getPostDtoFromPostAndOrgMember(post, postOwnerOrgMember);
+            PostDto postDto = getPostDtoFromPostAndOrgMember(post, orgMember);
             postDto.setCreator(post.getCreator().getId().equals(orgMemberId));
             postDto.setLiked(isLiked(post.getLikes(), orgMember.getUser()));
             return postDto;
