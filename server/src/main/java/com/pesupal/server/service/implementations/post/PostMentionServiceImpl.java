@@ -87,6 +87,8 @@ public class PostMentionServiceImpl extends CurrentValueRetriever implements Pos
             }
         }
 
+        post.setPostMentionLabel(mentions.getLabel());
+
         return existingMentions;
     }
 
