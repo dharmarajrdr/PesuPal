@@ -11,8 +11,8 @@ import ScheduledPostsLayout from './FeedsMainPanel/ScheduledPostsLayout'
 const FeedsLayout = () => {
 
     const leftNavigationState = useState(true);
-    const [showCreatePostModal, setShowCreatePostModal] = useState(false);
     const [leftNavOpened,] = leftNavigationState;
+    const [showCreatePostModal, setShowCreatePostModal] = useState(false);
     const width = {
         'leftNavOpened': "24.5%",
         "leftNavClosed": "90px"
