@@ -112,7 +112,7 @@ const CreateNewPost = () => {
             setContent(currentPostData?.description || "");
             setTags(currentPostData?.tags || []);
             setPostId(currentPostData?.id || null);
-            setFiles(currentPostData?.media?.map(({ url, mediaId, extension }) => ({ 'preview': url, 'id': mediaId, 'name': mediaId, extension, 'existing': true })) || []);
+            setFiles(currentPostData?.media?.map(({ url, mediaId, extension }) => ({ 'preview': url, mediaId, 'file': { 'name': mediaId }, extension, 'existing': true })) || []);
             setMentionLabel(currentPostData?.mentions?.label || null);
             setMentionedMembers(currentPostData?.mentions?.data || []);
             setIsPostCreation(false);
