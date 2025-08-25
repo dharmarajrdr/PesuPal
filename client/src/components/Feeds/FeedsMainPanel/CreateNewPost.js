@@ -98,6 +98,7 @@ const CreateNewPost = () => {
     const [isPostCreation, setIsPostCreation] = useState(false);
     const [postTitle, setPostTitle] = useState("");
     const [content, setContent] = useState("");
+    const [scheduledAt, setScheduledAt] = useState(null);
     const [showMentionContainer, setShowMentionContainer] = useState(false);
 
     const allowedTypes = ['image/png', 'image/jpeg', 'image/gif'];
@@ -114,6 +115,7 @@ const CreateNewPost = () => {
             setMentionLabel(currentPostData?.mentions?.label || null);
             setMentionedMembers(currentPostData?.mentions?.data || []);
             setIsPostCreation(false);
+            setScheduledAt(new Date(currentPostData?.createdAt) > Date.now() ? currentPostData?.createdAt : null);
             setShowMentionContainer(currentPostData?.mentions?.data?.length > 0);
         } else {
             setHeader('Post Something');
@@ -125,6 +127,7 @@ const CreateNewPost = () => {
             setMentionLabel(predefinedLabels[0]);
             setMentionedMembers([]);
             setIsPostCreation(true);
+            setScheduledAt(null);
             setShowMentionContainer(false);
         }
 
@@ -302,7 +305,7 @@ const CreateNewPost = () => {
                     </div>
                     <div className='FRCE'>
                         <button id='cancel-post-button' onClick={onMinimize}>Cancel</button>
-                        <ShareWithSchedule onShare={handlePostSubmit} onSchedule={handlePostSchedule} isPostCreation={isPostCreation} />
+                        <ShareWithSchedule onShare={handlePostSubmit} onSchedule={handlePostSchedule} scheduledAt={scheduledAt} />
                     </div>
                 </div>
 
