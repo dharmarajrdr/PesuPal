@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux';
 import SchedulePicker from '../../Chat/ConversationScreen/SchedulePicker';
 import { hideConfirmationPopup, showConfirmationPopup } from '../../../store/reducers/ConfirmationPopupSlice';
 
-const ShareWithSchedule = ({ onShare, onSchedule }) => {
+const ShareWithSchedule = ({ onShare, onSchedule, isPostCreation }) => {
 
     const dispatch = useDispatch();
     const [showPicker, setShowPicker] = useState(false);
@@ -48,14 +48,14 @@ const ShareWithSchedule = ({ onShare, onSchedule }) => {
     return (
         <div className="share-wrapper FCSS w100">
             <div className="FRCC w100" id='share-post-button-wrapper'>
-                <button className="share-main" onClick={shareClickHandler}>Share</button>
-                <i className={`fa ${showSchedule ? 'fa-chevron-up' : 'fa-chevron-down'}`} id="share-chevron" onClick={() => setShowSchedule(prev => !prev)}></i>
+                <button className="share-main" onClick={shareClickHandler}>{isPostCreation ? 'Share' : 'Update'}</button>
+                {isPostCreation && <i className={`fa ${showSchedule ? 'fa-chevron-up' : 'fa-chevron-down'}`} id="share-chevron" onClick={() => setShowSchedule(prev => !prev)}></i>}
             </div>
 
-            {showPicker && <SchedulePicker onSchedule={scheduleClickHandler} showPicker={showPicker} setShowPicker={setShowPicker} />}
-            <div className={`w100 schedule-slide ${showSchedule ? 'slide-visible' : ''}`}>
+            {onSchedule && showPicker && <SchedulePicker onSchedule={scheduleClickHandler} showPicker={showPicker} setShowPicker={setShowPicker} />}
+            {isPostCreation && <div className={`w100 schedule-slide ${showSchedule ? 'slide-visible' : ''}`}>
                 <button className="schedule-btn" onClick={() => setShowPicker(!showPicker)}>Schedule</button>
-            </div>
+            </div>}
         </div>
     );
 };

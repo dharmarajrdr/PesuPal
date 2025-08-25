@@ -18,6 +18,12 @@ export const postSlice = createSlice({
         addPost: (state, action) => {
             state.list.push(action.payload);
         },
+        updatePost: (state, action) => {
+            const index = state.list.findIndex(post => post.id === action.payload.id);
+            if (index !== -1) {
+                state.list[index] = action.payload;
+            }
+        },
         clearPosts: (state) => {
             state.list = [];
             state.currentPostData = null;
@@ -43,5 +49,5 @@ export const postSlice = createSlice({
     }
 });
 
-export const { setPosts, appendPosts, addPost, clearPosts, deletePost, setActivePostId, setPostData, resetPostData, showCreatePostModal, hideCreatePostModal } = postSlice.actions;
+export const { setPosts, appendPosts, addPost, updatePost, clearPosts, deletePost, setActivePostId, setPostData, resetPostData, showCreatePostModal, hideCreatePostModal } = postSlice.actions;
 export default postSlice.reducer;
