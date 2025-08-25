@@ -1,6 +1,5 @@
 import './PostHeader.css';
 import utils from '../../../utils';
-import PostsLikedBy from './PostsLikedBy';
 import { useEffect, useState } from 'react';
 import { apiRequest } from '../../../http_request';
 import OptionsModal from '../../Utils/OptionsModal';
@@ -36,6 +35,16 @@ const PostHeader = ({ userId, displayName, displayPicture, createdAt, postId, co
     }
 
     const options = [
+        {
+            name: isCreator && 'Edit Post',
+            icon: 'fa fa-pen-to-square',
+            onClick: (e) => {
+                e.stopPropagation();
+                dispatch(setActivePostId(null));
+                dispatch(showProfile(userId, { editPostId: postId }));
+                closeOptionsModal();
+            }
+        },
         {
             name: isCreator && isScheduledPost && `Post Now`,
             icon: `fa fa-paper-plane`,

@@ -15,6 +15,7 @@ import { hideConfirmationPopup } from '../../../store/reducers/ConfirmationPopup
 const CreateNewPost = ({ onMinimize }) => {
 
     const dispatch = useDispatch();
+    const header = 'Post Something';
     const fileInputRef = useRef(null);
     const [tags, setTags] = useState([]);
     const [files, setFiles] = useState([]);
@@ -177,7 +178,7 @@ const CreateNewPost = ({ onMinimize }) => {
         <div id='create-new-post-overlay' className='entire-screen-overlay fullscreen-post-creation FRCC'>
             <div id='CreateNewPost' className='FCSS post-container'>
                 <div className='FRCB w100'>
-                    <label className='post-label'>Post Something</label>
+                    <label className='post-label'>{header}</label>
                 </div>
 
                 <div className='FRSS w100' id='post-input-section'>
