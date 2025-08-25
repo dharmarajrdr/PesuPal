@@ -35,6 +35,14 @@ public class PostController extends CurrentValueRetriever {
         return ResponseEntity.ok().body(new ApiResponseDto("Post scheduled successfully", post));
     }
 
+    @PatchMapping("/reschedule/{postId}")
+    public ResponseEntity<ApiResponseDto> reschedulePost(@PathVariable String postId, @RequestBody CreatePostDto createPostDto) {
+
+        createPostDto.setStatus(PostStatus.SCHEDULED);
+        PostDto postDto = postService.updatePost(postId, createPostDto);
+        return ResponseEntity.ok().body(new ApiResponseDto("Post rescheduled successfully", postDto));
+    }
+
     @PatchMapping("/unschedule/{postId}")
     public ResponseEntity<ApiResponseDto> unschedulePost(@PathVariable String postId) {
 

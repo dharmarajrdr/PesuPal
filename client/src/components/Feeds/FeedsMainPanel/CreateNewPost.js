@@ -99,6 +99,7 @@ const CreateNewPost = () => {
     const [postTitle, setPostTitle] = useState("");
     const [content, setContent] = useState("");
     const [scheduledAt, setScheduledAt] = useState(null);
+    const [isScheduledPost, setIsScheduledPost] = useState(false);
     const [showMentionContainer, setShowMentionContainer] = useState(false);
 
     const allowedTypes = ['image/png', 'image/jpeg', 'image/gif'];
@@ -115,7 +116,8 @@ const CreateNewPost = () => {
             setMentionLabel(currentPostData?.mentions?.label || null);
             setMentionedMembers(currentPostData?.mentions?.data || []);
             setIsPostCreation(false);
-            setScheduledAt(new Date(currentPostData?.createdAt) > Date.now() ? currentPostData?.createdAt : null);
+            setIsScheduledPost(currentPostData?.status === 'SCHEDULED');
+            setScheduledAt(currentPostData?.status === 'SCHEDULED' ? currentPostData?.createdAt : null);
             setShowMentionContainer(currentPostData?.mentions?.data?.length > 0);
         } else {
             setHeader('Post Something');
@@ -127,6 +129,7 @@ const CreateNewPost = () => {
             setMentionLabel(predefinedLabels[0]);
             setMentionedMembers([]);
             setIsPostCreation(true);
+            setIsScheduledPost(false);
             setScheduledAt(null);
             setShowMentionContainer(false);
         }
@@ -221,11 +224,11 @@ const CreateNewPost = () => {
 
     const handlePostSchedule = (scheduledAt) => {
 
-        if (!isPostCreation) {
+        if (!isPostCreation && !isScheduledPost) {
             return dispatch(showPopup({ message: "Unable to schedule as this post is already published.", type: 'error' }));
         }
 
-        postCreation(`/api/v1/post/schedule`, 'POST', { scheduledAt });
+        postCreation(`/api/v1/post/${isPostCreation ? 'schedule' : 'reschedule/' + postId}`, isPostCreation ? 'POST' : 'PATCH', { scheduledAt });
     };
 
     const onMinimize = () => {
