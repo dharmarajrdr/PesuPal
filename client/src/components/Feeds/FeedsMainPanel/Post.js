@@ -14,7 +14,7 @@ const Post = ({ post, setShowPostLikesById }) => {
 
     return (
         <div className='Post w100'>
-            <PostHeader userId={userId} postId={id} displayName={displayName} displayPicture={displayPicture} createdAt={createdAt} commentable={commentable} setCommentable={setCommentable} isCreator={isCreator} poll={poll} setShowPostLikesById={setShowPostLikesById} />
+            <PostHeader post={post} commentable={commentable} setCommentable={setCommentable} poll={poll} setShowPostLikesById={setShowPostLikesById} />
             <PostBody mentions={mentions} title={title} description={description} media={media} tags={tags} poll={poll} setPoll={setPoll} />
             <PostFooter post={post} commentable={commentable} bookmarkable={bookmarkable} bookmarked={bookmarked} />
         </div>

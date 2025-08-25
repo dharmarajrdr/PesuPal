@@ -1,16 +1,18 @@
 import './PostHeader.css';
 import utils from '../../../utils';
-import PostsLikedBy from './PostsLikedBy';
 import { useEffect, useState } from 'react';
 import { apiRequest } from '../../../http_request';
 import OptionsModal from '../../Utils/OptionsModal';
 import { useDispatch, useSelector } from 'react-redux';
 import { showPopup } from '../../../store/reducers/PopupSlice';
 import { showProfile } from '../../../store/reducers/ProfileSlice';
-import { deletePost, setActivePostId } from '../../../store/reducers/PostSlice';
 import { hideConfirmationPopup, showConfirmationPopup } from '../../../store/reducers/ConfirmationPopupSlice';
+import { deletePost, setActivePostId, setPostData, showCreatePostModal } from '../../../store/reducers/PostSlice';
 
-const PostHeader = ({ userId, displayName, displayPicture, createdAt, postId, commentable, setCommentable, isCreator, poll, setShowPostLikesById }) => {
+const PostHeader = ({ post, commentable, setCommentable, poll, setShowPostLikesById }) => {
+
+    const { 'id': postId, owner, createdAt, 'creator': isCreator } = post,
+        { userId, displayName, displayPicture } = owner;
 
     const dispatch = useDispatch();
     const [isOptionOpen, setIsOptionOpen] = useState(false);
@@ -36,6 +38,17 @@ const PostHeader = ({ userId, displayName, displayPicture, createdAt, postId, co
     }
 
     const options = [
+        {
+            name: isCreator && 'Edit Post',
+            icon: 'fa fa-pen-to-square',
+            onClick: (e) => {
+                e.stopPropagation();
+                dispatch(setActivePostId(postId));
+                dispatch(setPostData(post));
+                dispatch(showCreatePostModal());
+                closeOptionsModal();
+            }
+        },
         {
             name: isCreator && isScheduledPost && `Post Now`,
             icon: `fa fa-paper-plane`,

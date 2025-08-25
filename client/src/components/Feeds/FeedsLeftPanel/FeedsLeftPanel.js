@@ -1,4 +1,3 @@
-import React from 'react'
 import './FeedsLeftPanel.css'
 import FeedsLeftPanelList from './FeedsLeftPanelList'
 import FeedsLeftPanelItem from './FeedsLeftPanelItem'

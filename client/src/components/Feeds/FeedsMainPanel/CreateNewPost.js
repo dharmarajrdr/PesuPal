@@ -6,25 +6,48 @@ import { apiRequest } from '../../../http_request';
 import { useEffect, useRef, useState } from 'react';
 import ShareWithSchedule from './ShareWithSchedule';
 import { useDispatch, useSelector } from 'react-redux';
-import { addPost } from '../../../store/reducers/PostSlice';
 import { showPopup } from '../../../store/reducers/PopupSlice';
 import { showFullScreenImage } from '../../../store/reducers/FullScreenImageSlice';
 import { hideLoader, showLoader } from '../../../store/reducers/VerticalLoaderSlice';
 import { hideConfirmationPopup } from '../../../store/reducers/ConfirmationPopupSlice';
+import { addPost, hideCreatePostModal, resetPostData, updatePost } from '../../../store/reducers/PostSlice';
 
-const CreateNewPost = ({ onMinimize }) => {
+const CreateNewPost = () => {
+
+    const { currentPostData, isShowCreatePostModal } = useSelector(state => state.posts) || {};
 
     const dispatch = useDispatch();
     const fileInputRef = useRef(null);
-    const [tags, setTags] = useState([]);
     const [files, setFiles] = useState([]);
-    const [content, setContent] = useState("");
-    const [postTitle, setPostTitle] = useState("");
     const myProfile = useSelector(state => state.myProfile);
+    const [tags, setTags] = useState([]);
+    const [postId, setPostId] = useState(null);
+    const [header, setHeader] = useState('Post Something');
+    const [isPostCreation, setIsPostCreation] = useState(false);
+    const [postTitle, setPostTitle] = useState("");
+    const [content, setContent] = useState("");
 
     const allowedTypes = ['image/png', 'image/jpeg', 'image/gif'];
 
     useEffect(() => {
+
+        if (currentPostData) {
+            setHeader('Edit Post');
+            setPostTitle(currentPostData?.title || "");
+            setContent(currentPostData?.description || "");
+            setTags(currentPostData?.tags || []);
+            setPostId(currentPostData?.id || null);
+            setFiles(currentPostData?.media?.map(preview => ({ preview })) || []);
+            setIsPostCreation(false);
+        } else {
+            setHeader('Post Something');
+            setPostTitle("");
+            setContent("");
+            setTags([]);
+            setFiles([]);
+            setPostId(null);
+            setIsPostCreation(true);
+        }
 
         const quillEditor = document.querySelector('.ql-container.ql-snow');
         const quillToolbar = document.querySelector('.ql-toolbar.ql-snow');
@@ -52,7 +75,8 @@ const CreateNewPost = ({ onMinimize }) => {
         if (inputWrapper) {
             inputWrapper.style.height = `calc(470px - ${postAttachments ? postAttachments.offsetHeight : 0}px)`;
         }
-    }, []);
+
+    }, [currentPostData, isShowCreatePostModal]);
 
     const postCreation = (api, options) => {
 
@@ -85,7 +109,7 @@ const CreateNewPost = ({ onMinimize }) => {
             Object.assign(payload, options || {});
 
             apiRequest(api, 'POST', payload).then(({ data, message }) => {
-                dispatch(addPost(data));
+                isPostCreation ? dispatch(addPost(data)) : dispatch(updatePost(data));
                 onMinimize();
                 dispatch(showPopup({ message, type: 'success' }));
                 dispatch(hideLoader());
@@ -106,13 +130,23 @@ const CreateNewPost = ({ onMinimize }) => {
 
     const handlePostSubmit = () => {
 
-        postCreation(`/api/v1/post/create`, { 'status': 'PUBLISHED' });
+        postCreation(`/api/v1/post/${isPostCreation ? 'create' : postId}`, { 'status': 'PUBLISHED' });
     };
 
     const handlePostSchedule = (scheduledAt) => {
 
+        if (!isPostCreation) {
+            return dispatch(showPopup({ message: "Unable to schedule as this post is already published.", type: 'error' }));
+        }
+
         postCreation(`/api/v1/post/schedule`, { 'status': 'SCHEDULED', scheduledAt });
     };
+
+    const onMinimize = () => {
+
+        dispatch(resetPostData());
+        dispatch(hideCreatePostModal());
+    }
 
     const handleFileChange = (e) => {
 
@@ -141,9 +175,7 @@ const CreateNewPost = ({ onMinimize }) => {
 
         const withPreview = filtered.map((file) => ({
             file,
-            preview: file.type.startsWith("image")
-                ? URL.createObjectURL(file)
-                : null
+            preview: file.type.startsWith("image") ? URL.createObjectURL(file) : null
         }));
 
         setFiles((prev) => [...prev, ...withPreview]);
@@ -173,11 +205,11 @@ const CreateNewPost = ({ onMinimize }) => {
         setTags(tags.filter(tag => tag !== tagToRemove));
     }
 
-    return (
+    return isShowCreatePostModal && (
         <div id='create-new-post-overlay' className='entire-screen-overlay fullscreen-post-creation FRCC'>
             <div id='CreateNewPost' className='FCSS post-container'>
                 <div className='FRCB w100'>
-                    <label className='post-label'>Post Something</label>
+                    <label className='post-label'>{header}</label>
                 </div>
 
                 <div className='FRSS w100' id='post-input-section'>
@@ -216,7 +248,7 @@ const CreateNewPost = ({ onMinimize }) => {
                     </div>
                     <div className='FRCE'>
                         <button id='cancel-post-button' onClick={onMinimize}>Cancel</button>
-                        <ShareWithSchedule onShare={handlePostSubmit} onSchedule={handlePostSchedule} />
+                        <ShareWithSchedule onShare={handlePostSubmit} onSchedule={handlePostSchedule} isPostCreation={isPostCreation} />
                     </div>
                 </div>
 
@@ -229,12 +261,12 @@ const FilePreview = ({ file, removeSelectedFileHandler }) => {
 
     const dispatch = useDispatch();
 
-    const showFullScreenImageHandler = () => {
-        dispatch(showFullScreenImage(file.preview));
-    }
+    const { name, preview } = file || {};
 
-    return <div className='post-attachment-preview FRCC' key={file.name}>
-        <img src={file.preview} alt={file.name} className='post-attachment-image' onClick={showFullScreenImageHandler} />
+    const showFullScreenImageHandler = () => dispatch(showFullScreenImage(preview));
+
+    return <div className='post-attachment-preview FRCC' key={name}>
+        <img src={preview} alt={name} className='post-attachment-image' onClick={showFullScreenImageHandler} />
         <i className="fa-solid fa-xmark post-attachment-remove" onClick={() => removeSelectedFileHandler(file)}></i>
     </div>
 }
