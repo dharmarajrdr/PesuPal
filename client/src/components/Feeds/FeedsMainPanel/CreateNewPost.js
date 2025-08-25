@@ -213,7 +213,7 @@ const CreateNewPost = () => {
 
     const handlePostSubmit = () => {
 
-        postCreation(`/api/v1/post/${isPostCreation ? 'create' : postId}`, isPostCreation ? 'POST' : 'PATCH', { 'status': 'PUBLISHED' });
+        postCreation(`/api/v1/post/${isPostCreation ? 'create' : postId}`, isPostCreation ? 'POST' : 'PATCH');
     };
 
     const handlePostSchedule = (scheduledAt) => {
@@ -222,7 +222,7 @@ const CreateNewPost = () => {
             return dispatch(showPopup({ message: "Unable to schedule as this post is already published.", type: 'error' }));
         }
 
-        postCreation(`/api/v1/post/schedule`, 'POST', { 'status': 'SCHEDULED', scheduledAt });
+        postCreation(`/api/v1/post/schedule`, 'POST', { scheduledAt });
     };
 
     const onMinimize = () => {
@@ -288,8 +288,8 @@ const CreateNewPost = () => {
                             <ReactQuill theme="snow" value={content} onChange={setContent} className='w100' id='post-input' placeholder='What do you want to share?' />
                             <PostTagContainer tags={tags} setTags={setTags} />
                         </div>
-                        <PostAttachments files={files} removeSelectedFileHandler={removeSelectedFileHandler} />
                         {showMentionContainer && <PostMentions mentionLabel={mentionLabel} mentionedMembers={mentionedMembers} setMentionLabel={setMentionLabel} setMentionedMembers={setMentionedMembers} />}
+                        <PostAttachments files={files} removeSelectedFileHandler={removeSelectedFileHandler} />
                     </div>
                 </div>
 

@@ -39,17 +39,6 @@ const PostHeader = ({ post, commentable, setCommentable, poll, setShowPostLikesB
 
     const options = [
         {
-            name: isCreator && 'Edit Post',
-            icon: 'fa fa-pen-to-square',
-            onClick: (e) => {
-                e.stopPropagation();
-                dispatch(setActivePostId(postId));
-                dispatch(setPostData(post));
-                dispatch(showCreatePostModal());
-                closeOptionsModal();
-            }
-        },
-        {
             name: isCreator && isScheduledPost && `Post Now`,
             icon: `fa fa-paper-plane`,
             onClick: (e) => {
@@ -79,6 +68,17 @@ const PostHeader = ({ post, commentable, setCommentable, poll, setShowPostLikesB
                         }
                     ]
                 }));
+            }
+        },
+        {
+            name: isCreator && 'Edit Post',
+            icon: 'fa fa-pen-to-square',
+            onClick: (e) => {
+                e.stopPropagation();
+                dispatch(setActivePostId(postId));
+                dispatch(setPostData(post));
+                dispatch(showCreatePostModal());
+                closeOptionsModal();
             }
         },
         {
