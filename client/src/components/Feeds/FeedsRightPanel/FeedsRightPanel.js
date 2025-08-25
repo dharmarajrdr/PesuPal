@@ -1,13 +1,23 @@
 import Quote from './Quote'
 import './FeedsRightPanel.css'
-import TrendingTags from './TrendingTags'
-import TrendingPosts from './TrendingPosts'
+import TrendingTags from './TrendingTags';
+import { useDispatch } from 'react-redux';
+import TrendingPosts from './TrendingPosts';
+import { resetPostData, showCreatePostModal } from '../../../store/reducers/PostSlice';
 
-const Header = ({ setShowCreatePostModal }) => {
+const Header = () => {
+
+    const dispatch = useDispatch();
+
+    const showCreatePostModalHandler = () => {
+        
+        dispatch(resetPostData());
+        dispatch(showCreatePostModal());
+    }
 
     return <div className='FRCB w100 pR' id='FeedsRightPanelHeader'>
 
-        <button id='create-post-button' onClick={() => setShowCreatePostModal(true)}>
+        <button id='create-post-button' onClick={showCreatePostModalHandler}>
             <i className="fa-solid fa-plus w15"></i>
             Create Post
         </button>
@@ -18,10 +28,10 @@ const Header = ({ setShowCreatePostModal }) => {
     </div>
 }
 
-const FeedsRightPanel = ({ setShowCreatePostModal }) => {
+const FeedsRightPanel = () => {
     return (
         <div id='FeedsRightPanel'>
-            <Header setShowCreatePostModal={setShowCreatePostModal} />
+            <Header />
             <div id='FeedsRightPanelContent' className='noScrollbar'>
                 <TrendingTags />
                 <TrendingPosts />

@@ -5,7 +5,8 @@ export const postSlice = createSlice({
     initialState: {
         list: [],
         activePostId: null,
-        currentPostData: null
+        currentPostData: null,
+        isShowCreatePostModal: false
     },
     reducers: {
         setPosts: (state, action) => {
@@ -27,11 +28,20 @@ export const postSlice = createSlice({
         setActivePostId: (state, action) => {
             state.activePostId = action.payload;
         },
-        setCurrentPostData: (state, action) => {
+        setPostData: (state, action) => {
             state.currentPostData = action.payload;
+        },
+        resetPostData: (state) => {
+            state.currentPostData = null;
+        },
+        showCreatePostModal: (state, action) => {
+            state.isShowCreatePostModal = true;
+        },
+        hideCreatePostModal: (state, action) => {
+            state.isShowCreatePostModal = false;
         }
     }
 });
 
-export const { setPosts, appendPosts, addPost, clearPosts, deletePost, setActivePostId, setCurrentPostData } = postSlice.actions;
+export const { setPosts, appendPosts, addPost, clearPosts, deletePost, setActivePostId, setPostData, resetPostData, showCreatePostModal, hideCreatePostModal } = postSlice.actions;
 export default postSlice.reducer;

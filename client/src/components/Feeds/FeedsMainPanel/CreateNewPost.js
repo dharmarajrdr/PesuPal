@@ -6,26 +6,42 @@ import { apiRequest } from '../../../http_request';
 import { useEffect, useRef, useState } from 'react';
 import ShareWithSchedule from './ShareWithSchedule';
 import { useDispatch, useSelector } from 'react-redux';
-import { addPost } from '../../../store/reducers/PostSlice';
 import { showPopup } from '../../../store/reducers/PopupSlice';
 import { showFullScreenImage } from '../../../store/reducers/FullScreenImageSlice';
 import { hideLoader, showLoader } from '../../../store/reducers/VerticalLoaderSlice';
 import { hideConfirmationPopup } from '../../../store/reducers/ConfirmationPopupSlice';
+import { addPost, hideCreatePostModal, resetPostData } from '../../../store/reducers/PostSlice';
 
-const CreateNewPost = ({ onMinimize }) => {
+const CreateNewPost = () => {
+
+    const { currentPostData, isShowCreatePostModal } = useSelector(state => state.posts) || {};
 
     const dispatch = useDispatch();
-    const header = 'Post Something';
     const fileInputRef = useRef(null);
-    const [tags, setTags] = useState([]);
     const [files, setFiles] = useState([]);
-    const [content, setContent] = useState("");
-    const [postTitle, setPostTitle] = useState("");
     const myProfile = useSelector(state => state.myProfile);
+    const [tags, setTags] = useState([]);
+    const [header, setHeader] = useState('Post Something');
+    const [postTitle, setPostTitle] = useState("");
+    const [content, setContent] = useState("");
 
     const allowedTypes = ['image/png', 'image/jpeg', 'image/gif'];
 
     useEffect(() => {
+
+        if (currentPostData) {
+            setHeader('Edit Post');
+            setPostTitle(currentPostData?.title || "");
+            setContent(currentPostData?.description || "");
+            setTags(currentPostData?.tags || []);
+            setFiles([]);
+        } else {
+            setHeader('Post Something');
+            setPostTitle("");
+            setContent("");
+            setTags([]);
+            setFiles([]);
+        }
 
         const quillEditor = document.querySelector('.ql-container.ql-snow');
         const quillToolbar = document.querySelector('.ql-toolbar.ql-snow');
@@ -53,7 +69,8 @@ const CreateNewPost = ({ onMinimize }) => {
         if (inputWrapper) {
             inputWrapper.style.height = `calc(470px - ${postAttachments ? postAttachments.offsetHeight : 0}px)`;
         }
-    }, []);
+
+    }, [currentPostData, isShowCreatePostModal]);
 
     const postCreation = (api, options) => {
 
@@ -115,6 +132,12 @@ const CreateNewPost = ({ onMinimize }) => {
         postCreation(`/api/v1/post/schedule`, { 'status': 'SCHEDULED', scheduledAt });
     };
 
+    const onMinimize = () => {
+
+        dispatch(resetPostData());
+        dispatch(hideCreatePostModal());
+    }
+
     const handleFileChange = (e) => {
 
         const selectedFiles = Array.from(e.target.files);
@@ -174,7 +197,7 @@ const CreateNewPost = ({ onMinimize }) => {
         setTags(tags.filter(tag => tag !== tagToRemove));
     }
 
-    return (
+    return isShowCreatePostModal && (
         <div id='create-new-post-overlay' className='entire-screen-overlay fullscreen-post-creation FRCC'>
             <div id='CreateNewPost' className='FCSS post-container'>
                 <div className='FRCB w100'>
