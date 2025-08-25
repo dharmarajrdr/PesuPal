@@ -196,6 +196,28 @@ public class PostServiceImpl extends CurrentValueRetriever implements PostServic
     }
 
     /**
+     * Get unique mentions from the list of mentions
+     *
+     * @param mentions
+     * @return
+     */
+    private List<UserPreviewDto> getUniqueMentions(List<PostMention> mentions) {
+
+        Set<String> uniqueMemberIds = new HashSet<>();
+        List<UserPreviewDto> userPreviews = new ArrayList<>();
+        for (PostMention mention : mentions) {
+            OrgMember member = mention.getMentionedMember();
+            String memberId = member.getPublicId();
+            if (uniqueMemberIds.contains(memberId)) {
+                continue;
+            }
+            uniqueMemberIds.add(memberId);
+            userPreviews.add(UserPreviewDto.fromOrgMember(member));
+        }
+        return userPreviews;
+    }
+
+    /**
      * Converts a Post entity and OrgMember to a PostDto.
      *
      * @param post
@@ -218,7 +240,7 @@ public class PostServiceImpl extends CurrentValueRetriever implements PostServic
             postDto.setPoll(PollDto.fromPoll(pollService.getPollByPost(post), orgMember.getId()));
         }
         if (post.getPostMentionLabel() != null) {
-            postDto.setMentions(new PostMentionsDto(post.getPostMentionLabel(), post.getMentions().stream().map(postMention -> UserPreviewDto.fromOrgMember(postMention.getMentionedMember())).toList()));
+            postDto.setMentions(new PostMentionsDto(post.getPostMentionLabel(), getUniqueMentions(post.getMentions())));
         }
         return postDto;
     }

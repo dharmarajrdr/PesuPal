@@ -10,11 +10,10 @@ import { showProfile } from '../../../store/reducers/ProfileSlice';
 import { deletePost, setActivePostId } from '../../../store/reducers/PostSlice';
 import { hideConfirmationPopup, showConfirmationPopup } from '../../../store/reducers/ConfirmationPopupSlice';
 
-const PostHeader = ({ userId, displayName, displayPicture, createdAt, postId, commentable, setCommentable, isCreator, poll }) => {
+const PostHeader = ({ userId, displayName, displayPicture, createdAt, postId, commentable, setCommentable, isCreator, poll, setShowPostLikesById }) => {
 
     const dispatch = useDispatch();
     const [isOptionOpen, setIsOptionOpen] = useState(false);
-    const [showLikesList, setShowLikesList] = useState(false);
     const { activePostId } = useSelector(state => state.posts); // only one can be open
     const [pollUpdatable, setPollUpdatable] = useState(poll?.updatable);
 
@@ -74,7 +73,7 @@ const PostHeader = ({ userId, displayName, displayPicture, createdAt, postId, co
             icon: `fa fa-users`,
             onClick: (e) => {
                 e.stopPropagation();
-                setShowLikesList(true);
+                setShowPostLikesById(postId);
                 closeOptionsModal();
             }
         },
@@ -189,7 +188,6 @@ const PostHeader = ({ userId, displayName, displayPicture, createdAt, postId, co
             </div>
         </div>
         <i className='fa-solid fa-ellipsis cursP' onClick={onToggleOption}></i>
-        {showLikesList && <PostsLikedBy postId={postId} closeShowLikesList={() => setShowLikesList(false)} showLikesList={showLikesList} />}
         {isOptionOpen && <OptionsModal options={options} style={{ top: '35px', right: '-20px' }} />}
     </div>
 }

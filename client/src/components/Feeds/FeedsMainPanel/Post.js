@@ -4,7 +4,7 @@ import PostBody from './PostBody';
 import PostHeader from './PostHeader';
 import PostFooter from './PostFooter';
 
-const Post = ({ post }) => {
+const Post = ({ post, setShowPostLikesById }) => {
 
     const { id, title, owner, description, createdAt, media, mentions, bookmarked, tags, bookmarkable, creator: isCreator } = post,
         { userId, displayName, displayPicture } = owner;
@@ -14,7 +14,7 @@ const Post = ({ post }) => {
 
     return (
         <div className='Post w100'>
-            <PostHeader userId={userId} postId={id} displayName={displayName} displayPicture={displayPicture} createdAt={createdAt} commentable={commentable} setCommentable={setCommentable} isCreator={isCreator} poll={poll} />
+            <PostHeader userId={userId} postId={id} displayName={displayName} displayPicture={displayPicture} createdAt={createdAt} commentable={commentable} setCommentable={setCommentable} isCreator={isCreator} poll={poll} setShowPostLikesById={setShowPostLikesById} />
             <PostBody mentions={mentions} title={title} description={description} media={media} tags={tags} poll={poll} setPoll={setPoll} />
             <PostFooter post={post} commentable={commentable} bookmarkable={bookmarkable} bookmarked={bookmarked} />
         </div>

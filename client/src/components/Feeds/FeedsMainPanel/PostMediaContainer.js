@@ -70,9 +70,9 @@ const PostMediaContainer = ({ media }) => {
         }
     }
 
-    return <div className='mediaContainer FCSS w100'>
+    return media.length > 0 ? <div className='mediaContainer FCSS w100'>
         {componentToRender()}
-    </div>
+    </div> : null;
 }
 
 export default PostMediaContainer
