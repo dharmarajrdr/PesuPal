@@ -7,7 +7,6 @@ import com.pesupal.server.dto.response.post.PostsListDto;
 import com.pesupal.server.enums.PostStatus;
 import com.pesupal.server.enums.SortOrder;
 import com.pesupal.server.helpers.CurrentValueRetriever;
-import com.pesupal.server.model.post.Post;
 import com.pesupal.server.service.interfaces.post.PostService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -100,8 +99,8 @@ public class PostController extends CurrentValueRetriever {
     @PatchMapping("/{postId}")
     public ResponseEntity<ApiResponseDto> updatePost(@PathVariable String postId, @RequestBody CreatePostDto createPostDto) {
 
-        Post post = postService.updatePost(postId, createPostDto);
-        return ResponseEntity.ok().body(new ApiResponseDto("Post updated successfully", post));
+        PostDto postDto = postService.updatePost(postId, createPostDto);
+        return ResponseEntity.ok().body(new ApiResponseDto("Post updated successfully", postDto));
     }
 
     @DeleteMapping("/{postId}")
