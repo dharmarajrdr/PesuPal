@@ -58,15 +58,22 @@ public class PostServiceImpl extends CurrentValueRetriever implements PostServic
      *
      * @param createPostDto
      */
-    private void validateCreatePostDto(CreatePostDto createPostDto) {
+    private void validateCreatePostDto(CreatePostDto createPostDto, OrgMember creator) {
 
         if (createPostDto.getTags().size() > MAXIMUM_TAGS_PER_POST) {
             throw new ActionProhibitedException("A post can have a maximum of " + MAXIMUM_TAGS_PER_POST + " tags.");
         }
 
         CreatePostMentionsDto createPostMentionsDto = createPostDto.getMentions();
-        if (createPostMentionsDto != null && !createPostMentionsDto.getData().isEmpty() && createPostMentionsDto.getLabel().trim().isEmpty()) {
-            throw new MandatoryDataMissingException("Specify a label for the mention.");
+        if (createPostMentionsDto != null) {
+            String label = createPostMentionsDto.getLabel().trim();
+            Set<String> data = createPostMentionsDto.getData();
+            if (!data.isEmpty() && label.isEmpty()) {
+                throw new MandatoryDataMissingException("Specify a label for the mention.");
+            }
+            if (data.stream().anyMatch(id -> id.equals(creator.getPublicId()))) {
+                throw new ActionProhibitedException("You cannot mention yourself in a post.");
+            }
         }
     }
 
@@ -80,7 +87,7 @@ public class PostServiceImpl extends CurrentValueRetriever implements PostServic
 
         OrgMember creator = getCurrentOrgMember();
 
-        validateCreatePostDto(createPostDto);
+        validateCreatePostDto(createPostDto, creator);
 
         boolean hasPoll = createPostDto.getPoll() != null;
         Post post = createPostDto.toPost();
@@ -437,9 +444,9 @@ public class PostServiceImpl extends CurrentValueRetriever implements PostServic
     @Override
     public PostDto updatePost(String postId, CreatePostDto createPostDto) {
 
-        validateCreatePostDto(createPostDto);
-
         OrgMember orgMember = getCurrentOrgMember();
+
+        validateCreatePostDto(createPostDto, orgMember);
 
         Post post = getPostByPublicIdAndOrgId(postId, orgMember.getOrg().getId());
 
