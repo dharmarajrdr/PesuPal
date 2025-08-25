@@ -9,4 +9,6 @@ import java.util.List;
 public interface PostMentionService {
 
     List<PostMention> saveAll(CreatePostMentionsDto mentions, Post post);
+
+    List<PostMention> updateMentions(Post post, CreatePostMentionsDto mentions);
 }
