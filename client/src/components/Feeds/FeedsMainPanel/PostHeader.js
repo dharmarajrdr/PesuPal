@@ -6,10 +6,13 @@ import OptionsModal from '../../Utils/OptionsModal';
 import { useDispatch, useSelector } from 'react-redux';
 import { showPopup } from '../../../store/reducers/PopupSlice';
 import { showProfile } from '../../../store/reducers/ProfileSlice';
-import { deletePost, setActivePostId } from '../../../store/reducers/PostSlice';
+import { deletePost, setActivePostId, setCurrentPostData } from '../../../store/reducers/PostSlice';
 import { hideConfirmationPopup, showConfirmationPopup } from '../../../store/reducers/ConfirmationPopupSlice';
 
-const PostHeader = ({ userId, displayName, displayPicture, createdAt, postId, commentable, setCommentable, isCreator, poll, setShowPostLikesById }) => {
+const PostHeader = ({ post, commentable, setCommentable, poll, setShowPostLikesById }) => {
+
+    const { 'id': postId, owner, createdAt, 'creator': isCreator } = post,
+        { userId, displayName, displayPicture } = owner;
 
     const dispatch = useDispatch();
     const [isOptionOpen, setIsOptionOpen] = useState(false);
@@ -40,8 +43,8 @@ const PostHeader = ({ userId, displayName, displayPicture, createdAt, postId, co
             icon: 'fa fa-pen-to-square',
             onClick: (e) => {
                 e.stopPropagation();
-                dispatch(setActivePostId(null));
-                dispatch(showProfile(userId, { editPostId: postId }));
+                dispatch(setActivePostId(postId));
+                dispatch(setCurrentPostData(post));
                 closeOptionsModal();
             }
         },

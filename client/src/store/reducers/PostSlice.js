@@ -4,7 +4,8 @@ export const postSlice = createSlice({
     name: 'posts',
     initialState: {
         list: [],
-        activePostId: null
+        activePostId: null,
+        currentPostData: null
     },
     reducers: {
         setPosts: (state, action) => {
@@ -18,15 +19,19 @@ export const postSlice = createSlice({
         },
         clearPosts: (state) => {
             state.list = [];
+            state.currentPostData = null;
         },
         deletePost: (state, action) => {
             state.list = state.list.filter(post => post.id !== action.payload);
         },
         setActivePostId: (state, action) => {
             state.activePostId = action.payload;
+        },
+        setCurrentPostData: (state, action) => {
+            state.currentPostData = action.payload;
         }
     }
 });
 
-export const { setPosts, appendPosts, addPost, clearPosts, deletePost, setActivePostId } = postSlice.actions;
+export const { setPosts, appendPosts, addPost, clearPosts, deletePost, setActivePostId, setCurrentPostData } = postSlice.actions;
 export default postSlice.reducer;
