@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Set;
 
 @Service
 @AllArgsConstructor
@@ -33,6 +34,10 @@ public class PostMentionServiceImpl extends CurrentValueRetriever implements Pos
     @Transactional
     public List<PostMention> saveAll(CreatePostMentionsDto mentions, Post post) {
 
+        if (mentions == null) {
+            return List.of();
+        }
+
         OrgMember postOwner = getCurrentOrgMember();
 
         List<PostMention> postMentions = mentions.getData().stream().map(memberId -> {
@@ -48,4 +53,41 @@ public class PostMentionServiceImpl extends CurrentValueRetriever implements Pos
 
         return postMentionRepository.saveAll(postMentions);
     }
+
+    /**
+     * Updates post mentions.
+     *
+     * @param post
+     * @param mentions
+     * @return
+     */
+    @Override
+    @Transactional
+    public List<PostMention> updateMentions(Post post, CreatePostMentionsDto mentions) {
+
+        if (mentions == null) {
+            return List.of();
+        }
+
+        Set<String> orgMemberIds = mentions.getData();
+        List<PostMention> existingMentions = post.getMentions(); // managed collection
+
+        // 1. Remove old mentions
+        existingMentions.removeIf(em -> !orgMemberIds.contains(em.getMentionedMember().getPublicId()));
+
+        // 2. Add new mentions
+        for (String memberId : orgMemberIds) {
+            boolean exists = existingMentions.stream()
+                    .anyMatch(em -> em.getMentionedMember().getPublicId().equals(memberId));
+            if (!exists) {
+                PostMention postMention = new PostMention();
+                postMention.setPost(post);
+                postMention.setMentionedMember(orgMemberService.getOrgMemberByPublicId(memberId));
+                existingMentions.add(postMention);
+            }
+        }
+
+        return existingMentions;
+    }
+
 }
