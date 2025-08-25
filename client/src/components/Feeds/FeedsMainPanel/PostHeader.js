@@ -6,8 +6,8 @@ import OptionsModal from '../../Utils/OptionsModal';
 import { useDispatch, useSelector } from 'react-redux';
 import { showPopup } from '../../../store/reducers/PopupSlice';
 import { showProfile } from '../../../store/reducers/ProfileSlice';
-import { deletePost, setActivePostId, setCurrentPostData } from '../../../store/reducers/PostSlice';
 import { hideConfirmationPopup, showConfirmationPopup } from '../../../store/reducers/ConfirmationPopupSlice';
+import { deletePost, setActivePostId, setPostData, showCreatePostModal } from '../../../store/reducers/PostSlice';
 
 const PostHeader = ({ post, commentable, setCommentable, poll, setShowPostLikesById }) => {
 
@@ -44,7 +44,8 @@ const PostHeader = ({ post, commentable, setCommentable, poll, setShowPostLikesB
             onClick: (e) => {
                 e.stopPropagation();
                 dispatch(setActivePostId(postId));
-                dispatch(setCurrentPostData(post));
+                dispatch(setPostData(post));
+                dispatch(showCreatePostModal());
                 closeOptionsModal();
             }
         },
