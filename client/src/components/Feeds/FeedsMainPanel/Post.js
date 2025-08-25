@@ -6,8 +6,7 @@ import PostFooter from './PostFooter';
 
 const Post = ({ post, setShowPostLikesById }) => {
 
-    const { id, title, owner, description, createdAt, media, mentions, bookmarked, tags, bookmarkable, creator: isCreator } = post,
-        { userId, displayName, displayPicture } = owner;
+    const { title, description, media, mentions, bookmarked, tags, bookmarkable } = post || {};
 
     const [poll, setPoll] = useState(post.poll);
     const [commentable, setCommentable] = useState(post.commentable);

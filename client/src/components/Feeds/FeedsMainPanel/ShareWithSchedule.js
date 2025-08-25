@@ -46,7 +46,7 @@ const ShareWithSchedule = ({ onShare, onSchedule, isPostCreation }) => {
     }
 
     return (
-        <div className="share-wrapper FCSS w100">
+        <div className={`${isPostCreation ? 'create-post' : 'update-post'}-wrapper FCSS w100`}>
             <div className="FRCC w100" id='share-post-button-wrapper'>
                 <button className="share-main" onClick={shareClickHandler}>{isPostCreation ? 'Share' : 'Update'}</button>
                 {isPostCreation && <i className={`fa ${showSchedule ? 'fa-chevron-up' : 'fa-chevron-down'}`} id="share-chevron" onClick={() => setShowSchedule(prev => !prev)}></i>}

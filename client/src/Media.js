@@ -13,6 +13,10 @@ async function uploadMultipleMedia(files, setFiles) {
     setFiles(prevFiles => prevFiles.map(f => ({ ...f, 'uploading': true })));
 
     for (const file of files) {
+        if (file.existing) { // skip existing files
+            setFiles(prevFiles => prevFiles.map(f => f.file.name === file.file.name ? { ...f, 'uploaded': true, 'uploading': false } : f));
+            continue;
+        }
         try {
             const { data } = await uploadSingleMedia(file);
             const { mediaId, extension, size } = data;

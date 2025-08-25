@@ -6,7 +6,6 @@ import com.pesupal.server.enums.PostStatus;
 import com.pesupal.server.model.post.Post;
 import lombok.Data;
 
-import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -26,7 +25,7 @@ public class PostDto {
 
     private List<String> tags;
 
-    private List<URL> media;
+    private List<PostMediaDto> media;
 
     private PostImpressionDto impression;
 

@@ -2,15 +2,85 @@ import './CreateNewPost.css';
 import Media from '../../../Media';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
+import SearchUser from '../../SearchUser';
 import { apiRequest } from '../../../http_request';
 import { useEffect, useRef, useState } from 'react';
 import ShareWithSchedule from './ShareWithSchedule';
 import { useDispatch, useSelector } from 'react-redux';
 import { showPopup } from '../../../store/reducers/PopupSlice';
+import { showProfile } from '../../../store/reducers/ProfileSlice';
 import { showFullScreenImage } from '../../../store/reducers/FullScreenImageSlice';
 import { hideLoader, showLoader } from '../../../store/reducers/VerticalLoaderSlice';
 import { hideConfirmationPopup } from '../../../store/reducers/ConfirmationPopupSlice';
 import { addPost, hideCreatePostModal, resetPostData, updatePost } from '../../../store/reducers/PostSlice';
+
+const predefinedLabels = ['cc', 'behalf of', 'with', 'credits', 'kudos', 'thanks', 'shoutout'];
+
+const PostTagContainer = ({ tags, setTags }) => {
+
+    const dispatch = useDispatch();
+
+    const addTagHandler = (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            const newTag = `#${e.target.value.trim()}`;
+            if (newTag.match(/^#[\w-]+$/) === null) {
+                return dispatch(showPopup({ message: "Invalid tag format! Tags can only contain letters, numbers, underscores, and hyphens.", type: 'error' }));
+            }
+            if (newTag && !tags.includes(newTag)) {
+                setTags([...tags, newTag]);
+                e.target.value = '';
+            }
+        }
+    }
+
+    const removeTagHandler = (e) => {
+        const tagToRemove = e.target.previousSibling.textContent;
+        setTags(tags.filter(tag => tag !== tagToRemove));
+    }
+
+    return <div className='FRCS' id='create-post-tags'>
+        {tags.map((tag, index) => (
+            <div className='create-post-tag FRCC' key={index}>
+                <span>{tag}</span>
+                <i className="fa-solid fa-xmark" onClick={removeTagHandler}></i>
+            </div>
+        ))}
+        <input type='text' placeholder='Add Tag' autoComplete='off' id='create-tag-input' onKeyDown={addTagHandler} />
+    </div>
+}
+
+const PostAttachments = ({ files, removeSelectedFileHandler }) => {
+
+    return files.length > 0 ? <div id='post-attachments' className='FRCS w100'>
+        {files.map((file, index) => (
+            <FilePreview key={index} file={file} removeSelectedFileHandler={removeSelectedFileHandler} />
+        ))}
+    </div> : null;
+}
+
+const PostMentions = ({ mentionLabel, mentionedMembers, setMentionLabel, setMentionedMembers }) => {
+
+    const maxMentions = 5;
+    const dispatch = useDispatch();
+
+    return <div className='FRCS w100 post-mentions' id='create-post-mentions'>
+        <SearchUser maxUsersSelectable={maxMentions} selectedUsers={mentionedMembers} setSelectedUsers={setMentionedMembers} />
+        <select id='mention-label-select' value={mentionLabel || ''} onChange={(e) => setMentionLabel(e.target.value)}>
+            {predefinedLabels.map((predefinedLabel, index) => (
+                <option key={index} value={predefinedLabel}>
+                    {predefinedLabel}
+                </option>
+            ))}
+        </select>
+        {mentionedMembers.map((mention) => {
+            const { id, displayName } = mention || {};
+            return <div key={id} className='mentioned-member' onClick={() => dispatch(showProfile(id))}>
+                <span className='display-name'>{displayName}</span>
+            </div>
+        })}
+    </div>
+}
 
 const CreateNewPost = () => {
 
@@ -22,10 +92,13 @@ const CreateNewPost = () => {
     const myProfile = useSelector(state => state.myProfile);
     const [tags, setTags] = useState([]);
     const [postId, setPostId] = useState(null);
+    const [mentionLabel, setMentionLabel] = useState(null);
+    const [mentionedMembers, setMentionedMembers] = useState([]);
     const [header, setHeader] = useState('Post Something');
     const [isPostCreation, setIsPostCreation] = useState(false);
     const [postTitle, setPostTitle] = useState("");
     const [content, setContent] = useState("");
+    const [showMentionContainer, setShowMentionContainer] = useState(false);
 
     const allowedTypes = ['image/png', 'image/jpeg', 'image/gif'];
 
@@ -37,8 +110,11 @@ const CreateNewPost = () => {
             setContent(currentPostData?.description || "");
             setTags(currentPostData?.tags || []);
             setPostId(currentPostData?.id || null);
-            setFiles(currentPostData?.media?.map(preview => ({ preview })) || []);
+            setFiles(currentPostData?.media?.map(({ url, mediaId, extension }) => ({ 'preview': url, 'id': mediaId, 'name': mediaId, extension, 'existing': true })) || []);
+            setMentionLabel(currentPostData?.mentions?.label || null);
+            setMentionedMembers(currentPostData?.mentions?.data || []);
             setIsPostCreation(false);
+            setShowMentionContainer(currentPostData?.mentions?.data?.length > 0);
         } else {
             setHeader('Post Something');
             setPostTitle("");
@@ -46,7 +122,10 @@ const CreateNewPost = () => {
             setTags([]);
             setFiles([]);
             setPostId(null);
+            setMentionLabel(predefinedLabels[0]);
+            setMentionedMembers([]);
             setIsPostCreation(true);
+            setShowMentionContainer(false);
         }
 
         const quillEditor = document.querySelector('.ql-container.ql-snow');
@@ -78,11 +157,10 @@ const CreateNewPost = () => {
 
     }, [currentPostData, isShowCreatePostModal]);
 
-    const postCreation = (api, options) => {
+    const postCreation = (api, method, options) => {
 
         if (content.trim().length == 0) {
-            alert("Post content cannot be empty!");
-            return;
+            return dispatch(showPopup({ message: "Post content cannot be empty!", type: 'error' }));
         }
 
         dispatch(showLoader());
@@ -93,11 +171,16 @@ const CreateNewPost = () => {
                 "title": postTitle,
                 "description": content,
                 "tags": tags,
-                "mediaIds": files.map(({ mediaId, extension, file }) => {
+                "mediaIds": files.map(file => {
+                    const { mediaId, extension } = file || {};
                     return {
                         'id': mediaId, extension
                     }
                 }),
+                "mentions": {
+                    "label": mentionLabel,
+                    "data": mentionedMembers.map(({ id }) => id)
+                },
                 // "poll": {
                 //     "question": "Which company are you targeting?",
                 //     "options": [
@@ -108,7 +191,7 @@ const CreateNewPost = () => {
 
             Object.assign(payload, options || {});
 
-            apiRequest(api, 'POST', payload).then(({ data, message }) => {
+            apiRequest(api, method, payload).then(({ data, message }) => {
                 isPostCreation ? dispatch(addPost(data)) : dispatch(updatePost(data));
                 onMinimize();
                 dispatch(showPopup({ message, type: 'success' }));
@@ -130,7 +213,7 @@ const CreateNewPost = () => {
 
     const handlePostSubmit = () => {
 
-        postCreation(`/api/v1/post/${isPostCreation ? 'create' : postId}`, { 'status': 'PUBLISHED' });
+        postCreation(`/api/v1/post/${isPostCreation ? 'create' : postId}`, isPostCreation ? 'POST' : 'PATCH', { 'status': 'PUBLISHED' });
     };
 
     const handlePostSchedule = (scheduledAt) => {
@@ -139,7 +222,7 @@ const CreateNewPost = () => {
             return dispatch(showPopup({ message: "Unable to schedule as this post is already published.", type: 'error' }));
         }
 
-        postCreation(`/api/v1/post/schedule`, { 'status': 'SCHEDULED', scheduledAt });
+        postCreation(`/api/v1/post/schedule`, 'POST', { 'status': 'SCHEDULED', scheduledAt });
     };
 
     const onMinimize = () => {
@@ -182,27 +265,12 @@ const CreateNewPost = () => {
         e.target.value = ""; // Reset file input
     };
 
-    const addTagHandler = (e) => {
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            const newTag = `#${e.target.value.trim()}`;
-            if (newTag.match(/^#[\w-]+$/) === null) {
-                return dispatch(showPopup({ message: "Invalid tag format! Tags can only contain letters, numbers, underscores, and hyphens.", type: 'error' }));
-            }
-            if (newTag && !tags.includes(newTag)) {
-                setTags([...tags, newTag]);
-                e.target.value = '';
-            }
-        }
-    }
-
     const removeSelectedFileHandler = (file) => {
         setFiles(files.filter(f => f.name !== file.name));
     }
 
-    const removeTagHandler = (e) => {
-        const tagToRemove = e.target.previousSibling.textContent;
-        setTags(tags.filter(tag => tag !== tagToRemove));
+    const showMentionContainerHandler = () => {
+        setShowMentionContainer(true);
     }
 
     return isShowCreatePostModal && (
@@ -218,33 +286,19 @@ const CreateNewPost = () => {
                         <input type='text' placeholder='Title' id='post-title-input' autoComplete='off' value={postTitle} onChange={(e) => setPostTitle(e.target.value)} />
                         <div className='FCSS w100' id='post-content-input-wrapper'>
                             <ReactQuill theme="snow" value={content} onChange={setContent} className='w100' id='post-input' placeholder='What do you want to share?' />
-                            <div className='FRCS' id='create-post-tags'>
-                                {tags.map((tag, index) => (
-                                    <div className='create-post-tag FRCC' key={index}>
-                                        <span>{tag}</span>
-                                        <i className="fa-solid fa-xmark" onClick={removeTagHandler}></i>
-                                    </div>
-                                ))}
-                                <input type='text' placeholder='Add Tag' autoComplete='off' id='create-tag-input' onKeyDown={addTagHandler} />
-                            </div>
+                            <PostTagContainer tags={tags} setTags={setTags} />
                         </div>
-                        {files.length > 0 && <div id='post-attachments' className='FRCS w100'>
-                            {files.map((file, index) => (
-                                <FilePreview key={index} file={file} removeSelectedFileHandler={removeSelectedFileHandler} />
-                            ))}
-                        </div>}
+                        <PostAttachments files={files} removeSelectedFileHandler={removeSelectedFileHandler} />
+                        {showMentionContainer && <PostMentions mentionLabel={mentionLabel} mentionedMembers={mentionedMembers} setMentionLabel={setMentionLabel} setMentionedMembers={setMentionedMembers} />}
                     </div>
                 </div>
 
                 <div className='w100 FRCB post-footer'>
                     <div className='FRCS post-actions'>
                         <PostAction icon='fa-solid fa-square-poll-vertical' label='Poll' />
+                        <PostAction icon='fa-solid fa-user-tag' label='Mention' onClick={showMentionContainerHandler} />
                         <PostAction icon='fa-regular fa-image' label='Attachment' onClick={() => fileInputRef.current.click()} />
                         <input type='file' multiple style={{ display: 'none' }} ref={fileInputRef} onChange={handleFileChange} accept={allowedTypes.length ? allowedTypes.join(",") : "*/*"} />
-                        {/* <PostAction icon='fa-regular fa-hashtag' label='Tag' /> */}
-                        {/* <PostAction icon='fa-regular fa-at' label='Mention' /> */}
-                        {/* <PostAction icon='fa-solid fa-t' label='Title' /> */}
-                        {/* <PostAction icon='fa-regular fa-calendar-days' label='Schedule' /> */}
                     </div>
                     <div className='FRCE'>
                         <button id='cancel-post-button' onClick={onMinimize}>Cancel</button>

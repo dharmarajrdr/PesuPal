@@ -29,7 +29,7 @@ public interface PostService {
 
     PostsListDto getPostByTag(String tag, int page, int size, SortOrder sortOrder);
 
-    Post updatePost(String postId, CreatePostDto createPostDto);
+    PostDto updatePost(String postId, CreatePostDto createPostDto);
 
     void deletePost(String postId);
 

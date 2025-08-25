@@ -47,12 +47,7 @@ public class SimpleFeedRetrieverService implements FeedRetrieverService {
         Pageable pageable = PageRequest.of(page, size, sort);
 
         Page<Post> posts = postRepository.getUnlikedPostsByOrgMember(orgMember.getOrg(), orgMember, pageable);
-        List<PostDto> postDtos = new ArrayList<>(posts.getContent().stream().map(post -> {
-            PostDto postDto = postService.getPostDtoFromPostAndOrgMember(post, post.getCreator());
-            postDto.setCreator(post.getCreator().getId().equals(orgMember.getId()));
-            postDto.setLiked(false);
-            return postDto;
-        }).toList());
+        List<PostDto> postDtos = new ArrayList<>(posts.getContent().stream().map(post -> postService.getPostDtoFromPostAndOrgMember(post, post.getCreator())).toList());
 
         PostsListDto postsListDto = new PostsListDto();
         postsListDto.setInfo(Map.of("hasMoreRecords", posts.hasNext()));

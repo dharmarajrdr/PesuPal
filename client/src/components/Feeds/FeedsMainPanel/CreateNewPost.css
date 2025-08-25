@@ -106,7 +106,7 @@
   padding: 10px 10px;
 }
 
-#create-post-tags input:focus {
+#create-post-tags>input:focus {
   background-color: #fafafa;
 }
 
@@ -191,6 +191,45 @@
   max-width: max-content;
 }
 
+#create-post-mentions #mention-label-select {
+  border: none;
+  outline: none;
+  padding: 5px 8px;
+  font-size: 12px;
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+  background-color: #f5f5f5;
+  color: #555;
+  cursor: pointer;
+  margin: 0px 5px;
+}
+
+#create-post-mentions #search-users-container #search-user-input-container {
+  border-left: 1px solid #fff;
+  border-right: 1px solid #fff;
+  border-bottom: 1px solid #ccc;
+  border-top: none;
+  border-radius: 0;
+}
+
+#create-post-mentions #search-users-container #search-user-input-container.showing-suggestions {
+  border-color: #ccc;
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+}
+
+.remove-mention-member {
+  cursor: pointer;
+  color: #999;
+  transition-duration: 0.25s;
+  margin-right: 2px;
+  margin-left: 5px;
+}
+
+.remove-mention-member:hover {
+  color: #333;
+}
+
 .user-avatar {
   border-radius: 50%;
   object-fit: cover;
@@ -244,7 +283,12 @@
   color: #555;
 }
 
-.share-wrapper {
+.create-post-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.update-post-wrapper {
   position: relative;
   display: inline-block;
 }
@@ -257,7 +301,6 @@
 
 .share-main,
 #share-chevron {
-  padding: 8px 8px 8px 16px;
   font-weight: 600;
   font-size: 12px;
   border: none;
@@ -271,6 +314,14 @@
 .share-main:hover,
 #share-chevron:hover {
   background-color: var(--primary-color-active);
+}
+
+.create-post-wrapper .share-main {
+  padding: 8px 8px 8px 16px;
+}
+
+.update-post-wrapper .share-main {
+  padding: 8px 16px;
 }
 
 #share-chevron {
