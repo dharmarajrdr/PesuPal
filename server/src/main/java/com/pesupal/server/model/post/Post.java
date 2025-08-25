@@ -46,6 +46,12 @@ public class Post extends PublicAccessModel {
 
     private boolean bookmarkable;
 
+    private String postMentionLabel;
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
+    private List<PostMention> mentions = new ArrayList<>();
+
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
     private List<PostLike> likes = new ArrayList<>();
