@@ -250,7 +250,7 @@ public class PostServiceImpl extends CurrentValueRetriever implements PostServic
             postMediaDto.setUrl(s3Service.generatePresignedUrl(key));
             return postMediaDto;
         }).toList());
-        postDto.setOwner(UserBasicInfoDto.fromOrgMember(orgMember));
+        postDto.setOwner(UserBasicInfoDto.fromOrgMember(post.getCreator()));
         postDto.setImpression(PostImpressionDto.builder().likes(post.getLikes().size()).comments(post.getComments().size()).build());
         postDto.setBookmarked(false);   // Feature not implemented yet
         if (post.isHasPoll()) {
