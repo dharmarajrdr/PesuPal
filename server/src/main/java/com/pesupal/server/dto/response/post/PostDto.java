@@ -46,6 +46,8 @@ public class PostDto {
 
     private PostStatus status;
 
+    private PostMentionsDto mentions;
+
     public static PostDto fromPost(Post post) {
 
         PostDto postDto = new PostDto();

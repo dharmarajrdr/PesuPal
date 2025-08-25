@@ -2,10 +2,8 @@ package com.pesupal.server.service.implementations.post;
 
 import com.pesupal.server.dto.request.post.CreatePostDto;
 import com.pesupal.server.dto.response.UserBasicInfoDto;
-import com.pesupal.server.dto.response.post.PollDto;
-import com.pesupal.server.dto.response.post.PostDto;
-import com.pesupal.server.dto.response.post.PostImpressionDto;
-import com.pesupal.server.dto.response.post.PostsListDto;
+import com.pesupal.server.dto.response.UserPreviewDto;
+import com.pesupal.server.dto.response.post.*;
 import com.pesupal.server.enums.FeedRetriever;
 import com.pesupal.server.enums.PostStatus;
 import com.pesupal.server.enums.SortOrder;
@@ -15,10 +13,7 @@ import com.pesupal.server.exceptions.PermissionDeniedException;
 import com.pesupal.server.factory.FeedRetrieverServiceFactory;
 import com.pesupal.server.helpers.CurrentValueRetriever;
 import com.pesupal.server.helpers.DateTimeUtil;
-import com.pesupal.server.model.post.Post;
-import com.pesupal.server.model.post.PostLike;
-import com.pesupal.server.model.post.PostMedia;
-import com.pesupal.server.model.post.PostTag;
+import com.pesupal.server.model.post.*;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.model.user.User;
 import com.pesupal.server.repository.post.PostRepository;
@@ -49,6 +44,7 @@ public class PostServiceImpl extends CurrentValueRetriever implements PostServic
     private final PostTagService postTagService;
     private final OrgMemberService orgMemberService;
     private final PostMediaService postMediaService;
+    private final PostMentionService postMentionService;
     private final RedisTemplate<String, Object> redisTemplate;
     private final FeedRetrieverServiceFactory feedRetrieverServiceFactory;
 
@@ -75,11 +71,13 @@ public class PostServiceImpl extends CurrentValueRetriever implements PostServic
         postRepository.save(post);
         List<PostMedia> postMedia = postMediaService.saveAll(createPostDto.getMediaIds(), post);
         List<PostTag> postTags = postTagService.saveAll(createPostDto.getTags(), post);
+        List<PostMention> postMentions = postMentionService.saveAll(createPostDto.getMentions(), post);
         if (hasPoll) {
             pollService.createPoll(createPostDto.getPoll(), post);
         }
         post.setTags(postTags);
         post.setPostMedia(postMedia);
+        post.setMentions(postMentions);
         return post;
     }
 
@@ -218,6 +216,9 @@ public class PostServiceImpl extends CurrentValueRetriever implements PostServic
         postDto.setBookmarked(false);   // Feature not implemented yet
         if (post.isHasPoll()) {
             postDto.setPoll(PollDto.fromPoll(pollService.getPollByPost(post), orgMember.getId()));
+        }
+        if (post.getPostMentionLabel() != null) {
+            postDto.setMentions(new PostMentionsDto(post.getPostMentionLabel(), post.getMentions().stream().map(postMention -> UserPreviewDto.fromOrgMember(postMention.getMentionedMember())).toList()));
         }
         return postDto;
     }

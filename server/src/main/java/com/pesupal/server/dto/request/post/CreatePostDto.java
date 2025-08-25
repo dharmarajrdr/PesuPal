@@ -36,6 +36,8 @@ public class CreatePostDto {
 
     private PostStatus status;
 
+    private CreatePostMentionsDto mentions;
+
     public Post toPost() {
 
         Post post = new Post();
@@ -47,6 +49,9 @@ public class CreatePostDto {
         post.setBookmarkable(this.bookmarkable);
         post.setCreatedAt(this.scheduledAt);
         post.setStatus(this.status);
+        if (this.mentions != null) {
+            post.setPostMentionLabel(this.mentions.getLabel());
+        }
         return post;
     }
 
