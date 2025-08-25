@@ -76,20 +76,21 @@ public class PostMediaServiceImpl implements PostMediaService {
      * @return
      */
     @Override
+    @Transactional
     public List<PostMedia> updatePostMedia(Post post, Set<MediaDto> mediaIds) {
 
         List<PostMedia> existingMedia = post.getPostMedia(); // managed collection
 
         // 1. Remove old media
-        existingMedia.stream().filter(postMedia -> mediaIds.stream().noneMatch(mediaDto -> mediaDto.getId().equals(postMedia.getMediaId()))).forEach(this::deletePostMedia);
+        existingMedia.removeIf(pm -> mediaIds.stream().noneMatch(dto -> dto.getId().equals(pm.getMediaId())));
 
-        // 2. Add new mentions
+        // 2. Add new media
         if (mediaIds != null) {
-            for (MediaDto mediaId : mediaIds) {
-                boolean exists = existingMedia.stream().anyMatch(em -> em.getMediaId().equals(mediaId.getId()));
+            for (MediaDto dto : mediaIds) {
+                boolean exists = existingMedia.stream().anyMatch(pm -> pm.getMediaId().equals(dto.getId()));
                 if (!exists) {
-                    PostMedia postMedia = PostMedia.builder().post(post).mediaId(mediaId.getId()).extension(mediaId.getExtension()).build();
-                    existingMedia.add(postMediaRepository.save(postMedia));
+                    PostMedia newMedia = PostMedia.builder().post(post).mediaId(dto.getId()).extension(dto.getExtension()).build();
+                    existingMedia.add(newMedia); // cascade handles persist
                 }
             }
         }
