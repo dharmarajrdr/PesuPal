@@ -55,6 +55,7 @@
 .post-mentions {
     font-family: 'system-ui';
     font-size: 13px;
+    margin-top: 10px;
 }
 
 .post-mentions label {
@@ -72,6 +73,6 @@
     cursor: pointer;
 }
 
-.post-mentions .mentioned-member .display-name:not(:last-child)::after {
+.post-mentions .mentioned-member:not(:last-child) .display-name::after {
     content: ',';
 }
