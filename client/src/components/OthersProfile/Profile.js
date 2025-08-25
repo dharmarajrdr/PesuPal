@@ -48,16 +48,18 @@ const NavigationLink = ({ to, icon, label, count }) => {
 
 const Profile = () => {
 
+    const dispatch = useDispatch();
+    const [error, setError] = useState(null);
     const [profile, setProfile] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
     const userId = useSelector(state => state.profile);
-    const dispatch = useDispatch();
 
     useEffect(() => {
         if (userId == null) {
             return;
         }
+        setProfile(null);
+        setLoading(true);
         apiRequest("/api/v1/profile/" + userId, "GET").then(({ data }) => {
             setLoading(false);
             setProfile(data);
