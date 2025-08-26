@@ -3,6 +3,7 @@ import Media from '../../../Media';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import SearchUser from '../../SearchUser';
+import UploadStatus from '../../Chat/UploadStatus';
 import { apiRequest } from '../../../http_request';
 import { useEffect, useRef, useState } from 'react';
 import ShareWithSchedule from './ShareWithSchedule';
@@ -74,7 +75,7 @@ const FilePreview = ({ file, removeSelectedFileHandler, showFullScreenImageHandl
 
     return <div className='post-attachment-preview FRCC' key={name}>
         <img src={preview} alt={name} className='post-attachment-image' onClick={showFullScreenImageHandler} />
-        <i className="fa-solid fa-xmark post-attachment-remove" onClick={() => removeSelectedFileHandler(file)}></i>
+        <UploadStatus file={file} removeFile={() => removeSelectedFileHandler(file)} />
     </div>
 }
 

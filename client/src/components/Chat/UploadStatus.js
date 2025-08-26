@@ -5,13 +5,13 @@ const UploadStatus = ({ file, removeFile, index }) => {
     return (
         <>
             {uploaded ? (
-                <i className="fa fa-check-circle file-uploaded-icon" title="File uploaded successfully" />
+                <i style={{ color: 'green' }} className="fa fa-check-circle file-uploaded-icon" title="File uploaded successfully" />
             ) : failedUpload ? (
-                <i className="fa fa-exclamation-triangle file-upload-failed-icon" title={failedUploadReason} />
+                <i style={{ color: 'red' }} className="fa fa-exclamation-triangle file-upload-failed-icon" title={failedUploadReason} />
             ) : uploading ? (
-                <i className="fa fa-spinner fa-spin file-uploading-icon" title="File is uploading" />
+                <i style={{ color: 'orange' }} className="fa fa-spinner fa-spin file-uploading-icon" title="File is uploading" />
             ) : (
-                <i className="fa fa-trash remove-btn" onClick={() => removeFile(index)} title="Remove file" />
+                <i style={{ color: 'gray' }} className="fa fa-trash remove-btn" onClick={() => removeFile(index)} title="Remove file" />
             )}
         </>
     )
