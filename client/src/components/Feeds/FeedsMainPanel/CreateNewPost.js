@@ -1,4 +1,5 @@
 import './CreateNewPost.css';
+import PostPoll from './PostPoll';
 import Media from '../../../Media';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
@@ -234,6 +235,7 @@ const CreateNewPost = () => {
                             <PostTagContainer tags={tags} setTags={setTags} />
                         </div>
                         {showMentionContainer && <PostMentions mentionLabel={mentionLabel} mentionedMembers={mentionedMembers} setMentionLabel={setMentionLabel} setMentionedMembers={setMentionedMembers} />}
+                        <PostPoll />
                         <PostAttachments files={files} removeSelectedFileHandler={removeSelectedFileHandler} />
                     </div>
                 </div>
