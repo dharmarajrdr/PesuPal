@@ -2,112 +2,24 @@ import './CreateNewPost.css';
 import Media from '../../../Media';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
-import SearchUser from '../../SearchUser';
-import UploadStatus from '../../Chat/UploadStatus';
+import PostMentions from './PostMentions';
+import PostAttachments from './PostAttachments';
+import PostTagContainer from './PostTagContainer';
 import { apiRequest } from '../../../http_request';
 import { useEffect, useRef, useState } from 'react';
 import ShareWithSchedule from './ShareWithSchedule';
 import { useDispatch, useSelector } from 'react-redux';
 import { showPopup } from '../../../store/reducers/PopupSlice';
-import { showProfile } from '../../../store/reducers/ProfileSlice';
-import { showFullScreenImageAt } from '../../../store/reducers/FullScreenImageSlice';
 import { hideLoader, showLoader } from '../../../store/reducers/VerticalLoaderSlice';
 import { hideConfirmationPopup } from '../../../store/reducers/ConfirmationPopupSlice';
 import { addPost, hideCreatePostModal, resetPostData, updatePost } from '../../../store/reducers/PostSlice';
 
-const predefinedLabels = ['cc', 'behalf of', 'with', 'credits', 'kudos', 'thanks', 'shoutout'];
-
-const PostTagContainer = ({ tags, setTags }) => {
-
-    const dispatch = useDispatch();
-
-    const addTagHandler = (e) => {
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            const newTag = `#${e.target.value.trim()}`;
-            if (newTag.match(/^#[\w-]+$/) === null) {
-                return dispatch(showPopup({ message: "Invalid tag format! Tags can only contain letters, numbers, underscores, and hyphens.", type: 'error' }));
-            }
-            if (newTag && !tags.includes(newTag)) {
-                setTags([...tags, newTag]);
-                e.target.value = '';
-            }
-        }
-    }
-
-    const removeTagHandler = (e) => {
-        const tagToRemove = e.target.previousSibling.textContent;
-        setTags(tags.filter(tag => tag !== tagToRemove));
-    }
-
-    return <div className='FRCS' id='create-post-tags'>
-        {tags.map((tag, index) => (
-            <div className='create-post-tag FRCC' key={index}>
-                <span>{tag}</span>
-                <i className="fa-solid fa-xmark" onClick={removeTagHandler}></i>
-            </div>
-        ))}
-        <input type='text' placeholder='Add Tag' autoComplete='off' id='create-tag-input' onKeyDown={addTagHandler} />
-    </div>
-}
-
-const PostAttachments = ({ files, removeSelectedFileHandler }) => {
-
-    const dispatch = useDispatch();
-
-    const showFullScreenImageHandler = (index) => {
-        dispatch(showFullScreenImageAt({
-            mediaUrls: files.map(f => f.preview),
-            currentIndex: index
-        }));
-    }
-
-    return files.length > 0 ? <div id='post-attachments' className='FRCS w100'>
-        {files.map((file, index) => (
-            <FilePreview key={index} file={file} removeSelectedFileHandler={removeSelectedFileHandler} showFullScreenImageHandler={() => showFullScreenImageHandler(index)} />
-        ))}
-    </div> : null;
-}
-
-const FilePreview = ({ file, removeSelectedFileHandler, showFullScreenImageHandler }) => {
-
-    const { name, preview } = file || {};
-
-    return <div className='post-attachment-preview FRCC' key={name}>
-        <img src={preview} alt={name} className='post-attachment-image' onClick={showFullScreenImageHandler} />
-        <UploadStatus file={file} removeFile={() => removeSelectedFileHandler(file)} />
-    </div>
-}
-
 const PostAction = ({ icon, label, onClick }) => (
     <span className='actions_post_creation FRCC' onClick={onClick ? onClick : null}>
-        <i className={`${icon} mR5`}></i>
+        <i className={`${icon} w15 mR5`}></i>
         <span>{label}</span>
     </span>
 );
-
-const PostMentions = ({ mentionLabel, mentionedMembers, setMentionLabel, setMentionedMembers }) => {
-
-    const maxMentions = 5;
-    const dispatch = useDispatch();
-
-    return <div className='FRCS w100 post-mentions' id='create-post-mentions'>
-        <SearchUser maxUsersSelectable={maxMentions} selectedUsers={mentionedMembers} setSelectedUsers={setMentionedMembers} />
-        <select id='mention-label-select' value={mentionLabel || ''} onChange={(e) => setMentionLabel(e.target.value)}>
-            {predefinedLabels.map((predefinedLabel, index) => (
-                <option key={index} value={predefinedLabel}>
-                    {predefinedLabel}
-                </option>
-            ))}
-        </select>
-        {mentionedMembers.map((mention) => {
-            const { id, displayName } = mention || {};
-            return <div key={id} className='mentioned-member' onClick={() => dispatch(showProfile(id))}>
-                <span className='display-name'>{displayName}</span>
-            </div>
-        })}
-    </div>
-}
 
 const CreateNewPost = () => {
 
@@ -153,7 +65,7 @@ const CreateNewPost = () => {
             setTags([]);
             setFiles([]);
             setPostId(null);
-            setMentionLabel(predefinedLabels[0]);
+            setMentionLabel('cc');
             setMentionedMembers([]);
             setIsPostCreation(true);
             setIsScheduledPost(false);
@@ -306,7 +218,7 @@ const CreateNewPost = () => {
         setShowMentionContainer(true);
     }
 
-    return isShowCreatePostModal && (
+    return isShowCreatePostModal || true && (
         <div id='create-new-post-overlay' className='entire-screen-overlay fullscreen-post-creation FRCC'>
             <div id='CreateNewPost' className='FCSS post-container'>
                 <div className='FRCB w100'>
