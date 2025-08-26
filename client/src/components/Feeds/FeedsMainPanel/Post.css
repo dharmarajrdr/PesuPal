@@ -58,9 +58,8 @@
   color: #d28733;
 }
 
-i.bookmarked {
+.post-bookmarked i {
   color: #e1842e;
-  font-weight: 600;
 }
 
 .tagsContainer {
