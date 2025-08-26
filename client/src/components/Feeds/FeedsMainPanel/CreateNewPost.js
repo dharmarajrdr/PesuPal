@@ -1,6 +1,7 @@
 import './CreateNewPost.css';
 import PostPoll from './PostPoll';
 import Media from '../../../Media';
+import utils from '../../../utils';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import PostMentions from './PostMentions';
@@ -12,8 +13,8 @@ import ShareWithSchedule from './ShareWithSchedule';
 import { useDispatch, useSelector } from 'react-redux';
 import { showPopup } from '../../../store/reducers/PopupSlice';
 import { hideLoader, showLoader } from '../../../store/reducers/VerticalLoaderSlice';
-import { hideConfirmationPopup } from '../../../store/reducers/ConfirmationPopupSlice';
 import { addPost, hideCreatePostModal, resetPostData, updatePost } from '../../../store/reducers/PostSlice';
+import { hideConfirmationPopup, showConfirmationPopup } from '../../../store/reducers/ConfirmationPopupSlice';
 
 const PostAction = ({ icon, label, onClick }) => (
     <span className='actions_post_creation FRCC' onClick={onClick ? onClick : null}>
@@ -41,6 +42,9 @@ const CreateNewPost = () => {
     const [scheduledAt, setScheduledAt] = useState(null);
     const [isScheduledPost, setIsScheduledPost] = useState(false);
     const [showMentionContainer, setShowMentionContainer] = useState(false);
+    const [showPollContainer, setShowPollContainer] = useState(false);
+    const [question, setQuestion] = useState('');
+    const [pollOptions, setPollOptions] = useState(['', '']);
 
     const allowedTypes = ['image/png', 'image/jpeg', 'image/gif'];
 
@@ -59,6 +63,9 @@ const CreateNewPost = () => {
             setIsScheduledPost(currentPostData?.status === 'SCHEDULED');
             setScheduledAt(currentPostData?.status === 'SCHEDULED' ? currentPostData?.createdAt : null);
             setShowMentionContainer(currentPostData?.mentions?.data?.length > 0);
+            setPollOptions(currentPostData?.poll?.options?.map(({ option }) => option) || []);
+            setQuestion(currentPostData?.poll?.question || '');
+            setShowPollContainer(currentPostData?.poll?.options?.length || currentPostData?.poll?.question?.length);
         } else {
             setHeader('Post Something');
             setPostTitle("");
@@ -71,6 +78,9 @@ const CreateNewPost = () => {
             setIsPostCreation(true);
             setIsScheduledPost(false);
             setScheduledAt(null);
+            setPollOptions(['', '']);
+            setQuestion('');
+            setShowPollContainer(false);
             setShowMentionContainer(false);
         }
 
@@ -105,10 +115,6 @@ const CreateNewPost = () => {
 
     const postCreation = (api, method, options) => {
 
-        if (content.trim().length == 0) {
-            return dispatch(showPopup({ message: "Post content cannot be empty!", type: 'error' }));
-        }
-
         dispatch(showLoader());
 
         Media.uploadMultipleMedia(files, setFiles).then(() => {
@@ -127,12 +133,10 @@ const CreateNewPost = () => {
                     "label": mentionLabel,
                     "data": mentionedMembers.map(({ id }) => id)
                 },
-                // "poll": {
-                //     "question": "Which company are you targeting?",
-                //     "options": [
-                //         "Microsoft", "PayPal", "Google", "Amazon"
-                //     ]
-                // }
+                "poll": {
+                    "question": question,
+                    "options": pollOptions
+                }
             };
 
             Object.assign(payload, options || {});
@@ -155,6 +159,29 @@ const CreateNewPost = () => {
             dispatch(hideConfirmationPopup());
         });
 
+    }
+
+    const afterValidation = (callback) => {
+
+        if (content.trim().length == 0) {
+            return dispatch(showPopup({ message: "Post content cannot be empty!", type: 'error' }));
+        }
+
+        const hasQuestion = question.trim().length > 0;
+        const hasOptions = pollOptions.some(option => option.trim().length > 0);
+
+        if (hasQuestion || hasOptions) {
+            if (question.trim().length == 0) {
+                return dispatch(showPopup({ message: "Poll question cannot be empty!", type: 'error' }));
+            }
+            for (let option of pollOptions) {
+                if (option.trim().length == 0) {
+                    return dispatch(showPopup({ message: "Poll options cannot be empty!", type: 'error' }));
+                }
+            }
+        }
+
+        callback();
     }
 
     const handlePostSubmit = () => {
@@ -219,7 +246,47 @@ const CreateNewPost = () => {
         setShowMentionContainer(true);
     }
 
-    return isShowCreatePostModal || true && (
+    const shareClickHandler = () => {
+        afterValidation(() => {
+            dispatch(showConfirmationPopup({
+                message: 'Are you sure you want to post this?',
+                options: [
+                    {
+                        title: 'Post',
+                        color: 'green',
+                        onClick: handlePostSubmit
+                    },
+                    {
+                        title: 'Cancel',
+                        color: 'gray',
+                        onClick: () => dispatch(hideConfirmationPopup())
+                    }
+                ]
+            }));
+        });
+    }
+
+    const scheduleClickHandler = (scheduledAt) => {
+        afterValidation(() => {
+            dispatch(showConfirmationPopup({
+                message: 'Are you sure you want to schedule this post?',
+                options: [
+                    {
+                        title: 'Schedule',
+                        color: 'green',
+                        onClick: () => handlePostSchedule(scheduledAt)
+                    },
+                    {
+                        title: 'Cancel',
+                        color: 'gray',
+                        onClick: () => dispatch(hideConfirmationPopup())
+                    }
+                ]
+            }));
+        });
+    }
+
+    return isShowCreatePostModal && (
         <div id='create-new-post-overlay' className='entire-screen-overlay fullscreen-post-creation FRCC'>
             <div id='CreateNewPost' className='FCSS post-container'>
                 <div className='FRCB w100'>
@@ -234,22 +301,22 @@ const CreateNewPost = () => {
                             <ReactQuill theme="snow" value={content} onChange={setContent} className='w100' id='post-input' placeholder='What do you want to share?' />
                             <PostTagContainer tags={tags} setTags={setTags} />
                         </div>
-                        {showMentionContainer && <PostMentions mentionLabel={mentionLabel} mentionedMembers={mentionedMembers} setMentionLabel={setMentionLabel} setMentionedMembers={setMentionedMembers} />}
-                        <PostPoll />
+                        {showPollContainer && <PostPoll question={question} setQuestion={setQuestion} options={pollOptions} setOptions={setPollOptions} />}
                         <PostAttachments files={files} removeSelectedFileHandler={removeSelectedFileHandler} />
+                        {showMentionContainer && <PostMentions mentionLabel={mentionLabel} mentionedMembers={mentionedMembers} setMentionLabel={setMentionLabel} setMentionedMembers={setMentionedMembers} />}
                     </div>
                 </div>
 
                 <div className='w100 FRCB post-footer'>
                     <div className='FRCS post-actions'>
-                        <PostAction icon='fa-solid fa-square-poll-vertical' label='Poll' />
+                        <PostAction icon='fa-solid fa-square-poll-vertical' label='Poll' onClick={() => { setShowPollContainer(true); utils.autoFocusInput('poll-question-input'); }} />
                         <PostAction icon='fa-solid fa-user-tag' label='Mention' onClick={showMentionContainerHandler} />
                         <PostAction icon='fa-regular fa-image' label='Attachment' onClick={() => fileInputRef.current.click()} />
                         <input type='file' multiple style={{ display: 'none' }} ref={fileInputRef} onChange={handleFileChange} accept={allowedTypes.length ? allowedTypes.join(",") : "*/*"} />
                     </div>
                     <div className='FRCE'>
                         <button id='cancel-post-button' onClick={onMinimize}>Cancel</button>
-                        <ShareWithSchedule onShare={handlePostSubmit} onSchedule={handlePostSchedule} scheduledAt={scheduledAt} />
+                        <ShareWithSchedule scheduleClickHandler={scheduleClickHandler} shareClickHandler={shareClickHandler} scheduledAt={scheduledAt} />
                     </div>
                 </div>
 
