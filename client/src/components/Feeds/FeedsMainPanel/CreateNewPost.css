@@ -164,13 +164,13 @@
 
 #post-attachments .post-attachment-preview i {
   font-size: 10px;
-  color: #777;
   width: 15px;
   margin-left: 5px;
   height: 100%;
   line-height: 30px;
   text-align: center;
   cursor: pointer;
+  padding: 0;
 }
 
 #post-attachments .post-attachment-preview i:hover {
