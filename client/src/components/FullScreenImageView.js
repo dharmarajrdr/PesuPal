@@ -41,12 +41,20 @@ const FullScreenImageView = () => {
     const enableLeftArrow = currentIndex > 0, enableRightArrow = currentIndex < mediaUrls.length - 1;
 
     return mediaUrls.length > 0 ? (
-        <div className='entire-screen-overlay FRCB' id='full-screen-ticket-attachment-overlay' onClick={closeFullScreenImage}>
+        <div className='entire-screen-overlay FRCC' id='full-screen-ticket-attachment-overlay' onClick={closeFullScreenImage}>
             {showPreviousNextIcons && <div className={`FRCC full-screen-image-toggle-icons ${!enableLeftArrow ? 'disabled' : ''}`} onClick={(e) => toggleImageViewer(e, currentIndex - 1)}><i className='fa fa-chevron-left'></i></div>}
-            <div id='full-screen-image-viewer' className='centerMe FRCC'>
-                {showError ? <ResourceNotFound /> : (
-                    <img src={mediaUrl} onError={() => setShowError(true)} />
-                )}
+            <div className='FCCC w100' id='full-screen-image-viewer-container'>
+                <div id='header-full-screen-image-viewer' className='FRCB'>
+
+                </div>
+                <div id='full-screen-image-viewer' className='FRCC'>
+                    {showError ? <ResourceNotFound /> : (
+                        <img src={mediaUrl} onError={() => setShowError(true)} />
+                    )}
+                </div>
+                <div id='footer-full-screen-image-viewer' className='FRCB'>
+
+                </div>
             </div>
             {showPreviousNextIcons && <div className={`FRCC full-screen-image-toggle-icons ${!enableRightArrow ? 'disabled' : ''}`} onClick={(e) => toggleImageViewer(e, currentIndex + 1)}><i className='fa fa-chevron-right'></i></div>}
         </div>
