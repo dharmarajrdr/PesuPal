@@ -39,7 +39,7 @@ const CreateCommentContainer = ({ postId, setComments, setCommentsCount }) => {
 
     return (
         <div id='create-comment' className='FRCC w100'>
-            <textarea className='create-comment-textarea' placeholder='Write a comment...' value={comment} onChange={(e) => setComment(e.target.value)} />
+            <textarea className='create-comment-textarea' autoFocus={true} placeholder='Write a comment...' value={comment} onChange={(e) => setComment(e.target.value)} />
             <button className='create-comment-button' onClick={submitCommentHandler}>
                 <i className='fa fa-paper-plane mR5' /> Post
             </button>

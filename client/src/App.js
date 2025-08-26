@@ -32,11 +32,11 @@ function App() {
             <div className="App FRCS">
                 {isAuthPage ? <AuthenticationRoutes /> : <>
                     <AuthModal setIsSubscriptionExpired={setIsSubscriptionExpired} setAuthenticated={setAuthenticated} />
-                    <CommonContainer />
                     {authenticated ?
                         <AuthenticatedRoutes isSubscriptionExpired={isSubscriptionExpired} inLobby={inLobby} />
                         : <InitialLoadLogoPage />
                     }
+                    <CommonContainer />
                 </>}
             </div>
         </Provider>

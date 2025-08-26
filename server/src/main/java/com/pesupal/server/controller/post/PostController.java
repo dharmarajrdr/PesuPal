@@ -6,7 +6,6 @@ import com.pesupal.server.dto.response.post.PostDto;
 import com.pesupal.server.dto.response.post.PostsListDto;
 import com.pesupal.server.enums.PostStatus;
 import com.pesupal.server.enums.SortOrder;
-import com.pesupal.server.helpers.CurrentValueRetriever;
 import com.pesupal.server.service.interfaces.post.PostService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @AllArgsConstructor
 @RequestMapping("/api/v1/post")
-public class PostController extends CurrentValueRetriever {
+public class PostController {
 
     private final PostService postService;
 
@@ -25,21 +24,6 @@ public class PostController extends CurrentValueRetriever {
         createPostDto.setStatus(PostStatus.PUBLISHED);
         PostDto post = postService.createPost(createPostDto);
         return ResponseEntity.ok().body(new ApiResponseDto("Post created successfully", post));
-    }
-
-    @PostMapping("/schedule")
-    public ResponseEntity<ApiResponseDto> schedulePost(@RequestBody CreatePostDto createPostDto) {
-
-        createPostDto.setStatus(PostStatus.SCHEDULED);
-        PostDto post = postService.schedulePost(createPostDto);
-        return ResponseEntity.ok().body(new ApiResponseDto("Post scheduled successfully", post));
-    }
-
-    @PatchMapping("/unschedule/{postId}")
-    public ResponseEntity<ApiResponseDto> unschedulePost(@PathVariable String postId) {
-
-        postService.unschedulePost(postId, getCurrentOrgMember());
-        return ResponseEntity.ok().body(new ApiResponseDto("Post unscheduled successfully"));
     }
 
     @GetMapping("/feeds")
@@ -56,15 +40,6 @@ public class PostController extends CurrentValueRetriever {
 
         PostDto post = postService.getPostByIdAndOrgId(postId);
         return ResponseEntity.ok().body(new ApiResponseDto("Post retrieved successfully.", post));
-    }
-
-    @GetMapping("/scheduled")
-    public ResponseEntity<ApiResponseDto> getScheduledPosts(@RequestParam(defaultValue = "0") int page,
-                                                            @RequestParam(defaultValue = "10") int size,
-                                                            @RequestParam(name = "sort_order", defaultValue = "DESC") String sortOrder) {
-
-        PostsListDto posts = postService.getScheduledPosts(page, size, SortOrder.valueOf(sortOrder));
-        return ResponseEntity.ok().body(new ApiResponseDto("Scheduled posts retrieved successfully.", posts.getPosts(), posts.getInfo()));
     }
 
     @GetMapping("/user/{userId}")

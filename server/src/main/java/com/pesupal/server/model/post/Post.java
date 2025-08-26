@@ -60,7 +60,7 @@ public class Post extends PublicAccessModel {
     @JsonIgnore
     private List<PostComment> comments = new ArrayList<>();
 
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JsonIgnore
     private List<PostMedia> postMedia = new ArrayList<>();
 

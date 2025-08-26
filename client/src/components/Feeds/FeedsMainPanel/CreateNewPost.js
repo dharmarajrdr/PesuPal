@@ -9,7 +9,7 @@ import ShareWithSchedule from './ShareWithSchedule';
 import { useDispatch, useSelector } from 'react-redux';
 import { showPopup } from '../../../store/reducers/PopupSlice';
 import { showProfile } from '../../../store/reducers/ProfileSlice';
-import { showFullScreenImage } from '../../../store/reducers/FullScreenImageSlice';
+import { showFullScreenImageAt } from '../../../store/reducers/FullScreenImageSlice';
 import { hideLoader, showLoader } from '../../../store/reducers/VerticalLoaderSlice';
 import { hideConfirmationPopup } from '../../../store/reducers/ConfirmationPopupSlice';
 import { addPost, hideCreatePostModal, resetPostData, updatePost } from '../../../store/reducers/PostSlice';
@@ -52,12 +52,38 @@ const PostTagContainer = ({ tags, setTags }) => {
 
 const PostAttachments = ({ files, removeSelectedFileHandler }) => {
 
+    const dispatch = useDispatch();
+
+    const showFullScreenImageHandler = (index) => {
+        dispatch(showFullScreenImageAt({
+            mediaUrls: files.map(f => f.preview),
+            currentIndex: index
+        }));
+    }
+
     return files.length > 0 ? <div id='post-attachments' className='FRCS w100'>
         {files.map((file, index) => (
-            <FilePreview key={index} file={file} removeSelectedFileHandler={removeSelectedFileHandler} />
+            <FilePreview key={index} file={file} removeSelectedFileHandler={removeSelectedFileHandler} showFullScreenImageHandler={() => showFullScreenImageHandler(index)} />
         ))}
     </div> : null;
 }
+
+const FilePreview = ({ file, removeSelectedFileHandler, showFullScreenImageHandler }) => {
+
+    const { name, preview } = file || {};
+
+    return <div className='post-attachment-preview FRCC' key={name}>
+        <img src={preview} alt={name} className='post-attachment-image' onClick={showFullScreenImageHandler} />
+        <i className="fa-solid fa-xmark post-attachment-remove" onClick={() => removeSelectedFileHandler(file)}></i>
+    </div>
+}
+
+const PostAction = ({ icon, label, onClick }) => (
+    <span className='actions_post_creation FRCC' onClick={onClick ? onClick : null}>
+        <i className={`${icon} mR5`}></i>
+        <span>{label}</span>
+    </span>
+);
 
 const PostMentions = ({ mentionLabel, mentionedMembers, setMentionLabel, setMentionedMembers }) => {
 
@@ -98,6 +124,8 @@ const CreateNewPost = () => {
     const [isPostCreation, setIsPostCreation] = useState(false);
     const [postTitle, setPostTitle] = useState("");
     const [content, setContent] = useState("");
+    const [scheduledAt, setScheduledAt] = useState(null);
+    const [isScheduledPost, setIsScheduledPost] = useState(false);
     const [showMentionContainer, setShowMentionContainer] = useState(false);
 
     const allowedTypes = ['image/png', 'image/jpeg', 'image/gif'];
@@ -110,10 +138,12 @@ const CreateNewPost = () => {
             setContent(currentPostData?.description || "");
             setTags(currentPostData?.tags || []);
             setPostId(currentPostData?.id || null);
-            setFiles(currentPostData?.media?.map(({ url, mediaId, extension }) => ({ 'preview': url, 'id': mediaId, 'name': mediaId, extension, 'existing': true })) || []);
+            setFiles(currentPostData?.media?.map(({ url, mediaId, extension }) => ({ 'preview': url, mediaId, 'name': mediaId, 'file': { 'name': mediaId }, extension, 'existing': true })) || []);
             setMentionLabel(currentPostData?.mentions?.label || null);
             setMentionedMembers(currentPostData?.mentions?.data || []);
             setIsPostCreation(false);
+            setIsScheduledPost(currentPostData?.status === 'SCHEDULED');
+            setScheduledAt(currentPostData?.status === 'SCHEDULED' ? currentPostData?.createdAt : null);
             setShowMentionContainer(currentPostData?.mentions?.data?.length > 0);
         } else {
             setHeader('Post Something');
@@ -125,6 +155,8 @@ const CreateNewPost = () => {
             setMentionLabel(predefinedLabels[0]);
             setMentionedMembers([]);
             setIsPostCreation(true);
+            setIsScheduledPost(false);
+            setScheduledAt(null);
             setShowMentionContainer(false);
         }
 
@@ -213,16 +245,16 @@ const CreateNewPost = () => {
 
     const handlePostSubmit = () => {
 
-        postCreation(`/api/v1/post/${isPostCreation ? 'create' : postId}`, isPostCreation ? 'POST' : 'PATCH', { 'status': 'PUBLISHED' });
+        postCreation(`/api/v1/post/${isPostCreation ? 'create' : postId}`, isPostCreation ? 'POST' : 'PATCH');
     };
 
     const handlePostSchedule = (scheduledAt) => {
 
-        if (!isPostCreation) {
+        if (!isPostCreation && !isScheduledPost) {
             return dispatch(showPopup({ message: "Unable to schedule as this post is already published.", type: 'error' }));
         }
 
-        postCreation(`/api/v1/post/schedule`, 'POST', { 'status': 'SCHEDULED', scheduledAt });
+        postCreation(`/api/v1/post/${isPostCreation ? 'schedule' : 'reschedule/' + postId}`, isPostCreation ? 'POST' : 'PATCH', { scheduledAt });
     };
 
     const onMinimize = () => {
@@ -288,8 +320,8 @@ const CreateNewPost = () => {
                             <ReactQuill theme="snow" value={content} onChange={setContent} className='w100' id='post-input' placeholder='What do you want to share?' />
                             <PostTagContainer tags={tags} setTags={setTags} />
                         </div>
-                        <PostAttachments files={files} removeSelectedFileHandler={removeSelectedFileHandler} />
                         {showMentionContainer && <PostMentions mentionLabel={mentionLabel} mentionedMembers={mentionedMembers} setMentionLabel={setMentionLabel} setMentionedMembers={setMentionedMembers} />}
+                        <PostAttachments files={files} removeSelectedFileHandler={removeSelectedFileHandler} />
                     </div>
                 </div>
 
@@ -302,7 +334,7 @@ const CreateNewPost = () => {
                     </div>
                     <div className='FRCE'>
                         <button id='cancel-post-button' onClick={onMinimize}>Cancel</button>
-                        <ShareWithSchedule onShare={handlePostSubmit} onSchedule={handlePostSchedule} isPostCreation={isPostCreation} />
+                        <ShareWithSchedule onShare={handlePostSubmit} onSchedule={handlePostSchedule} scheduledAt={scheduledAt} />
                     </div>
                 </div>
 
@@ -311,25 +343,5 @@ const CreateNewPost = () => {
     );
 };
 
-const FilePreview = ({ file, removeSelectedFileHandler }) => {
-
-    const dispatch = useDispatch();
-
-    const { name, preview } = file || {};
-
-    const showFullScreenImageHandler = () => dispatch(showFullScreenImage(preview));
-
-    return <div className='post-attachment-preview FRCC' key={name}>
-        <img src={preview} alt={name} className='post-attachment-image' onClick={showFullScreenImageHandler} />
-        <i className="fa-solid fa-xmark post-attachment-remove" onClick={() => removeSelectedFileHandler(file)}></i>
-    </div>
-}
-
-const PostAction = ({ icon, label, onClick }) => (
-    <span className='actions_post_creation FRCC' onClick={onClick ? onClick : null}>
-        <i className={`${icon} mR5`}></i>
-        <span>{label}</span>
-    </span>
-);
 
 export default CreateNewPost;

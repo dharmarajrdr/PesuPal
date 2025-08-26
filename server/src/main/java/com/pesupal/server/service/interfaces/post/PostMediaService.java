@@ -12,4 +12,6 @@ public interface PostMediaService {
     void unlinkMediaFromPost(Post post);
 
     List<PostMedia> saveAll(Set<MediaDto> mediaIds, Post post);
+
+    List<PostMedia> updatePostMedia(Post post, Set<MediaDto> mediaIds);
 }
