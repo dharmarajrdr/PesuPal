@@ -121,23 +121,41 @@ const CreateNewPost = () => {
 
             const payload = {
                 "title": postTitle,
-                "description": content,
-                "tags": tags,
-                "mediaIds": files.map(file => {
-                    const { mediaId, extension } = file || {};
-                    return {
-                        'id': mediaId, extension
-                    }
-                }),
-                "mentions": {
-                    "label": mentionLabel,
-                    "data": mentionedMembers.map(({ id }) => id)
-                },
-                "poll": {
-                    "question": question,
-                    "options": pollOptions
-                }
+                "description": content
             };
+
+            if (tags.length) {
+                Object.assign(payload, { tags });
+            }
+
+            if (files.length) {
+                Object.assign(payload, {
+                    "mediaIds": files.map(file => {
+                        const { mediaId, extension } = file || {};
+                        return {
+                            'id': mediaId, extension
+                        }
+                    })
+                });
+            }
+
+            if (question.trim().length) {
+                Object.assign(payload, {
+                    "poll": {
+                        "question": question,
+                        "options": pollOptions
+                    }
+                });
+            }
+
+            if (mentionedMembers.length) {
+                Object.assign(payload, {
+                    "mentions": {
+                        "label": mentionLabel,
+                        "data": mentionedMembers.map(({ id }) => id)
+                    }
+                });
+            }
 
             Object.assign(payload, options || {});
 
