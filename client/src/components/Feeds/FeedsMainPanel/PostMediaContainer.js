@@ -55,7 +55,7 @@ const PostMediaContainer = ({ media }) => {
 
     const showFullScreenImageHandler = (index) => {
 
-        const mediaUrls = media.map((url) => ({ url }));
+        const mediaUrls = media.map(({ url }) => url);
         dispatch(showFullScreenImageAt({ mediaUrls, 'currentIndex': index }));
     }
 
