@@ -45,6 +45,7 @@ const CreateNewPost = () => {
     const [showPollContainer, setShowPollContainer] = useState(false);
     const [question, setQuestion] = useState('');
     const [pollOptions, setPollOptions] = useState(['', '']);
+    const [purpose, setPurpose] = useState('CREATE');
 
     const allowedTypes = ['image/png', 'image/jpeg', 'image/gif'];
 
@@ -63,9 +64,7 @@ const CreateNewPost = () => {
             setIsScheduledPost(currentPostData?.status === 'SCHEDULED');
             setScheduledAt(currentPostData?.status === 'SCHEDULED' ? currentPostData?.createdAt : null);
             setShowMentionContainer(currentPostData?.mentions?.data?.length > 0);
-            setPollOptions(currentPostData?.poll?.options?.map(({ option }) => option) || []);
-            setQuestion(currentPostData?.poll?.question || '');
-            setShowPollContainer(currentPostData?.poll?.options?.length || currentPostData?.poll?.question?.length);
+            setPurpose('EDIT');
         } else {
             setHeader('Post Something');
             setPostTitle("");
@@ -82,6 +81,7 @@ const CreateNewPost = () => {
             setQuestion('');
             setShowPollContainer(false);
             setShowMentionContainer(false);
+            setPurpose('CREATE');
         }
 
         const quillEditor = document.querySelector('.ql-container.ql-snow');
@@ -301,7 +301,7 @@ const CreateNewPost = () => {
                             <ReactQuill theme="snow" value={content} onChange={setContent} className='w100' id='post-input' placeholder='What do you want to share?' />
                             <PostTagContainer tags={tags} setTags={setTags} />
                         </div>
-                        {showPollContainer && <PostPoll question={question} setQuestion={setQuestion} options={pollOptions} setOptions={setPollOptions} />}
+                        {purpose == 'CREATE' && showPollContainer && <PostPoll question={question} setQuestion={setQuestion} options={pollOptions} setOptions={setPollOptions} />}
                         <PostAttachments files={files} removeSelectedFileHandler={removeSelectedFileHandler} />
                         {showMentionContainer && <PostMentions mentionLabel={mentionLabel} mentionedMembers={mentionedMembers} setMentionLabel={setMentionLabel} setMentionedMembers={setMentionedMembers} />}
                     </div>
@@ -309,7 +309,7 @@ const CreateNewPost = () => {
 
                 <div className='w100 FRCB post-footer'>
                     <div className='FRCS post-actions'>
-                        <PostAction icon='fa-solid fa-square-poll-vertical' label='Poll' onClick={() => { setShowPollContainer(true); utils.autoFocusInput('poll-question-input'); }} />
+                        {purpose == 'CREATE' && <PostAction icon='fa-solid fa-square-poll-vertical' label='Poll' onClick={() => { setShowPollContainer(true); utils.autoFocusInput('poll-question-input'); }} />}
                         <PostAction icon='fa-solid fa-user-tag' label='Mention' onClick={showMentionContainerHandler} />
                         <PostAction icon='fa-regular fa-image' label='Attachment' onClick={() => fileInputRef.current.click()} />
                         <input type='file' multiple style={{ display: 'none' }} ref={fileInputRef} onChange={handleFileChange} accept={allowedTypes.length ? allowedTypes.join(",") : "*/*"} />
