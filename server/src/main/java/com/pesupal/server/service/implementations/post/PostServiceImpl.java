@@ -45,6 +45,7 @@ public class PostServiceImpl extends CurrentValueRetriever implements PostServic
     private final PollService pollService;
     private final PostRepository postRepository;
     private final PostTagService postTagService;
+    private final BookmarkService bookmarkService;
     private final OrgMemberService orgMemberService;
     private final PostMediaService postMediaService;
     private final PostMentionService postMentionService;
@@ -274,6 +275,7 @@ public class PostServiceImpl extends CurrentValueRetriever implements PostServic
         }
         postDto.setCreator(orgMember.getId().equals(post.getCreator().getId()));
         postDto.setLiked(isLiked(post.getLikes(), orgMember.getUser()));
+        postDto.setBookmarked(bookmarkService.isBookmarked(post, orgMember));
         return postDto;
     }
 
