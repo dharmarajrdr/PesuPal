@@ -12,6 +12,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -37,4 +38,14 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             """)
     Page<Post> getUnlikedPostsByOrgMember(@Param("org") Org org, @Param("orgMember") OrgMember orgMember, Pageable pageable);
 
+    @Query("""
+            SELECT p FROM Post p
+            LEFT JOIN p.likes l
+            LEFT JOIN p.comments c
+            WHERE p.org = :org AND p.status = 'PUBLISHED'
+            GROUP BY p
+            ORDER BY (COUNT(l) + COUNT(c)) DESC
+            LIMIT :limit
+            """)
+    List<Post> getTrendingPostsByEngagement(Org org, int limit);
 }
