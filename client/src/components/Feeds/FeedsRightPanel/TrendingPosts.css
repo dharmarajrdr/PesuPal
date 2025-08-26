@@ -17,19 +17,22 @@
 }
 
 .TrendingPost {
-  padding: 5px 0px;
-  margin: 5px;
+  padding: 5px;
+  margin: 3px 0px;
   border-radius: 5px;
   font-size: 14px;
 }
 
 .TrendingPost .title {
   margin-bottom: 5px;
-  max-height: 50px;
-  text-overflow: ellipsis;
   overflow: hidden;
   font-weight: 500;
+  font-size: 13px;
   color: #333;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
 }
 
 #TrendingPostsList {
