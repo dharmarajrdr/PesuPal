@@ -28,7 +28,7 @@ const PostFooter = ({ post, commentable, bookmarkable, bookmarked }) => {
     const { id: postId, liked, impression } = post || {};
     const { likes, comments } = impression || {};
 
-    const params = useParams();
+    const { nav } = useParams();
     const dispatch = useDispatch();
     const [likedPost, setLikedPost] = useState(liked);
     const [likesCount, setLikesCount] = useState(likes || 0);
@@ -58,7 +58,7 @@ const PostFooter = ({ post, commentable, bookmarkable, bookmarked }) => {
         e.preventDefault();
 
         apiRequest(`/api/v1/post/bookmark/${postId}`, bookmarkedPost ? 'DELETE' : 'POST').then(() => {
-            if (params["*"] == 'bookmarks' && bookmarkedPost) {
+            if (nav === 'bookmarks' && bookmarkedPost) {
                 dispatch(deletePost(postId));
             }
             setBookmarkedPost(!bookmarkedPost);

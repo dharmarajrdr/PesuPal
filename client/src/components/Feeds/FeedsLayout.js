@@ -23,7 +23,7 @@ const FeedsLayout = () => {
             <CreateNewPost />
             <FeedsLeftPanel leftNavigationState={leftNavigationState} width={leftNavOpened ? width.leftNavOpened : width.leftNavClosed} />
             <Routes>
-                <Route path='/' element={<Feeds leftNavOpened={leftNavOpened} width={width} />} />
+                <Route index element={<Feeds leftNavOpened={leftNavOpened} width={width} />} />
                 <Route path='/bookmarks' element={<BookmarkPostsLayout />} />
                 <Route path='/scheduled-posts' element={<ScheduledPostsLayout />} />
                 <Route path='/tag/:tag' element={<TagPostsLayout />} />
