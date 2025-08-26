@@ -1,8 +1,10 @@
 import { useState } from 'react'
 import { useDispatch } from 'react-redux';
+import { useParams } from 'react-router-dom';
 import { apiRequest } from '../../../http_request';
 import PostCommentsLayout from './PostCommentsLayout';
 import { showPopup } from '../../../store/reducers/PopupSlice';
+import { deletePost } from '../../../store/reducers/PostSlice';
 
 const Comment = ({ postId, commentable, comments }) => {
 
@@ -26,11 +28,17 @@ const PostFooter = ({ post, commentable, bookmarkable, bookmarked }) => {
     const { id: postId, liked, impression } = post || {};
     const { likes, comments } = impression || {};
 
+    const params = useParams();
     const dispatch = useDispatch();
     const [likedPost, setLikedPost] = useState(liked);
     const [likesCount, setLikesCount] = useState(likes || 0);
 
-    const likeHandler = () => {
+    const [bookmarkedPost, setBookmarkedPost] = useState(bookmarked);
+
+    const likeHandler = (e) => {
+
+        e.stopPropagation();
+        e.preventDefault();
 
         apiRequest(`/api/v1/post/like/${postId}`, likedPost ? 'DELETE' : 'POST').then(() => {
             setLikedPost(!likedPost);
@@ -44,15 +52,29 @@ const PostFooter = ({ post, commentable, bookmarkable, bookmarked }) => {
         });
     }
 
+    const bookmarkHandler = (e) => {
+
+        e.stopPropagation();
+        e.preventDefault();
+
+        apiRequest(`/api/v1/post/bookmark/${postId}`, bookmarkedPost ? 'DELETE' : 'POST').then(() => {
+            if (params["*"] == 'bookmarks' && bookmarkedPost) {
+                dispatch(deletePost(postId));
+            }
+            setBookmarkedPost(!bookmarkedPost);
+        }).catch(({ message }) => {
+            dispatch(showPopup({ message, type: 'error' }));
+        });
+    }
+
     return <div className='PostFooter w100 FRCB'>
         <div className='FRCS'>
             <div className={`postActions leftFooter FRCC mY5 ${likedPost && 'post-liked'}`} onClick={likeHandler}><i className={`fa-regular fa-thumbs-up`}></i> {likesCount}</div>
             <Comment postId={postId} commentable={commentable} comments={comments} />
         </div>
         <div className='FRCE'>
-            {bookmarkable && <div className='postActions rightFooter FRCC mY5'><i className={`fa-regular fa-bookmark ${bookmarked && 'bookmarked'}`}></i></div>}
+            {bookmarkable && <div className={`postActions rightFooter FRCC mY5 ${bookmarkedPost && 'post-bookmarked'}`} onClick={bookmarkHandler}><i className={`fa-${bookmarkedPost ? 'solid' : 'regular'} fa-bookmark`}></i></div>}
         </div>
-        {/* <p>{mentions} Mentions</p> */}
     </div>
 }
 
