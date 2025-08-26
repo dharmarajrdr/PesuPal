@@ -13,6 +13,7 @@ import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.exceptions.MandatoryDataMissingException;
 import com.pesupal.server.exceptions.PermissionDeniedException;
 import com.pesupal.server.factory.FeedRetrieverServiceFactory;
+import com.pesupal.server.factory.TrendingPostsAnalyserFactory;
 import com.pesupal.server.helpers.CurrentValueRetriever;
 import com.pesupal.server.helpers.DateTimeUtil;
 import com.pesupal.server.model.post.*;
@@ -32,6 +33,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -48,9 +50,13 @@ public class PostServiceImpl extends CurrentValueRetriever implements PostServic
     private final PostMentionService postMentionService;
     private final RedisTemplate<String, Object> redisTemplate;
     private final FeedRetrieverServiceFactory feedRetrieverServiceFactory;
+    private final TrendingPostsAnalyserFactory trendingPostsAnalyserFactory;
 
     private final static int MAXIMUM_TAGS_PER_POST = 10;
     private final static String SCHEDULED_POST_KEY = "scheduled_posts";
+    private final static String TRENDING_POSTS_KEY = "trending_posts";
+    private final static Duration TRENDING_POSTS_CACHE_DURATION = Duration.ofHours(6);
+    private final static String TRENDING_POSTS_ANALYSER_ALGORITHM = "ENGAGEMENT_BASED";
     private final static FeedRetriever feedRetrieverAlgorithm = FeedRetriever.SIMPLE_FEED_RETRIEVER_ALGORITHM;
 
     /**
@@ -324,8 +330,6 @@ public class PostServiceImpl extends CurrentValueRetriever implements PostServic
         OrgMember orgMember = getCurrentOrgMember();
         Long orgId = orgMember.getOrg().getId();
 
-        OrgMember creator = orgMemberService.getOrgMemberByPublicId(creatorId);
-
         Sort sort = Sort.by(sortOrder == SortOrder.ASC ? Sort.Direction.ASC : Sort.Direction.DESC, "createdAt");
         Pageable pageable = PageRequest.of(page, size, sort);
         Page<Post> postPage = postRepository.findAllByOrgIdAndCreator_PublicIdAndStatus(orgId, creatorId, pageable, PostStatus.PUBLISHED);
@@ -377,6 +381,39 @@ public class PostServiceImpl extends CurrentValueRetriever implements PostServic
 
         FeedRetrieverService feedRetrieverService = feedRetrieverServiceFactory.getFeedRetrieverService(feedRetrieverAlgorithm);
         return feedRetrieverService.getFeeds(page, size, sortOrder, getCurrentOrgMember());
+    }
+
+    /**
+     * Retrieves trending posts.
+     *
+     * @param limit
+     * @return
+     */
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<PostDto> getTrendingPosts(int limit) {
+
+        OrgMember orgMember = getCurrentOrgMember();
+
+        // Fetch post ids from redis.
+        String key = TRENDING_POSTS_KEY + "-" + orgMember.getOrg().getId();
+        List<Object> postIds = redisTemplate.opsForList().range(key, 0, limit - 1);
+        if (postIds != null && !postIds.isEmpty()) {
+            List<PostDto> posts = new ArrayList<>();
+            for (Object id : postIds) {
+                postRepository.findById(Long.valueOf(id.toString())).ifPresent(post -> posts.add(getPostDtoFromPostAndOrgMember(post, orgMember)));
+            }
+            return posts;
+        }
+
+        // If not found in redis, analyse and store in redis.
+        TrendingPostsAnalyser trendingPostsAnalyser = trendingPostsAnalyserFactory.getTrendingPostsAnalyser(TRENDING_POSTS_ANALYSER_ALGORITHM);
+        List<Post> newTrendingPosts = trendingPostsAnalyser.analyseTrendingPosts(orgMember.getOrg(), limit);
+        List<Long> newTrendingPostIds = newTrendingPosts.stream().map(Post::getId).toList();
+        redisTemplate.delete(key); // Clear existing key if any.
+        redisTemplate.opsForList().rightPushAll(key, newTrendingPostIds.toArray(new Long[0]));  // Store new post ids.
+        redisTemplate.expire(key, TRENDING_POSTS_CACHE_DURATION); // Set expiry same
+        return newTrendingPosts.stream().map(post -> getPostDtoFromPostAndOrgMember(post, orgMember)).toList();
     }
 
     /**

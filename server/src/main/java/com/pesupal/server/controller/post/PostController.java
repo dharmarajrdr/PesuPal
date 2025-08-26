@@ -11,6 +11,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @AllArgsConstructor
 @RequestMapping("/api/v1/post")
@@ -62,6 +64,13 @@ public class PostController {
 
         PostsListDto posts = postService.getPostByTag("#" + tag, page, size, SortOrder.valueOf(sortOrder));
         return ResponseEntity.ok().body(new ApiResponseDto("Posts retrieved successfully.", posts.getPosts(), posts.getInfo()));
+    }
+
+    @GetMapping("/trending")
+    public ResponseEntity<ApiResponseDto> getTrendingPosts(@RequestParam(defaultValue = "5", required = false) int limit) {
+
+        List<PostDto> trendingPosts = postService.getTrendingPosts(limit);
+        return ResponseEntity.ok().body(new ApiResponseDto("Trending posts retrieved successfully.", trendingPosts));
     }
 
     @PutMapping("/archive/{postId}")

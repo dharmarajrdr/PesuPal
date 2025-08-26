@@ -7,6 +7,8 @@ import com.pesupal.server.enums.SortOrder;
 import com.pesupal.server.model.post.Post;
 import com.pesupal.server.model.user.OrgMember;
 
+import java.util.List;
+
 public interface PostService {
 
     PostDto createPost(CreatePostDto createPostDto);
@@ -38,4 +40,6 @@ public interface PostService {
     PostsListDto getScheduledPosts(int page, int size, SortOrder sortOrder);
 
     PostsListDto getFeeds(int page, int size, SortOrder sortOrder);
+
+    List<PostDto> getTrendingPosts(int limit);
 }
