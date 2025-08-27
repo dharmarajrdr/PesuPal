@@ -5,6 +5,7 @@ import com.pesupal.server.dto.response.post.PostCommentDto;
 import com.pesupal.server.enums.PostStatus;
 import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.exceptions.DataNotFoundException;
+import com.pesupal.server.exceptions.PermissionDeniedException;
 import com.pesupal.server.helpers.CurrentValueRetriever;
 import com.pesupal.server.model.post.Post;
 import com.pesupal.server.model.post.PostComment;
@@ -47,6 +48,10 @@ public class PostCommentServiceImpl extends CurrentValueRetriever implements Pos
 
         if (!post.getStatus().equals(PostStatus.PUBLISHED)) {
             throw new ActionProhibitedException("Unable to comment on the post as it is not available.");
+        }
+
+        if (createPostCommentDto.getAnonymous() && post.getCreator().getPublicId().equals(commenter.getPublicId())) {
+            throw new PermissionDeniedException("You cannot comment anonymously on your own post.");
         }
 
         PostComment postComment = createPostCommentDto.toPostComment();
@@ -125,5 +130,29 @@ public class PostCommentServiceImpl extends CurrentValueRetriever implements Pos
     public PostComment getPostCommentById(Long commentId) {
 
         return postCommentRepository.findById(commentId).orElseThrow(() -> new DataNotFoundException("Comment with ID " + commentId + " not found."));
+    }
+
+    /**
+     * Update comment based on its id
+     *
+     * @param commentId
+     * @param updateCommentDto
+     */
+    @Override
+    public void updateComment(Long commentId, CreatePostCommentDto updateCommentDto) {
+
+        OrgMember orgMember = getCurrentOrgMember();
+
+        PostComment postComment = getPostCommentById(commentId);
+        if (!postComment.getCommenter().getPublicId().equals(orgMember.getPublicId())) {
+            throw new PermissionDeniedException("You don't have permission to update this comment");
+        }
+
+        if (!postComment.getPost().getStatus().equals(PostStatus.PUBLISHED)) {
+            throw new ActionProhibitedException("Unable to comment as the post is not available");
+        }
+
+        updateCommentDto.applyToPostComment(postComment);
+        postCommentRepository.save(postComment);
     }
 }
