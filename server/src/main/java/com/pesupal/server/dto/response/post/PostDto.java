@@ -47,6 +47,8 @@ public class PostDto {
 
     private PostMentionsDto mentions;
 
+    private boolean allowAnonymousComments;
+
     public static PostDto fromPost(Post post) {
 
         PostDto postDto = new PostDto();
@@ -58,6 +60,7 @@ public class PostDto {
         postDto.setBookmarkable(post.isBookmarkable());
         postDto.setShareable(post.isShareable());
         postDto.setStatus(post.getStatus());
+        postDto.setAllowAnonymousComments(post.isAllowAnonymousComments());
         return postDto;
     }
 }
