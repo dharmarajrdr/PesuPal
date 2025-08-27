@@ -2,6 +2,7 @@ import './FeedsLayout.css'
 import Feeds from './Feeds'
 import { useState } from 'react'
 import TagPostsLayout from './TagPostsLayout'
+import TagsListLayout from './TagsListLayout'
 import PageNotFound from '../Auth/PageNotFound'
 import { Route, Routes } from 'react-router-dom'
 import SinglePostLayout from './SinglePostLayout'
@@ -20,7 +21,7 @@ const FeedsLayout = () => {
     }
 
     return (
-        <div id='FeedsLayout' className='Layout FRCS'>
+        <div id='FeedsLayout' className='Layout FRSS'>
             <CreateNewPost />
             <FeedsLeftPanel leftNavigationState={leftNavigationState} width={leftNavOpened ? width.leftNavOpened : width.leftNavClosed} />
             <Routes>
@@ -28,7 +29,8 @@ const FeedsLayout = () => {
                 <Route path='/bookmarks' element={<BookmarkPostsLayout />} />
                 <Route path='/post/:postId' element={<SinglePostLayout />} />
                 <Route path='/scheduled-posts' element={<ScheduledPostsLayout />} />
-                <Route path='/tag/:tag' element={<TagPostsLayout />} />
+                <Route path='/tags' element={<TagsListLayout />} />
+                <Route path='/tags/:tag' element={<TagPostsLayout />} />
                 <Route path="*" element={<PageNotFound />} />
             </Routes>
         </div>

@@ -1,14 +1,14 @@
 export default [
     {
-        'title': 'My Feed',
+        'title': 'Feeds',
         'icon': 'fa-regular fa-newspaper',
-        'color': '#0000FF',
+        'color': '#0963d8ff',
         'route': '/feeds'
     },
     {
         'title': 'Scheduled Posts',
         'icon': 'fa-regular fa-calendar-days',
-        'color': '#FFC0CB',
+        'color': '#aea10bff',
         'route': '/feeds/scheduled-posts'
     },
     {
@@ -16,6 +16,12 @@ export default [
         'icon': 'fa-regular fa-bookmark',
         'color': '#008000',
         'route': '/feeds/bookmarks'
+    },
+    {
+        'title': 'Tags',
+        'icon': 'fa-solid fa-hashtag',
+        'color': '#FFA500',
+        'route': '/feeds/tags'
     },
     {
         'title': 'Announcements',
