@@ -142,6 +142,10 @@ const CreateNewPost = () => {
                         }
                     })
                 });
+            } else {
+                Object.assign(payload, {
+                    "mediaIds": []
+                });
             }
 
             if (question.trim().length) {
