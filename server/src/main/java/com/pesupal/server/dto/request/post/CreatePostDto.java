@@ -7,7 +7,6 @@ import com.pesupal.server.model.post.Post;
 import lombok.Data;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
 import java.util.Set;
 
 @Data
@@ -24,9 +23,9 @@ public class CreatePostDto {
 
     private Boolean bookmarkable = true;
 
-    private Set<MediaDto> mediaIds = new HashSet<>();
+    private Set<MediaDto> mediaIds = null;
 
-    private Set<String> tags = new HashSet<>();
+    private Set<String> tags = null;
 
     private Boolean media = false;
 
@@ -38,17 +37,22 @@ public class CreatePostDto {
 
     private CreatePostMentionsDto mentions;
 
+    private Boolean allowAnonymousComments;
+
     public Post toPost() {
 
         Post post = new Post();
         post.setTitle(this.title);
         post.setDescription(this.description);
-        post.setMedia(!this.mediaIds.isEmpty());
         post.setCommentable(this.commentable);
         post.setShareable(this.shareable);
         post.setBookmarkable(this.bookmarkable);
         post.setCreatedAt(this.scheduledAt);
         post.setStatus(this.status);
+        post.setAllowAnonymousComments(this.allowAnonymousComments == true);
+        if (this.mediaIds != null) {
+            post.setMedia(!this.mediaIds.isEmpty());
+        }
         if (this.mentions != null) {
             post.setPostMentionLabel(this.mentions.getLabel());
         }
@@ -79,6 +83,9 @@ public class CreatePostDto {
         }
         if (this.status != null) {
             post.setStatus(this.status);
+        }
+        if (this.allowAnonymousComments != null) {
+            post.setAllowAnonymousComments(this.allowAnonymousComments);
         }
     }
 }
