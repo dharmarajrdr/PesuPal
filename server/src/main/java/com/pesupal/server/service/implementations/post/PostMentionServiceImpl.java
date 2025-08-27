@@ -66,7 +66,7 @@ public class PostMentionServiceImpl extends CurrentValueRetriever implements Pos
     public List<PostMention> updateMentions(Post post, CreatePostMentionsDto mentions) {
 
         if (mentions == null) {
-            return List.of();
+            return post.getMentions();
         }
 
         Set<String> orgMemberIds = mentions.getData();
