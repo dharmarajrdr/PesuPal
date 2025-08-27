@@ -10,7 +10,7 @@ const Header = () => {
     const dispatch = useDispatch();
 
     const showCreatePostModalHandler = () => {
-        
+
         dispatch(resetPostData());
         dispatch(showCreatePostModal());
     }
@@ -35,7 +35,7 @@ const FeedsRightPanel = () => {
             <div id='FeedsRightPanelContent' className='noScrollbar'>
                 <TrendingTags />
                 <TrendingPosts />
-                <Quote quote="One day, you'll leave this world behind So live a life you will remember." author="Avicii" />
+                <Quote />
             </div>
         </div>
     )
