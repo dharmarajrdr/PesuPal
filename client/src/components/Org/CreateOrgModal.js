@@ -1,9 +1,9 @@
-import { useState } from 'react';
 import './CreateOrgModal.css';
-import { apiRequest } from '../../http_request';
-import { useNavigate } from 'react-router-dom';
-import { showPopup } from '../../store/reducers/PopupSlice';
+import { useState } from 'react';
 import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { apiRequest } from '../../http_request';
+import { showPopup } from '../../store/reducers/PopupSlice';
 
 const CreateOrgModal = () => {
 
@@ -72,8 +72,8 @@ const CreateOrgModal = () => {
                     />
                 </div>
 
-                <div className='FRCC w100'>
-                    <button className="submit-btn mR5" onClick={handleSubmit}>Create Org</button>
+                <div className='FRCC w100 mT10'>
+                    <button className="submit-btn mR5" onClick={handleSubmit}>Create</button>
                     <button className="cancel-btn mL5" onClick={closeCreateOrgModal}>Cancel</button>
                 </div>
             </div>
