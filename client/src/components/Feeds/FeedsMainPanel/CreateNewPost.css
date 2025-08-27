@@ -79,9 +79,16 @@
   margin-bottom: 10px;
   padding: 10px 15px;
   border-radius: 8px;
+  height: 40px;
   font-family: 'system-ui';
   background-color: var(--pure-white);
   border: 1px solid #ccc;
+}
+
+#post-title-input:focus {
+  transition-duration: 0.25s;
+  border-color: #007bff;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
 }
 
 #post-title-input:focus {

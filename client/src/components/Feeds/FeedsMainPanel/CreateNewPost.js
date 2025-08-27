@@ -42,6 +42,7 @@ const CreateNewPost = () => {
     const [scheduledAt, setScheduledAt] = useState(null);
     const [isScheduledPost, setIsScheduledPost] = useState(false);
     const [showMentionContainer, setShowMentionContainer] = useState(false);
+    const [showTitle, setShowTitle] = useState(false);
     const [showPollContainer, setShowPollContainer] = useState(false);
     const [question, setQuestion] = useState('');
     const [pollOptions, setPollOptions] = useState(['', '']);
@@ -54,6 +55,7 @@ const CreateNewPost = () => {
         if (currentPostData) {
             setHeader('Edit Post');
             setPostTitle(currentPostData?.title || "");
+            setShowTitle(currentPostData?.title?.trim().length > 0);
             setContent(currentPostData?.description || "");
             setTags(currentPostData?.tags || []);
             setPostId(currentPostData?.id || null);
@@ -69,6 +71,7 @@ const CreateNewPost = () => {
             setHeader('Post Something');
             setPostTitle("");
             setContent("");
+            setShowTitle(false);
             setTags([]);
             setFiles([]);
             setPostId(null);
@@ -90,6 +93,7 @@ const CreateNewPost = () => {
         const inputWrapper = document.getElementById('post-content-input-wrapper');
         const createPostTags = document.getElementById('create-post-tags');
         const postInput = document.getElementById('post-input');
+        const postTitle = document.getElementById('post-title-input');
         const postAttachments = document.getElementById('post-attachments');
 
         if (quillEditor) {
@@ -101,14 +105,14 @@ const CreateNewPost = () => {
         }
         if (postInput) {
             // postInput.style.border = '1px solid blue';
-            postInput.style.height = `calc(100% - ${createPostTags.offsetHeight}px)`;
+            postInput.style.height = `calc(100% - ${createPostTags.offsetHeight}px - ${postTitle ? postTitle.offsetHeight + 20 : 0}px)`;
         }
         if (fullscreenQuillEditor) {
             // fullscreenQuillEditor.style.border = '1px solid orange';
-            fullscreenQuillEditor.style.height = `calc(100% - 40px)`;
+            fullscreenQuillEditor.style.height = `calc(100% - 40px - ${postTitle ? postTitle.offsetHeight + 20 : 0}px)`;
         }
         if (inputWrapper) {
-            inputWrapper.style.height = `calc(470px - ${postAttachments ? postAttachments.offsetHeight : 0}px)`;
+            inputWrapper.style.height = `calc(520px - ${postAttachments ? postAttachments.offsetHeight : 0}px - ${postTitle ? postTitle.offsetHeight + 40 : 0}px)`;
         }
 
     }, [currentPostData, isShowCreatePostModal]);
@@ -314,7 +318,7 @@ const CreateNewPost = () => {
                 <div className='FRSS w100' id='post-input-section'>
                     <img src={myProfile?.displayPicture} className='img_40_40 user-avatar' alt='User' />
                     <div className='FCSS w100' id='post-input-wrapper'>
-                        <input type='text' placeholder='Title' id='post-title-input' autoComplete='off' value={postTitle} onChange={(e) => setPostTitle(e.target.value)} />
+                        {showTitle && <input type='text' placeholder='Title' id='post-title-input' autoComplete='off' value={postTitle} onChange={(e) => setPostTitle(e.target.value)} />}
                         <div className='FCSS w100' id='post-content-input-wrapper'>
                             <ReactQuill theme="snow" value={content} onChange={setContent} className='w100' id='post-input' placeholder='What do you want to share?' />
                             <PostTagContainer tags={tags} setTags={setTags} />
@@ -327,6 +331,7 @@ const CreateNewPost = () => {
 
                 <div className='w100 FRCB post-footer'>
                     <div className='FRCS post-actions'>
+                        <PostAction icon='fa-solid fa-t' label='Title' onClick={() => { setShowTitle(true); setPostTitle(''); utils.autoFocusInput('post-title-input'); }} />
                         {purpose == 'CREATE' && <PostAction icon='fa-solid fa-square-poll-vertical' label='Poll' onClick={() => { setShowPollContainer(true); utils.autoFocusInput('poll-question-input'); }} />}
                         <PostAction icon='fa-solid fa-user-tag' label='Mention' onClick={showMentionContainerHandler} />
                         <PostAction icon='fa-regular fa-image' label='Attachment' onClick={() => fileInputRef.current.click()} />
