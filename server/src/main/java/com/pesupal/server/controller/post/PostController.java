@@ -29,9 +29,7 @@ public class PostController {
     }
 
     @GetMapping("/feeds")
-    public ResponseEntity<ApiResponseDto> getFeeds(@RequestParam(defaultValue = "0") int page,
-                                                   @RequestParam(defaultValue = "10") int size,
-                                                   @RequestParam(name = "sort_order", defaultValue = "DESC") String sortOrder) {
+    public ResponseEntity<ApiResponseDto> getFeeds(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size, @RequestParam(name = "sort_order", defaultValue = "DESC") String sortOrder) {
 
         PostsListDto posts = postService.getFeeds(page, size, SortOrder.valueOf(sortOrder));
         return ResponseEntity.ok().body(new ApiResponseDto("Posts retrieved successfully.", posts.getPosts(), posts.getInfo()));
@@ -45,10 +43,7 @@ public class PostController {
     }
 
     @GetMapping("/user/{userId}")
-    public ResponseEntity<ApiResponseDto> getPostsByUserId(@PathVariable(name = "userId") String postOwnerId,
-                                                           @RequestParam(defaultValue = "0") int page,
-                                                           @RequestParam(defaultValue = "10") int size,
-                                                           @RequestParam(name = "sort_order", defaultValue = "DESC") String sortOrder) {
+    public ResponseEntity<ApiResponseDto> getPostsByUserId(@PathVariable(name = "userId") String postOwnerId, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size, @RequestParam(name = "sort_order", defaultValue = "DESC") String sortOrder) {
 
 
         PostsListDto posts = postService.getPostByUserId(postOwnerId, page, size, SortOrder.valueOf(sortOrder));
@@ -56,10 +51,7 @@ public class PostController {
     }
 
     @GetMapping("/tag/{tag}")
-    public ResponseEntity<ApiResponseDto> getPostsByTag(@PathVariable(name = "tag") String tag,
-                                                        @RequestParam(defaultValue = "0") int page,
-                                                        @RequestParam(defaultValue = "10") int size,
-                                                        @RequestParam(name = "sort_order", defaultValue = "DESC") String sortOrder) {
+    public ResponseEntity<ApiResponseDto> getPostsByTag(@PathVariable(name = "tag") String tag, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size, @RequestParam(name = "sort_order", defaultValue = "DESC") String sortOrder) {
 
 
         PostsListDto posts = postService.getPostByTag("#" + tag, page, size, SortOrder.valueOf(sortOrder));
@@ -92,5 +84,12 @@ public class PostController {
 
         postService.deletePost(postId);
         return ResponseEntity.ok().body(new ApiResponseDto("Post deleted successfully"));
+    }
+
+    @GetMapping()
+    public ResponseEntity<ApiResponseDto> searchPosts(@RequestParam String search, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+
+        PostsListDto posts = postService.searchPosts(search, page, size);
+        return ResponseEntity.ok().body(new ApiResponseDto("Posts retrieved successfully.", posts.getPosts(), posts.getInfo()));
     }
 }
