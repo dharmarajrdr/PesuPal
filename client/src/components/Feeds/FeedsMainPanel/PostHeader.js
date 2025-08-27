@@ -95,7 +95,7 @@ const PostHeader = ({ post, commentable, setCommentable, poll, setShowPostLikesB
             icon: 'fa fa-link',
             onClick: (e) => {
                 e.stopPropagation();
-                navigator.clipboard.writeText(`${window.location.origin}/post/${postId}`);
+                navigator.clipboard.writeText(`${window.location.origin}/feeds/post/${postId}`);
                 closeOptionsModal();
                 dispatch(showPopup({ message: 'Post link copied to clipboard', type: 'success' }));
             }
