@@ -1,4 +1,3 @@
-import React from 'react'
 import './RecentlyAccessedFilesTable.css'
 import utils from '../../../utils';
 

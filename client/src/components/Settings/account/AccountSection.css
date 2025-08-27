@@ -1,0 +1,8 @@
+#account-section {
+    padding: 20px;
+    border-radius: 5px;
+    width: calc(100% - 40px);
+    margin: 20px;
+    background-color: #fff;
+    box-shadow: 0 2px 4px var(--box-shadow-color);
+}

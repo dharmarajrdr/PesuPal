@@ -19,6 +19,13 @@
   justify-content: space-between;
 }
 
+.FRSE {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: flex-end;
+}
+
 .FRCB {
   display: flex;
   flex-direction: row;
@@ -61,11 +68,25 @@
   justify-content: flex-start;
 }
 
+.FREC {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  justify-content: center;
+}
+
 .FCCB {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
+}
+
+.FCSE {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: flex-start;
 }
 
 .FCSC {
@@ -96,6 +117,24 @@
   justify-content: center;
 }
 
+.FCSB {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: space-between;
+}
+
+.FCCE {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.w15 {
+  width: 15px;
+}
+
 .w20 {
   width: 20px;
 }
@@ -124,12 +163,20 @@
   padding-top: 10px;
 }
 
+.mT2 {
+  margin-top: 2px;
+}
+
 .mT5 {
   margin-top: 5px;
 }
 
 .mT10 {
   margin-top: 10px;
+}
+
+.mT15 {
+  margin-top: 15px;
 }
 
 .mT20 {
@@ -208,8 +255,16 @@
   padding: 20px;
 }
 
+.colorDDD {
+  color: #ddd;
+}
+
 .colorAAA {
   color: #aaa;
+}
+
+.color999 {
+  color: #999;
 }
 
 .color555 {
@@ -221,7 +276,7 @@
 }
 
 .colorFFF {
-  color: #fff;
+  color: var(--pure-white);
 }
 
 .cursP {
@@ -232,6 +287,10 @@
   user-select: none;
 }
 
+.italic {
+  font-style: italic;
+}
+
 /* Hide scrollbar for Chrome, Safari and Opera */
 .noScrollbar::-webkit-scrollbar {
   display: none;
@@ -239,8 +298,10 @@
 
 /* Hide scrollbar for IE, Edge and Firefox */
 .noScrollbar {
-  -ms-overflow-style: none; /* IE and Edge */
-  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none;
+  /* IE and Edge */
+  scrollbar-width: none;
+  /* Firefox */
 }
 
 .pR {
@@ -252,7 +313,7 @@
 }
 
 .m10 {
-    margin: 10px;
+  margin: 10px;
 }
 
 .mx10 {
@@ -273,6 +334,10 @@
 
 .mL15 {
   margin-left: 15px;
+}
+
+.mL20 {
+  margin-left: 20px;
 }
 
 .mB5 {
@@ -304,11 +369,11 @@
 }
 
 .fs12 {
-  font-size: 12;
+  font-size: 12px;
 }
 
 .fs14 {
-  font-size: 14;
+  font-size: 14px;
 }
 
 .w_20 {
@@ -319,11 +384,24 @@
   width: 30px;
 }
 
+.border000 {
+  border: 1px solid #000;
+}
+
+.border555 {
+  border: 1px solid #555;
+}
+
+.border999 {
+  border: 1px solid #999;
+}
+
 .img_20_20 {
   width: 20px;
   height: 20px;
   line-height: 20px;
   border-radius: 100%;
+  object-fit: cover;
 }
 
 .img_30_30 {
@@ -331,6 +409,7 @@
   height: 30px;
   line-height: 30px;
   border-radius: 100%;
+  object-fit: cover;
 }
 
 .img_40_40 {
@@ -338,6 +417,7 @@
   height: 40px;
   line-height: 40px;
   border-radius: 100%;
+  object-fit: cover;
 }
 
 .img_75_75 {
@@ -345,6 +425,7 @@
   height: 75px;
   line-height: 75px;
   border-radius: 100%;
+  object-fit: cover;
 }
 
 .alignCenter {
@@ -357,43 +438,59 @@
 
 /* Custom Scrollbar for WebKit Browsers */
 .custom-scrollbar {
-  scrollbar-width: thin; /* Firefox - makes the scrollbar thin */
-  scrollbar-color: #ddd #fafafa; /* Thumb and track color for Firefox */
+  scrollbar-width: thin;
+  /* Firefox - makes the scrollbar thin */
+  scrollbar-color: #ddd #fafafa;
+  /* Thumb and track color for Firefox */
 }
 
 .custom-scrollbar:hover {
-  scrollbar-color: #ccc #fafafa; /* Thumb and track color for Firefox when hovered */
+  scrollbar-color: #ccc var(--pure-white-hover);
+  /* Thumb and track color for Firefox when hovered */
 }
 
 /* WebKit Browsers (Chrome, Safari, Edge) */
 .custom-scrollbar::-webkit-scrollbar {
-  width: 8px; /* Scrollbar width */
-  background-color: #fff; /* Gray background for the track */
+  width: 8px;
+  /* Scrollbar width */
+  background-color: var(--pure-white);
+  /* Gray background for the track */
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
-  background-color: #fff; /* Light gray track background */
-  border-radius: 10px; /* Rounded track for smooth look */
+  background-color: var(--pure-white);
+  /* Light gray track background */
+  border-radius: 10px;
+  /* Rounded track for smooth look */
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background-color: #5f6368; /* Darker gray for the thumb */
-  border-radius: 10px; /* Rounded thumb */
-  border: 1px solid #fff; /* Adds padding to thumb, matching track background */
+  background-color: #5f6368;
+  /* Darker gray for the thumb */
+  border-radius: 10px;
+  /* Rounded thumb */
+  border: 1px solid var(--pure-white);
+  /* Adds padding to thumb, matching track background */
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background-color: #4c4f54; /* Slightly darker gray when hovered */
+  background-color: #4c4f54;
+  /* Slightly darker gray when hovered */
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:active {
-  background-color: #3c4043; /* Even darker gray when clicked */
+  background-color: #3c4043;
+  /* Even darker gray when clicked */
 }
 
 .Layout {
   width: calc(100% - 75px);
   height: 100vh;
-  background-color: #e3e8ee;
+  background-color: var(--bg-color);
+  overflow: hidden;
+}
+
+.overflowHidden {
   overflow: hidden;
 }
 
@@ -404,6 +501,10 @@ span {
 .bR_line {
   border-right: 1px solid #aaa;
   padding-right: 5px;
+}
+
+.borderRadius5 {
+  border-radius: 5px;
 }
 
 .bL_line {
@@ -417,7 +518,7 @@ span {
 }
 
 .bgFFF {
-  background-color: #fff;
+  background-color: var(--pure-white);
 }
 
 .fw400 {
@@ -456,4 +557,35 @@ span {
   .Layout {
     width: 100%;
   }
+}
+
+/* Chrome, Safari, Edge, Opera */
+input[type=number]::-webkit-outer-spin-button,
+input[type=number]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+.entire-screen-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: var(--overlay-bg-color);
+  z-index: 10;
+}
+
+.centerMe {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }

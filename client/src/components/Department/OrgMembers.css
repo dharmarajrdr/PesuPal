@@ -4,7 +4,7 @@
     margin: 10px;
     height: calc(100vh - 120px);
     box-sizing: border-box;
-    background-color: #fff;
+    background-color: var(--pure-white);
     border-radius: 5px;
     position: relative;
     overflow: auto;
@@ -21,7 +21,7 @@
     margin-bottom: 10px;
     position: sticky;
     top: 0;
-    background-color: #fff;
+    background-color: var(--pure-white);
     z-index: 2;
 }
 
@@ -61,7 +61,7 @@
 }
 
 .org-member:hover {
-    background-color: #f0f0f084;
+    background-color: var(--pure-white-hover);
 }
 
 .org-member div .displayName {

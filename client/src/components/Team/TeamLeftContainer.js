@@ -1,4 +1,3 @@
-import React from 'react'
 import ListOfTeamNavigations from './ListOfTeamNavigations';
 import './TeamLeftContainer.css'
 import TeamLeftContainerItem from './TeamLeftContainerItem';

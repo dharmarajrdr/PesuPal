@@ -1,12 +1,14 @@
+import { useSelector } from 'react-redux';
 import './OrgPreview.css';
 
-const OrgPreview = ({ org, setCurrentOrg, currentOrgId }) => {
+const OrgPreview = ({ org, setCurrentOrg }) => {
 
     const { id, displayName, role, uniqueName, displayPicture, members, status, subscription } = org;
     const { planName, expiresAt, status: subscriptionStatus } = subscription || {};
     const isOwner = role === 'ADMIN';
     const isTrial = planName == 'FREE_TRIAL';
-    const active = org.id == currentOrgId;
+    const currentOrgId = useSelector((state) => state.currentOrg.publicId);
+    const active = org.publicId == currentOrgId;
 
     const orgClickHandler = (e) => {
         e.stopPropagation();
@@ -16,12 +18,8 @@ const OrgPreview = ({ org, setCurrentOrg, currentOrgId }) => {
     };
 
     return (
-        <div className={`FRCB org-preview p20 ${active ? 'active' : ''}`} key={id} onClick={orgClickHandler} >
-            {isTrial && (
-                <h5 className='trial-badge'>
-                    TRIAL
-                </h5>
-            )}
+        <div className={`FRCB org-preview p20 cursP ${active ? 'active' : ''}`} key={id} onClick={orgClickHandler} >
+            {isTrial && <h5 className='trial-badge'>TRIAL</h5>}
             <div className='display-picture FCCC'>
                 {displayPicture ?
                     <img src={displayPicture} alt='Logo' className='objectPositionCenter objectFitCover' /> :

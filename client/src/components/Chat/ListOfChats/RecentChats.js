@@ -4,6 +4,10 @@ import RecentChat from './RecentChat'
 import { apiRequest } from '../../../http_request'
 import Loader from '../../Loader'
 import ErrorMessage from '../../ErrorMessage'
+import { useNavigate } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
+import { setActiveRecentChat } from '../../../store/reducers/ActiveRecentChatSlice'
+import { setRecentChats, updateRecentChat } from '../../../store/reducers/RecentChatsSlice'
 
 const NoChatsFound = () => {
 
@@ -18,35 +22,50 @@ const NoChatsFound = () => {
     )
 }
 
+const RecentChats = ({ searchChat }) => {
 
-const RecentChats = () => {
-
-    const [recentChat, setRecentChat] = useState([]);
+    const [page, setPage] = useState(0);
+    const [size, setSize] = useState(25);
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(true);
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const recentChats = useSelector(state => state.recentChats);
+    const activeChatTab = useSelector(state => state.activeChatTab);
 
     useEffect(() => {
-        apiRequest('/api/v1/direct-messages/recent?page=0&size=10', 'GET').then(({ data }) => {
-            setRecentChat(data);
+        const { recentChatsApi } = activeChatTab;
+        if (!recentChatsApi) { return; }
+        apiRequest(`${recentChatsApi}?search=${searchChat}&page=${page}&size=${size}`, 'GET').then(({ data }) => {
+            dispatch(setRecentChats(data));
             setLoading(false);
         }).catch(({ message }) => {
             setError(message);
             setLoading(false);
         });
-    }, []);
+    }, [activeChatTab]);
 
-    return (
-        <div id='RecentChats' className='FCCS w100'>
+    const openChatHandler = (chat) => {
+        navigate(`${activeChatTab.route}/${chat.chatId}`);
+        dispatch(setActiveRecentChat(chat));
+        const recentMessage = {
+            'number_of_unread_messages': 0
+        };
+        dispatch(updateRecentChat({ 'chatId': chat.chatId, recentMessage }));  // Reset unread messages count
+    }
+
+    return activeChatTab ? (
+        <div id='RecentChats' className='FCCS w100 pT5'>
             {
                 loading ? <Loader /> :
                     error ? <ErrorMessage message={error} /> :
-                        recentChat.length ?
-                            recentChat.map(({ name, status, image, recentMessage }, index) =>
-                                <RecentChat key={index} name={name} image={image} status={status} recentMessage={recentMessage} />
+                        recentChats?.length ?
+                            recentChats.map((recentChat, index) =>
+                                <RecentChat key={index} recentChat={recentChat} openChatHandler={openChatHandler} />
                             ) : <NoChatsFound />
             }
         </div>
-    )
+    ) : null;
 }
 
 export default RecentChats

@@ -1,33 +1,21 @@
 import './App.css';
-import { useEffect } from 'react';
-import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
-import { hasCookie } from './components/Auth/utils';
-import Signup from './components/Auth/Signup';
-import Signin from './components/Auth/Signin';
-import LeftNavigation from './components/LeftNavigation/LeftNavigation';
-import FeedsLayout from './components/Feeds/FeedsLayout';
-import ChatLayout from './components/Chat/ChatLayout';
-import PeopleLayout from './components/People/PeopleLayout';
-import TeamLayout from './components/Team/TeamLayout';
-import TrackerLayout from './components/Tracker/TrackerLayout';
-import { configureStore } from '@reduxjs/toolkit';
-import { combineReducers } from 'redux';
+import store from './store';
 import { Provider } from 'react-redux';
-import { NavigationReducers } from './store/reducers/Navigation';
-import PageNotFound from './components/Auth/PageNotFound';
-
-const store = configureStore({
-    reducer: combineReducers({
-        Navigation: NavigationReducers
-    }),
-    devTools: true
-});
+import { useEffect, useState } from 'react';
+import { hasCookie } from './components/Auth/utils';
+import AuthModal from './components/Auth/AuthModal';
+import AuthenticatedRoutes from './AuthenticatedRoutes';
+import InitialLoadLogoPage from './InitialLoadLogoPage';
+import AuthenticationRoutes from './AuthenticationRoutes';
+import CommonContainer from './components/CommonContainer';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 function App() {
 
     const location = useLocation();
     const navigate = useNavigate();
 
+    const inLobby = ['/', '/org/create'].includes(location.pathname);
     const isAuthPage = ['/signin', '/signup'].includes(location.pathname);
 
     useEffect(() => {
@@ -36,22 +24,20 @@ function App() {
         }
     }, [location.pathname, navigate]);
 
+    const [authenticated, setAuthenticated] = useState(false);
+    const [isSubscriptionExpired, setIsSubscriptionExpired] = useState(false);
+
     return (
         <Provider store={store}>
             <div className="App FRCS">
-                {/* ✅ Only render LeftNavigation if not on /signin or /signup */}
-                {!isAuthPage && <LeftNavigation />}
-
-                <Routes>
-                    <Route path="/feeds" element={<FeedsLayout />} />
-                    <Route path="/chat" element={<ChatLayout />} />
-                    <Route path="/people" element={<PeopleLayout />} />
-                    <Route path="/team/*" element={<TeamLayout />} />
-                    <Route path="/tracker" element={<TrackerLayout />} />
-                    <Route path="/signup" element={<Signup />} />
-                    <Route path="/signin" element={<Signin />} />
-                    <Route path="*" element={<PageNotFound />} />
-                </Routes>
+                {isAuthPage ? <AuthenticationRoutes /> : <>
+                    <AuthModal setIsSubscriptionExpired={setIsSubscriptionExpired} setAuthenticated={setAuthenticated} />
+                    {authenticated ?
+                        <AuthenticatedRoutes isSubscriptionExpired={isSubscriptionExpired} inLobby={inLobby} />
+                        : <InitialLoadLogoPage />
+                    }
+                    <CommonContainer />
+                </>}
             </div>
         </Provider>
     );

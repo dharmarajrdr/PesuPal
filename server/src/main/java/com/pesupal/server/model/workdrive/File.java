@@ -1,17 +1,18 @@
 package com.pesupal.server.model.workdrive;
 
 import com.pesupal.server.enums.Security;
-import com.pesupal.server.model.CreationTimeAuditable;
-import com.pesupal.server.model.user.User;
+import com.pesupal.server.model.PublicAccessModel;
+import com.pesupal.server.model.user.OrgMember;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 @Data
 @Entity
-public class File extends CreationTimeAuditable {
+public class File extends PublicAccessModel {
 
     @Column(nullable = false)
     private String name;
@@ -22,14 +23,20 @@ public class File extends CreationTimeAuditable {
     private Long size;
 
     @ManyToOne
-    private User creator;
+    private OrgMember creator;
 
     @Column(nullable = false, unique = true)
     private UUID mediaId;
 
+    @Column(nullable = false)
+    private String extension;
+
     @Enumerated(EnumType.STRING)
     private Security security;
 
-    @OneToMany(mappedBy = "file", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    List<FileAccessStat> accessStats;
+    @Column(nullable = false)
+    private boolean deleted;
+
+    @OneToMany(mappedBy = "file", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    List<FileAccessStat> accessStats = new ArrayList<>();
 }

@@ -1,24 +1,26 @@
-import React from 'react'
 import { NavLink } from 'react-router-dom';
 import './LeftNavigation.css'
+import UserAvatar from '../User/UserAvatar';
 
-const Nav = ({ icon, image, title, route, notifyCount, showOrgListHandler }) => {
+const NavContent = ({ icon, image, notifyCount, title, fontWeight }) => {
+    return <>
+        {
+            icon ? <i className={`fas ${icon} colorFFF`} style={{ fontWeight }}></i> : <UserAvatar displayPicture={image} />
+        }
+        {notifyCount && notifyCount != '0' && <b className='notifyCount'>{notifyCount}</b>}
+        <span className='colorFFF'>{title}</span>
+    </>
+}
+
+const Nav = ({ icon, image, title, route, notifyCount, showOrgListHandler, fontWeight }) => {
 
     return route ? (
         <NavLink to={route} className={({ isActive }) => (isActive ? 'activeNav' : '') + ` LeftNavigationItem cursP FCCC selectNone`}  >
-            {
-                icon ? <i className={`fas ${icon} colorFFF`}></i> : <img src={image} />
-            }
-            {notifyCount && notifyCount != '0' && <b className='notifyCount'>{notifyCount}</b>}
-            <span className='colorFFF'>{title}</span>
+            <NavContent icon={icon} image={image} notifyCount={notifyCount} title={title} fontWeight={fontWeight} />
         </NavLink>
     ) : (
         <div className='LeftNavigationItem FCCC selectNone' onClick={showOrgListHandler} >
-            {
-                icon ? <i className={`fas ${icon} colorFFF`}></i> : <img src={image} />
-            }
-            {notifyCount && notifyCount != '0' && <b className='notifyCount'>{notifyCount}</b>}
-            <span className='colorFFF'>{title}</span>
+            <NavContent icon={icon} image={image} notifyCount={notifyCount} title={title} />
         </div>
     )
 }

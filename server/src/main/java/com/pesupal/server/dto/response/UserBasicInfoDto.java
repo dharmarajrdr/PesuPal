@@ -8,7 +8,7 @@ import lombok.Data;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class UserBasicInfoDto {
 
-    private Long userId;
+    private String userId;
 
     private String displayName;
 
@@ -26,10 +26,12 @@ public class UserBasicInfoDto {
 
     private Integer employeeId;
 
+    private String chatId;
+
     public static UserBasicInfoDto fromOrgMember(OrgMember orgMember) {
 
         UserBasicInfoDto userBasicInfoDto = new UserBasicInfoDto();
-        userBasicInfoDto.setUserId(orgMember.getUser().getId());
+        userBasicInfoDto.setUserId(orgMember.getPublicId());
         userBasicInfoDto.setDisplayName(orgMember.getDisplayName());
         userBasicInfoDto.setDisplayPicture(orgMember.getDisplayPicture());
         userBasicInfoDto.setDesignation(orgMember.getDesignation().getName());

@@ -1,0 +1,13 @@
+#single-post-overlay-container {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    margin: 30px 0px;
+    width: 60%;
+    max-height: calc(100% - 60px);
+    overflow-y: auto;
+}
+
+#single-post-overlay-container .Post {
+    margin: 0;
+}

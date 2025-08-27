@@ -1,5 +1,5 @@
 .org-preview {
-    background-color: #fff;
+    background-color: var(--pure-white);
     border: 1px solid #ddd;
     width: 400px;
     align-items: stretch;
@@ -17,15 +17,15 @@
 }
 
 .org-preview:not(.active):hover {
-    background-color: #f9f9f9;
+    background-color: var(--pure-white-hover);
 }
 
 .org-preview .trial-badge {
     position: absolute;
     top: 5px;
     left: -20px;
-    background-color: #f0ad4e;
-    color: #fff;
+    background-color: var(--badge-color);
+    color: var(--pure-white);
     padding: 5px 5px 5px 0px;
     width: 100px;
     text-align: center;
@@ -37,7 +37,7 @@
 }
 
 .org-preview .trial-badge i {
-    color: #fff;
+    color: var(--pure-white);
     margin-right: 5px;
 }
 
@@ -52,8 +52,8 @@
     width: 40px;
     height: 40px;
     border-radius: 5px;
-    background-color: #3f4c68;
-    color: #fff;
+    background-color: var(--primary-color);
+    color: var(--pure-white);
     font-size: 20px;
     display: flex;
     align-items: center;
