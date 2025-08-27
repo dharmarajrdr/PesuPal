@@ -125,7 +125,8 @@ const CreateNewPost = () => {
 
             const payload = {
                 "title": postTitle,
-                "description": content
+                "description": content,
+                "allowAnonymousComments": false
             };
 
             if (tags.length) {

@@ -25,10 +25,7 @@ import com.pesupal.server.service.interfaces.post.*;
 import com.pesupal.server.strategies.media_storage.S3Service;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -36,6 +33,7 @@ import org.springframework.stereotype.Service;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -415,6 +413,37 @@ public class PostServiceImpl extends CurrentValueRetriever implements PostServic
         redisTemplate.opsForList().rightPushAll(key, newTrendingPostIds.toArray(new Long[0]));  // Store new post ids.
         redisTemplate.expire(key, TRENDING_POSTS_CACHE_DURATION); // Set expiry same
         return newTrendingPosts.stream().map(post -> getPostDtoFromPostAndOrgMember(post, orgMember)).toList();
+    }
+
+    /**
+     * Searches posts based on a query string.
+     *
+     * @param query
+     * @param page
+     * @param size
+     * @return
+     */
+    @Override
+    public PostsListDto searchPosts(String query, int page, int size) {
+
+        if (query.length() < 3) {
+            throw new ActionProhibitedException("Search query must be at least 3 characters long.");
+        }
+
+        OrgMember orgMember = getCurrentOrgMember();
+
+        String tsQuery = Arrays.stream(query.split("\\s+"))
+                .map(word -> word.replaceAll("[^a-zA-Z0-9]", ""))
+                .filter(word -> !word.isBlank())
+                .collect(Collectors.joining(" | "));
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by("created_at").descending());
+        Slice<Post> posts = postRepository.searchPostsByOrg(orgMember.getOrg().getId(), tsQuery, pageable);
+        List<PostDto> postDtos = new ArrayList<>(posts.getContent().stream().map(post -> getPostDtoFromPostAndOrgMember(post, orgMember)).toList());
+        PostsListDto postsListDto = new PostsListDto();
+        postsListDto.setInfo(Map.of("hasMoreRecords", posts.hasNext()));
+        postsListDto.setPosts(postDtos);
+        return postsListDto;
     }
 
     /**
