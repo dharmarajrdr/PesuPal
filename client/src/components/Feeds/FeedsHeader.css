@@ -76,6 +76,29 @@
     background-color: #aaa;
 }
 
+#feeds-notifications {
+    text-align: center;
+    padding: 5px 10px;
+    position: relative;
+    cursor: pointer;
+    margin-right: 10px;
+}
+
+#feeds-notifications .notifyCount {
+    position: absolute;
+    top: 2px;
+    right: 5px;
+}
+
+#feeds-notifications i {
+    font-size: 18px;
+    color: #555;
+}
+
+#feeds-notifications i:hover {
+    color: #333;
+}
+
 @media screen and (max-width: 768px) {
     #FeedsRightPanel {
         display: none;

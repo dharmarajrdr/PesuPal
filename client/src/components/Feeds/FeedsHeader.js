@@ -21,13 +21,12 @@ const HeaderRight = () => {
     }
 
     return <div className='FRCS pR' id='FeedsRightPanelHeader'>
+        <div className='pR' id='feeds-notifications'>
+            <i className="fa-solid fa-bell"></i>
+            <b className='notifyCount'>17</b>
+        </div>
         <button id='create-post-button' onClick={showCreatePostModalHandler}>
-            <i className="fa-solid fa-plus w15"></i>
-            Create Post
-        </button>
-        <button className='my-posts-button'>
-            <i className="fa-solid fa-book w15"></i>
-            My Posts
+            <i className="fa-solid fa-plus w15"></i>Create Post
         </button>
     </div>
 }
