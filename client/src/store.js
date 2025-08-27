@@ -15,6 +15,7 @@ import CurrentOrgSlice from './store/reducers/CurrentOrgSlice';
 import ModuleFilterSlice from './store/reducers/ModuleFilterSlice';
 import ActiveChatTabSlice from './store/reducers/ActiveChatTabSlice';
 import LeftNavigationSlice from './store/reducers/LeftNavigationSlice';
+import SinglePostSlice from './store/reducers/SinglePostSlice';
 import ConversationSlice from './store/reducers/ConversationSlice';
 import ConfirmationPopupSlice from './store/reducers/ConfirmationPopupSlice';
 import CurrentModuleSlice from './store/reducers/CurrentModuleSlice';
@@ -32,6 +33,7 @@ const store = configureStore({
         profile: ProfileSlice,
         myProfile: MyProfileSlice,
         currentOrg: CurrentOrgSlice,
+        singlePost: SinglePostSlice,
         recentChats: RecentChatsSlice,
         Navigation: NavigationReducers,
         moduleFilter: ModuleFilterSlice,

@@ -1,10 +1,10 @@
 import './TrendingPosts.css'
 import Loader from '../../Loader.js';
-import { Link } from 'react-router-dom';
 import { useDispatch } from "react-redux";
 import { useEffect, useState } from 'react'
 import { apiRequest } from '../../../http_request.js';
 import { showPopup } from '../../../store/reducers/PopupSlice.js';
+import { showSinglePost } from '../../../store/reducers/SinglePostSlice.js';
 
 const TrendingPosts = () => {
 
@@ -31,17 +31,20 @@ const TrendingPosts = () => {
             <div className='FRCC w100' id='TrendingPostsList'>
                 {loader ? <div className='FRCC w100'>
                     <Loader />
-                </div> : posts.map(({ title, id, owner }, index) => {
+                </div> : posts.map((post, index) => {
+                    const { title, owner } = post || {};
                     const { displayName, displayPicture } = owner || {};
-                    const route = `/posts/${id}`;
+                    const showSinglePostHandler = () => {
+                        dispatch(showSinglePost(post));
+                    }
                     return (
-                        <Link to={route} key={index} className='TrendingPost w100'>
+                        <div key={index} className='TrendingPost w100' onClick={showSinglePostHandler}>
                             <p className='title'>{title}</p>
                             <div className='FRCS'>
                                 <img src={displayPicture} className='img_20_20 mR5' />
                                 <span className='fs12 color777'>{displayName}</span>
                             </div>
-                        </Link>
+                        </div>
                     )
                 })}
             </div>
