@@ -16,11 +16,11 @@
 
 ### Post Comment Table
 
-| id | post_id | commentator_id | message   | created_time |
-|----|---------|----------------|-----------|--------------|
-| 1  | 1       | 2              | Nice!     | 2023-10-01   |
-| 2  | 1       | 3              | Congrats! | 2023-10-01   |
-| 3  | 2       | 1              | Great!    | 2023-10-02   |
+| id | post_id | commentator_id | message   | created_time | is_anonymous |
+|----|---------|----------------|-----------|--------------|--------------|
+| 1  | 1       | 2              | Nice!     | 2023-10-01   | true         |
+| 2  | 1       | 3              | Congrats! | 2023-10-01   | false        |
+| 3  | 2       | 1              | Great!    | 2023-10-02   | true         |
 
 ### Post Reply Table
 

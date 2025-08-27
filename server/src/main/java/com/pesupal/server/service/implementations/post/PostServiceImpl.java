@@ -67,7 +67,7 @@ public class PostServiceImpl extends CurrentValueRetriever implements PostServic
      */
     private void validateCreatePostDto(CreatePostDto createPostDto, OrgMember creator) {
 
-        if (createPostDto.getTags().size() > MAXIMUM_TAGS_PER_POST) {
+        if (createPostDto.getTags() != null && createPostDto.getTags().size() > MAXIMUM_TAGS_PER_POST) {
             throw new ActionProhibitedException("A post can have a maximum of " + MAXIMUM_TAGS_PER_POST + " tags.");
         }
 
@@ -100,7 +100,6 @@ public class PostServiceImpl extends CurrentValueRetriever implements PostServic
         Post post = createPostDto.toPost();
         post.setOrg(creator.getOrg());
         post.setCreator(creator);
-        post.setMedia(!createPostDto.getMediaIds().isEmpty());
         post.setHasPoll(hasPoll);
         postRepository.save(post);
         List<PostMedia> postMedia = postMediaService.saveAll(createPostDto.getMediaIds(), post);
@@ -289,7 +288,7 @@ public class PostServiceImpl extends CurrentValueRetriever implements PostServic
     @Override
     public Post getPostByIdAndOrgId(Long postId, Long orgId) {
 
-        return postRepository.findByIdAndOrgId(postId, orgId).orElseThrow(() -> new DataNotFoundException("Post with ID " + postId + " does not exist."));
+        return postRepository.findByIdAndOrgId(postId, orgId).orElseThrow(() -> new DataNotFoundException("Post does not exist."));
     }
 
     /**
@@ -318,7 +317,7 @@ public class PostServiceImpl extends CurrentValueRetriever implements PostServic
     @Override
     public Post getPostByPublicIdAndOrgId(String postId, Long orgId) {
 
-        return postRepository.findByPublicIdAndOrgId(postId, orgId).orElseThrow(() -> new DataNotFoundException("Post with ID " + postId + " does not exist."));
+        return postRepository.findByPublicIdAndOrgId(postId, orgId).orElseThrow(() -> new DataNotFoundException("Post does not exist."));
     }
 
     /**
@@ -550,7 +549,7 @@ public class PostServiceImpl extends CurrentValueRetriever implements PostServic
     @Override
     public Post getPostByPublicId(String postId) {
 
-        return postRepository.findByPublicId(postId).orElseThrow(() -> new DataNotFoundException("Post with id " + postId + " does not exist."));
+        return postRepository.findByPublicId(postId).orElseThrow(() -> new DataNotFoundException("Post does not exist."));
     }
 
     /**
@@ -561,6 +560,6 @@ public class PostServiceImpl extends CurrentValueRetriever implements PostServic
      */
     public Post getPostById(Long postId) {
 
-        return postRepository.findById(postId).orElseThrow(() -> new DataNotFoundException("Post with id " + postId + " does not exist."));
+        return postRepository.findById(postId).orElseThrow(() -> new DataNotFoundException("Post does not exist."));
     }
 }
