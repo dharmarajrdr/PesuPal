@@ -4,6 +4,7 @@ import { useState } from 'react'
 import TagPostsLayout from './TagPostsLayout'
 import PageNotFound from '../Auth/PageNotFound'
 import { Route, Routes } from 'react-router-dom'
+import SinglePostLayout from './SinglePostLayout'
 import CreateNewPost from './FeedsMainPanel/CreateNewPost'
 import FeedsLeftPanel from './FeedsLeftPanel/FeedsLeftPanel'
 import BookmarkPostsLayout from './FeedsMainPanel/BookmarkPostsLayout'
@@ -25,6 +26,7 @@ const FeedsLayout = () => {
             <Routes>
                 <Route index element={<Feeds leftNavOpened={leftNavOpened} width={width} />} />
                 <Route path='/bookmarks' element={<BookmarkPostsLayout />} />
+                <Route path='/post/:postId' element={<SinglePostLayout />} />
                 <Route path='/scheduled-posts' element={<ScheduledPostsLayout />} />
                 <Route path='/tag/:tag' element={<TagPostsLayout />} />
                 <Route path="*" element={<PageNotFound />} />
