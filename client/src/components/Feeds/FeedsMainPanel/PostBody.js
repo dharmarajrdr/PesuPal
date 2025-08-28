@@ -36,7 +36,7 @@ const PostMentions = ({ mentions }) => {
 const TagsContainer = ({ tags }) => {
     return <div className='FRCS tagsContainer'>
         {tags && tags.map((tag, index) => (
-            <NavLink to={`/feeds/tag/${tag.replace(/^#/m, '')}`} key={index} className='tagNavLink'>{tag}</NavLink>
+            <NavLink to={`/feeds/tags/${tag.replace(/^#/m, '')}`} key={index} className='tagNavLink'>{tag}</NavLink>
         ))}
     </div>
 }

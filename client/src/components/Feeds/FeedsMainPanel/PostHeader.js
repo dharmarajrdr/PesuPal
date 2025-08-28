@@ -7,16 +7,17 @@ import { useDispatch, useSelector } from 'react-redux';
 import { showPopup } from '../../../store/reducers/PopupSlice';
 import { showProfile } from '../../../store/reducers/ProfileSlice';
 import { hideConfirmationPopup, showConfirmationPopup } from '../../../store/reducers/ConfirmationPopupSlice';
-import { deletePost, setActivePostId, setPostData, showCreatePostModal } from '../../../store/reducers/PostSlice';
+import { deletePost, patchPost, setActivePostId, setPostData, showCreatePostModal } from '../../../store/reducers/PostSlice';
 
 const PostHeader = ({ post, commentable, setCommentable, poll, setShowPostLikesById }) => {
 
-    const { 'id': postId, owner, createdAt, 'creator': isCreator } = post,
-        { userId, displayName, displayPicture } = owner;
+    const { 'id': postId, owner, createdAt, 'creator': isCreator, allowAnonymousComments } = post || {};
+    const { userId, displayName, displayPicture } = owner || {};
 
     const dispatch = useDispatch();
     const [isOptionOpen, setIsOptionOpen] = useState(false);
     const { activePostId } = useSelector(state => state.posts); // only one can be open
+    const [commentAnonymous, setCommentAnonymous] = useState(allowAnonymousComments);
     const [pollUpdatable, setPollUpdatable] = useState(poll?.updatable);
 
     const onToggleOption = () => {
@@ -95,9 +96,40 @@ const PostHeader = ({ post, commentable, setCommentable, poll, setShowPostLikesB
             icon: 'fa fa-link',
             onClick: (e) => {
                 e.stopPropagation();
-                navigator.clipboard.writeText(`${window.location.origin}/post/${postId}`);
+                navigator.clipboard.writeText(`${window.location.origin}/feeds/post/${postId}`);
                 closeOptionsModal();
                 dispatch(showPopup({ message: 'Post link copied to clipboard', type: 'success' }));
+            }
+        },
+        {
+            name: isCreator && `${commentAnonymous ? 'Restrict' : 'Allow'} Anonymous Comments`,
+            icon: 'fa fa-user-secret',
+            onClick: (e) => {
+                e.stopPropagation();
+                dispatch(showConfirmationPopup({
+                    message: `Are you sure you want to ${commentAnonymous ? 'restrict' : 'allow'} anonymous comments on this post?`,
+                    options: [
+                        {
+                            title: `${commentAnonymous ? 'Restrict' : 'Allow'}`,
+                            color: `${commentAnonymous ? 'red' : 'green'}`,
+                            onClick: () => {
+                                apiRequest(`/api/v1/post/${postId}`, "PATCH", { 'allowAnonymousComments': !commentAnonymous }).then(({ data }) => {
+                                    setCommentAnonymous(!commentAnonymous);
+                                    dispatch(patchPost({ id: postId, allowAnonymousComments: !commentAnonymous }));
+                                    dispatch(showPopup({ message: `Anonymous comments ${!commentAnonymous ? 'enabled' : 'disabled'}`, type: 'success' }));
+                                    closeOptionsModal();
+                                }).catch(({ message }) => {
+                                    dispatch(showPopup({ message, type: 'error' }));
+                                });
+                            }
+                        },
+                        {
+                            title: "Cancel",
+                            color: "gray",
+                            onClick: () => dispatch(hideConfirmationPopup())
+                        }
+                    ]
+                }));
             }
         },
         {

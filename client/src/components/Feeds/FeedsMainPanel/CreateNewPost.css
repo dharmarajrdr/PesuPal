@@ -79,9 +79,16 @@
   margin-bottom: 10px;
   padding: 10px 15px;
   border-radius: 8px;
+  height: 40px;
   font-family: 'system-ui';
   background-color: var(--pure-white);
   border: 1px solid #ccc;
+}
+
+#post-title-input:focus {
+  transition-duration: 0.25s;
+  border-color: #007bff;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
 }
 
 #post-title-input:focus {
@@ -92,22 +99,6 @@
   border: 1px solid #ccc;
   position: relative;
   border-radius: 8px;
-}
-
-#create-post-tags {
-  gap: 5px;
-  flex-wrap: wrap;
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  min-height: 40px;
-  max-height: 70px;
-  overflow-y: auto;
-  padding: 10px 10px;
-}
-
-#create-post-tags>input:focus {
-  background-color: #fafafa;
 }
 
 .create-post-tag {
@@ -141,81 +132,12 @@
   color: #333;
 }
 
-#post-attachments {
-  max-height: 50px;
-  padding: 10px 10px 5px 0px;
-}
-
-#post-attachments .post-attachment-preview {
-  width: 75px;
-  height: 100%;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  padding: 2px 4px;
-  margin-right: 5px;
-}
-
-#post-attachments .post-attachment-preview img {
-  width: calc(100% - 20px);
-  height: 100%;
-  cursor: pointer;
-  object-fit: cover;
-}
-
-#post-attachments .post-attachment-preview i {
-  font-size: 10px;
-  width: 15px;
-  margin-left: 5px;
-  height: 100%;
-  line-height: 30px;
-  text-align: center;
-  cursor: pointer;
-  padding: 0;
-}
-
-#post-attachments .post-attachment-preview i:hover {
-  color: #333;
-  background-color: #f5f5f5;
-}
-
-#post-attachments .post-attachment-preview:hover {
-  border-color: #aaa;
-  background-color: #eee;
-}
-
 #create-tag-input {
   border: none;
   outline: none;
   padding: 3px 8px;
   font-size: 12px;
   max-width: max-content;
-}
-
-#create-post-mentions #mention-label-select {
-  border: none;
-  outline: none;
-  padding: 5px 8px;
-  font-size: 12px;
-  border-top-left-radius: 5px;
-  border-bottom-left-radius: 5px;
-  background-color: #f5f5f5;
-  color: #555;
-  cursor: pointer;
-  margin: 0px 5px;
-}
-
-#create-post-mentions #search-users-container #search-user-input-container {
-  border-left: 1px solid #fff;
-  border-right: 1px solid #fff;
-  border-bottom: 1px solid #ccc;
-  border-top: none;
-  border-radius: 0;
-}
-
-#create-post-mentions #search-users-container #search-user-input-container.showing-suggestions {
-  border-color: #ccc;
-  border-bottom-left-radius: 5px;
-  border-bottom-right-radius: 5px;
 }
 
 .remove-mention-member {

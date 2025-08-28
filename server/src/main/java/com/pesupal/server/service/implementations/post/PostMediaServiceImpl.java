@@ -58,7 +58,7 @@ public class PostMediaServiceImpl implements PostMediaService {
     @Transactional
     public List<PostMedia> saveAll(Set<MediaDto> mediaIds, Post post) {
 
-        if (mediaIds.isEmpty()) {
+        if (mediaIds == null || mediaIds.isEmpty()) {
             return List.of();
         }
 
@@ -79,19 +79,21 @@ public class PostMediaServiceImpl implements PostMediaService {
     @Transactional
     public List<PostMedia> updatePostMedia(Post post, Set<MediaDto> mediaIds) {
 
+        if (mediaIds == null) {
+            return post.getPostMedia();
+        }
+
         List<PostMedia> existingMedia = post.getPostMedia(); // managed collection
 
         // 1. Remove old media
         existingMedia.removeIf(pm -> mediaIds.stream().noneMatch(dto -> dto.getId().equals(pm.getMediaId())));
 
         // 2. Add new media
-        if (mediaIds != null) {
-            for (MediaDto dto : mediaIds) {
-                boolean exists = existingMedia.stream().anyMatch(pm -> pm.getMediaId().equals(dto.getId()));
-                if (!exists) {
-                    PostMedia newMedia = PostMedia.builder().post(post).mediaId(dto.getId()).extension(dto.getExtension()).build();
-                    existingMedia.add(newMedia); // cascade handles persist
-                }
+        for (MediaDto dto : mediaIds) {
+            boolean exists = existingMedia.stream().anyMatch(pm -> pm.getMediaId().equals(dto.getId()));
+            if (!exists) {
+                PostMedia newMedia = PostMedia.builder().post(post).mediaId(dto.getId()).extension(dto.getExtension()).build();
+                existingMedia.add(newMedia); // cascade handles persist
             }
         }
 

@@ -34,7 +34,7 @@ const TrendingTags = () => {
                 </div> : tags.map((tag, index) => {
                     const tagName = tag.startsWith('#') ? tag.slice(1) : tag;
                     return (
-                        <Link to={`/feeds/tag/${tagName}`} key={index} className='TrendingTag'>{tag}</Link>
+                        <Link to={`/feeds/tags/${tagName}`} key={index} className='TrendingTag'>{tag}</Link>
                     )
                 })}
             </div>

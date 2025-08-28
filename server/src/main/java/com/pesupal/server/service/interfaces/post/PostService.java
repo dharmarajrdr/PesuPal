@@ -42,4 +42,6 @@ public interface PostService {
     PostsListDto getFeeds(int page, int size, SortOrder sortOrder);
 
     List<PostDto> getTrendingPosts(int limit);
+
+    PostsListDto searchPosts(String query, int page, int size);
 }

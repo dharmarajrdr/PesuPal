@@ -3,6 +3,7 @@ import Profile from './OthersProfile/Profile'
 import VerticalLoader from './VerticalLoader'
 import FullScreenImageView from './FullScreenImageView'
 import ConfirmationPopup from './Utils/ConfirmationPopup'
+import SinglePostOverlay from './Feeds/SinglePostOverlay'
 
 const CommonContainer = () => {
 
@@ -13,6 +14,7 @@ const CommonContainer = () => {
             <VerticalLoader />
             <Profile />
             <FullScreenImageView />
+            <SinglePostOverlay />
         </div>
     )
 }

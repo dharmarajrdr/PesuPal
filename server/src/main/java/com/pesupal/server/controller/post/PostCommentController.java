@@ -37,4 +37,11 @@ public class PostCommentController {
         postCommentService.deletePostComment(commentId);
         return ResponseEntity.ok().body(new ApiResponseDto("Comment deleted successfully."));
     }
+
+    @PatchMapping("/comment/{commentId}")
+    public ResponseEntity<ApiResponseDto> updateComment(@PathVariable Long commentId, @RequestBody CreatePostCommentDto updateCommentDto) {
+
+        postCommentService.updateComment(commentId, updateCommentDto);
+        return ResponseEntity.ok().body(new ApiResponseDto("Comment updated successfully"));
+    }
 }
