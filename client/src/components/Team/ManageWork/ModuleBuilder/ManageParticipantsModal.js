@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { apiRequest } from '../../../../http_request';
 import { showPopup } from '../../../../store/reducers/PopupSlice';
 import { showProfile } from '../../../../store/reducers/ProfileSlice';
-import { decrementModuleMemberCount, incrementModuleMemberCount } from '../../../../store/reducers/CurrentModuleSlice';
+import { decrementModuleMemberCount } from '../../../../store/reducers/CurrentModuleSlice';
 import { hideConfirmationPopup, showConfirmationPopup } from '../../../../store/reducers/ConfirmationPopupSlice';
 
 
@@ -17,11 +17,17 @@ const SearchUsers = ({ searchQuery, setSearchQuery }) => {
     );
 }
 
+const FirstChar = ({ displayName }) => {
+
+    return <p className='first-char-of-name'>{displayName.charAt(0).toUpperCase()}</p>
+}
+
 const UpdateMemberRole = ({ user, moduleId, onClose }) => {
 
     const dispatch = useDispatch();
     const { id, member, role } = user || {};
     const { displayPicture, displayName, email, id: userId } = member || {};
+    const [showDisplayPicture, setShowDisplayPicture] = useState(displayPicture != null);
     const [newRole, setNewRole] = useState(role);
 
     const updateUserHandler = (e) => {
@@ -94,7 +100,7 @@ const UpdateMemberRole = ({ user, moduleId, onClose }) => {
 
     return <div key={id} className='user-preview FRCB w100'>
         <div className='FRCS'>
-            <img src={displayPicture} alt={displayName} className='img_30_30 mR10' onClick={() => { dispatch(showProfile(userId)); }} />
+            {showDisplayPicture ? <img src={displayPicture} onError={() => setShowDisplayPicture(false)} alt={displayName} className='img_30_30 mR10' onClick={() => { dispatch(showProfile(userId)); }} /> : <FirstChar displayName={displayName} />}
             <div className='FCSS'>
                 <h6>{displayName}</h6>
                 <span className='fs10 mT2 color999'>{email}</span>
