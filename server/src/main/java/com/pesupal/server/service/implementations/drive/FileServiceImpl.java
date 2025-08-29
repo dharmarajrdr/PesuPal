@@ -1,7 +1,6 @@
 package com.pesupal.server.service.implementations.drive;
 
 import com.pesupal.server.dto.request.drive.CreateFileDto;
-import com.pesupal.server.dto.response.UserBasicInfoDto;
 import com.pesupal.server.dto.response.drive.FileDto;
 import com.pesupal.server.dto.response.drive.FileOrFolderDto;
 import com.pesupal.server.enums.Arithmetic;
@@ -14,6 +13,7 @@ import com.pesupal.server.model.workdrive.Folder;
 import com.pesupal.server.repository.drive.FileRepository;
 import com.pesupal.server.service.interfaces.drive.FileService;
 import com.pesupal.server.service.interfaces.drive.FolderService;
+import com.pesupal.server.service.interfaces.org.OrgMemberService;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Sort;
@@ -27,6 +27,22 @@ public class FileServiceImpl extends CurrentValueRetriever implements FileServic
 
     private final FolderService folderService;
     private final FileRepository fileRepository;
+    private final OrgMemberService orgMemberService;
+
+    /**
+     * Converts a File and OrgMember to a FileDto.
+     *
+     * @param file
+     * @param owner
+     * @return
+     */
+    @Override
+    public FileDto fromFileAndOrgMember(File file, OrgMember owner) {
+
+        FileDto fileDto = FileDto.fromFile(file);
+        fileDto.setOwner(orgMemberService.getUserBasicInfo(owner));
+        return fileDto;
+    }
 
     /**
      * Finds all files in a given folder for a specific organization member.
@@ -39,7 +55,7 @@ public class FileServiceImpl extends CurrentValueRetriever implements FileServic
 
         Sort sort = Sort.by(Sort.Order.asc("name").ignoreCase());
         return fileRepository.findAllByFolderAndDeleted(parentFolder, deleted, sort).stream().map(file -> {
-            FileOrFolderDto fileDto = FileDto.fromFileAndOrgMember(file, file.getCreator());
+            FileOrFolderDto fileDto = fromFileAndOrgMember(file, file.getCreator());
             fileDto.setType(FileOrFolder.FILE);
             return fileDto;
         }).toList();
@@ -66,7 +82,7 @@ public class FileServiceImpl extends CurrentValueRetriever implements FileServic
         file = fileRepository.save(file);
         folderService.updateFolderSizeRecursively(folder, file.getSize(), Arithmetic.PLUS);
         FileDto fileDto = FileDto.fromFile(file);
-        fileDto.setOwner(UserBasicInfoDto.fromOrgMember(orgMember));
+        fileDto.setOwner(orgMemberService.getUserBasicInfo(orgMember));
         return fileDto;
     }
 
