@@ -20,8 +20,6 @@ public interface GroupChatMemberRepository extends JpaRepository<GroupChatMember
 
     Optional<GroupChatMember> findByGroupIdAndParticipantId(Long groupId, Long participantId);
 
-    boolean existsByGroup_PublicIdAndParticipant_PublicIdAndActiveIsTrue(String groupId, String participantId);
-
     Optional<GroupChatMember> findByGroup_PublicIdAndParticipantId(String groupId, Long userId);
 
     List<GroupChatMember> findAllByGroup_PublicId(String groupId);
@@ -35,19 +33,21 @@ public interface GroupChatMemberRepository extends JpaRepository<GroupChatMember
     void updateAllLastReadMessageToNullByGroup(@Param("group") Group group);
 
     @Query("""
-                    SELECT u
-                    FROM OrgMember u
+                    SELECT om
+                    FROM OrgMember om
                     WHERE (
-                        LOWER(u.displayName) LIKE LOWER(CONCAT('%', :search, '%'))
-                        OR LOWER(u.userName) LIKE LOWER(CONCAT('%', :search, '%'))
+                        LOWER(om.displayName) LIKE LOWER(CONCAT('%', :search, '%'))
+                        OR LOWER(om.userName) LIKE LOWER(CONCAT('%', :search, '%'))
                     )
-                    AND u.id NOT IN (
+                    AND om.org.id = :orgId
+                    AND om.id NOT IN (
                         SELECT gm.participant.id
                         FROM GroupChatMember gm
                         WHERE gm.group.publicId = :groupId
                         AND gm.active = true
                     )
-                    ORDER BY u.displayName ASC
+                    AND om.archived = false
+                    ORDER BY om.displayName ASC
             """)
-    Page<OrgMember> getNonParticipantMembersByGroupId(@Param("groupId") String groupId, @Param("search") String search, Pageable pageable);
+    Page<OrgMember> getNonParticipantMembersByGroupId(@Param("groupId") String groupId, @Param("orgId") Long orgId, @Param("search") String search, Pageable pageable);
 }
