@@ -16,6 +16,7 @@ import com.pesupal.server.service.interfaces.drive.FileService;
 import com.pesupal.server.service.interfaces.drive.PublicFolderService;
 import com.pesupal.server.service.interfaces.drive.SecuredFolderPermissionService;
 import com.pesupal.server.service.interfaces.drive.WorkdriveSpace;
+import com.pesupal.server.service.interfaces.org.OrgMemberService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
@@ -32,6 +33,7 @@ public class OrgSpace extends WorkspaceSupportsPublicFolder implements Workdrive
     private final PublicFolderService publicFolderService;
     private final PublicFolderRepository publicFolderRepository;
     private final SecuredFolderPermissionService securedFolderPermissionService;
+    private final OrgMemberService orgMemberService;
 
     /**
      * Saves a folder in the organization space with security settings.
@@ -68,7 +70,8 @@ public class OrgSpace extends WorkspaceSupportsPublicFolder implements Workdrive
         List<FileOrFolderDto> filesAndFolders = folderRepository.findAllBySpaceAndParentFolderAndDeleted(Workspace.ORG_SPACE, parentFolder, false, sort)
                 .stream()
                 .map(folder -> {
-                    FolderDto folderDto = FolderDto.fromFolderAndOrgMember(folder, folder.getCreatedBy());
+                    FolderDto folderDto = FolderDto.fromFolder(folder);
+                    folderDto.setOwner(orgMemberService.getUserBasicInfo(folder.getCreatedBy()));
                     folderDto.setSecurity(folder.getPublicFolder().getSecurity());
                     folderDto.setType(FileOrFolder.FOLDER);
                     return folderDto;

@@ -11,6 +11,7 @@ import com.pesupal.server.model.workdrive.Folder;
 import com.pesupal.server.repository.drive.FolderRepository;
 import com.pesupal.server.service.interfaces.drive.FileService;
 import com.pesupal.server.service.interfaces.drive.WorkdriveSpace;
+import com.pesupal.server.service.interfaces.org.OrgMemberService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
@@ -24,6 +25,7 @@ public class PersonalSpace implements WorkdriveSpace {
 
     private final FileService fileService;
     private final FolderRepository folderRepository;
+    private final OrgMemberService orgMemberService;
 
     /**
      * Saves a folder in the personal space.
@@ -52,7 +54,8 @@ public class PersonalSpace implements WorkdriveSpace {
         List<FileOrFolderDto> filesAndFolders = folderRepository.findAllByCreatedByAndSpaceAndParentFolderAndDeleted(orgMember, Workspace.PERSONAL_SPACE, parentFolder, false, sort)
                 .stream()
                 .map(folder -> {
-                    FolderDto folderDto = FolderDto.fromFolderAndOrgMember(folder, folder.getCreatedBy());
+                    FolderDto folderDto = FolderDto.fromFolder(folder);
+                    folderDto.setOwner(orgMemberService.getUserBasicInfo(folder.getCreatedBy()));
                     folderDto.setSecurity(Security.SECURED);    // Personal space folders are always secured
                     folderDto.setType(FileOrFolder.FOLDER);
                     return folderDto;
