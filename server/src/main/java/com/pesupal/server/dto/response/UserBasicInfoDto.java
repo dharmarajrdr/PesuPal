@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.pesupal.server.model.user.OrgMember;
 import lombok.Data;
 
+import java.net.URL;
+
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class UserBasicInfoDto {
@@ -12,7 +14,7 @@ public class UserBasicInfoDto {
 
     private String displayName;
 
-    private String displayPicture;
+    private URL displayPicture;
 
     private String designation;
 
@@ -33,7 +35,6 @@ public class UserBasicInfoDto {
         UserBasicInfoDto userBasicInfoDto = new UserBasicInfoDto();
         userBasicInfoDto.setUserId(orgMember.getPublicId());
         userBasicInfoDto.setDisplayName(orgMember.getDisplayName());
-        userBasicInfoDto.setDisplayPicture(orgMember.getDisplayPicture());
         userBasicInfoDto.setDesignation(orgMember.getDesignation().getName());
         userBasicInfoDto.setDepartment(orgMember.getDepartment().getName());
         userBasicInfoDto.setStatus(orgMember.getStatus());

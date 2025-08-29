@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.net.URL;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -16,7 +18,7 @@ public class UserPreviewDto {
 
     private String displayName;
 
-    private String displayPicture;
+    private URL displayPicture;
 
     private boolean archived;
 
@@ -31,7 +33,6 @@ public class UserPreviewDto {
         UserPreviewDto userPreviewDto = new UserPreviewDto();
         userPreviewDto.setId(orgMember.getPublicId());
         userPreviewDto.setDisplayName(orgMember.getDisplayName());
-        userPreviewDto.setDisplayPicture(orgMember.getDisplayPicture());
         userPreviewDto.setArchived(orgMember.isArchived());
         return userPreviewDto;
     }
