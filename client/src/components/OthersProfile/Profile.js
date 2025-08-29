@@ -54,6 +54,9 @@ const Profile = () => {
     const [loading, setLoading] = useState(true);
     const userId = useSelector(state => state.profile);
 
+    const { displayName, designation, department, displayPicture, Social, phone, email, employeeId } = profile || {};
+    const [displayPictureUrl, setShowDisplayPictureUrl] = useState('/images/anonymous.jpg');
+
     useEffect(() => {
         if (userId == null) {
             return;
@@ -63,6 +66,9 @@ const Profile = () => {
         apiRequest("/api/v1/profile/" + userId, "GET").then(({ data }) => {
             setLoading(false);
             setProfile(data);
+            if (data.displayPicture) {
+                setShowDisplayPictureUrl(data.displayPicture);
+            }
         }).catch(({ message }) => {
             setLoading(false);
             setError(message);
@@ -73,15 +79,13 @@ const Profile = () => {
         dispatch(hideProfile());
     }
 
-    const { displayName, designation, department, displayPicture, Social, phone, email, employeeId } = profile || {};
-
     return userId ? (
         <div id='ProfileOverlay' className='FRCE' onClick={closeProfileOverlay}>
             <div id='ProfileCard' className='noScrollbar'>
                 {loading ? <Loader /> :
                     error ? <ErrorMessage message={error} /> : <>
                         <div id='user_image_basic_info' className='FCCC'>
-                            <img src={displayPicture} id='user_photo' className='objectFitCover' />
+                            <img src={displayPictureUrl} id='user_photo' className='objectFitCover' onError={() => setShowDisplayPictureUrl('/images/anonymous.jpg')} />
                             <div id='user_basic_info' className='FCCC'>
                                 <div className='row'>
                                     <h4 id='profile_name'>{displayName}</h4>
