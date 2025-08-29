@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 @AllArgsConstructor
@@ -69,10 +68,7 @@ public class GroupMessageMediaFileServiceImpl implements GroupMessageMediaFileSe
 
         List<GroupMessageMediaFile> groupMessageMediaFiles = groupMessageMediaFileRepository.findAllByGroupChatMessageIsNull();
         for (GroupMessageMediaFile groupMessageMediaFile : groupMessageMediaFiles) {
-            UUID mediaId = groupMessageMediaFile.getMediaId();
-            String extension = groupMessageMediaFile.getExtension();
-            String key = mediaId + "." + extension;
-            s3Service.deleteFile(key);
+            s3Service.deleteFile(groupMessageMediaFile.getMediaId());
         }
         groupMessageMediaFileRepository.deleteAll(groupMessageMediaFiles);
     }
