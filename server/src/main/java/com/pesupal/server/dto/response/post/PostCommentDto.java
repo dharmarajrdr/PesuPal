@@ -29,10 +29,9 @@ public class PostCommentDto extends UserBasicInfoDto {
         dto.setReplyCount(postComment.getReplies().size());
         if (postComment.isAnonymous()) {
             dto.setDisplayName("Anonymous");
-            dto.setDisplayPicture("/images/anonymous.jpg");
+            // dto.setDisplayPicture("/images/anonymous.jpg");
         } else {
             dto.setDisplayName(orgMember.getDisplayName());
-            dto.setDisplayPicture(orgMember.getDisplayPicture());
             dto.setUserId(postComment.getCommenter().getPublicId());
         }
         return dto;
