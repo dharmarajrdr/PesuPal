@@ -1,16 +1,21 @@
-import { useEffect, useState } from 'react'
 import './GroupMembers.css';
-import { useDispatch, useSelector } from "react-redux";
+import { useEffect, useState } from 'react'
 import { apiRequest } from '../../../http_request';
-import { showProfile } from '../../../store/reducers/ProfileSlice';
-import { hideConfirmationPopup, showConfirmationPopup } from '../../../store/reducers/ConfirmationPopupSlice';
+import { useDispatch, useSelector } from "react-redux";
 import { showPopup } from '../../../store/reducers/PopupSlice';
+import { showProfile } from '../../../store/reducers/ProfileSlice';
 import { decreaseParticipantsCount } from '../../../store/reducers/CurrentChatPreviewSlice';
+import { hideConfirmationPopup, showConfirmationPopup } from '../../../store/reducers/ConfirmationPopupSlice';
+
+const FirstChar = ({ displayName }) => {
+    return <p className='first-char-of-name' style={{ width: '30px', height: '30px', lineHeight: '30px' }}>{displayName.charAt(0).toUpperCase()}</p>
+}
 
 const UserPreview = ({ user_detail, groupId }) => {
 
     const dispatch = useDispatch();
     const { id, displayName, displayPicture } = user_detail || {};
+    const [showDisplayPicture, setShowDisplayPicture] = useState(displayPicture != null);
     const { groupChatConfiguration } = useSelector(state => state.currentChatPreviewSlice);
     const { removeMember: memberRemovable } = groupChatConfiguration || {};
 
@@ -44,7 +49,7 @@ const UserPreview = ({ user_detail, groupId }) => {
 
     return <div key={id} className='user-preview FRCB w100'>
         <div className='FRCS'>
-            <img src={displayPicture} alt={displayName} className='img_30_30 mR10' onClick={() => { dispatch(showProfile(id)); }} />
+            {showDisplayPicture ? <img src={displayPicture} alt={displayName} className='img_30_30 mR10' onClick={() => { dispatch(showProfile(id)); }} /> : <FirstChar displayName={displayName} />}
             <h6>{displayName}</h6>
         </div>
         {memberRemovable && <span className='fs12 color777 remove-user-button' onClick={removeMemberHandler}>Remove</span>}

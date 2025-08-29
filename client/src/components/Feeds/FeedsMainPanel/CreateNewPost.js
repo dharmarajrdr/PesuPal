@@ -15,6 +15,8 @@ import { showPopup } from '../../../store/reducers/PopupSlice';
 import { hideLoader, showLoader } from '../../../store/reducers/VerticalLoaderSlice';
 import { addPost, hideCreatePostModal, resetPostData, updatePost } from '../../../store/reducers/PostSlice';
 import { hideConfirmationPopup, showConfirmationPopup } from '../../../store/reducers/ConfirmationPopupSlice';
+import { updateSinglePost } from '../../../store/reducers/SinglePostSlice';
+import { updateTrendingPost } from '../../../store/reducers/TrendingPostsSlice';
 
 const PostAction = ({ icon, label, onClick }) => (
     <span className='actions_post_creation FRCC' onClick={onClick ? onClick : null}>
@@ -174,6 +176,8 @@ const CreateNewPost = () => {
                 dispatch(showPopup({ message, type: 'success' }));
                 dispatch(hideLoader());
                 dispatch(hideConfirmationPopup());
+                dispatch(updateSinglePost(data));
+                dispatch(updateTrendingPost(data));
             }).catch(({ message }) => {
                 dispatch(showPopup({ message, type: 'error' }));
                 dispatch(hideLoader());
