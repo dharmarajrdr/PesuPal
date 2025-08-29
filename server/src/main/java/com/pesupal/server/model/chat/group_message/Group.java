@@ -8,6 +8,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.util.List;
+import java.util.UUID;
 
 @Data
 @Entity(name = "groups")
@@ -21,7 +22,7 @@ public class Group extends PublicAccessModel {
 
     private String description;
 
-    private String displayPicture; // <mediaId>.<extension>
+    private UUID displayPicture;
 
     @ManyToOne
     private OrgMember owner;
