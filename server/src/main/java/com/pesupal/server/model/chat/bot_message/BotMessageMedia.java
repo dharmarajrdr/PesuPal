@@ -24,8 +24,5 @@ public class BotMessageMedia extends BaseModel {
     private UUID mediaId;
 
     @Column(nullable = false)
-    private String extension;
-
-    @Column(nullable = false)
     private Long size;
 }

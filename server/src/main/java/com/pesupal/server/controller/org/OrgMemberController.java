@@ -38,15 +38,11 @@ public class OrgMemberController extends OrgSubscriptionManager {
         return ResponseEntity.ok(new ApiResponseDto("Member added to organization successfully.", orgMember));
     }
 
-    @GetMapping("/display-picture")
-    public ResponseEntity<ApiResponseDto> getOrgMemberImage(@RequestParam(required = false) Long userId) {
+    @PatchMapping("/{orgMemberPublicId}")
+    public ResponseEntity<ApiResponseDto> updateOrgMember(@PathVariable String orgMemberPublicId, @RequestBody AddOrgMemberDto addOrgMemberDto) {
 
-        if (userId == null) {
-            userId = getCurrentUserId();
-        }
-
-        String imageUrl = orgMemberService.getOrgMemberImageByUserIdAndOrgId(userId, getCurrentOrgId());
-        return ResponseEntity.ok(new ApiResponseDto("Organization member image retrieved successfully.", imageUrl));
+        orgMemberService.updateOrgMember(orgMemberPublicId, addOrgMemberDto, getCurrentOrgMember());
+        return ResponseEntity.ok(new ApiResponseDto("Organization member updated successfully."));
     }
 
     @GetMapping("/orgs")
@@ -101,6 +97,7 @@ public class OrgMemberController extends OrgSubscriptionManager {
             OrgMember orgMember = orgMemberService.getOrgMemberByPublicId(orgMemberId);
             Org org = orgMember.getOrg();
             OrgSubscriptionHistory orgSubscriptionHistory = orgSubscriptionHistoryService.getLatestSubscription(org.getId()).orElseThrow(() -> new DataNotFoundException("No subscription history found for org with ID " + org.getId()));
+            userDetail.put("orgId", org.getPublicId());
             userDetail.put("orgMemberId", orgMemberId);
             userDetail.put("orgStatus", orgSubscriptionHistory.getEndDate().isBefore(LocalDateTime.now()) ? "Inactive" : "Active");
         }

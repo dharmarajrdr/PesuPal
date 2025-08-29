@@ -12,4 +12,6 @@ public interface UserOnboardingService {
     UserOnboarding initiateOnboarding(User user);
 
     void hasDoneOnboardingVerification(User user);
+
+    void hasDoneOnboardingVerification(String userId);
 }
