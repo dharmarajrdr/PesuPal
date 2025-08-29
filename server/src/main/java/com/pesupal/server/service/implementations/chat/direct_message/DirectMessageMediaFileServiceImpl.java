@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 @AllArgsConstructor
@@ -63,10 +62,7 @@ public class DirectMessageMediaFileServiceImpl implements DirectMessageMediaFile
 
         List<DirectMessageMediaFile> directMessageMediaFiles = directMessageMediaFileRepository.findAllByDirectMessageIsNull();
         for (DirectMessageMediaFile directMessageMediaFile : directMessageMediaFiles) {
-            UUID mediaId = directMessageMediaFile.getMediaId();
-            String extension = directMessageMediaFile.getExtension();
-            String key = mediaId + "." + extension;
-            s3Service.deleteFile(key);
+            s3Service.deleteFile(directMessageMediaFile.getMediaId());
         }
         directMessageMediaFileRepository.deleteAll(directMessageMediaFiles);
     }
