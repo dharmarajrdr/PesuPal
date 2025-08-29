@@ -24,7 +24,6 @@ public class ReplyCommentDto extends UserBasicInfoDto {
         replyCommentDto.setCreatedAt(postReply.getCreatedAt());
         replyCommentDto.setUserId(postReply.getReplier().getPublicId());
         replyCommentDto.setDisplayName(orgMember.getDisplayName());
-        replyCommentDto.setDisplayPicture(orgMember.getDisplayPicture());
         return replyCommentDto;
     }
 }
