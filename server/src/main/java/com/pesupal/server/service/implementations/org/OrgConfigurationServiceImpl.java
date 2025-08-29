@@ -43,6 +43,5 @@ public class OrgConfigurationServiceImpl implements OrgConfigurationService {
 
         orgConfigurationRepository.save(adminConfiguration);
         orgConfigurationRepository.save(userConfiguration);
-
     }
 }
