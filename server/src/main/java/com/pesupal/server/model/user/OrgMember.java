@@ -11,6 +11,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -45,8 +46,7 @@ public class OrgMember extends PublicAccessModel {
     @Column(nullable = false)
     private String status;
 
-    @Column(nullable = false)
-    private String displayPicture;
+    private UUID displayPicture;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore

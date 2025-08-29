@@ -19,6 +19,19 @@ const Tag = ({ tag }) => {
     )
 }
 
+const NoTagsAvailable = () => {
+
+    return (
+        <div className='FCCC w100 h100' id='no-data-found'>
+            <p className='FRCC w100'>
+                <i className='fa fa-exclamation-triangle mR5 w15'></i>
+                No tags available
+            </p>
+            <p className='w100 alignCenter'>No tags have been created yet.</p>
+        </div>
+    )
+}
+
 const TagsListLayout = () => {
 
     const dispatch = useDispatch();
@@ -38,7 +51,7 @@ const TagsListLayout = () => {
 
     return (
         <div id='tags-list-layout' className='w100'>
-            {loading ? <Loader /> : tags.map((tag, index) => <Tag key={index} tag={tag} />)}
+            {loading ? <Loader /> : tags.length ? tags.map((tag, index) => <Tag key={index} tag={tag} />) : <NoTagsAvailable />}
         </div>
     )
 }

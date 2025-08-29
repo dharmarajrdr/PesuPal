@@ -25,7 +25,4 @@ public class PostMedia extends PublicAccessModel {
 
     @Column(nullable = false, unique = true)
     private UUID mediaId;
-
-    @Column(nullable = false)
-    private String extension;
 }

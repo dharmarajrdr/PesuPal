@@ -12,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -28,10 +27,8 @@ public class PostMediaServiceImpl implements PostMediaService {
      * @param postMedia
      */
     private void deletePostMedia(PostMedia postMedia) {
-        UUID mediaId = postMedia.getMediaId();
-        String extension = postMedia.getExtension();
-        String key = mediaId + "." + extension;
-        s3Service.deleteFile(key);
+
+        s3Service.deleteFile(postMedia.getMediaId());
         postMedia.setPost(null);
         postMediaRepository.save(postMedia);
     }
@@ -63,7 +60,7 @@ public class PostMediaServiceImpl implements PostMediaService {
         }
 
         return mediaIds.stream().map(mediaId -> {
-            PostMedia postMedia = PostMedia.builder().post(post).mediaId(mediaId.getId()).extension(mediaId.getExtension()).build();
+            PostMedia postMedia = PostMedia.builder().post(post).mediaId(mediaId.getId()).build();
             return postMediaRepository.save(postMedia);
         }).collect(Collectors.toList());
     }
@@ -92,7 +89,7 @@ public class PostMediaServiceImpl implements PostMediaService {
         for (MediaDto dto : mediaIds) {
             boolean exists = existingMedia.stream().anyMatch(pm -> pm.getMediaId().equals(dto.getId()));
             if (!exists) {
-                PostMedia newMedia = PostMedia.builder().post(post).mediaId(dto.getId()).extension(dto.getExtension()).build();
+                PostMedia newMedia = PostMedia.builder().post(post).mediaId(dto.getId()).build();
                 existingMedia.add(newMedia); // cascade handles persist
             }
         }

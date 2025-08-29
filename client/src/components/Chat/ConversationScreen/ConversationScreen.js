@@ -1,22 +1,22 @@
-import { useEffect, useRef, useState } from 'react'
 import './ConversationScreen.css';
-import ChatHeader from './ChatHeader';
-import ChatMessages from './ChatMessages';
-import useWebSocket from '../../../WebSocket';
-import { useParams } from 'react-router-dom';
-import { apiRequest } from '../../../http_request';
-import { useDispatch, useSelector } from 'react-redux';
-import { clearCurrentChatPreview, setCurrentChatPreview } from '../../../store/reducers/CurrentChatPreviewSlice';
-import { setChatId } from '../../../store/reducers/ChatIdSlice';
-import PermissionDenied from '../../Auth/PermissionDenied';
-import { setActiveChatTab } from '../../../store/reducers/ActiveChatTabSlice';
-import { showPopup } from '../../../store/reducers/PopupSlice';
-import { setShowChatHeaderOptionsModal } from '../../../store/reducers/ShowChatHeaderOptionsModalSlice';
-import { moveRecentChatToTop, updateOrAddRecentChat } from '../../../store/reducers/RecentChatsSlice';
 import utils from '../../../utils';
 import ChatFooter from './ChatFooter';
+import ChatHeader from './ChatHeader';
+import ChatMessages from './ChatMessages';
+import { useParams } from 'react-router-dom';
+import useWebSocket from '../../../WebSocket';
 import PageNotFound from '../../Auth/PageNotFound';
+import { apiRequest } from '../../../http_request';
+import { useEffect, useRef, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import PermissionDenied from '../../Auth/PermissionDenied';
+import { showPopup } from '../../../store/reducers/PopupSlice';
+import { setChatId } from '../../../store/reducers/ChatIdSlice';
+import { setActiveChatTab } from '../../../store/reducers/ActiveChatTabSlice';
 import { addMessage, setMessages } from '../../../store/reducers/ConversationSlice';
+import { moveRecentChatToTop, updateOrAddRecentChat } from '../../../store/reducers/RecentChatsSlice';
+import { setShowChatHeaderOptionsModal } from '../../../store/reducers/ShowChatHeaderOptionsModalSlice';
+import { clearCurrentChatPreview, setCurrentChatPreview } from '../../../store/reducers/CurrentChatPreviewSlice';
 
 const ConversationScreen = ({ activeTabName }) => {
 
@@ -46,25 +46,48 @@ const ConversationScreen = ({ activeTabName }) => {
 	const { displayName, active, groupActive, groupChatConfiguration } = currentChatPreview || {};
 	const { postMessage: messagePostable, deleteMessage: messageDeletable, editMessage: messageEditable } = groupChatConfiguration || {};
 
-	const updateRecentChat = (msg) => {
+	const updateRecentChat = (msg, type) => {
 
-		const { chatMode, message, sender } = msg || {};
+		console.log(`Received message via WebSocket: `, msg);
+
+		const { chatMode, message, sender, receiver, group, messageType } = msg || {};
 
 		if (chatMode !== activeChatTab.chatMode) {
 			return; // If the message is not in the current chat mode, ignore it
 		}
 
 		const isChatOpen = chatId == msg.chatId;
+		const isGroupChat = chatMode === "GROUP_MESSAGE";
 
-		const recentMessage = {
+		const isMessageReceived = type === 'message-received';
+
+		const recentMessage = isMessageReceived ? {
 			chatId: msg.chatId,
+			image: isGroupChat ? group.displayPicture : sender.displayPicture,
+			status: sender.status,
+			name: isGroupChat ? group.name : sender.displayName,
 			recentMessage: {
 				sender: sender.displayName,
 				message: message,
 				media: false,
-				createdAt: utils.convertTime(msg.createdAt, 12)
+				createdAt: utils.convertTime(msg.createdAt, 12),
+				messageType
+			}
+		} : {
+			chatId: msg.chatId,
+			image: receiver.displayPicture,
+			status: receiver.status,
+			name: receiver.displayName,
+			recentMessage: {
+				sender: receiver.displayName,
+				message: message,
+				media: false,
+				createdAt: utils.convertTime(msg.createdAt, 12),
+				messageType
 			}
 		};
+
+		console.log(recentMessage);
 
 		if (isChatOpen) {	// User is waiting for a response
 
@@ -93,12 +116,12 @@ const ConversationScreen = ({ activeTabName }) => {
 		userId: myProfile.id,
 		onPrivateMessage: (msg) => {
 
-			updateRecentChat(msg);
+			updateRecentChat(msg, 'message-received');
 			playNotificationSound();
 		},
 		onGroupMessage: (msg) => {
 
-			updateRecentChat(msg);
+			updateRecentChat(msg, 'message-received');
 			playNotificationSound();
 		},
 		onError: ({ message }) => {
@@ -106,7 +129,7 @@ const ConversationScreen = ({ activeTabName }) => {
 		},
 		onMessageDelivery: (msg) => {
 
-			updateRecentChat(msg);
+			updateRecentChat(msg, 'message-delivered');
 		},
 		onTyping: () => {
 

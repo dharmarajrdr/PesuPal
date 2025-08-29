@@ -5,13 +5,15 @@ import com.pesupal.server.dto.request.chat.group_message.UpdateGroupChatConfigur
 import com.pesupal.server.enums.Visibility;
 import lombok.Data;
 
+import java.net.URL;
+
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ChatPreviewDto {
 
     private String displayName;
 
-    private String displayPicture;
+    private URL displayPicture;
 
     private String description;
 

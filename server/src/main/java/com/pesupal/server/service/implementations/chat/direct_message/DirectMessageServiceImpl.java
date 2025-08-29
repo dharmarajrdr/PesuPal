@@ -20,16 +20,13 @@ import com.pesupal.server.model.chat.direct_message.DirectMessageMediaFile;
 import com.pesupal.server.model.chat.direct_message.PinnedDirectMessage;
 import com.pesupal.server.model.org.Org;
 import com.pesupal.server.model.user.OrgMember;
-import com.pesupal.server.model.user.User;
 import com.pesupal.server.projections.RecentPrivateChatProjection;
 import com.pesupal.server.repository.chat.direct_message.DirectMessageMediaFileRepository;
 import com.pesupal.server.repository.chat.direct_message.DirectMessageRepository;
 import com.pesupal.server.security.JwtUtil;
-import com.pesupal.server.service.interfaces.UserService;
+import com.pesupal.server.service.interfaces.MediaService;
 import com.pesupal.server.service.interfaces.chat.direct_message.*;
 import com.pesupal.server.service.interfaces.org.OrgMemberService;
-import com.pesupal.server.service.interfaces.org.OrgService;
-import com.pesupal.server.strategies.media_storage.S3Service;
 import io.jsonwebtoken.Claims;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -54,9 +51,7 @@ public class DirectMessageServiceImpl extends CurrentValueRetriever implements D
     private static final String SCHEDULED_MESSAGE_KEY = "scheduled_direct_messages";
 
     private final JwtUtil jwtUtil;
-    private final S3Service s3Service;
-    private final OrgService orgService;
-    private final UserService userService;
+    private final MediaService mediaService;
     private final OrgMemberService orgMemberService;
     private final SimpMessagingTemplate messagingTemplate;
     private final RedisTemplate<String, Object> redisTemplate;
@@ -67,11 +62,9 @@ public class DirectMessageServiceImpl extends CurrentValueRetriever implements D
     private final DirectMessageMediaFileService directMessageMediaFileService;
     private final DirectMessageMediaFileRepository directMessageMediaFileRepository;
 
-    public DirectMessageServiceImpl(DirectMessageRepository directMessageRepository, @Lazy DirectMessageReactionService directMessageReactionService, UserService userService, OrgService orgService, OrgMemberService orgMemberService, PinnedDirectMessageService pinnedDirectMessageService, DirectMessageMediaFileRepository directMessageMediaFileRepository, S3Service s3Service, DirectMessageMediaFileService directMessageMediaFileService, JwtUtil jwtUtil, DirectMessageChatService directMessageChatService, RedisTemplate<String, Object> redisTemplate, SimpMessagingTemplate messagingTemplate) {
+    public DirectMessageServiceImpl(DirectMessageRepository directMessageRepository, @Lazy DirectMessageReactionService directMessageReactionService, OrgMemberService orgMemberService, PinnedDirectMessageService pinnedDirectMessageService, DirectMessageMediaFileRepository directMessageMediaFileRepository, DirectMessageMediaFileService directMessageMediaFileService, JwtUtil jwtUtil, DirectMessageChatService directMessageChatService, RedisTemplate<String, Object> redisTemplate, SimpMessagingTemplate messagingTemplate, MediaService mediaService) {
         this.jwtUtil = jwtUtil;
-        this.s3Service = s3Service;
-        this.orgService = orgService;
-        this.userService = userService;
+        this.mediaService = mediaService;
         this.redisTemplate = redisTemplate;
         this.orgMemberService = orgMemberService;
         this.messagingTemplate = messagingTemplate;
@@ -95,17 +88,21 @@ public class DirectMessageServiceImpl extends CurrentValueRetriever implements D
 
         MessageDto messageDto = MessageDto.fromDirectMessage(dm);
         Long senderId = dm.getSender().getId();
+        Long receiverId = dm.getReceiver().getId();
         if (!memo.containsKey(senderId)) {
-            memo.put(senderId, UserPreviewDto.fromOrgMember(orgMemberService.getOrgMemberByUserIdAndOrgId(senderId, orgId)));
+            memo.put(senderId, orgMemberService.getUserPreview(dm.getSender()));
+        }
+        if (!memo.containsKey(receiverId)) {
+            memo.put(receiverId, orgMemberService.getUserPreview(dm.getReceiver()));
         }
         messageDto.setSender(memo.get(senderId));
+        messageDto.setReceiver(memo.get(receiverId));
         if (dm.getContainsMedia()) {
             Optional<DirectMessageMediaFile> optionalDirectMessageMediaFile = directMessageMediaFileRepository.findByDirectMessage(dm);
             if (optionalDirectMessageMediaFile.isPresent()) {
                 DirectMessageMediaFile directMessageMediaFile = optionalDirectMessageMediaFile.get();
                 MediaFileDto directMessageMediaFileDto = MediaFileDto.fromDirectMessageMediaFile(directMessageMediaFile);
-                String key = directMessageMediaFile.getMediaId() + "." + directMessageMediaFile.getExtension();
-                directMessageMediaFileDto.setMediaUrl(s3Service.generatePresignedUrl(key));
+                directMessageMediaFileDto.setMediaUrl(mediaService.generatePresignedUrl(directMessageMediaFile.getMediaId()));
                 messageDto.setMedia(directMessageMediaFileDto);
             }
         }
@@ -227,11 +224,6 @@ public class DirectMessageServiceImpl extends CurrentValueRetriever implements D
         Long userId = orgMember.getId();
         Long orgId = orgMember.getOrg().getId();
 
-        User user = userService.getUserById(userId);
-        Org org = orgService.getOrgById(orgId);
-
-        orgMemberService.validateUserIsOrgMember(user, org);
-
         List<RecentPrivateChatProjection> rows = directMessageRepository.findRecentChatsPaged(userId, orgId, search, size, offset);
 
         List<RecentChatDto> chats = rows.stream().map(projection -> {
@@ -251,7 +243,7 @@ public class DirectMessageServiceImpl extends CurrentValueRetriever implements D
             RecentChatDto dto = new RecentChatDto();
             dto.setChatId(projection.getChatPublicId());
             dto.setName(projection.getDisplayName());
-            dto.setImage(projection.getDisplayPicture());
+            dto.setImage(mediaService.generatePresignedUrl(projection.getDisplayPicture()));
             dto.setStatus(projection.getUserStatus());
             dto.setRecentMessage(lastMessage);
 
@@ -349,7 +341,7 @@ public class DirectMessageServiceImpl extends CurrentValueRetriever implements D
         chatPreviewDto.setChatId(chatId);
         chatPreviewDto.setActive(!otherUser.isArchived());
         chatPreviewDto.setDisplayName(otherUser.getDisplayName());
-        chatPreviewDto.setDisplayPicture(otherUser.getDisplayPicture());
+        chatPreviewDto.setDisplayPicture(mediaService.generatePresignedUrl(otherUser.getDisplayPicture()));
         Optional<PinnedDirectMessage> pinnedDirectMessage = pinnedDirectMessageService.getPinnedDirectMessageByPinnedByAndDirectMessageChat(currentUser, directMessageChat);
         pinnedDirectMessage.ifPresent(directMessage -> chatPreviewDto.setPinnedId(directMessage.getId()));
         return chatPreviewDto;

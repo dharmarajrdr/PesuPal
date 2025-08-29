@@ -2,7 +2,6 @@ package com.pesupal.server.service.implementations.post;
 
 import com.pesupal.server.dto.request.post.CreatePostDto;
 import com.pesupal.server.dto.request.post.CreatePostMentionsDto;
-import com.pesupal.server.dto.response.UserBasicInfoDto;
 import com.pesupal.server.dto.response.UserPreviewDto;
 import com.pesupal.server.dto.response.post.*;
 import com.pesupal.server.enums.FeedRetriever;
@@ -20,12 +19,13 @@ import com.pesupal.server.model.post.*;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.model.user.User;
 import com.pesupal.server.repository.post.PostRepository;
+import com.pesupal.server.service.interfaces.MediaService;
 import com.pesupal.server.service.interfaces.org.OrgMemberService;
 import com.pesupal.server.service.interfaces.post.*;
-import com.pesupal.server.strategies.media_storage.S3Service;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.*;
+import org.springframework.data.redis.RedisSystemException;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -39,8 +39,8 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class PostServiceImpl extends CurrentValueRetriever implements PostService {
 
-    private final S3Service s3Service;
     private final PollService pollService;
+    private final MediaService mediaService;
     private final PostRepository postRepository;
     private final PostTagService postTagService;
     private final BookmarkService bookmarkService;
@@ -52,8 +52,8 @@ public class PostServiceImpl extends CurrentValueRetriever implements PostServic
     private final TrendingPostsAnalyserFactory trendingPostsAnalyserFactory;
 
     private final static int MAXIMUM_TAGS_PER_POST = 10;
-    private final static String SCHEDULED_POST_KEY = "scheduled_posts";
-    private final static String TRENDING_POSTS_KEY = "trending_posts";
+    private final static String SCHEDULED_POST_KEY = "scheduled:posts";
+    private final static String TRENDING_POSTS_KEY = "trending:posts";
     private final static Duration TRENDING_POSTS_CACHE_DURATION = Duration.ofHours(6);
     private final static String TRENDING_POSTS_ANALYSER_ALGORITHM = "ENGAGEMENT_BASED";
     private final static FeedRetriever feedRetrieverAlgorithm = FeedRetriever.SIMPLE_FEED_RETRIEVER_ALGORITHM;
@@ -238,7 +238,7 @@ public class PostServiceImpl extends CurrentValueRetriever implements PostServic
                 continue;
             }
             uniqueMemberIds.add(memberId);
-            userPreviews.add(UserPreviewDto.fromOrgMember(member));
+            userPreviews.add(orgMemberService.getUserPreview(member));
         }
         return userPreviews;
     }
@@ -256,12 +256,11 @@ public class PostServiceImpl extends CurrentValueRetriever implements PostServic
         PostDto postDto = PostDto.fromPost(post);
         postDto.setTags(post.getTags().stream().map(postTag -> postTag.getTag().getName()).sorted().toList());
         postDto.setMedia(post.getPostMedia().stream().map(postMedia -> {
-            String key = postMedia.getMediaId() + "." + postMedia.getExtension();
             PostMediaDto postMediaDto = PostMediaDto.fromPostMedia(postMedia);
-            postMediaDto.setUrl(s3Service.generatePresignedUrl(key));
+            postMediaDto.setUrl(mediaService.generatePresignedUrl(postMedia.getMediaId()));
             return postMediaDto;
         }).toList());
-        postDto.setOwner(UserBasicInfoDto.fromOrgMember(post.getCreator()));
+        postDto.setOwner(orgMemberService.getUserBasicInfo(post.getCreator()));
         postDto.setImpression(PostImpressionDto.builder().likes(post.getLikes().size()).comments(post.getComments().size()).build());
         postDto.setBookmarked(false);   // Feature not implemented yet
         if (post.isHasPoll()) {
@@ -395,12 +394,12 @@ public class PostServiceImpl extends CurrentValueRetriever implements PostServic
         OrgMember orgMember = getCurrentOrgMember();
 
         // Fetch post ids from redis.
-        String key = TRENDING_POSTS_KEY + "-" + orgMember.getOrg().getId();
+        String key = TRENDING_POSTS_KEY + ":{" + orgMember.getOrg().getId() + "}";
         List<Object> postIds = redisTemplate.opsForList().range(key, 0, limit - 1);
         if (postIds != null && !postIds.isEmpty()) {
             List<PostDto> posts = new ArrayList<>();
             for (Object id : postIds) {
-                postRepository.findById(Long.valueOf(id.toString())).ifPresent(post -> posts.add(getPostDtoFromPostAndOrgMember(post, orgMember)));
+                postRepository.findById(Long.valueOf((String) id)).ifPresent(post -> posts.add(getPostDtoFromPostAndOrgMember(post, orgMember)));
             }
             return posts;
         }
@@ -408,10 +407,18 @@ public class PostServiceImpl extends CurrentValueRetriever implements PostServic
         // If not found in redis, analyse and store in redis.
         TrendingPostsAnalyser trendingPostsAnalyser = trendingPostsAnalyserFactory.getTrendingPostsAnalyser(TRENDING_POSTS_ANALYSER_ALGORITHM);
         List<Post> newTrendingPosts = trendingPostsAnalyser.analyseTrendingPosts(orgMember.getOrg(), limit);
-        List<Long> newTrendingPostIds = newTrendingPosts.stream().map(Post::getId).toList();
-        redisTemplate.delete(key); // Clear existing key if any.
-        redisTemplate.opsForList().rightPushAll(key, newTrendingPostIds.toArray(new Long[0]));  // Store new post ids.
-        redisTemplate.expire(key, TRENDING_POSTS_CACHE_DURATION); // Set expiry same
+
+        if (newTrendingPosts.isEmpty()) {
+            return List.of();
+        }
+
+        List<String> newTrendingPostIds = newTrendingPosts.stream().map(post -> post.getId().toString()).toList();
+        try {
+            redisTemplate.delete(key);  // Clear existing key if exists.
+            redisTemplate.opsForList().rightPushAll(key, newTrendingPostIds.toArray(new String[0]));
+            redisTemplate.expire(key, TRENDING_POSTS_CACHE_DURATION); // Set expiry same
+        } catch (RedisSystemException ignored) {
+        }
         return newTrendingPosts.stream().map(post -> getPostDtoFromPostAndOrgMember(post, orgMember)).toList();
     }
 

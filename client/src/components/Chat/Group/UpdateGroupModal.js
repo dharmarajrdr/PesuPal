@@ -86,8 +86,8 @@ const UpdateGroupModal = ({ setShowCreateGroupModal, groupData }) => {
             updateGroup(groupData);
         } else {
             Media.uploadSingleMedia({ file }).then(({ data }) => {
-                const { mediaId, extension } = data || {};
-                Object.assign(groupData, { 'displayPicture': `${mediaId}.${extension}` });
+                const { mediaId } = data || {};
+                Object.assign(groupData, { 'displayPicture': mediaId });
                 updateGroup(groupData);
             }).catch(({ message }) => {
                 dispatch(hideLoader());

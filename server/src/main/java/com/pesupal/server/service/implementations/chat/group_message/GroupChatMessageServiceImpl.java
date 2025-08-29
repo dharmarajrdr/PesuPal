@@ -7,6 +7,7 @@ import com.pesupal.server.dto.request.chat.group_message.GetGroupConversationDto
 import com.pesupal.server.dto.response.UserPreviewDto;
 import com.pesupal.server.dto.response.chat.MediaFileDto;
 import com.pesupal.server.dto.response.chat.MessageDto;
+import com.pesupal.server.dto.response.chat.group_message.GroupDto;
 import com.pesupal.server.enums.MessageType;
 import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.exceptions.DataNotFoundException;
@@ -22,9 +23,9 @@ import com.pesupal.server.repository.chat.group_message.GroupChatMemberRepositor
 import com.pesupal.server.repository.chat.group_message.GroupChatMessageRepository;
 import com.pesupal.server.repository.chat.group_message.GroupMessageMediaFileRepository;
 import com.pesupal.server.security.JwtUtil;
+import com.pesupal.server.service.interfaces.MediaService;
 import com.pesupal.server.service.interfaces.chat.group_message.*;
 import com.pesupal.server.service.interfaces.org.OrgMemberService;
-import com.pesupal.server.strategies.media_storage.S3Service;
 import io.jsonwebtoken.Claims;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -49,7 +50,7 @@ public class GroupChatMessageServiceImpl extends CurrentValueRetriever implement
     private static final String SCHEDULED_MESSAGE_KEY = "scheduled_group_messages";
 
     private final JwtUtil jwtUtil;
-    private final S3Service s3Service;
+    private final MediaService mediaService;
     private final GroupService groupService;
     private final OrgMemberService orgMemberService;
     private final SimpMessagingTemplate messagingTemplate;
@@ -154,7 +155,7 @@ public class GroupChatMessageServiceImpl extends CurrentValueRetriever implement
             MessageDto messageDto = MessageDto.fromGroupMessage(gm);
             Long senderId = gm.getSender().getId();
             if (!memo.containsKey(senderId)) {
-                memo.put(senderId, UserPreviewDto.fromOrgMember(orgMemberService.getOrgMemberByUserIdAndOrgId(senderId, orgId)));
+                memo.put(senderId, orgMemberService.getUserPreview(orgMemberService.getOrgMemberByUserIdAndOrgId(senderId, orgId)));
             }
             messageDto.setSender(memo.get(senderId));
             if (gm.isContainsMedia()) {
@@ -162,8 +163,7 @@ public class GroupChatMessageServiceImpl extends CurrentValueRetriever implement
                 if (optionalGroupMessageMediaFile.isPresent()) {
                     GroupMessageMediaFile groupMessageMediaFile = optionalGroupMessageMediaFile.get();
                     MediaFileDto mediaFileDto = MediaFileDto.fromGroupMessageMediaFile(groupMessageMediaFile);
-                    String key = groupMessageMediaFile.getMediaId() + "." + groupMessageMediaFile.getExtension();
-                    mediaFileDto.setMediaUrl(s3Service.generatePresignedUrl(key));
+                    mediaFileDto.setMediaUrl(mediaService.generatePresignedUrl(groupMessageMediaFile.getMediaId()));
                     messageDto.setMedia(mediaFileDto);
                 }
             }
@@ -253,16 +253,16 @@ public class GroupChatMessageServiceImpl extends CurrentValueRetriever implement
         MessageDto messageDto = MessageDto.fromGroupMessage(gm);
         Long senderId = gm.getSender().getId();
         if (!memo.containsKey(senderId)) {
-            memo.put(senderId, UserPreviewDto.fromOrgMember(orgMemberService.getOrgMemberByUserIdAndOrgId(senderId, orgId)));
+            memo.put(senderId, orgMemberService.getUserPreview(gm.getSender()));
         }
         messageDto.setSender(memo.get(senderId));
+        messageDto.setGroup(GroupDto.fromGroup(gm.getGroup()));
         if (gm.isContainsMedia()) {
             Optional<GroupMessageMediaFile> optionalGroupMessageMediaFile = groupMessageMediaFileRepository.findByGroupChatMessage(gm);
             if (optionalGroupMessageMediaFile.isPresent()) {
                 GroupMessageMediaFile groupMessageMediaFile = optionalGroupMessageMediaFile.get();
                 MediaFileDto groupMessageMediaFileDto = MediaFileDto.fromGroupMessageMediaFile(groupMessageMediaFile);
-                String key = groupMessageMediaFile.getMediaId() + "." + groupMessageMediaFile.getExtension();
-                groupMessageMediaFileDto.setMediaUrl(s3Service.generatePresignedUrl(key));
+                groupMessageMediaFileDto.setMediaUrl(mediaService.generatePresignedUrl(groupMessageMediaFile.getMediaId()));
                 messageDto.setMedia(groupMessageMediaFileDto);
             }
         }

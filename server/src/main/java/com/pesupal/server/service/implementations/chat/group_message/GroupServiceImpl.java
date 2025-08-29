@@ -34,8 +34,10 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.net.URL;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class GroupServiceImpl extends CurrentValueRetriever implements GroupService {
@@ -96,9 +98,9 @@ public class GroupServiceImpl extends CurrentValueRetriever implements GroupServ
         groupChatConfigurationService.initializeGroupChatConfiguration(group);
         initializeGroupChatMember(group, owner);
         groupChatMessageService.addSystemMessage(group, owner.getDisplayName() + " has created the group.");
-        String displayPicture = null;
+        URL displayPicture = null;
         try {
-            displayPicture = mediaService.generatePresignedUrl(createGroupDto.getDisplayPicture()).toString();
+            displayPicture = mediaService.generatePresignedUrl(createGroupDto.getDisplayPicture());
         } catch (Exception ignored) {
         }
         return GroupDto.fromGroupAndOrgMemberAndDisplayPicture(group, owner, displayPicture);
@@ -159,7 +161,8 @@ public class GroupServiceImpl extends CurrentValueRetriever implements GroupServ
         int offset = page * size;
 
         OrgMember orgMember = getCurrentOrgMember();
-        Long userId = orgMember.getId();
+        Long orgMemberId = orgMember.getId();
+        Long userId = orgMember.getUser().getId();
 
         User user = userService.getUserById(userId);
         Org org = orgMember.getOrg();
@@ -167,7 +170,7 @@ public class GroupServiceImpl extends CurrentValueRetriever implements GroupServ
 
         orgMemberService.validateUserIsOrgMember(user, org);
 
-        List<RecentGroupChatProjection> rows = groupRepository.findRecentGroupChatsPaged(userId, orgId, search, size, offset);
+        List<RecentGroupChatProjection> rows = groupRepository.findRecentGroupChatsPaged(orgMemberId, orgId, search, size, offset);
 
         List<RecentChatDto> chats = rows.stream().map(proj -> {
             LastMessageDto lastMessage = new LastMessageDto();
@@ -182,7 +185,7 @@ public class GroupServiceImpl extends CurrentValueRetriever implements GroupServ
             dto.setChatId(proj.getGroupId());
             dto.setName(proj.getGroupName());
             try {
-                dto.setImage(mediaService.generatePresignedUrl(proj.getSenderDisplayPicture()).toString());
+                dto.setImage(mediaService.generatePresignedUrl(proj.getSenderDisplayPicture()));
             } catch (Exception ignored) {
             }
             dto.setStatus(proj.getGroupVisibility());
@@ -191,7 +194,7 @@ public class GroupServiceImpl extends CurrentValueRetriever implements GroupServ
             return dto;
         }).toList();
 
-        Long total = groupRepository.countRecentGroupChats(userId, orgId);
+        Long total = groupRepository.countRecentGroupChats(orgMemberId, orgId);
 
         return new RecentChatPagedDto(chats, pageable, total);
     }
@@ -241,7 +244,7 @@ public class GroupServiceImpl extends CurrentValueRetriever implements GroupServ
         chatPreviewDto.setVisibility(group.getVisibility());
         chatPreviewDto.setDescription(group.getDescription());
         try {
-            chatPreviewDto.setDisplayPicture(mediaService.generatePresignedUrl(group.getDisplayPicture()).toString());
+            chatPreviewDto.setDisplayPicture(mediaService.generatePresignedUrl(group.getDisplayPicture()));
         } catch (Exception ignored) {
         }
         chatPreviewDto.setGroupChatConfiguration(UpdateGroupChatConfigurationDto.fromGroupChatConfiguration(groupChatConfiguration));
@@ -321,11 +324,11 @@ public class GroupServiceImpl extends CurrentValueRetriever implements GroupServ
             throw new PermissionDeniedException("You do not have permission to update the group visibility.");
         }
 
-        String previousDisplayPicture = group.getDisplayPicture();
+        UUID previousDisplayPicture = group.getDisplayPicture();
 
         updateGroupDto.applyToGroup(group);
 
-        String newDisplayPicture = group.getDisplayPicture();
+        UUID newDisplayPicture = group.getDisplayPicture();
 
         if (group.getName().isBlank()) {
             throw new PermissionDeniedException("Group name cannot be empty.");
@@ -349,7 +352,7 @@ public class GroupServiceImpl extends CurrentValueRetriever implements GroupServ
 
         GroupDto groupDto = GroupDto.fromGroup(group);
         try {
-            groupDto.setDisplayPicture(mediaService.generatePresignedUrl(group.getDisplayPicture()).toString());
+            groupDto.setDisplayPicture(mediaService.generatePresignedUrl(group.getDisplayPicture()));
         } catch (Exception ignored) {
         }
         return groupDto;

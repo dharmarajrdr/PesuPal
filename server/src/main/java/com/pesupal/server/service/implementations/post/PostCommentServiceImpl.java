@@ -11,6 +11,7 @@ import com.pesupal.server.model.post.Post;
 import com.pesupal.server.model.post.PostComment;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.repository.post.PostCommentRepository;
+import com.pesupal.server.service.interfaces.MediaService;
 import com.pesupal.server.service.interfaces.org.OrgMemberService;
 import com.pesupal.server.service.interfaces.post.PostCommentService;
 import com.pesupal.server.service.interfaces.post.PostService;
@@ -24,6 +25,7 @@ import java.util.*;
 public class PostCommentServiceImpl extends CurrentValueRetriever implements PostCommentService {
 
     private final PostService postService;
+    private final MediaService mediaService;
     private final OrgMemberService orgMemberService;
     private final PostCommentRepository postCommentRepository;
 
@@ -59,6 +61,7 @@ public class PostCommentServiceImpl extends CurrentValueRetriever implements Pos
         postComment.setCommenter(commenter);
         PostCommentDto postCommentDto = PostCommentDto.fromPostCommentAndOrgMember(postCommentRepository.save(postComment), commenter);
         postCommentDto.setDeletable(true);
+        postCommentDto.setDisplayPicture(mediaService.generatePresignedUrl(postComment.getCommenter().getDisplayPicture()));
         return postCommentDto;
     }
 
@@ -114,6 +117,7 @@ public class PostCommentServiceImpl extends CurrentValueRetriever implements Pos
             }
             PostCommentDto postCommentDto = PostCommentDto.fromPostCommentAndOrgMember(postComment, memo.get(commentedById));
             postCommentDto.setDeletable(commentedById.equals(userId));
+            postCommentDto.setDisplayPicture(mediaService.generatePresignedUrl(postComment.getCommenter().getDisplayPicture()));
             return postCommentDto;
         }).toList());
         postCommentDtos.sort(Comparator.comparing(PostCommentDto::getCreatedAt).reversed());
