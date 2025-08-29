@@ -4,10 +4,11 @@ import com.pesupal.server.enums.MessageType;
 import com.pesupal.server.model.chat.MessageStatus;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 public interface RecentPrivateChatProjection {
 
-    String getDisplayPicture();
+    UUID getDisplayPicture();
 
     String getDisplayName();
 
