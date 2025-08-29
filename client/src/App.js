@@ -36,8 +36,8 @@ function App() {
                         <AuthenticatedRoutes isSubscriptionExpired={isSubscriptionExpired} inLobby={inLobby} />
                         : <InitialLoadLogoPage />
                     }
-                    <CommonContainer />
                 </>}
+                <CommonContainer />
             </div>
         </Provider>
     );
