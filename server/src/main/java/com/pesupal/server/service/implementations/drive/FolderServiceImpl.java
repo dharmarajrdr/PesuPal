@@ -17,6 +17,7 @@ import com.pesupal.server.repository.drive.FileRepository;
 import com.pesupal.server.repository.drive.FolderRepository;
 import com.pesupal.server.service.interfaces.drive.FolderService;
 import com.pesupal.server.service.interfaces.drive.WorkdriveSpace;
+import com.pesupal.server.service.interfaces.org.OrgMemberService;
 import jakarta.transaction.Transactional;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -30,11 +31,13 @@ public class FolderServiceImpl extends CurrentValueRetriever implements FolderSe
     private final FileRepository fileRepository;
     private final FolderRepository folderRepository;
     private final WorkspaceFactory workspaceFactory;
+    private final OrgMemberService orgMemberService;
 
-    public FolderServiceImpl(FolderRepository folderRepository, @Lazy WorkspaceFactory workspaceFactory, FileRepository fileRepository) {
+    public FolderServiceImpl(FolderRepository folderRepository, @Lazy WorkspaceFactory workspaceFactory, FileRepository fileRepository, OrgMemberService orgMemberService) {
         this.fileRepository = fileRepository;
         this.folderRepository = folderRepository;
         this.workspaceFactory = workspaceFactory;
+        this.orgMemberService = orgMemberService;
     }
 
     /**
@@ -70,8 +73,9 @@ public class FolderServiceImpl extends CurrentValueRetriever implements FolderSe
         }
         WorkdriveSpace workdriveSpace = workspaceFactory.getFactory(createFolderDto.getSpace());
         folder = workdriveSpace.save(folder, createFolderDto, orgMember);
-        FolderDto folderDto = FolderDto.fromFolderAndOrgMember(folder, orgMember);
+        FolderDto folderDto = FolderDto.fromFolder(folder);
         folderDto.setSecurity(createFolderDto.getSecurity());
+        folderDto.setOwner(orgMemberService.getUserBasicInfo(orgMember));
         return folderDto;
     }
 

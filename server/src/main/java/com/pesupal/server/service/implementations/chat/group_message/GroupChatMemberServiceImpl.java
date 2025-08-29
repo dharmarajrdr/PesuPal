@@ -165,7 +165,7 @@ public class GroupChatMemberServiceImpl extends CurrentValueRetriever implements
         OrgMember orgMember = getCurrentOrgMember();
         GroupChatMember groupChatMember = getGroupMemberByGroupIdAndUserId(groupId, orgMember.getId());
 
-        return groupChatMemberRepository.getNonParticipantMembersByGroupId(groupChatMember.getGroup().getPublicId(), search, pageable).getContent().stream().map(UserPreviewDto::fromOrgMember).toList();
+        return groupChatMemberRepository.getNonParticipantMembersByGroupId(groupChatMember.getGroup().getPublicId(), orgMember.getOrg().getId(), search, pageable).getContent().stream().map(UserPreviewDto::fromOrgMember).toList();
     }
 
     /**
@@ -249,7 +249,7 @@ public class GroupChatMemberServiceImpl extends CurrentValueRetriever implements
         newGroupMember.setActive(true);
         groupChatMemberRepository.save(newGroupMember);
         groupChatMessageService.addSystemMessage(group, currentUser.getDisplayName() + " added " + newMember.getDisplayName());
-        return UserPreviewDto.fromOrgMember(newMember);
+        return orgMemberService.getUserPreview(newMember);
     }
 
     /**
@@ -280,7 +280,7 @@ public class GroupChatMemberServiceImpl extends CurrentValueRetriever implements
         return group.getMembers().stream().filter(GroupChatMember::isActive).collect(Collectors.groupingBy(
                 GroupChatMember::getRole,
                 Collectors.mapping(
-                        member -> UserPreviewDto.fromOrgMember(orgMemberService.getOrgMemberByUserIdAndOrgId(member.getParticipant().getId(), orgId)),
+                        member -> orgMemberService.getUserPreview(orgMemberService.getOrgMemberByUserIdAndOrgId(member.getParticipant().getUser().getId(), orgId)),
                         Collectors.toList()
                 )
         )).entrySet().stream().collect(Collectors.toMap(
