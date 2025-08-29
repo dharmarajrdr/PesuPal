@@ -9,10 +9,12 @@ import MyProfileSlice from './store/reducers/MyProfileSlice';
 import PopupSlice from './store/reducers/PopupSlice';
 import { configureStore } from '@reduxjs/toolkit';
 import { combineReducers } from 'redux';
+import OrgSlice from './store/reducers/OrgSlice';
 import DriveSlice from './store/reducers/DriveSlice';
 import ProfileSlice from './store/reducers/ProfileSlice';
-import CurrentOrgSlice from './store/reducers/CurrentOrgSlice';
+import CreateOrgSlice from './store/reducers/CreateOrgSlice';
 import ModuleFilterSlice from './store/reducers/ModuleFilterSlice';
+import TrendingPostsSlice from './store/reducers/TrendingPostsSlice';
 import ActiveChatTabSlice from './store/reducers/ActiveChatTabSlice';
 import LeftNavigationSlice from './store/reducers/LeftNavigationSlice';
 import SinglePostSlice from './store/reducers/SinglePostSlice';
@@ -26,19 +28,21 @@ import ShowChatHeaderOptionsModalSlice from './store/reducers/ShowChatHeaderOpti
 
 const store = configureStore({
     reducer: combineReducers({
+        org: OrgSlice,
         popup: PopupSlice,
         drive: DriveSlice,
         posts: PostReducer,
         chatId: ChatIdSlice,
         profile: ProfileSlice,
         myProfile: MyProfileSlice,
-        currentOrg: CurrentOrgSlice,
+        createOrg: CreateOrgSlice,
         singlePost: SinglePostSlice,
         recentChats: RecentChatsSlice,
         Navigation: NavigationReducers,
         moduleFilter: ModuleFilterSlice,
         conversation: ConversationSlice,
         activeChatTab: ActiveChatTabSlice,
+        trendingPosts: TrendingPostsSlice,
         currentModule: CurrentModuleSlice,
         supportTickets: SupportTicketsSlice,
         leftNavigation: LeftNavigationSlice,
