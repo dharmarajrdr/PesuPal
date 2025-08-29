@@ -8,6 +8,8 @@ import com.pesupal.server.model.chat.group_message.GroupChatPinned;
 import com.pesupal.server.model.user.OrgMember;
 import lombok.Data;
 
+import java.net.URL;
+
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class PinnedChatDto {
@@ -16,7 +18,7 @@ public class PinnedChatDto {
 
     private String displayName;
 
-    private String displayPicture;
+    private URL displayPicture;
 
     private String status;
 
@@ -30,7 +32,6 @@ public class PinnedChatDto {
 
         PinnedChatDto dto = new PinnedChatDto();
         dto.setDisplayName(pinnedUser.getDisplayName());
-        dto.setDisplayPicture(pinnedUser.getDisplayPicture());
         dto.setStatus(pinnedUser.getStatus());
         dto.setChatId(pinnedChat.getPublicId());
         dto.setId(pinnedDirectMessage.getId());
@@ -42,7 +43,6 @@ public class PinnedChatDto {
         PinnedChatDto dto = new PinnedChatDto();
         Group group = groupChatPinned.getGroup();
         dto.setDisplayName(group.getName());
-        dto.setDisplayPicture(group.getDisplayPicture());
         dto.setChatId(group.getPublicId());
         dto.setId(groupChatPinned.getId());
         return dto;
