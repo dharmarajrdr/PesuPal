@@ -1,6 +1,7 @@
 package com.pesupal.server.service.interfaces.org;
 
 import com.pesupal.server.dto.request.org.AddOrgMemberDto;
+import com.pesupal.server.dto.request.org.CreateOrgDto;
 import com.pesupal.server.dto.response.UserBasicInfoDto;
 import com.pesupal.server.dto.response.UserPreviewDto;
 import com.pesupal.server.dto.response.org.OrgDetailDto;
@@ -18,13 +19,15 @@ public interface OrgMemberService {
 
     OrgMember getOrgMemberByUserIdAndOrgId(Long userId, Long orgId);
 
+    UserBasicInfoDto getUserBasicInfo(OrgMember orgMember);
+
     Boolean existsByUserAndOrg(User user, Org org);
 
     List<UserBasicInfoDto> getAllMembers(Long departmentId, OrgMember orgMember);
 
     Boolean existsByUserIdAndOrgId(Long userId, Long orgId);
 
-    OrgMember joinOrgAsFirstMember(User user, Org org);
+    OrgMember joinOrgAsFirstMember(CreateOrgDto createOrgDto, Org org, User user);
 
     List<OrgDetailDto> listOfOrgUserPartOf(Long userId);
 
@@ -36,9 +39,11 @@ public interface OrgMemberService {
 
     List<UserPreviewDto> getSearchedOrgMembers(OrgMember orgMember, String search, int page, int size);
 
-    String getOrgMemberImageByUserIdAndOrgId(Long userId, Long currentOrgId);
-
     UserPreviewDto getUserPreview(OrgMember orgMember);
 
     String generateTokenWithOrgMemberId(String publicUserId, String publicOrgId);
+
+    void removeAllOrgMembers(Org org);
+
+    void updateOrgMember(String orgMemberPublicId, AddOrgMemberDto addOrgMemberDto, OrgMember currentOrgMember);
 }

@@ -57,4 +57,7 @@ public interface OrgMemberRepository extends JpaRepository<OrgMember, Long> {
             nativeQuery = true)
     Page<OrgMember> fuzzySearchOrgMembers(@Param("orgId") Long orgId, @Param("search") String search, Pageable pageable);
 
+    void deleteAllByOrg(Org org);
+
+    boolean existsByUserNameAndOrg(String userName, Org org);
 }
