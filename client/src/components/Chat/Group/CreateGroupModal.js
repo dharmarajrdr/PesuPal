@@ -75,7 +75,7 @@ const CreateGroupModal = ({ setShowCreateGroupModal }) => {
 
                 <h2>Create Group</h2>
 
-                <div className='FCSS w100'>
+                <div className='FCCC w100'>
                     <ImageUploader onImageSelect={(file) => setFile(file)} style={{ width: '100px', height: '100px', marginBottom: '20px' }} />
                     <input type="text" placeholder="Enter group name" value={groupName} onChange={(e) => setGroupName(e.target.value)} className="group-name-input" />
                     <input type="text" placeholder="Enter group description (optional)" value={groupDescription} onChange={(e) => setGroupDescription(e.target.value)} className="group-description-input" />

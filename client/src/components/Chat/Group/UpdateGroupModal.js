@@ -109,7 +109,7 @@ const UpdateGroupModal = ({ setShowCreateGroupModal, groupData }) => {
 
                 <h2>Group Info</h2>
 
-                <div className='FCSS w100'>
+                <div className='FCCC w100'>
                     <ImageUploader allowEdit={groupProfilePictureEditable} defaultImage={displayPicture} onImageSelect={onImageSelect} style={{ width: '100px', height: '100px', marginBottom: '20px' }} />
                     <input type="text" placeholder="Enter group name" value={groupName} onChange={(e) => groupNameEditable ? setGroupName(e.target.value) : null} className="group-name-input" />
                     <input type="text" placeholder="Enter group description (optional)" value={groupDescription} onChange={(e) => groupDescriptionEditable ? setGroupDescription(e.target.value) : null} className="group-description-input" />
