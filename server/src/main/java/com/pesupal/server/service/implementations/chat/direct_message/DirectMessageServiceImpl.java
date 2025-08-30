@@ -454,6 +454,27 @@ public class DirectMessageServiceImpl extends CurrentValueRetriever implements D
     }
 
     /**
+     * Unschedules all messages in a specific chat.
+     *
+     * @param chatId
+     * @param memo
+     */
+    @Override
+    public void unscheduleAllMessagesInChat(String chatId, Map<Long, UserPreviewDto> memo) {
+
+        DirectMessageChat directMessageChat = directMessageChatService.getDirectMessageByPublicId(chatId);
+        OrgMember orgMember = getCurrentOrgMember();
+        if (!isUserPartOfThisChat(directMessageChat, orgMember.getId())) {
+            throw new PermissionDeniedException("You are not part of this chat.");
+        }
+
+        List<DirectMessage> scheduledMessages = directMessageRepository.findAllBySenderAndDirectMessageChatAndMessageStatus(orgMember, directMessageChat, MessageStatus.SCHEDULED);
+        for (DirectMessage message : scheduledMessages) {
+            unschedule(message.getId(), memo, orgMember);
+        }
+    }
+
+    /**
      * Deletes a scheduled message by its ID.
      *
      * @param messageId
