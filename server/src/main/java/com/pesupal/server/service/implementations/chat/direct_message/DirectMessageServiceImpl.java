@@ -357,7 +357,8 @@ public class DirectMessageServiceImpl extends CurrentValueRetriever implements D
     @Async
     public void broadcastMessage(MessageDto messageDto, SimpMessagingTemplate messagingTemplate) {
 
-        messagingTemplate.convertAndSend("/topic/direct-message." + messageDto.getReceiverId(), messageDto);
+        messagingTemplate.convertAndSend("/topic/direct-message." + messageDto.getReceiver().getId(), messageDto);
+
         messagingTemplate.convertAndSend("/topic/message-delivery." + messageDto.getSender().getId(), messageDto);
     }
 
