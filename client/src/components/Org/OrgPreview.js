@@ -34,16 +34,16 @@ const OrgPreview = ({ org, setCurrentOrg }) => {
                     <b className='org-displayname'>{displayName}</b>
                     <span className={`org-status ${subscriptionStatus.toLowerCase()}`}>
                         {subscriptionStatus}
-                        <i className='fa fa-circle'></i>
+                        <i className='fa fa-circle w15'></i>
                     </span>
                 </div>
                 <div className='FRCB w100'>
                     <span className='org-role'>
-                        <i className={`fa ${isOwner ? 'fa-user-shield' : 'fa-user'}`}></i>
+                        <i className={`fa ${isOwner ? 'fa-user-shield' : 'fa-user'} w15`}></i>
                         {role}
                     </span>
                     <span className='org-members-count'>
-                        <i className="fa-solid fa-users"></i>
+                        <i className="fa-solid fa-users mR5"></i>
                         {members}
                     </span>
 
