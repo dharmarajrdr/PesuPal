@@ -1,9 +1,9 @@
 import './ListOfChats.css'
+import SubTabs from './SubTabs'
+import { useState } from 'react'
 import SearchUsers from './SearchUsers'
 import PinnedUsers from './PinnedUsers'
 import RecentChats from './RecentChats'
-import SubTabs from './SubTabs'
-import { useState } from 'react'
 
 const ListOfChats = () => {
 
