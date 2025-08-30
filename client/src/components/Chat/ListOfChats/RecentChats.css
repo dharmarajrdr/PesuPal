@@ -1,12 +1,22 @@
+#RecentChats {
+  height: calc(100% - 110px);
+  overflow-y: auto;
+}
+
 .RecentChatContainer {
   width: 100%;
   overflow: hidden;
   border-bottom: 1px solid #ddd;
   padding: 10px;
+  height: 70px;
 }
 
-.RecentChatContainer:hover {
-  background-color: #eee;
+.RecentChatContainer.active {
+  background-color: var(--bg-color);
+}
+
+.RecentChatContainer:not(.active):hover {
+  background-color: var(--pure-white-hover);
   transition-duration: 0.25s;
 }
 
@@ -16,14 +26,21 @@
   border-radius: 100%;
   margin-right: 10px;
   margin-left: 5px;
+  object-fit: cover;
+  object-position: center;
+}
+
+.RecentChatContainer .user-avatar-placeholder-first-character {
+  margin: 0px 10px 0px 5px;
 }
 
 .RecentChatContainer .name {
   font-size: 14px;
   line-height: 24px;
   text-wrap: nowrap;
-  max-width: 85%;
+  max-width: 70%;
   overflow: hidden;
+  text-overflow: ellipsis;
   font-weight: 600;
 }
 
@@ -48,7 +65,7 @@
 .number_of_unread_messages {
   font-size: 10px;
   background-color: #999;
-  color: #fff;
+  color: var(--pure-white);
   border-radius: 50px;
   width: 15px;
   height: 15px;

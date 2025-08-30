@@ -1,15 +1,12 @@
-import React from 'react'
 import './FeedsMainPanel.css'
-import PostYourThoughts from './PostYourThoughts'
 import AllPosts from './AllPosts'
 
-const FeedsMainPanel = () => {
-  return (
-    <div id='FeedsMainPanel'>
-        <PostYourThoughts />
-        <AllPosts />
-    </div>
-  )
+const FeedsMainPanel = ({ searchText }) => {
+    return (
+        <div id='FeedsMainPanel'>
+            <AllPosts searchText={searchText} />
+        </div>
+    )
 }
 
 export default FeedsMainPanel

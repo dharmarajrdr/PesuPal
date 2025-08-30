@@ -1,0 +1,11 @@
+.error-message i {
+    margin-right: 5px;
+    color: #d9534f;
+}
+
+.error-message span {
+    color: #d9534f;
+    font-family: 'system-ui', sans-serif;
+    font-size: 0.875rem;
+    font-weight: 500;
+}

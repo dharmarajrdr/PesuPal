@@ -1,0 +1,83 @@
+package com.pesupal.server.service.implementations.drive;
+
+import com.pesupal.server.enums.CRUD;
+import com.pesupal.server.exceptions.PermissionDeniedException;
+import com.pesupal.server.model.user.OrgMember;
+import com.pesupal.server.model.workdrive.Folder;
+import com.pesupal.server.model.workdrive.PublicFolder;
+import com.pesupal.server.model.workdrive.SecuredFolderPermission;
+import com.pesupal.server.repository.drive.SecuredFolderPermissionRepository;
+import com.pesupal.server.service.interfaces.drive.SecuredFolderPermissionService;
+import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.util.Optional;
+
+@Service
+@AllArgsConstructor
+public class SecuredFolderPermissionServiceImpl implements SecuredFolderPermissionService {
+
+    private final SecuredFolderPermissionRepository securedFolderPermissionRepository;
+
+    /**
+     * Retrieves the SecuredFolderPermission for a given folder and user.
+     *
+     * @param folder
+     * @param accessGrantedTo
+     * @return SecuredFolderPermission
+     */
+    @Override
+    public Optional<SecuredFolderPermission> getSecuredFolderPermissionByFolderAndUser(Folder folder, OrgMember accessGrantedTo) {
+
+        return securedFolderPermissionRepository.findByFolderAndAccessGrantedTo(folder, accessGrantedTo);
+    }
+
+    /**
+     * Checks if the user has the necessary permission for a CRUD operation in a secured public folder.
+     *
+     * @param parentPublicFolder
+     * @param accessGrantedTo
+     * @param crud
+     * @return boolean
+     */
+    @Override
+    public boolean hasNecessaryPermission(PublicFolder parentPublicFolder, OrgMember accessGrantedTo, CRUD crud) {
+
+        SecuredFolderPermission securedFolderPermission = getSecuredFolderPermissionByFolderAndUser(parentPublicFolder.getFolder(), accessGrantedTo)
+                .orElseThrow(() -> new PermissionDeniedException("User does not have " + crud.name().toLowerCase() + " access in this folder."));
+        return switch (crud) {
+            case CREATE, UPDATE, DELETE -> securedFolderPermission.isWritable();
+            case READ -> securedFolderPermission.isReadable();
+        };
+    }
+
+    /**
+     * Checks if the user has write permission in a secured public folder.
+     *
+     * @param parentPublicFolder
+     * @param orgMember
+     * @return boolean
+     */
+    @Override
+    public boolean hasWritePermission(PublicFolder parentPublicFolder, OrgMember orgMember) {
+
+        return getSecuredFolderPermissionByFolderAndUser(parentPublicFolder.getFolder(), orgMember)
+                .orElseThrow(() -> new PermissionDeniedException("User does not have write access on this folder."))
+                .isWritable();
+    }
+
+    /**
+     * Checks if the user has read permission in a secured public folder.
+     *
+     * @param parentPublicFolder
+     * @param orgMember
+     * @return boolean
+     */
+    @Override
+    public boolean hasReadPermission(PublicFolder parentPublicFolder, OrgMember orgMember) {
+
+        return getSecuredFolderPermissionByFolderAndUser(parentPublicFolder.getFolder(), orgMember)
+                .orElseThrow(() -> new PermissionDeniedException("User does not have read access in this folder."))
+                .isReadable();
+    }
+}

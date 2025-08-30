@@ -1,53 +1,46 @@
 import './App.css';
-import { useEffect } from 'react';
-import Signup from './components/Auth/Signup';
-import Signin from './components/Auth/Signin';
-import { BrowserRouter, Route, Routes, useNavigate } from 'react-router-dom';
-import { hasCookie } from './components/Auth/utils';
-import LeftNavigation from './components/LeftNavigation/LeftNavigation';
-import FeedsLayout from './components/Feeds/FeedsLayout';
-import ChatLayout from './components/Chat/ChatLayout';
-import { configureStore } from '@reduxjs/toolkit';
-import { combineReducers } from 'redux';
+import store from './store';
 import { Provider } from 'react-redux';
-import { NavigationReducers } from './store/reducers/Navigation';
-import PeopleLayout from './components/People/PeopleLayout';
-import TeamLayout from './components/Team/TeamLayout';
-import TrackerLayout from './components/Tracker/TrackerLayout';
-
-function Navigation() {
-    const navigate = useNavigate();
-
-    useEffect(() => {
-        !hasCookie() && navigate('/signin');
-    }, []);
-
-    return null;
-}
+import { useEffect, useState } from 'react';
+import { hasCookie } from './components/Auth/utils';
+import AuthModal from './components/Auth/AuthModal';
+import AuthenticatedRoutes from './AuthenticatedRoutes';
+import InitialLoadLogoPage from './InitialLoadLogoPage';
+import AuthenticationRoutes from './AuthenticationRoutes';
+import CommonContainer from './components/CommonContainer';
+import { useLocation, useNavigate } from 'react-router-dom';
+import InternalServerError from './components/Auth/InternalServerError';
 
 function App() {
-    const store = configureStore({
-        'reducer': combineReducers({
-            Navigation: NavigationReducers
-        }),
-        'devTools': true
-    });
+
+    const location = useLocation();
+    const navigate = useNavigate();
+
+    const inLobby = ['/', '/org/create'].includes(location.pathname);
+    const isAuthPage = ['/signin', '/signup'].includes(location.pathname);
+
+    useEffect(() => {
+        if (!hasCookie() && !isAuthPage) {
+            navigate('/signin');
+        }
+    }, [location.pathname, navigate]);
+
+    const [serverDown, setServerDown] = useState(false);
+    const [authenticated, setAuthenticated] = useState(false);
+    const [isSubscriptionExpired, setIsSubscriptionExpired] = useState(false);
+
     return (
         <Provider store={store}>
             <div className="App FRCS">
-                <BrowserRouter>
-                    {/* <Navigation /> */}
-                    <LeftNavigation />
-                    <Routes>
-                        <Route path='/feeds' element={<FeedsLayout />} />
-                        <Route path='/chat' element={<ChatLayout />} />
-                        <Route path='/people' element={<PeopleLayout />} />
-                        <Route path='/team/*' element={<TeamLayout />} />
-                        <Route path='/tracker' element={<TrackerLayout />} />
-                        <Route path='/signup' element={<Signup />} />
-                        <Route path='/signin' element={<Signin />} />
-                    </Routes>
-                </BrowserRouter>
+                {isAuthPage ? <AuthenticationRoutes /> : <>
+                    <AuthModal setServerDown={setServerDown} setIsSubscriptionExpired={setIsSubscriptionExpired} setAuthenticated={setAuthenticated} />
+                    {authenticated ?
+                        (serverDown ? <InternalServerError message='Server is down. Come back after having some coffee.' /> :
+                            <AuthenticatedRoutes isSubscriptionExpired={isSubscriptionExpired} inLobby={inLobby} />
+                        ) : <InitialLoadLogoPage />
+                    }
+                </>}
+                <CommonContainer />
             </div>
         </Provider>
     );

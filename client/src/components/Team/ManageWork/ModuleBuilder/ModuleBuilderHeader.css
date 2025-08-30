@@ -1,0 +1,109 @@
+#create-module-header {
+    background-color: var(--pure-white);
+    padding: 10px 20px;
+    box-shadow: 0 2px 4px var(--box-shadow-color);
+}
+
+#create-module-header>i {
+    width: 20px;
+    height: 20px;
+    text-align: center;
+    line-height: 21px;
+    cursor: pointer;
+}
+
+#create-module-header #module-name {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--primary-color);
+    cursor: default;
+}
+
+#publishButton {
+    background-color: var(--primary-color);
+    border: none;
+    color: white;
+    padding: 7px 10px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+#publishButton:hover {
+    background-color: var(--primary-color-active);
+}
+
+#more-options-button {
+    background-color: var(--pure-white-hover);
+    width: 30px;
+    height: 30px;
+    line-height: 28px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 5px;
+    border: 1px solid #fff;
+    box-sizing: border-box;
+}
+
+#more-options-button:hover {
+    border-color: #eee;
+}
+
+.module-members-icon {
+    background-color: #eee;
+    margin-left: 10px;
+    border-radius: 5px;
+    padding: 5px 5px 5px 10px;
+    cursor: pointer;
+    transition-duration: 0.2s;
+}
+
+.module-members-icon i,
+.module-members-icon span {
+    color: var(--primary-color);
+}
+
+.module-members-icon span {
+    font-size: 13px;
+    padding-right: 4px;
+}
+
+.module-members-icon:hover {
+    background-color: #ddd;
+}
+
+#module-visibility-select {
+    padding: 5px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    background-color: var(--pure-white);
+    cursor: pointer;
+    transition-duration: 0.2s;
+}
+
+#module-visibility-select:focus {
+    border-color: var(--primary-color);
+    outline: none;
+}
+
+#user-role-select {
+    padding: 2px 5px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    background-color: var(--pure-white);
+    cursor: pointer;
+    transition-duration: 0.2s;
+    font-size: 12px;
+    color: #555;
+}
+
+#user-role-select:focus {
+    border-color: var(--primary-color);
+    outline: none;
+}

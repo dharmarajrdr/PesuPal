@@ -1,35 +1,8 @@
 .Post {
-  background-color: #fff;
+  background-color: var(--pure-white);
   margin-top: 15px;
   border-radius: 10px;
-  padding: 20px;
-}
-
-.Post .PostHeader {
-  border-bottom: 1px solid #ddd;
-  margin-bottom: 10px;
-  padding-bottom: 10px;
-  position: sticky;
-  top: 0px;
-  background-color: #fff;
-}
-
-.Post .PostHeader .user_name {
-  font-size: 14px;
-  font-weight: 500;
-  margin-bottom: 2px;
-  cursor: pointer;
-}
-
-.Post .PostHeader .user_photo {
-  margin-right: 10px;
-  cursor: pointer;
-}
-
-.Post .PostHeader .created_at {
-  font-size: 12px;
-  color: #999;
-  margin-top: 2px;
+  padding: 10px 20px 20px 20px;
 }
 
 .Post .PostBody .postTitle {
@@ -42,6 +15,7 @@
   font-size: 14px;
   margin-top: 10px;
   color: #333;
+  line-height: 1.5;
 }
 
 .Post .PostFooter {
@@ -52,11 +26,10 @@
 .Post .PostFooter .postActions {
   cursor: pointer;
   font-size: 13px;
-  color: #555;
 }
 
 .Post .PostFooter .postActions i {
-  width: 18px;
+  width: 20px;
   text-align: center;
 }
 
@@ -76,75 +49,40 @@
   padding-left: 10px;
 }
 
-.mediaContainer {
-  margin-top: 15px;
-  max-height: 200px;
-  overflow: hidden;
+.post-liked {
+  color: #d28733;
 }
 
-.media_image {
-  padding-bottom: 25px;
-  max-height: 450px;
-  height: 100%;
-  object-fit: scale-down;
-  object-position: top;
+.post-liked i {
+  font-weight: 600;
+  color: #d28733;
+}
+
+.post-bookmarked i {
+  color: #e1842e;
+}
+
+.tagsContainer {
+  margin-top: 10px;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.tagsContainer .tagNavLink {
+  color: #2e67e1;
+  font-size: 13px;
+  margin-right: 5px;
   cursor: pointer;
+  margin-bottom: 3px;
 }
 
-#view_image_full_screen {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100vh;
-  overflow: hidden;
-  z-index: 5;
-  background-color: rgba(0, 0, 0, 0.2);
-}
-
-#view_image_full_screen img {
-  max-width: 90%;
-  max-height: 90%;
-  box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.1);
-}
-
-#closeFullScreen {
-  position: fixed;
-  top: 50px;
-  right: 50px;
-  font-size: 15px;
-  color: #333;
-  cursor: pointer;
-  background-color: blue;
-  padding: 8px 20px;
-  border-radius: 10px;
-  box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.2);
-}
-
-#closeFullScreen i {
-  width: 20px;
-  height: 20px;
-  line-height: 20px;
-  text-align: center;
-  color: #fff;
-}
-
-#closeFullScreen span {
-  color: #fff;
-  line-height: 20px;
-  padding-right: 5px;
-}
-
-#closeFullScreen:hover {
-  color: #000;
-  transition-duration: 0.25s;
+.tagsContainer .tagNavLink:hover {
+  text-decoration: underline;
+  color: #1a4bb8;
 }
 
 @media screen and (max-width: 768px) {
-  #view_image_full_screen {
-    height: 669px;
-    background-color: rgba(0, 0, 0, 0.75);
-  }
+
   #closeFullScreen {
     top: 20px;
     right: 20px;

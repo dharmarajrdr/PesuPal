@@ -1,0 +1,94 @@
+.general-section {
+    background: white;
+    border-radius: 8px;
+    padding: 25px;
+    box-shadow: 0px 2px 6px var(--box-shadow-color);
+    margin-bottom: 20px;
+}
+
+.section-title-wrapper {
+    padding-bottom: 5px;
+}
+
+.section-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 4px;
+    color: #555;
+}
+
+.section-desc {
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 12px;
+}
+
+.section-warning {
+    background: #fff6e5;
+    color: #9c6a00;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px;
+    border-radius: 4px;
+    margin-bottom: 12px;
+    font-size: 14px;
+}
+
+.account-items {
+    border-top: 1px solid #f0f0f0;
+    padding-top: 5px;
+}
+
+.account-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 0;
+}
+
+.icon-wrapper {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    color: #fff;
+}
+
+.icon-wrapper i {
+    color: #fff;
+}
+
+.item-info {
+    flex: 1;
+}
+
+.item-label {
+    font-size: 15px;
+    font-weight: 400;
+    color: #555;
+    margin-bottom: 3px;
+}
+
+.item-time {
+    font-size: 13px;
+    color: #aaa;
+}
+
+.item-extra {
+    font-size: 14px;
+    color: #28a745;
+}
+
+.add-item-button {
+    display: flex;
+    align-items: center;
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 7px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+}
