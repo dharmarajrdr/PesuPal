@@ -22,8 +22,6 @@ public interface GroupChatMemberRepository extends JpaRepository<GroupChatMember
 
     Optional<GroupChatMember> findByGroup_PublicIdAndParticipantId(String groupId, Long userId);
 
-    List<GroupChatMember> findAllByGroup_PublicId(String groupId);
-
     @Modifying
     @Query("UPDATE GroupChatMember gcm SET gcm.lastReadMessage = NULL WHERE gcm.lastReadMessage = :message")
     void updateLastReadMessageToNull(@Param("message") GroupChatMessage message);
@@ -50,4 +48,6 @@ public interface GroupChatMemberRepository extends JpaRepository<GroupChatMember
                     ORDER BY om.displayName ASC
             """)
     Page<OrgMember> getNonParticipantMembersByGroupId(@Param("groupId") String groupId, @Param("orgId") Long orgId, @Param("search") String search, Pageable pageable);
+
+    List<GroupChatMember> findAllByGroup_PublicIdAndActive(String groupId, boolean active);
 }

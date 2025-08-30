@@ -222,7 +222,7 @@ public class GroupServiceImpl extends CurrentValueRetriever implements GroupServ
             isActiveGroupMember = optionalGroupChatMember.get().isActive();
         }
 
-        if (!group.getVisibility().equals(Visibility.PUBLIC) && !isActiveGroupMember && !group.isInactiveMemberAccessChat()) {
+        if (!group.getVisibility().equals(Visibility.PUBLIC) && !isActiveGroupMember) {
             throw new PermissionDeniedException("You don't have permission to access this chat.");
         }
 

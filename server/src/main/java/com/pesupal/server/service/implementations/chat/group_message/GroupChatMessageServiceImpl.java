@@ -357,7 +357,7 @@ public class GroupChatMessageServiceImpl extends CurrentValueRetriever implement
      */
     protected List<GroupChatMember> getActiveMembersOfGroup(String groupId) {
 
-        return groupChatMemberRepository.findAllByGroup_PublicId(groupId);
+        return groupChatMemberRepository.findAllByGroup_PublicIdAndActive(groupId, true);
     }
 
     /**
@@ -372,7 +372,6 @@ public class GroupChatMessageServiceImpl extends CurrentValueRetriever implement
         List<GroupChatMember> groupChatMembers = getActiveMembersOfGroup(messageDto.getChatId());
         for (GroupChatMember groupChatMember : groupChatMembers) {
             String userId = groupChatMember.getParticipant().getPublicId();
-            System.out.println("Broadcasting group message to user " + userId);
             messagingTemplate.convertAndSend("/topic/group-message." + userId, messageDto);
         }
     }
