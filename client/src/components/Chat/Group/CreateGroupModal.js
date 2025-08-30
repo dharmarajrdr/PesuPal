@@ -1,12 +1,12 @@
-import { useState } from 'react';
 import './CreateGroupModal.css';
-import { apiRequest } from '../../../http_request';
+import { useState } from 'react';
+import Media from '../../../Media';
+import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import GroupVisibility from './GroupVisibility';
 import ImageUploader from '../../ImageUploader';
-import { useDispatch } from 'react-redux';
+import { apiRequest } from '../../../http_request';
 import { showPopup } from '../../../store/reducers/PopupSlice';
-import Media from '../../../Media';
 import { hideLoader, showLoader } from '../../../store/reducers/VerticalLoaderSlice';
 
 const CreateGroupModal = ({ setShowCreateGroupModal }) => {
