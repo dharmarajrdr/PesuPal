@@ -1,15 +1,15 @@
 import './CreateGroupModal.css';
 import { useState } from 'react';
+import Media from '../../../Media';
 import GroupVisibility from './GroupVisibility';
 import ImageUploader from '../../ImageUploader';
 import { apiRequest } from '../../../http_request';
 import { useDispatch, useSelector } from "react-redux";
 import { showPopup } from '../../../store/reducers/PopupSlice';
 import { updateRecentChat } from '../../../store/reducers/RecentChatsSlice';
+import { hideLoader, showLoader } from '../../../store/reducers/VerticalLoaderSlice';
 import { updateCurrentChatPreview } from '../../../store/reducers/CurrentChatPreviewSlice';
 import { updatePinnedDirectMessage } from '../../../store/reducers/PinnedDirectMessageSlice';
-import Media from '../../../Media';
-import { hideLoader, showLoader } from '../../../store/reducers/VerticalLoaderSlice';
 
 const UpdateGroupModal = ({ setShowCreateGroupModal, groupData }) => {
 
@@ -20,6 +20,7 @@ const UpdateGroupModal = ({ setShowCreateGroupModal, groupData }) => {
     const [groupName, setGroupName] = useState(name);
     const [isPublic, setIsPublic] = useState(visibility === 'PUBLIC');
     const [groupDescription, setGroupDescription] = useState(description);
+    const [displayPictureUpdated, setDisplayPictureUpdated] = useState(false);
 
     const currentChatPreview = useSelector(state => state.currentChatPreviewSlice);
     const { groupChatConfiguration } = currentChatPreview || {};
@@ -30,6 +31,11 @@ const UpdateGroupModal = ({ setShowCreateGroupModal, groupData }) => {
         setGroupDescription('');
         setIsPublic(true);
         setShowCreateGroupModal(false);
+    }
+
+    const onImageSelect = (file) => {
+        setFile(file);
+        setDisplayPictureUpdated(true);
     }
 
     const handleSubmit = () => {
@@ -43,7 +49,6 @@ const UpdateGroupModal = ({ setShowCreateGroupModal, groupData }) => {
 
         const groupData = {
             name: groupName.trim(),
-            displayPicture,
             description: groupDescription.trim(),
             visibility: isPublic ? 'PUBLIC' : 'PRIVATE',
         };
@@ -79,13 +84,14 @@ const UpdateGroupModal = ({ setShowCreateGroupModal, groupData }) => {
             });
         }
 
-        if (file == null) {
-            if (displayPicture != null) {
-                Object.assign(groupData, { 'displayPictureRemoved': true });
-            }
+        if (displayPictureUpdated) {
+            Object.assign(groupData, { 'displayPictureRemoved': file == null });
+        }
+
+        if (!displayPictureUpdated || !file) {
             updateGroup(groupData);
         } else {
-            Media.uploadSingleMedia({ file }).then(({ data }) => {
+            Media.uploadSingleMedia({ file }, setFile).then(({ data }) => {
                 const { mediaId } = data || {};
                 Object.assign(groupData, { 'displayPicture': mediaId });
                 updateGroup(groupData);
@@ -104,7 +110,7 @@ const UpdateGroupModal = ({ setShowCreateGroupModal, groupData }) => {
                 <h2>Group Info</h2>
 
                 <div className='FCSS w100'>
-                    <ImageUploader allowEdit={groupProfilePictureEditable} defaultImage={displayPicture} onImageSelect={(file) => setFile(file)} style={{ width: '100px', height: '100px', marginBottom: '20px' }} />
+                    <ImageUploader allowEdit={groupProfilePictureEditable} defaultImage={displayPicture} onImageSelect={onImageSelect} style={{ width: '100px', height: '100px', marginBottom: '20px' }} />
                     <input type="text" placeholder="Enter group name" value={groupName} onChange={(e) => groupNameEditable ? setGroupName(e.target.value) : null} className="group-name-input" />
                     <input type="text" placeholder="Enter group description (optional)" value={groupDescription} onChange={(e) => groupDescriptionEditable ? setGroupDescription(e.target.value) : null} className="group-description-input" />
                     <GroupVisibility isPublic={isPublic} setIsPublic={setIsPublic} groupVisibilityEditable={groupVisibilityEditable} />
