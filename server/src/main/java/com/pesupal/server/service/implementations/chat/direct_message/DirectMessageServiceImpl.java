@@ -196,7 +196,7 @@ public class DirectMessageServiceImpl extends CurrentValueRetriever implements D
             throw new PermissionDeniedException("You do not have permission to delete this message.");
         }
 
-        if (directMessage.getMessageType().equals(MessageStatus.DELETED)) {
+        if (directMessage.getMessageStatus().equals(MessageStatus.DELETED)) {
             throw new ActionProhibitedException("This message has already been deleted.");
         }
 

@@ -76,7 +76,7 @@ public class PostLikeServiceImpl extends CurrentValueRetriever implements PostLi
 
         OrgMember orgMember = getCurrentOrgMember();
         return postLikeRepository.findByPostPublicIdAndPost_OrgId(postId, orgMember.getOrg().getId()).stream().map(postLike -> {
-            OrgMember likerOrgMember = orgMemberService.getOrgMemberByUserIdAndOrgId(postLike.getLiker().getId(), orgMember.getOrg().getId());
+            OrgMember likerOrgMember = postLike.getLiker();
             PostLikesDto postLikesDto = PostLikesDto.fromOrgMember(likerOrgMember);
             postLikesDto.setDisplayPicture(mediaService.generatePresignedUrl(likerOrgMember.getDisplayPicture()));
             postLikesDto.setCreatedAt(postLike.getCreatedAt());

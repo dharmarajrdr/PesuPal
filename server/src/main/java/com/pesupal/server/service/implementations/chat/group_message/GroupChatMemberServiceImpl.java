@@ -280,7 +280,7 @@ public class GroupChatMemberServiceImpl extends CurrentValueRetriever implements
         return group.getMembers().stream().filter(GroupChatMember::isActive).collect(Collectors.groupingBy(
                 GroupChatMember::getRole,
                 Collectors.mapping(
-                        member -> orgMemberService.getUserPreview(orgMemberService.getOrgMemberByUserIdAndOrgId(member.getParticipant().getUser().getId(), orgId)),
+                        member -> orgMemberService.getUserPreview(member.getParticipant()),
                         Collectors.toList()
                 )
         )).entrySet().stream().collect(Collectors.toMap(

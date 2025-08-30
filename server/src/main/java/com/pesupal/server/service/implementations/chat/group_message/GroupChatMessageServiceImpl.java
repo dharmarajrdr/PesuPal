@@ -155,7 +155,7 @@ public class GroupChatMessageServiceImpl extends CurrentValueRetriever implement
             MessageDto messageDto = MessageDto.fromGroupMessage(gm);
             Long senderId = gm.getSender().getId();
             if (!memo.containsKey(senderId)) {
-                memo.put(senderId, orgMemberService.getUserPreview(orgMemberService.getOrgMemberByUserIdAndOrgId(senderId, orgId)));
+                memo.put(senderId, orgMemberService.getUserPreview(gm.getSender()));
             }
             messageDto.setSender(memo.get(senderId));
             if (gm.isContainsMedia()) {
@@ -372,6 +372,7 @@ public class GroupChatMessageServiceImpl extends CurrentValueRetriever implement
         List<GroupChatMember> groupChatMembers = getActiveMembersOfGroup(messageDto.getChatId());
         for (GroupChatMember groupChatMember : groupChatMembers) {
             String userId = groupChatMember.getParticipant().getPublicId();
+            System.out.println("Broadcasting group message to user " + userId);
             messagingTemplate.convertAndSend("/topic/group-message." + userId, messageDto);
         }
     }
