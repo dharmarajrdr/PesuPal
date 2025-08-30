@@ -73,6 +73,13 @@ public class DirectMessageController extends CurrentValueRetriever {
         return ResponseEntity.ok(new ApiResponseDto("Direct message unscheduled successfully"));
     }
 
+    @PatchMapping("/unschedule/all/{chatId}")
+    public ResponseEntity<ApiResponseDto> unscheduleAllDirectMessage(@PathVariable String chatId) {
+
+        directMessageService.unscheduleAllMessagesInChat(chatId, new HashMap<>());
+        return ResponseEntity.ok(new ApiResponseDto("All scheduled direct messages unscheduled successfully"));
+    }
+
     @DeleteMapping("/schedule/{messageId}")
     public ResponseEntity<ApiResponseDto> deleteScheduleDirectMessage(@PathVariable Long messageId) {
 

@@ -196,7 +196,7 @@ public class DirectMessageServiceImpl extends CurrentValueRetriever implements D
             throw new PermissionDeniedException("You do not have permission to delete this message.");
         }
 
-        if (directMessage.getMessageType().equals(MessageStatus.DELETED)) {
+        if (directMessage.getMessageStatus().equals(MessageStatus.DELETED)) {
             throw new ActionProhibitedException("This message has already been deleted.");
         }
 
@@ -357,7 +357,8 @@ public class DirectMessageServiceImpl extends CurrentValueRetriever implements D
     @Async
     public void broadcastMessage(MessageDto messageDto, SimpMessagingTemplate messagingTemplate) {
 
-        messagingTemplate.convertAndSend("/topic/direct-message." + messageDto.getReceiverId(), messageDto);
+        messagingTemplate.convertAndSend("/topic/direct-message." + messageDto.getReceiver().getId(), messageDto);
+
         messagingTemplate.convertAndSend("/topic/message-delivery." + messageDto.getSender().getId(), messageDto);
     }
 
@@ -450,6 +451,27 @@ public class DirectMessageServiceImpl extends CurrentValueRetriever implements D
         directMessageRepository.save(directMessage);
         MessageDto messageDto = toMessageDto(directMessage, directMessage.getOrg().getId(), memo);
         broadcastMessage(messageDto, messagingTemplate);
+    }
+
+    /**
+     * Unschedules all messages in a specific chat.
+     *
+     * @param chatId
+     * @param memo
+     */
+    @Override
+    public void unscheduleAllMessagesInChat(String chatId, Map<Long, UserPreviewDto> memo) {
+
+        DirectMessageChat directMessageChat = directMessageChatService.getDirectMessageByPublicId(chatId);
+        OrgMember orgMember = getCurrentOrgMember();
+        if (!isUserPartOfThisChat(directMessageChat, orgMember.getId())) {
+            throw new PermissionDeniedException("You are not part of this chat.");
+        }
+
+        List<DirectMessage> scheduledMessages = directMessageRepository.findAllBySenderAndDirectMessageChatAndMessageStatus(orgMember, directMessageChat, MessageStatus.SCHEDULED);
+        for (DirectMessage message : scheduledMessages) {
+            unschedule(message.getId(), memo, orgMember);
+        }
     }
 
     /**

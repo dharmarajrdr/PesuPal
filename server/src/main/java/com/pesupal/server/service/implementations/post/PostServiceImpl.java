@@ -300,7 +300,6 @@ public class PostServiceImpl extends CurrentValueRetriever implements PostServic
         OrgMember orgMember = getCurrentOrgMember();
         Long orgId = orgMember.getOrg().getId();
         Post post = getPostByPublicIdAndOrgId(postId, orgId);
-        OrgMember postOwner = orgMemberService.getOrgMemberByUserIdAndOrgId(post.getCreator().getId(), orgId);
         return getPostDtoFromPostAndOrgMember(post, orgMember);
     }
 

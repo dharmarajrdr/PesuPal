@@ -34,8 +34,6 @@ public class Group extends PublicAccessModel {
 
     private boolean showOldMessagesToNewJoiners;
 
-    private boolean inactiveMemberAccessChat;
-
     @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<GroupChatMember> members;
 }

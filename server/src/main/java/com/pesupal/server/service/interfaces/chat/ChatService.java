@@ -24,6 +24,8 @@ public interface ChatService<T> {
 
     void unschedule(Long messageId, Map<Long, UserPreviewDto> memo, OrgMember triggeredBy);
 
+    void unscheduleAllMessagesInChat(String chatId, Map<Long, UserPreviewDto> memo);
+
     void deleteSchedule(Long messageId);
 
     void deleteAllScheduledMessages(String chatId);

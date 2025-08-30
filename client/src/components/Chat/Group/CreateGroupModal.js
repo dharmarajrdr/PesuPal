@@ -1,12 +1,12 @@
-import { useState } from 'react';
 import './CreateGroupModal.css';
-import { apiRequest } from '../../../http_request';
+import { useState } from 'react';
+import Media from '../../../Media';
+import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import GroupVisibility from './GroupVisibility';
 import ImageUploader from '../../ImageUploader';
-import { useDispatch } from 'react-redux';
+import { apiRequest } from '../../../http_request';
 import { showPopup } from '../../../store/reducers/PopupSlice';
-import Media from '../../../Media';
 import { hideLoader, showLoader } from '../../../store/reducers/VerticalLoaderSlice';
 
 const CreateGroupModal = ({ setShowCreateGroupModal }) => {
@@ -75,7 +75,7 @@ const CreateGroupModal = ({ setShowCreateGroupModal }) => {
 
                 <h2>Create Group</h2>
 
-                <div className='FCSS w100'>
+                <div className='FCCC w100'>
                     <ImageUploader onImageSelect={(file) => setFile(file)} style={{ width: '100px', height: '100px', marginBottom: '20px' }} />
                     <input type="text" placeholder="Enter group name" value={groupName} onChange={(e) => setGroupName(e.target.value)} className="group-name-input" />
                     <input type="text" placeholder="Enter group description (optional)" value={groupDescription} onChange={(e) => setGroupDescription(e.target.value)} className="group-description-input" />

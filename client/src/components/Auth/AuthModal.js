@@ -2,10 +2,9 @@ import { useEffect } from 'react'
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { apiRequest } from '../../http_request';
-import { showPopup } from '../../store/reducers/PopupSlice';
 import { setCurrentOrgId } from '../../store/reducers/OrgSlice';
 
-const AuthModal = ({ setIsSubscriptionExpired, setAuthenticated }) => {
+const AuthModal = ({ setIsSubscriptionExpired, setAuthenticated, setServerDown }) => {
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -32,12 +31,16 @@ const AuthModal = ({ setIsSubscriptionExpired, setAuthenticated }) => {
             } else {
                 dispatch(setCurrentOrgId(orgId));
             }
-        }).catch(({ message }) => {
-            sessionStorage.removeItem('token');
-            navigate('/signin');
-            dispatch(showPopup({ message, type: 'error' }));
-        }).finally(() => {
             setAuthenticated(true);
+        }).catch((data) => {
+            setAuthenticated(true);
+            const { statusCode } = data || {};
+            if (!statusCode) {
+                setServerDown(true);
+            } else {
+                sessionStorage.removeItem('token');
+                navigate('/signin');
+            }
         });
     }, []);
 
