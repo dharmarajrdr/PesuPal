@@ -60,34 +60,53 @@ const ConversationScreen = ({ activeTabName }) => {
 		const isGroupChat = chatMode === "GROUP_MESSAGE";
 
 		const isMessageReceived = type === 'message-received';
+		const recentMessage = {};
 
-		const recentMessage = isMessageReceived ? {
-			chatId: msg.chatId,
-			image: isGroupChat ? group.displayPicture : sender.displayPicture,
-			status: sender.status,
-			name: isGroupChat ? group.name : sender.displayName,
-			recentMessage: {
-				sender: sender.displayName,
-				message: message,
-				media: false,
-				createdAt: utils.convertTime(msg.createdAt, 12),
-				messageType
+		if (isMessageReceived) {
+			Object.assign(recentMessage, {
+				chatId: msg.chatId,
+				status: sender.status,
+				name: isGroupChat ? group.name : sender.displayName,
+				recentMessage: {
+					sender: sender.displayName,
+					message: message,
+					media: false,
+					createdAt: utils.convertTime(msg.createdAt, 12),
+					messageType
+				}
+			});
+			if (isGroupChat) {
+				if (group.displayPicture) {
+					Object.assign(recentMessage, {
+						image: group.displayPicture
+					});
+				}
+			} else {
+				if (sender.displayPicture) {
+					Object.assign(recentMessage, {
+						image: sender.displayPicture
+					});
+				}
 			}
-		} : {
-			chatId: msg.chatId,
-			image: receiver.displayPicture,
-			status: receiver.status,
-			name: receiver.displayName,
-			recentMessage: {
-				sender: receiver.displayName,
-				message: message,
-				media: false,
-				createdAt: utils.convertTime(msg.createdAt, 12),
-				messageType
+		} else {
+			Object.assign(recentMessage, {
+				chatId: msg.chatId,
+				status: receiver.status,
+				name: receiver.displayName,
+				recentMessage: {
+					sender: receiver.displayName,
+					message: message,
+					media: false,
+					createdAt: utils.convertTime(msg.createdAt, 12),
+					messageType
+				}
+			});
+			if (receiver.displayPicture) {
+				Object.assign(recentMessage, {
+					image: receiver.displayPicture
+				});
 			}
-		};
-
-		console.log(recentMessage);
+		}
 
 		if (isChatOpen) {	// User is waiting for a response
 
