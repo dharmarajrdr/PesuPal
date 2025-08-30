@@ -21,7 +21,6 @@ import com.pesupal.server.model.chat.group_message.GroupChatMember;
 import com.pesupal.server.model.chat.group_message.GroupChatPinned;
 import com.pesupal.server.model.org.Org;
 import com.pesupal.server.model.user.OrgMember;
-import com.pesupal.server.model.user.User;
 import com.pesupal.server.projections.RecentGroupChatProjection;
 import com.pesupal.server.repository.chat.group_message.GroupChatMemberRepository;
 import com.pesupal.server.repository.chat.group_message.GroupRepository;
@@ -162,13 +161,9 @@ public class GroupServiceImpl extends CurrentValueRetriever implements GroupServ
 
         OrgMember orgMember = getCurrentOrgMember();
         Long orgMemberId = orgMember.getId();
-        Long userId = orgMember.getUser().getId();
 
-        User user = userService.getUserById(userId);
         Org org = orgMember.getOrg();
         Long orgId = org.getId();
-
-        orgMemberService.validateUserIsOrgMember(user, org);
 
         List<RecentGroupChatProjection> rows = groupRepository.findRecentGroupChatsPaged(orgMemberId, orgId, search, size, offset);
 
