@@ -1,6 +1,7 @@
 import { useDispatch } from "react-redux";
 import { apiRequest } from "../http_request";
-import { updateMemberStatus } from "../store/reducers/DepartmentSlice";
+import { updateMemberStatusInDepartment } from "../store/reducers/DepartmentSlice";
+import { updateMemberStatusInPeople } from "../store/reducers/PeopleSlice";
 
 export default function usePresenceService() {
 
@@ -18,7 +19,9 @@ export default function usePresenceService() {
             return () => clearInterval(interval);
         },
         onPresenceUpdate: (message) => {
-            dispatch(updateMemberStatus({ 'userId': message.orgMemberId, 'status': message.memberStatus }));
+            const payload = { 'userId': message.orgMemberId, 'status': message.memberStatus };
+            dispatch(updateMemberStatusInDepartment(payload));
+            dispatch(updateMemberStatusInPeople(payload));
         }
     };
 }

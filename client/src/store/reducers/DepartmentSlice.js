@@ -27,7 +27,7 @@ const DepartmentSlice = createSlice({
         setDepartments: (state, action) => {
             state.departments = action.payload;
         },
-        updateMemberStatus: (state, action) => {
+        updateMemberStatusInDepartment: (state, action) => {
             const { userId, status } = action.payload;
             const memberIndex = state.currentDepartment.members.findIndex(member => member.userId === userId);
             if (memberIndex !== -1) {
@@ -37,5 +37,5 @@ const DepartmentSlice = createSlice({
     }
 });
 
-export const { setCurrentDepartmentId, setCurrentDepartmentName, setCurrentDepartmentHead, setDepartments, setCurrentDepartmentMembers, updateMemberStatus } = DepartmentSlice.actions;
+export const { setCurrentDepartmentId, setCurrentDepartmentName, setCurrentDepartmentHead, setDepartments, setCurrentDepartmentMembers, updateMemberStatusInDepartment } = DepartmentSlice.actions;
 export default DepartmentSlice.reducer;
