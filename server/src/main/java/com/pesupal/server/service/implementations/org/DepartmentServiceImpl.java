@@ -1,11 +1,12 @@
 package com.pesupal.server.service.implementations.org;
 
 import com.pesupal.server.dto.request.org.CreateDepartmentDto;
+import com.pesupal.server.dto.response.UserBasicInfoDto;
 import com.pesupal.server.dto.response.org.DepartmentDto;
 import com.pesupal.server.exceptions.DataNotFoundException;
+import com.pesupal.server.exceptions.PermissionDeniedException;
 import com.pesupal.server.helpers.CurrentValueRetriever;
 import com.pesupal.server.model.department.Department;
-import com.pesupal.server.model.org.Org;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.repository.org.DepartmentRepository;
 import com.pesupal.server.service.interfaces.org.DepartmentService;
@@ -65,14 +66,14 @@ public class DepartmentServiceImpl extends CurrentValueRetriever implements Depa
     }
 
     /**
+     * Retrieves a Department by its public ID.
+     *
      * @param departmentId
-     * @param org
      * @return
      */
-    @Override
-    public Department getDepartmentByIdAndOrg(Long departmentId, Org org) {
+    public Department getDepartmentByPublicId(String departmentId) {
 
-        return departmentRepository.findByIdAndOrg(departmentId, org).orElseThrow(() -> new DataNotFoundException("Department with ID " + departmentId + " not found"));
+        return departmentRepository.findByPublicId(departmentId).orElseThrow(() -> new DataNotFoundException("Department with ID " + departmentId + " not found"));
     }
 
     /**
@@ -82,13 +83,19 @@ public class DepartmentServiceImpl extends CurrentValueRetriever implements Depa
      * @return
      */
     @Override
-    public DepartmentDto getDepartmentByIdAndOrgId(Long departmentId) {
+    public DepartmentDto getDepartmentByIdAndOrgId(String departmentId) {
 
         OrgMember orgMember = getCurrentOrgMember();
-        Department department = getDepartmentByIdAndOrg(departmentId, orgMember.getOrg());
+        Department department = getDepartmentByPublicId(departmentId);
+
+        if (!department.getOrg().getId().equals(orgMember.getOrg().getId())) {
+            throw new PermissionDeniedException("You do not have permission to access this department.");
+        }
 
         DepartmentDto departmentDto = DepartmentDto.fromDepartmentAndOrgMember(department);
-        departmentDto.setHead(orgMemberService.getUserBasicInfo(department.getHead()));
+        if (department.getHead() != null) {
+            departmentDto.setHead(orgMemberService.getUserBasicInfo(department.getHead()));
+        }
         return departmentDto;
     }
 
@@ -105,4 +112,25 @@ public class DepartmentServiceImpl extends CurrentValueRetriever implements Depa
         departmentDto.setHead(orgMemberService.getUserBasicInfo(orgMember));
         return departmentDto;
     }
+
+
+    /**
+     * Retrieves all members of a department.
+     *
+     * @param departmentId
+     * @return List<UserBasicInfoDto>
+     */
+    @Override
+    public List<UserBasicInfoDto> getAllMembers(String departmentId) {
+
+        OrgMember orgMember = getCurrentOrgMember();
+
+        Department department = getDepartmentByPublicId(departmentId);
+        if (!department.getOrg().getId().equals(orgMember.getOrg().getId())) {
+            throw new PermissionDeniedException("You do not have permission to access members of this department.");
+        }
+
+        return department.getMembers().stream().map(orgMemberService::getUserBasicInfo).toList();
+    }
+
 }
