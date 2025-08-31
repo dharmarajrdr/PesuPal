@@ -13,7 +13,7 @@ const UserAvatar = ({ displayPicture, displayName, userId }) => {
 
     return (imageError || !displayPicture) ? (
         displayName ? (
-            <p className="user-avatar-placeholder-first-character img_40_40" style={{ backgroundColor: utils.uniqueColorGenerator(displayName) }} onClick={showUserProfile}>
+            <p className="user-avatar-placeholder-first-character cursP img_40_40" style={{ backgroundColor: utils.uniqueColorGenerator(displayName) }} onClick={showUserProfile}>
                 {displayName.charAt(0).toUpperCase()}
             </p>
         ) : (
