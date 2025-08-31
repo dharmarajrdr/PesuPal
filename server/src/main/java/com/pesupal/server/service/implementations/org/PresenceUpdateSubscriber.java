@@ -19,7 +19,7 @@ public class PresenceUpdateSubscriber {
         System.out.println(message.toString());
         OrgMember orgMember = orgMemberRepository.findByPublicId(message.getOrgMemberId()).orElse(null);
         if (orgMember != null) {
-            messagingTemplate.convertAndSend("/topic/presence/" + message.getOrgId(), message);
+            messagingTemplate.convertAndSend("/topic/presence." + message.getOrgId(), message);
             orgMember.setStatus(message.getMemberStatus());
             orgMemberRepository.save(orgMember);
         }
