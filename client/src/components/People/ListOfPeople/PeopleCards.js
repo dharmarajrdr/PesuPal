@@ -30,7 +30,7 @@ const PeopleCards = () => {
     const firstRender = useRef(true);
 
     const getUsers = () => {
-        apiRequest(`/api/v1/people/search?query=${searchUser.trim()}`, "GET").then(({ data }) => {
+        apiRequest(`/api/v1/people/search?query=${searchUser.trim()}&sortBy=displayName&sortOrder=ASC`, "GET").then(({ data }) => {
             setLoading(false);
             dispatch(setPeople(data));
         }).catch(({ message }) => {
