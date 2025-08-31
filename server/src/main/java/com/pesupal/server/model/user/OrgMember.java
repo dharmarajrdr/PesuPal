@@ -1,6 +1,7 @@
 package com.pesupal.server.model.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.pesupal.server.enums.MemberStatus;
 import com.pesupal.server.enums.Role;
 import com.pesupal.server.model.PublicAccessModel;
 import com.pesupal.server.model.department.Department;
@@ -44,7 +45,8 @@ public class OrgMember extends PublicAccessModel {
     private Designation designation;
 
     @Column(nullable = false)
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private MemberStatus status = MemberStatus.OFFLINE;
 
     private UUID displayPicture;
 

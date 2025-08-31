@@ -222,7 +222,6 @@ public class OrgMemberServiceImpl implements OrgMemberService {
         newOrgMember.setDesignation(designation);
         newOrgMember.setEmployeeId(1);
         newOrgMember.setRole(Role.ADMIN);
-        newOrgMember.setStatus("Away");     // Default status
         return orgMemberRepository.save(newOrgMember);
     }
 
@@ -426,5 +425,16 @@ public class OrgMemberServiceImpl implements OrgMemberService {
 
         addOrgMemberDto.applyToOrgMember(orgMember);
         orgMemberRepository.save(orgMember);
+    }
+
+    /**
+     * Informs presence of an organization member.
+     *
+     * @param orgMember
+     */
+    @Override
+    public void informPresence(OrgMember orgMember) {
+
+
     }
 }

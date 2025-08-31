@@ -9,7 +9,7 @@ const NoMembersAvailable = ({ message }) => {
     return (
         <div className='FCCC w100 h100P' id='no-data-found'>
             <p className='FRCC w100'>
-                <i className='fa fa-users mR5' />
+                <i className='fa fa-users mR5 w20' />
                 {message}
             </p>
         </div>
@@ -35,8 +35,8 @@ const OrgMember = ({ member }) => {
         <div className='org-member w100 FRCB'>
             <div className='FRCS' id='left'>
                 <div className='pR mR10'>
-                    <UserAvatar displayPicture={displayPicture} displayName={displayName} />
-                    <StatusIndicator status={status} style={{ bottom: '0px', right: '-2px', height: 'fit-content', padding: '3px' }} />
+                    <UserAvatar displayPicture={displayPicture} displayName={displayName} userId={userId} />
+                    <StatusIndicator status={status} style={{ bottom: '0px', right: '-2px', height: 'fit-content', padding: '3px', fontSize: '10px' }} />
                 </div>
                 <div className='FCSS org-member-details'>
                     <div className='FRCB w100'>

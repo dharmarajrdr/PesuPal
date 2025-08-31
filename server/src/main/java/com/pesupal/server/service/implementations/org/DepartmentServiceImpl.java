@@ -130,7 +130,7 @@ public class DepartmentServiceImpl extends CurrentValueRetriever implements Depa
             throw new PermissionDeniedException("You do not have permission to access members of this department.");
         }
 
-        return department.getMembers().stream().map(orgMemberService::getUserBasicInfo).toList();
+        return department.getMembers().stream().map(orgMemberService::getUserBasicInfo).sorted((a, b) -> a.getDisplayName().compareToIgnoreCase(b.getDisplayName())).toList();
     }
 
 }
