@@ -1,0 +1,156 @@
+#org-member-list {
+    background-color: #fff;
+    margin-top: 20px;
+    border-radius: 10px;
+    height: calc(100% - 65px);
+    overflow-y: auto;
+}
+
+#org-member-table #no-data-found {
+    height: calc(100vh - 160px);
+}
+
+#org-member-table .row.header {
+    border-bottom: 1px solid #ddd;
+    position: sticky;
+    top: 0;
+    padding: 15px 10px;
+    background-color: #fff;
+    z-index: 1;
+    box-shadow: 0px 1px 2px var(--box-shadow-color);
+}
+
+#org-member-table .header div {
+    font-weight: bold;
+}
+
+#org-member-table .header .column:last-child {
+    text-align: right;
+}
+
+#org-member-table .row {
+    padding: 10px;
+    cursor: pointer;
+    border-bottom: 1px solid #ddd;
+}
+
+#org-member-table .row:not(.header):hover {
+    background-color: #eee;
+}
+
+#org-member-table .row .column {
+    height: 100%;
+    padding: 0px 10px;
+    color: #555;
+    font-weight: 400;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    text-wrap: nowrap;
+}
+
+#org-member-table .row .column:nth-child(1) {
+    width: 10%;
+}
+
+#org-member-table .row .column:nth-child(2) {
+    width: 30%;
+}
+
+#org-member-table .row .column:nth-child(3) {
+    width: 10%;
+}
+
+#org-member-table .row .column:nth-child(4) {
+    width: 40%;
+    text-align: center;
+}
+
+#org-member-table .row .column:nth-child(5) {
+    width: 10%;
+}
+
+#org-member-table .row .member-status span {
+    font-size: 13px;
+}
+
+#org-member-table .row .member-status i {
+    font-size: 12px;
+}
+
+#org-member-table .row .member-status.active span,
+#org-member-table .row .member-status.active i {
+    color: green;
+    font-weight: 600;
+}
+
+#org-member-table .row .member-status.inactive span,
+#org-member-table .row .member-status.inactive i {
+    color: red;
+}
+
+.person-column>p,
+.person-column>img {
+    width: 40px;
+    height: 40px;
+    line-height: 40px;
+    border-radius: 50%;
+    margin-right: 10px;
+    object-fit: cover;
+}
+
+.person-column .name-and-email .person-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+    padding-bottom: 2px;
+}
+
+.person-column .name-and-email .person-email {
+    font-size: 12px;
+    color: #666;
+    padding-top: 2px;
+}
+
+#org-member-table .row .role-column p {
+    height: 18px;
+}
+
+#org-member-table .row .role-column p:first-child {
+    font-size: 13px;
+    color: #333;
+    padding-bottom: 2px;
+}
+
+#org-member-table .row .role-column p:last-child {
+    padding-top: 2px;
+    font-size: 12px;
+    color: #666;
+}
+
+#org-member-table .row .action-btns {
+    display: none;
+}
+
+#org-member-table .row .action-btns .action-btn {
+    color: #999;
+    font-size: 13px;
+    margin-left: 10px;
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+
+#org-member-table .row .action-btns .action-btn i {
+    font-size: 12px;
+    color: #999;
+}
+
+#org-member-table .row .action-btns .action-btn:hover,
+#org-member-table .row .action-btns .action-btn:hover i {
+    background-color: var(--secondary-color);
+    color: #fff;
+}
+
+#org-member-table .row:hover .action-btns {
+    display: flex;
+}

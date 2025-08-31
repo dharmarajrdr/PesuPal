@@ -15,6 +15,9 @@ import com.pesupal.server.security.CustomUserDetails;
 import com.pesupal.server.service.interfaces.org.OrgMemberService;
 import com.pesupal.server.service.interfaces.org.OrgSubscriptionHistoryService;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -62,9 +65,13 @@ public class OrgMemberController extends OrgSubscriptionManager {
     @GetMapping("/search")
     public ResponseEntity<ApiResponseDto> getSearchedOrgMembers(@RequestParam(name = "query", defaultValue = "") String search,
                                                                 @RequestParam(defaultValue = "0") int page,
-                                                                @RequestParam(defaultValue = "10") int size) {
+                                                                @RequestParam(defaultValue = "10") int size,
+                                                                @RequestParam(defaultValue = "displayName") String sortBy,
+                                                                @RequestParam(defaultValue = "ASC") String sortOrder) {
 
-        List<UserPreviewDto> orgMembers = orgMemberService.getSearchedOrgMembers(getCurrentOrgMember(), search, page, size);
+        Sort sort = sortOrder.equalsIgnoreCase("DESC") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+        List<UserBasicInfoDto> orgMembers = orgMemberService.getSearchedOrgMembers(getCurrentOrgMember(), search, pageable);
         return ResponseEntity.ok(new ApiResponseDto("List of organization members retrieved successfully.", orgMembers));
     }
 

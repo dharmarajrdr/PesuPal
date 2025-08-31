@@ -28,7 +28,7 @@ import com.pesupal.server.service.interfaces.UserService;
 import com.pesupal.server.service.interfaces.chat.direct_message.DirectMessageChatService;
 import com.pesupal.server.service.interfaces.org.*;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -333,12 +333,12 @@ public class OrgMemberServiceImpl implements OrgMemberService {
      * @return
      */
     @Override
-    public List<UserPreviewDto> getSearchedOrgMembers(OrgMember orgMember, String search, int page, int size) {
+    public List<UserBasicInfoDto> getSearchedOrgMembers(OrgMember orgMember, String search, Pageable pageable) {
 
         Long orgId = orgMember.getOrg().getId();
-        List<OrgMember> orgMembers = orgMemberRepository.searchOrgMembers(orgId, search, PageRequest.of(page, size)).getContent();
+        List<OrgMember> orgMembers = orgMemberRepository.searchOrgMembers(orgId, search, pageable).getContent();
         return orgMembers.stream().map(om -> {
-            UserPreviewDto userPreviewDto = getUserPreview(om);
+            UserBasicInfoDto userPreviewDto = getUserBasicInfo(om);
             DirectMessageChat directMessageChat = directMessageChatService.getOrCreateDirectMessageChat(orgMember, om);
             if (directMessageChat != null) {
                 userPreviewDto.setChatId(directMessageChat.getPublicId());

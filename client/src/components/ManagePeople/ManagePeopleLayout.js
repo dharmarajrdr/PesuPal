@@ -1,10 +1,10 @@
-import React from 'react'
 import ManagePeople from './ManagePeople'
+import './ManagePeopleLayout.css'
 
 const ManagePeopleLayout = () => {
 
     return (
-        <div>
+        <div id='manage-people-layout' className='FCSS Layout FRSS'>
             <ManagePeople />
         </div>
     )

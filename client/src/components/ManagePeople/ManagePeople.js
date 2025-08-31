@@ -1,39 +1,33 @@
-import { useState } from 'react';
-import AddUserLayout from './AddUserLayout';
 import './ManagePeople.css';
+import { useEffect, useState } from 'react';
+import AddUserLayout from './AddUserLayout';
+import OrgMemberList from './OrgMemberList';
 import ManagePeopleHeader from './ManagePeopleHeader';
-
-const initialPeople = [
-    {
-        userId: "AMwYOJWFAkoQ",
-        displayName: "Dharmaraj R",
-        displayPicture: "https://www.updatenews360.com/english/wp-content/uploads/2022/04/Xefntr7z_400x400.jpg",
-        designation: "CEO",
-        department: "Executive Department",
-        status: "Away",
-        email: "dharmaraj.171215@gmail.com",
-        phone: "1234567890"
-    },
-    {
-        userId: "uexJUG4ral4j",
-        displayName: "Mohankumar R",
-        displayPicture: "https://pbs.twimg.com/media/E03qKiHUYAE9tNW.jpg:large",
-        designation: "CEO",
-        department: "Executive Department",
-        status: "Away",
-        email: "mohan.rmk@gmail.com",
-        phone: "8072113856",
-        chatId: "MHI3f5RkAQg6"
-    }
-];
+import { apiRequest } from '../../http_request';
+import Loader from '../Loader';
 
 const ManagePeople = () => {
 
-    const [showAddUserLayout, setShowAddUserLayout] = useState(true);
+    const [members, setMembers] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [showAddUserLayout, setShowAddUserLayout] = useState(false);
+
+    useEffect(() => {
+        setLoading(true);
+        apiRequest(`/api/v1/people/search?query=${searchQuery}&sortBy=employeeId&sortOrder=ASC`, 'GET').then(({ data }) => {
+            setMembers(data);
+        }).catch(({ message }) => {
+            console.error(message);
+        }).finally(() => {
+            setLoading(false);
+        });
+    }, []);
 
     return (
-        <div className="manage-people-container h100">
-            <ManagePeopleHeader setShowAddUserLayout={setShowAddUserLayout} />
+        <div className="manage-people-container w100 h100">
+            <ManagePeopleHeader setShowAddUserLayout={setShowAddUserLayout} searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+            {loading ? <Loader /> : <OrgMemberList members={members} />}
             {showAddUserLayout && <AddUserLayout setShowAddUserLayout={setShowAddUserLayout} />}
         </div>
     );
