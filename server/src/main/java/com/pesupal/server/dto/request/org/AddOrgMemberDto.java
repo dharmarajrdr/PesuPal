@@ -32,7 +32,6 @@ public class AddOrgMemberDto {
         orgMember.setDisplayName(this.displayName);
         orgMember.setDisplayPicture(this.displayPicture);
         orgMember.setRole(this.role);
-        orgMember.setStatus("Away");    // Default status
         orgMember.setArchived(false);
         return orgMember;
     }
