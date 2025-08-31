@@ -1,28 +1,55 @@
 import './ManagePeople.css';
-import { useEffect, useState } from 'react';
+import Loader from '../Loader';
+import { useDispatch } from "react-redux";
 import AddUserLayout from './AddUserLayout';
 import OrgMemberList from './OrgMemberList';
-import ManagePeopleHeader from './ManagePeopleHeader';
 import { apiRequest } from '../../http_request';
-import Loader from '../Loader';
+import { useEffect, useRef, useState } from 'react';
+import ManagePeopleHeader from './ManagePeopleHeader';
+import { showPopup } from '../../store/reducers/PopupSlice';
+import { hideLoader, showLoader } from '../../store/reducers/VerticalLoaderSlice';
 
 const ManagePeople = () => {
 
+    const sortOrder = 'ASC';
+    const sortBy = 'employeeId';
+    const dispatch = useDispatch();
+    const firstRender = useRef(true);
     const [members, setMembers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
     const [showAddUserLayout, setShowAddUserLayout] = useState(false);
 
-    useEffect(() => {
-        setLoading(true);
-        apiRequest(`/api/v1/people/search?query=${searchQuery}&sortBy=employeeId&sortOrder=ASC`, 'GET').then(({ data }) => {
+    const getUsers = () => {
+        apiRequest(`/api/v1/people/search?query=${searchQuery}&sortBy=${sortBy}&sortOrder=${sortOrder}`, 'GET').then(({ data }) => {
             setMembers(data);
         }).catch(({ message }) => {
-            console.error(message);
+            dispatch(showPopup({ message, type: 'error' }));
         }).finally(() => {
             setLoading(false);
+            dispatch(hideLoader());
         });
+    }
+
+    useEffect(() => {
+        setLoading(true);
+        getUsers();
     }, []);
+
+    useEffect(() => {
+
+        if (firstRender.current) {
+            firstRender.current = false;
+            return;
+        }
+
+        const delayDebounceFn = setTimeout(() => {
+            dispatch(showLoader());
+            getUsers();
+        }, 1000);
+
+        return () => clearTimeout(delayDebounceFn);
+    }, [searchQuery]);
 
     return (
         <div className="manage-people-container w100 h100">

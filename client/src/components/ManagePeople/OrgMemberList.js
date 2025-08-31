@@ -9,7 +9,7 @@ const FirstChar = ({ displayName }) => {
 const Person = ({ person }) => {
 
     const { displayName, email, displayPicture } = person;
-    const [showDisplayPicture, setShowDisplayPicture] = useState(displayPicture != null);
+    const [showDisplayPicture, setShowDisplayPicture] = useState(displayPicture !== null && displayPicture !== undefined);
 
     return <div className='FRCS person-column'>
         {showDisplayPicture ? (
