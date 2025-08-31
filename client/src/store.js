@@ -13,6 +13,7 @@ import OrgSlice from './store/reducers/OrgSlice';
 import DriveSlice from './store/reducers/DriveSlice';
 import ProfileSlice from './store/reducers/ProfileSlice';
 import CreateOrgSlice from './store/reducers/CreateOrgSlice';
+import DepartmentSlice from './store/reducers/DepartmentSlice';
 import ModuleFilterSlice from './store/reducers/ModuleFilterSlice';
 import TrendingPostsSlice from './store/reducers/TrendingPostsSlice';
 import ActiveChatTabSlice from './store/reducers/ActiveChatTabSlice';
@@ -37,6 +38,7 @@ const store = configureStore({
         myProfile: MyProfileSlice,
         createOrg: CreateOrgSlice,
         singlePost: SinglePostSlice,
+        department: DepartmentSlice,
         recentChats: RecentChatsSlice,
         Navigation: NavigationReducers,
         moduleFilter: ModuleFilterSlice,
