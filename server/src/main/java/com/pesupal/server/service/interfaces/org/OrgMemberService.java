@@ -44,6 +44,4 @@ public interface OrgMemberService {
     void removeAllOrgMembers(Org org);
 
     void updateOrgMember(String orgMemberPublicId, AddOrgMemberDto addOrgMemberDto, OrgMember currentOrgMember);
-
-    void informPresence(OrgMember orgMember);
 }
