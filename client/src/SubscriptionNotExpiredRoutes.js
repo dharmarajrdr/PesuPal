@@ -1,8 +1,11 @@
+import { useEffect } from 'react';
 import TeamLayout from './components/Team/TeamLayout';
 import ChatLayout from './components/Chat/ChatLayout';
 import FeedsLayout from './components/Feeds/FeedsLayout';
 import PageNotFound from './components/Auth/PageNotFound';
+import { Navigate, Route, Routes } from 'react-router-dom';
 import PeopleLayout from './components/People/PeopleLayout';
+import usePresenceService from './hooks/usePresenceService';
 import DriveLayout from './components/Team/Drive/DriveLayout';
 import HomePageLayout from './components/Home/HomePageLayout';
 import SettingsLayout from './components/Settings/SettingsLayout';
@@ -11,9 +14,19 @@ import CreateOrgModal from './components/Org/CreateOrg/CreateOrgModal';
 import ManageWorkLayout from './components/Team/ManageWork/ManageWorkLayout';
 import NewModuleLayout from './components/Team/ManageWork/CreateModule/NewModuleLayout';
 import ModuleBuilderLayout from './components/Team/ManageWork/ModuleBuilder/ModuleBuilderLayout';
-import { Navigate, Route, Routes } from 'react-router-dom';
 
 const SubscriptionNotExpiredRoutes = () => {
+
+    const presenceService = usePresenceService();
+
+    useEffect(() => {
+
+        presenceService.setUserOnline();
+
+        const interval = setInterval(presenceService.setUserOnline, 15 * 1000); // 15 seconds
+        return () => clearInterval(interval);
+    }, [presenceService]);
+
     return (
         <Routes>
             <Route path="/" element={<HomePageLayout />} />

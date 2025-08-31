@@ -36,8 +36,8 @@ const DepartmentMain = ({ departmentId, currentDepartment }) => {
         });
     }, [currentDepartment]);
 
-    const availableMembers = orgMembersList.filter(member => member.status === 'available');
-    const unavailableMembers = orgMembersList.filter(member => member.status !== 'available');
+    const availableMembers = orgMembersList.filter(member => member.status === 'AVAILABLE');
+    const unavailableMembers = orgMembersList.filter(member => member.status !== 'AVAILABLE');
 
     return loading ? <Loader /> :
         error ? <ErrorMessage message={error} /> :
