@@ -1,4 +1,6 @@
 import { useEffect } from 'react';
+import useWebSocket from './WebSocket';
+import { useSelector } from 'react-redux';
 import TeamLayout from './components/Team/TeamLayout';
 import ChatLayout from './components/Chat/ChatLayout';
 import FeedsLayout from './components/Feeds/FeedsLayout';
@@ -18,14 +20,13 @@ import ModuleBuilderLayout from './components/Team/ManageWork/ModuleBuilder/Modu
 const SubscriptionNotExpiredRoutes = () => {
 
     const presenceService = usePresenceService();
+    const { currentOrgId } = useSelector(state => state.org);
+
+    useWebSocket({ 'onPresenceUpdate': presenceService.onPresenceUpdate, 'orgId': currentOrgId });
 
     useEffect(() => {
-
-        presenceService.setUserOnline();
-
-        const interval = setInterval(presenceService.setUserOnline, 15 * 1000); // 15 seconds
-        return () => clearInterval(interval);
-    }, [presenceService]);
+        presenceService.informUserOnlineAtInterval(15);
+    }, [currentOrgId]);
 
     return (
         <Routes>
