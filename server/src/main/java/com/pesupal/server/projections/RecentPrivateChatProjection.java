@@ -14,6 +14,8 @@ public interface RecentPrivateChatProjection {
 
     String getUserStatus();
 
+    String getUserId();
+
     String getSenderName();
 
     String getContent();
