@@ -2,6 +2,7 @@ import TeamLayout from './components/Team/TeamLayout';
 import ChatLayout from './components/Chat/ChatLayout';
 import FeedsLayout from './components/Feeds/FeedsLayout';
 import PageNotFound from './components/Auth/PageNotFound';
+import { Navigate, Route, Routes } from 'react-router-dom';
 import PeopleLayout from './components/People/PeopleLayout';
 import DriveLayout from './components/Team/Drive/DriveLayout';
 import HomePageLayout from './components/Home/HomePageLayout';
@@ -11,10 +12,9 @@ import CreateOrgModal from './components/Org/CreateOrg/CreateOrgModal';
 import ManageWorkLayout from './components/Team/ManageWork/ManageWorkLayout';
 import NewModuleLayout from './components/Team/ManageWork/CreateModule/NewModuleLayout';
 import ModuleBuilderLayout from './components/Team/ManageWork/ModuleBuilder/ModuleBuilderLayout';
-import { Navigate, Route, Routes } from 'react-router-dom';
 
 const SubscriptionNotExpiredRoutes = () => {
-    return (
+    return <>
         <Routes>
             <Route path="/" element={<HomePageLayout />} />
             <Route path='/org/create' element={<CreateOrgModal />} />
@@ -31,7 +31,7 @@ const SubscriptionNotExpiredRoutes = () => {
             <Route path='/more/*' element={<MoreFeaturesLayout />} />
             <Route path="*" element={<PageNotFound />} />
         </Routes>
-    )
+    </>
 }
 
 export default SubscriptionNotExpiredRoutes
