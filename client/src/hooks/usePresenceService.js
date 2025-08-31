@@ -2,6 +2,7 @@ import { useDispatch } from "react-redux";
 import { apiRequest } from "../http_request";
 import { updateMemberStatusInPeople } from "../store/reducers/PeopleSlice";
 import { updateMemberStatusInDepartment } from "../store/reducers/DepartmentSlice";
+import { updateMemberStatusInRecentChats } from "../store/reducers/RecentChatsSlice";
 import { updateMemberStatusInPinnedDirectMessages } from "../store/reducers/PinnedDirectMessageSlice";
 
 export default function usePresenceService() {
@@ -24,6 +25,7 @@ export default function usePresenceService() {
             dispatch(updateMemberStatusInDepartment(payload));
             dispatch(updateMemberStatusInPeople(payload));
             dispatch(updateMemberStatusInPinnedDirectMessages(payload));
+            dispatch(updateMemberStatusInRecentChats(payload));
         }
     };
 }

@@ -26,6 +26,7 @@ public interface DirectMessageRepository extends JpaRepository<DirectMessage, Lo
                 om.display_picture AS displayPicture,
                 om.display_name AS displayName,
                 om.status AS userStatus,
+                om.public_id AS userId,
             
                 CASE
                     WHEN dm.sender_id = :userId THEN 'Me'

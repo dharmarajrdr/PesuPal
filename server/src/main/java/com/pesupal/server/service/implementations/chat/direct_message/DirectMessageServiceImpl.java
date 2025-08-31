@@ -242,6 +242,7 @@ public class DirectMessageServiceImpl extends CurrentValueRetriever implements D
 
             RecentChatDto dto = new RecentChatDto();
             dto.setChatId(projection.getChatPublicId());
+            dto.setUserId(projection.getUserId());
             dto.setName(projection.getDisplayName());
             dto.setImage(mediaService.generatePresignedUrl(projection.getDisplayPicture()));
             dto.setStatus(projection.getUserStatus());

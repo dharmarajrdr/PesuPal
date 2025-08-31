@@ -12,6 +12,8 @@ public class RecentChatDto {
 
     private String chatId;
 
+    private String userId;
+
     private String name;
 
     private URL image;
