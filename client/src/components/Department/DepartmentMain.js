@@ -4,6 +4,8 @@ import OrgMembers from './OrgMembers';
 import { apiRequest } from '../../http_request';
 import Loader from '../Loader';
 import ErrorMessage from '../ErrorMessage';
+import { useDispatch, useSelector } from 'react-redux';
+import { setCurrentDepartmentMembers } from '../../store/reducers/DepartmentSlice';
 
 const NoUsersFound = () => {
 
@@ -17,31 +19,37 @@ const NoUsersFound = () => {
     )
 }
 
-const DepartmentMain = ({ departmentId, currentDepartment }) => {
+const DepartmentMain = () => {
 
-    const [orgMembersList, setOrgMembersList] = useState([]);
+    const dispatch = useDispatch();
+    const department = useSelector(state => state.department) || {};
+    const departmentId = useSelector(state => state.department?.currentDepartment?.id);
+    const members = useSelector(state => state.department?.currentDepartment?.members) || [];
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        if (!currentDepartment) {
-            return;
-        }
-        apiRequest(`/api/v1/department/${currentDepartment?.id || departmentId}/members`, "GET").then(({ data }) => {
+
+        if (!departmentId) return;
+
+        setLoading(true);
+        apiRequest(`/api/v1/department/${departmentId}/members`, "GET").then(({ data }) => {
             setLoading(false);
-            setOrgMembersList(data);
+            dispatch(setCurrentDepartmentMembers(data));
         }).catch(({ message }) => {
             setLoading(false);
             setError(message);
         });
-    }, [currentDepartment]);
 
-    const availableMembers = orgMembersList.filter(member => member.status === 'AVAILABLE');
-    const unavailableMembers = orgMembersList.filter(member => member.status !== 'AVAILABLE');
+    }, [departmentId, dispatch]);
+
+
+    const availableMembers = members.filter(member => member.status === 'AVAILABLE');
+    const unavailableMembers = members.filter(member => member.status !== 'AVAILABLE');
 
     return loading ? <Loader /> :
         error ? <ErrorMessage message={error} /> :
-            orgMembersList.length ? (
+            members.length ? (
                 <div id="department-main" className='w100 h100 FRSB'>
                     <OrgMembers title="Available Members" orgMembersList={availableMembers} noMembersAvailableMessage="Currently, all of them are offline." />
                     <OrgMembers title="Offline Members" orgMembersList={unavailableMembers} noMembersAvailableMessage="Currently, all of them are online." />
