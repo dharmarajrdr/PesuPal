@@ -1,7 +1,6 @@
 package com.pesupal.server.service.implementations.org;
 
 import com.pesupal.server.dto.request.org.AddOrgMemberDto;
-import com.pesupal.server.dto.request.org.CreateDesignationDto;
 import com.pesupal.server.dto.request.org.CreateOrgDto;
 import com.pesupal.server.dto.response.UserBasicInfoDto;
 import com.pesupal.server.dto.response.UserPreviewDto;
@@ -49,7 +48,7 @@ public class OrgMemberServiceImpl implements OrgMemberService {
     private final DirectMessageChatService directMessageChatService;
     private final OrgSubscriptionHistoryService orgSubscriptionHistoryService;
 
-    public OrgMemberServiceImpl(OrgService orgService, UserService userService, AuthService authService, @Lazy DepartmentService departmentService, DesignationService designationService, OrgMemberRepository orgMemberRepository, OrgConfigurationService orgConfigurationService, OrgSubscriptionHistoryService orgSubscriptionHistoryService, DirectMessageChatService directMessageChatService, DepartmentRepository departmentRepository, MediaService mediaService) {
+    public OrgMemberServiceImpl(OrgService orgService, UserService userService, AuthService authService, @Lazy DepartmentService departmentService, @Lazy DesignationService designationService, OrgMemberRepository orgMemberRepository, OrgConfigurationService orgConfigurationService, OrgSubscriptionHistoryService orgSubscriptionHistoryService, DirectMessageChatService directMessageChatService, DepartmentRepository departmentRepository, MediaService mediaService) {
         this.orgService = orgService;
         this.userService = userService;
         this.authService = authService;
@@ -183,11 +182,11 @@ public class OrgMemberServiceImpl implements OrgMemberService {
 
     private Designation createDummyDesignationForNewOrg(Org org, String designationName) {
 
-        CreateDesignationDto createDesignationDto = new CreateDesignationDto();
-        createDesignationDto.setName(designationName);
-        createDesignationDto.setSeniorityLevel(10L);
-        createDesignationDto.setOrgId(org.getId());
-        return designationService.createDesignation(createDesignationDto);
+        Designation designation = new Designation();
+        designation.setOrg(org);
+        designation.setName(designationName);
+        designation.setSeniorityLevel(10L);
+        return designationService.save(designation);
     }
 
     private Department createDummyDepartmentForNewOrg(String departmentName) {
