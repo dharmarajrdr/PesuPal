@@ -17,6 +17,8 @@ public class PinnedChatDto {
 
     private Long id;
 
+    private String userId;
+
     private String displayName;
 
     private URL displayPicture;
@@ -34,6 +36,7 @@ public class PinnedChatDto {
         PinnedChatDto dto = new PinnedChatDto();
         dto.setDisplayName(pinnedUser.getDisplayName());
         dto.setStatus(pinnedUser.getStatus());
+        dto.setUserId(pinnedUser.getPublicId());
         dto.setChatId(pinnedChat.getPublicId());
         dto.setId(pinnedDirectMessage.getId());
         return dto;
