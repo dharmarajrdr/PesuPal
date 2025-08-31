@@ -41,6 +41,7 @@ public class UserBasicInfoDto {
         userBasicInfoDto.setStatus(orgMember.getStatus());
         userBasicInfoDto.setEmail(orgMember.getUser().getEmail());
         userBasicInfoDto.setPhone(orgMember.getUser().getPhone());
+        userBasicInfoDto.setEmployeeId(orgMember.getEmployeeId());
         if (orgMember.getOrg().isShowEmployeeId()) {
             userBasicInfoDto.setEmployeeId(orgMember.getEmployeeId());
         }
