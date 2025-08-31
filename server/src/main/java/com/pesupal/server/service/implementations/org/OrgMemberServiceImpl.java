@@ -427,14 +427,4 @@ public class OrgMemberServiceImpl implements OrgMemberService {
         orgMemberRepository.save(orgMember);
     }
 
-    /**
-     * Informs presence of an organization member.
-     *
-     * @param orgMember
-     */
-    @Override
-    public void informPresence(OrgMember orgMember) {
-
-
-    }
 }

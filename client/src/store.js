@@ -11,8 +11,10 @@ import { configureStore } from '@reduxjs/toolkit';
 import { combineReducers } from 'redux';
 import OrgSlice from './store/reducers/OrgSlice';
 import DriveSlice from './store/reducers/DriveSlice';
+import PeopleSlice from './store/reducers/PeopleSlice';
 import ProfileSlice from './store/reducers/ProfileSlice';
 import CreateOrgSlice from './store/reducers/CreateOrgSlice';
+import DepartmentSlice from './store/reducers/DepartmentSlice';
 import ModuleFilterSlice from './store/reducers/ModuleFilterSlice';
 import TrendingPostsSlice from './store/reducers/TrendingPostsSlice';
 import ActiveChatTabSlice from './store/reducers/ActiveChatTabSlice';
@@ -32,11 +34,13 @@ const store = configureStore({
         popup: PopupSlice,
         drive: DriveSlice,
         posts: PostReducer,
+        people: PeopleSlice,
         chatId: ChatIdSlice,
         profile: ProfileSlice,
         myProfile: MyProfileSlice,
         createOrg: CreateOrgSlice,
         singlePost: SinglePostSlice,
+        department: DepartmentSlice,
         recentChats: RecentChatsSlice,
         Navigation: NavigationReducers,
         moduleFilter: ModuleFilterSlice,
