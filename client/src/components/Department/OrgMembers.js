@@ -35,8 +35,8 @@ const OrgMember = ({ member }) => {
         <div className='org-member w100 FRCB'>
             <div className='FRCS' id='left'>
                 <div className='pR mR10'>
-                    <UserAvatar displayPicture={displayPicture} />
-                    <StatusIndicator status={status} style={{ bottom: '-2px', right: '-5px', height: 'fit-content' }} />
+                    <UserAvatar displayPicture={displayPicture} displayName={displayName} />
+                    <StatusIndicator status={status} style={{ bottom: '0px', right: '-2px', height: 'fit-content', padding: '3px' }} />
                 </div>
                 <div className='FCSS org-member-details'>
                     <div className='FRCB w100'>
