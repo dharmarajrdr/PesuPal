@@ -27,6 +27,7 @@
 
 #OrgMembers .status-title i {
     font-size: 10px;
+    width: 12px;
 }
 
 #OrgMembers .status-title.available_members .status-span {
@@ -41,11 +42,11 @@
     color: #4caf50;
 }
 
-#OrgMembers .status-title.unavailable_members .status-span {
+#OrgMembers .status-title.offline_members .status-span {
     color: #ff9800;
 }
 
-#OrgMembers .status-title.unavailable_members i {
+#OrgMembers .status-title.offline_members i {
     color: #ff9800;
 }
 
