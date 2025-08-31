@@ -35,7 +35,7 @@ const PeopleCard = ({ person }) => {
             <div className='FCCC mB5 img_name_dept'>
                 <div className='FRCC profile_picture_container mB10'>
                     {showDisplayPicture ? <img src={displayPicture} className='img_75_75' onError={() => setShowDisplayPicture(false)} /> : <FirstChar name={displayName} />}
-                    <StatusIndicator status={status} />
+                    <StatusIndicator status={status} style={{ padding: '3px', bottom: '3px', right: '3px' }} />
                 </div>
                 <b className='mx5 user_name'>{displayName}</b>
                 <span className='color777 fs10 mB5'>{designation}</span>
