@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react';
 import { apiRequest } from '../../http_request';
 import Loader from '../Loader';
 import ErrorMessage from '../ErrorMessage';
+import { useDispatch, useSelector } from 'react-redux';
+import { hideProfile } from '../../store/reducers/ProfileSlice';
 
 const ContactInfo = ({ phone, email, Social }) => {
     return <div id='contact_info'>
@@ -35,51 +37,55 @@ const ContactInfo = ({ phone, email, Social }) => {
     </div>
 }
 
-const NavigationLink = ({ to, icon, label, count, setShowProfile }) => {
+const NavigationLink = ({ to, icon, label, count }) => {
 
-    return <Link to={to} className='FRCC p10 navlink' onClick={() => setShowProfile(false)}>
+    return <Link to={to} className='FRCC p10 navlink' >
         <i className={`fa ${icon} mR5`} />
         <h5>{label}</h5>
         {count !== undefined && <span className='fs12'>({count})</span>}
     </Link>
 }
 
-const Profile = ({ userId, setShowProfile }) => {
+const Profile = () => {
 
+    const dispatch = useDispatch();
+    const [error, setError] = useState(null);
     const [profile, setProfile] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+    const userId = useSelector(state => state.profile);
+
+    const { displayName, designation, department, displayPicture, Social, phone, email, employeeId } = profile || {};
+    const [displayPictureUrl, setShowDisplayPictureUrl] = useState('/images/anonymous.jpg');
 
     useEffect(() => {
         if (userId == null) {
-            setLoading(false);
-            setError("No user ID provided");
             return;
         }
+        setProfile(null);
+        setLoading(true);
         apiRequest("/api/v1/profile/" + userId, "GET").then(({ data }) => {
             setLoading(false);
             setProfile(data);
+            if (data.displayPicture) {
+                setShowDisplayPictureUrl(data.displayPicture);
+            }
         }).catch(({ message }) => {
             setLoading(false);
             setError(message);
         });
-    }, []);
+    }, [userId]);
 
-    const { displayName, designation, department, displayPicture, Social, phone, email, employeeId } = profile || {};
-
-    const closeProfileOverlay = (e) => {
-        if (e.target.id === 'ProfileOverlay') {
-            setShowProfile(false);
-        }
+    const closeProfileOverlay = () => {
+        dispatch(hideProfile());
     }
 
-    return (
+    return userId ? (
         <div id='ProfileOverlay' className='FRCE' onClick={closeProfileOverlay}>
             <div id='ProfileCard' className='noScrollbar'>
                 {loading ? <Loader /> :
                     error ? <ErrorMessage message={error} /> : <>
                         <div id='user_image_basic_info' className='FCCC'>
-                            <img src={displayPicture} id='user_photo' className='objectFitCover' />
+                            <img src={displayPictureUrl} id='user_photo' className='objectFitCover' onError={() => setShowDisplayPictureUrl('/images/anonymous.jpg')} />
                             <div id='user_basic_info' className='FCCC'>
                                 <div className='row'>
                                     <h4 id='profile_name'>{displayName}</h4>
@@ -103,14 +109,14 @@ const Profile = ({ userId, setShowProfile }) => {
                         <ContactInfo phone={phone} email={email} Social={Social} />
 
                         <div className='FRSS w100 navlinks'>
-                            <NavigationLink to={`/people/${userId}/posts`} icon='fa-newspaper' label='Posts' count={45} setShowProfile={setShowProfile} />
-                            <NavigationLink to={`/people/${userId}/file`} icon='fa-file' label='Files' count={12} setShowProfile={setShowProfile} />
+                            <NavigationLink to={`/people/${userId}/posts`} icon='fa-newspaper' label='Posts' count={45} />
+                            <NavigationLink to={`/people/${userId}/file`} icon='fa-file' label='Files' count={12} />
                         </div>
                     </>
                 }
             </div>
         </div>
-    );
+    ) : null;
 }
 
 export default Profile

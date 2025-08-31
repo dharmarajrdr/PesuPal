@@ -34,7 +34,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getUserById(Long ownerId) {
 
-        return userRepository.findById(ownerId).orElseThrow(() -> new DataNotFoundException("User with id " + ownerId + " not found"));
+        return userRepository.findById(ownerId).orElseThrow(() -> new DataNotFoundException("User not found"));
     }
 
     /**
@@ -76,7 +76,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getUserByPublicId(String userPublicId) {
 
-        return userRepository.findByPublicId(userPublicId).orElseThrow(() -> new DataNotFoundException("User with ID '" + userPublicId + "' not found"));
+        return userRepository.findByPublicId(userPublicId).orElseThrow(() -> new DataNotFoundException("User not found"));
     }
 
 }

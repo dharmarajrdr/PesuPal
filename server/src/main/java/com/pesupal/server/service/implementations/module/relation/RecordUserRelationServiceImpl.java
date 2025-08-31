@@ -73,7 +73,7 @@ public class RecordUserRelationServiceImpl extends RecordRelationServiceImpl imp
 
         RecordUserRelation recordUserRelation = getRecordSelectRelation(moduleRecord, moduleField);
         if (recordUserRelation != null) {
-            moduleFieldDto.setData(UserPreviewDto.fromOrgMember(recordUserRelation.getUser()));
+            moduleFieldDto.setData(orgMemberService.getUserPreview(recordUserRelation.getUser()));
         }
         return moduleFieldDto;
     }

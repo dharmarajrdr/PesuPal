@@ -10,6 +10,8 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.ManyToOne;
 import lombok.Data;
 
+import java.util.UUID;
+
 @Data
 @Entity
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -25,7 +27,7 @@ public class Org extends PublicAccessModel {
     @JsonIgnore
     private User owner;
 
-    private String displayPicture;
+    private UUID displayPicture;
 
     private boolean active;
 

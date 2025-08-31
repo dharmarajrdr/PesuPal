@@ -44,7 +44,9 @@ public class JobOpeningServiceImpl extends CurrentValueRetriever implements JobO
         jobOpening.setHiringManager(hiringManager);
         jobOpening.setOrg(hiringManager.getOrg());
         jobOpening.setStatus(JobOpeningStatus.OPEN);
-        return JobOpeningDto.fromJobOpening(jobOpeningRepository.save(jobOpening));
+        JobOpeningDto jobOpeningDto = JobOpeningDto.fromJobOpening(jobOpeningRepository.save(jobOpening));
+        jobOpeningDto.setCreatedBy(orgMemberService.getUserBasicInfo(jobOpening.getHiringManager()));
+        return jobOpeningDto;
     }
 
     /**
@@ -67,7 +69,10 @@ public class JobOpeningServiceImpl extends CurrentValueRetriever implements JobO
     @Override
     public JobOpeningDto getJobOpeningDtoById(Long jobOpeningId) {
 
-        return JobOpeningDto.fromJobOpening(getJobOpeningById(jobOpeningId));
+        JobOpening jobOpening = getJobOpeningById(jobOpeningId);
+        JobOpeningDto jobOpeningDto = JobOpeningDto.fromJobOpening(jobOpening);
+        jobOpeningDto.setCreatedBy(orgMemberService.getUserBasicInfo(jobOpening.getHiringManager()));
+        return jobOpeningDto;
     }
 
     /**
@@ -84,6 +89,10 @@ public class JobOpeningServiceImpl extends CurrentValueRetriever implements JobO
         if (!StaticConfig.HUMAN_RESOURCE_ROLES.contains(orgMember.getRole().name())) {
             throw new PermissionDeniedException("You do not have permission to view job openings.");
         }
-        return jobOpeningRepository.findAllByOrgIdAndStatusOrderByCreatedAtDesc(orgId, status).stream().map(jobOpening -> JobOpeningDto.fromJobOpening(jobOpening)).toList();
+        return jobOpeningRepository.findAllByOrgIdAndStatusOrderByCreatedAtDesc(orgId, status).stream().map(jobOpening -> {
+            JobOpeningDto jobOpeningDto = JobOpeningDto.fromJobOpening(jobOpening);
+            jobOpeningDto.setCreatedBy(orgMemberService.getUserBasicInfo(jobOpening.getHiringManager()));
+            return jobOpeningDto;
+        }).toList();
     }
 }

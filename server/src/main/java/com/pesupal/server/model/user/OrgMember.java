@@ -6,18 +6,25 @@ import com.pesupal.server.model.PublicAccessModel;
 import com.pesupal.server.model.department.Department;
 import com.pesupal.server.model.org.Org;
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
-@Data
+@Getter
+@Setter
 @Entity
+@EqualsAndHashCode(callSuper = false)
 public class OrgMember extends PublicAccessModel {
 
     @ManyToOne
+    @JsonIgnore
     private Org org;
 
     @ManyToOne
+    @JsonIgnore
     private User user;
 
     @Column(nullable = false)
@@ -39,8 +46,7 @@ public class OrgMember extends PublicAccessModel {
     @Column(nullable = false)
     private String status;
 
-    @Column(nullable = false)
-    private String displayPicture;
+    private UUID displayPicture;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore

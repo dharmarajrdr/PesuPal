@@ -8,9 +8,9 @@ import com.pesupal.server.model.recruit.Candidate;
 import com.pesupal.server.model.recruit.CandidateTimeline;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.repository.recruit.CandidateTimelineRepository;
+import com.pesupal.server.service.interfaces.org.OrgMemberService;
 import com.pesupal.server.service.interfaces.recruit.CandidateService;
 import com.pesupal.server.service.interfaces.recruit.CandidateTimelineService;
-import com.pesupal.server.service.interfaces.org.OrgMemberService;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
@@ -67,7 +67,9 @@ public class CandidateTimelineServiceImpl implements CandidateTimelineService {
                 .stream()
                 .map(candidateTimeline -> {
                     OrgMember createdByOrgMember = memo.computeIfAbsent(candidateTimeline.getCreatedBy().getId(), id -> orgMemberService.getOrgMemberByUserIdAndOrgId(id, orgId));
-                    return CandidateTimelineDto.fromCandidateTimelineAndOrgMember(candidateTimeline, createdByOrgMember);
+                    CandidateTimelineDto candidateTimelineDto = CandidateTimelineDto.fromCandidateTimeline(candidateTimeline);
+                    candidateTimelineDto.setCreatedBy(orgMemberService.getUserBasicInfo(orgMember));
+                    return candidateTimelineDto;
                 })
                 .toList();
     }

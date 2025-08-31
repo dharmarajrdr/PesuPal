@@ -8,7 +8,7 @@ import ListView from './Views/ListView';
 import KanbanView from './Views/KanbanView';
 import { useSearchParams } from 'react-router-dom';
 import { apiRequest } from '../../../http_request';
-import { setCurrentModuleId, setCurrentModuleView } from '../../../store/reducers/CurrentModuleSlice';
+import { setCurrentModuleId, setCurrentModuleView, setModuleRecords } from '../../../store/reducers/CurrentModuleSlice';
 import { showPopup } from '../../../store/reducers/PopupSlice';
 import PermissionDenied from '../../Auth/PermissionDenied';
 import PageNotFound from '../../Auth/PageNotFound';
@@ -20,7 +20,7 @@ const NoRecordsAvailable = () => {
     return (
         <div className='FCCC w100' id='no-data-found'>
             <p className='FRCC w100'>
-                <i className='fa fa-exclamation-triangle mR5'></i>
+                <i className='fa fa-exclamation-triangle mR5 w15'></i>
                 No records found
             </p>
         </div>
@@ -71,11 +71,15 @@ const ManageWorkBody = () => {
         setModuleNotFound(false);
         setPermissionDenied(false);
         setInfo({});
+
+        // Fetch records based on the current view
         apiRequest(API[view], 'GET').then(({ data, info }) => {
             setLoader(false);
             setInfo(info);
             setRecords(data);
+            dispatch(setModuleRecords(data));
         }).catch(({ message, statusCode }) => {
+            dispatch(setModuleRecords([]));
             setLoader(false);
             if (statusCode == 404) {
                 setModuleNotFound(true);

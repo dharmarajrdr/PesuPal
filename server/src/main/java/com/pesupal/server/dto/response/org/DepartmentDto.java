@@ -3,7 +3,6 @@ package com.pesupal.server.dto.response.org;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.pesupal.server.dto.response.UserBasicInfoDto;
 import com.pesupal.server.model.department.Department;
-import com.pesupal.server.model.user.OrgMember;
 import lombok.Data;
 
 @Data
@@ -18,15 +17,12 @@ public class DepartmentDto {
 
     private UserBasicInfoDto head;
 
-    public static DepartmentDto fromDepartmentAndOrgMember(Department department, OrgMember head) {
+    public static DepartmentDto fromDepartmentAndOrgMember(Department department) {
 
         DepartmentDto dto = new DepartmentDto();
         dto.setId(department.getId());
         dto.setName(department.getName());
         dto.setDescription(department.getDescription());
-        if (head != null) {
-            dto.setHead(UserBasicInfoDto.fromOrgMember(head));
-        }
         return dto;
     }
 }

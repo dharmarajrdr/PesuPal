@@ -1,5 +1,13 @@
+#AllPosts {
+  width: 100%;
+}
+
+#AllPosts #postsList {
+  width: 100%;
+}
+
 @media screen and (max-width: 768px) {
-  .AllPosts {
+  #AllPosts {
     padding: 5px;
   }
 }

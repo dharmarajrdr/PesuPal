@@ -1,10 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import PeopleCard from './PeopleCard';
 import './PeopleCards.css';
 import { apiRequest } from '../../../http_request';
 import Loader from '../../Loader';
 import ErrorMessage from '../../ErrorMessage';
-import Profile from '../../OthersProfile/Profile';
 
 const NoPeopleFound = () => {
 
@@ -19,22 +18,39 @@ const NoPeopleFound = () => {
     )
 }
 
-const PeopleCards = () => {
+const PeopleCards = ({ searchUser, people, setPeople }) => {
 
-    const [people, setPeople] = useState([]);
-    const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [selectedPerson, setSelectedPerson] = useState(null);
+    const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        apiRequest("/api/v1/people", "GET").then(({ data }) => {
+    const firstRender = useRef(true);
+
+    const getUsers = () => {
+        apiRequest(`/api/v1/people/search?query=${searchUser.trim()}`, "GET").then(({ data }) => {
             setLoading(false);
             setPeople(data);
         }).catch(({ message }) => {
             setLoading(false);
             setError(message);
         });
-    }, []);
+    }
+
+    useEffect(getUsers, []);
+
+    useEffect(() => {
+
+        if (firstRender.current) {
+            firstRender.current = false;
+            return;
+        }
+
+        const timer = setTimeout(() => {
+            getUsers();
+        }, 500);
+        return () => clearTimeout(timer);
+
+    }, [searchUser]);
+
 
     return (
         <div className='FCSS custom-scrollbar' id='PeopleCards'>
@@ -42,12 +58,9 @@ const PeopleCards = () => {
                 {loading ? <Loader /> :
                     error ? <ErrorMessage message={error} /> :
                         people.length ? people.map((person, index) =>
-                            <PeopleCard key={index} person={person} setShowProfile={() => setSelectedPerson(person)} />
+                            <PeopleCard key={index} person={person} />
                         ) : <NoPeopleFound />
                 }
-                {selectedPerson && (
-                    <Profile userId={selectedPerson.userId} setShowProfile={() => setSelectedPerson(null)} />
-                )}
             </div>
 
         </div>

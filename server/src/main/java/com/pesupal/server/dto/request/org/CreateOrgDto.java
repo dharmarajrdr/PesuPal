@@ -1,23 +1,11 @@
 package com.pesupal.server.dto.request.org;
 
-import com.pesupal.server.model.org.Org;
 import lombok.Data;
 
 @Data
 public class CreateOrgDto {
 
-    private String displayName;
+    private OrgDetailsDto org;
 
-    private String uniqueName;
-
-    private String displayPicture;
-
-    public Org toOrg() {
-
-        Org org = new Org();
-        org.setDisplayName(this.displayName);
-        org.setUniqueName(this.uniqueName);
-        org.setDisplayPicture(this.displayPicture);
-        return org;
-    }
+    private UserDetailsDto user;
 }

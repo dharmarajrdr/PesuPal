@@ -1,19 +1,22 @@
 import './ListOfChats.css'
+import SubTabs from './SubTabs'
+import { useState } from 'react'
 import SearchUsers from './SearchUsers'
 import PinnedUsers from './PinnedUsers'
 import RecentChats from './RecentChats'
-import SubTabs from './SubTabs'
 
 const ListOfChats = () => {
+
+    const [searchChat, setSearchChat] = useState('');
 
     return (
         <div id='ListOfChats' className='custom-scrollbar'>
             <div id='searchPinnedFixedContainer'>
-                <SearchUsers />
+                <SearchUsers searchChat={searchChat} setSearchChat={setSearchChat} />
                 <SubTabs />
                 <PinnedUsers />
             </div>
-            <RecentChats />
+            <RecentChats searchChat={searchChat} />
         </div>
     )
 }

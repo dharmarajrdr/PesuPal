@@ -5,6 +5,8 @@ import com.pesupal.server.enums.Role;
 import com.pesupal.server.model.org.Org;
 import lombok.Data;
 
+import java.net.URL;
+
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class OrgDetailDto {
@@ -15,7 +17,7 @@ public class OrgDetailDto {
 
     private String uniqueName;
 
-    private String displayPicture;
+    private URL displayPicture;
 
     private Role role;
 
@@ -29,7 +31,6 @@ public class OrgDetailDto {
         dto.setPublicId(org.getPublicId());
         dto.setDisplayName(org.getDisplayName());
         dto.setUniqueName(org.getUniqueName());
-        dto.setDisplayPicture(org.getDisplayPicture());
         return dto;
     }
 

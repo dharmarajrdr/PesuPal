@@ -1,20 +1,42 @@
-import React from 'react'
 import './TrendingTags.css'
-import { Link } from 'react-router-dom'
-import TrendingTagsList from './TrendingTagsList'
+import Loader from '../../Loader';
+import { Link } from 'react-router-dom';
+import { useDispatch } from "react-redux";
+import { useEffect, useState } from 'react';
+import { apiRequest } from '../../../http_request';
+import { showPopup } from '../../../store/reducers/PopupSlice';
 
 const TrendingTags = () => {
+
+    const dispatch = useDispatch();
+    const [tags, setTags] = useState([]);
+    const [loader, setLoader] = useState(true);
+
+    useEffect(() => {
+        setLoader(true);
+        apiRequest(`/api/v1/tags/trending?limit=10`, 'GET').then(({ data }) => {
+            setTags(data || []);
+            setLoader(false);
+        }).catch(({ message }) => {
+            dispatch(showPopup({ message, type: 'error' }));
+            setLoader(false);
+        });
+    }, []);
+
     return (
         <div id='TrendingTags' className='FCSS'>
             <p id='title' className='w100 selectNone'>
-                <i className='fa-regular fa-hashtag w20 mR5' style={{ color: 'orange' }} ></i>Trending tags
+                <i className='fa-regular fa-hashtag w15 mR5' style={{ color: 'orange' }} ></i>Trending tags
             </p>
-            <div className='FRCC' id='TrendingTagsList'>
-                {TrendingTagsList.map(({ title, route }, index) => {
-                    return (
-                        <Link to={route} key={index} className='TrendingTag'>{title}</Link>
-                    )
-                })}
+            <div className='FRCC w100' id='TrendingTagsList'>
+                {loader ? <div className='FRCC w100'><Loader /></div> :
+                    tags.length ? tags.map((tag, index) => {
+                        const tagName = tag.startsWith('#') ? tag.slice(1) : tag;
+                        return (
+                            <Link to={`/feeds/tags/${tagName}`} key={index} className='TrendingTag'>{tag}</Link>
+                        )
+                    }) :
+                        <p className='FCCC w100 p20 color777 fs12'>No tags found!</p>}
             </div>
         </div>
     )

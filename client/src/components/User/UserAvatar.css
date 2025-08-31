@@ -17,4 +17,5 @@
     text-align: center;
     line-height: 50px;
     font-weight: bold;
+    user-select: none;
 }

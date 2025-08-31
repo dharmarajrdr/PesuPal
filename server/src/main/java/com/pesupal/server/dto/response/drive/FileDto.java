@@ -3,7 +3,6 @@ package com.pesupal.server.dto.response.drive;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.pesupal.server.dto.response.UserBasicInfoDto;
 import com.pesupal.server.enums.Security;
-import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.model.workdrive.File;
 import lombok.Data;
 
@@ -24,18 +23,13 @@ public class FileDto extends FileOrFolderDto {
 
     private UUID mediaId;
 
+    private String extension;
+
     private Security security;
 
     private UserBasicInfoDto owner;
 
     private int accessCount;
-
-    public static FileDto fromFileAndOrgMember(File file, OrgMember owner) {
-
-        FileDto fileDto = fromFile(file);
-        fileDto.setOwner(UserBasicInfoDto.fromOrgMember(owner));
-        return fileDto;
-    }
 
     public static FileDto fromFile(File file) {
 
@@ -45,6 +39,7 @@ public class FileDto extends FileOrFolderDto {
         fileDto.setCreatedAt(file.getCreatedAt());
         fileDto.setSize(file.getSize());
         fileDto.setMediaId(file.getMediaId());
+        fileDto.setExtension(file.getExtension());
         fileDto.setSecurity(file.getSecurity());
         fileDto.setAccessCount(file.getAccessStats().size());
         return fileDto;

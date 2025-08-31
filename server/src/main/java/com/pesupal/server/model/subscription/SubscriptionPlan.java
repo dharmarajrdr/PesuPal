@@ -56,5 +56,4 @@ public class SubscriptionPlan extends CreationTimeAuditable {
         transaction.setCurrency(currency);
         return transaction;
     }
-
 }

@@ -1,7 +1,7 @@
-import { useNavigate } from 'react-router-dom';
 import './PageNotFound.css';
-import { useDispatch } from 'react-redux';
 import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { showLeftNavigation } from '../../store/reducers/LeftNavigationSlice';
 
 const PageNotFound = () => {

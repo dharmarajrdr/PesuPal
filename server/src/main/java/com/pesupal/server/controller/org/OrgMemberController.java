@@ -6,14 +6,19 @@ import com.pesupal.server.dto.response.ApiResponseDto;
 import com.pesupal.server.dto.response.UserBasicInfoDto;
 import com.pesupal.server.dto.response.UserPreviewDto;
 import com.pesupal.server.dto.response.org.OrgDetailDto;
+import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.helpers.OrgSubscriptionManager;
+import com.pesupal.server.model.org.Org;
+import com.pesupal.server.model.org.OrgSubscriptionHistory;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.security.CustomUserDetails;
 import com.pesupal.server.service.interfaces.org.OrgMemberService;
+import com.pesupal.server.service.interfaces.org.OrgSubscriptionHistoryService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +29,7 @@ import java.util.Map;
 public class OrgMemberController extends OrgSubscriptionManager {
 
     private final OrgMemberService orgMemberService;
+    private final OrgSubscriptionHistoryService orgSubscriptionHistoryService;
 
     @PostMapping("/new_member")
     public ResponseEntity<ApiResponseDto> addMemberToOrg(@RequestBody AddOrgMemberDto addOrgMemberDto) {
@@ -32,15 +38,11 @@ public class OrgMemberController extends OrgSubscriptionManager {
         return ResponseEntity.ok(new ApiResponseDto("Member added to organization successfully.", orgMember));
     }
 
-    @GetMapping("/display-picture")
-    public ResponseEntity<ApiResponseDto> getOrgMemberImage(@RequestParam(required = false) Long userId) {
+    @PatchMapping("/{orgMemberPublicId}")
+    public ResponseEntity<ApiResponseDto> updateOrgMember(@PathVariable String orgMemberPublicId, @RequestBody AddOrgMemberDto addOrgMemberDto) {
 
-        if (userId == null) {
-            userId = getCurrentUserId();
-        }
-
-        String imageUrl = orgMemberService.getOrgMemberImageByUserIdAndOrgId(userId, getCurrentOrgId());
-        return ResponseEntity.ok(new ApiResponseDto("Organization member image retrieved successfully.", imageUrl));
+        orgMemberService.updateOrgMember(orgMemberPublicId, addOrgMemberDto, getCurrentOrgMember());
+        return ResponseEntity.ok(new ApiResponseDto("Organization member updated successfully."));
     }
 
     @GetMapping("/orgs")
@@ -58,9 +60,9 @@ public class OrgMemberController extends OrgSubscriptionManager {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<ApiResponseDto> getSearchedOrgMembers(@RequestParam(name = "q") String search,
-                                                                @RequestParam(name = "page", defaultValue = "0") int page,
-                                                                @RequestParam(name = "size", defaultValue = "10") int size) {
+    public ResponseEntity<ApiResponseDto> getSearchedOrgMembers(@RequestParam(name = "query", defaultValue = "") String search,
+                                                                @RequestParam(defaultValue = "0") int page,
+                                                                @RequestParam(defaultValue = "10") int size) {
 
         List<UserPreviewDto> orgMembers = orgMemberService.getSearchedOrgMembers(getCurrentOrgMember(), search, page, size);
         return ResponseEntity.ok(new ApiResponseDto("List of organization members retrieved successfully.", orgMembers));
@@ -87,9 +89,18 @@ public class OrgMemberController extends OrgSubscriptionManager {
     public ResponseEntity<ApiResponseDto> whoAmI() {
 
         CustomUserDetails customUserDetails = getCurrentUserDetails();
+        String userId = customUserDetails.getUserPublicId();
+        String orgMemberId = customUserDetails.getOrgMemberPublicId();
         Map<String, String> userDetail = new HashMap<>();
-        userDetail.put("userId", customUserDetails.getUserPublicId());
-        userDetail.put("orgMemberId", customUserDetails.getOrgMemberPublicId());
+        userDetail.put("userId", userId);
+        if (orgMemberId != null) {
+            OrgMember orgMember = orgMemberService.getOrgMemberByPublicId(orgMemberId);
+            Org org = orgMember.getOrg();
+            OrgSubscriptionHistory orgSubscriptionHistory = orgSubscriptionHistoryService.getLatestSubscription(org.getId()).orElseThrow(() -> new DataNotFoundException("No subscription history found for org with ID " + org.getId()));
+            userDetail.put("orgId", org.getPublicId());
+            userDetail.put("orgMemberId", orgMemberId);
+            userDetail.put("orgStatus", orgSubscriptionHistory.getEndDate().isBefore(LocalDateTime.now()) ? "Inactive" : "Active");
+        }
         return ResponseEntity.ok().body(new ApiResponseDto("Token decoded successfully", userDetail));
     }
 }

@@ -5,15 +5,16 @@
     right: 30px;
     border-radius: 5px;
     overflow: hidden;
-    z-index: 1;
+    z-index: 2;
     box-shadow: 0px 4px 8px var(--box-shadow-color);
 }
 
 #options-container .option {
-    padding: 10px 15px;
+    padding: 10px 25px 10px 15px;
     cursor: pointer;
     color: var(--primary-color-active);
     border-bottom: 1px solid #eee;
+    user-select: none;
 }
 
 #options-container .option:hover {
@@ -30,4 +31,5 @@
 
 #options-container .option span {
     font-size: 14px;
+    line-height: 16px;
 }

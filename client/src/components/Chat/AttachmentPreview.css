@@ -1,0 +1,82 @@
+#attachment-preview {
+    background-color: #fff;
+    width: 30%;
+    height: 60%;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+#attachment-preview .attachment-item {
+    width: 100%;
+    background-color: #fff;
+    border-radius: 0;
+    box-shadow: none;
+    border-bottom: 1px solid #e0e0e0;
+    cursor: pointer;
+    padding: 15px 20px;
+}
+
+#attachment-preview .attachment-item:hover {
+    background-color: #f5f5f5;
+}
+
+#attachment-preview-title {
+    font-size: 16px;
+    font-weight: 500;
+    color: #333;
+    text-align: center;
+    padding: 10px;
+    z-index: 1;
+    background-color: #fff;
+    box-shadow: 0 2px 4px var(--box-shadow-color);
+}
+
+#attachment-preview-file-list {
+    height: calc(100% - 50px);
+    overflow-y: auto;
+}
+
+.file-uploaded-icon {
+    color: green;
+}
+
+.file-uploading-icon {
+    color: orange;
+}
+
+.file-upload-failed-icon {
+    color: red;
+}
+
+#attachment-preview-actions {
+    padding: 20px;
+    height: 50px;
+    box-shadow: 0 -2px 4px var(--box-shadow-color);
+}
+
+#attachment-preview-actions button {
+    background-color: gray;
+    color: #fff;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#attachment-preview-actions #send-button {
+    background-color: var(--primary-color);
+}
+
+#attachment-preview-actions #send-button:hover {
+    background-color: var(--primary-color-active);
+}
+
+#attachment-preview-actions #cancel-button:hover {
+    background-color: #666;
+}
+
+#attachment-preview-count {
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 5px;
+}

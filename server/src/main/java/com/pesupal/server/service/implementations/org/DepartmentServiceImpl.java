@@ -60,9 +60,8 @@ public class DepartmentServiceImpl extends CurrentValueRetriever implements Depa
     public List<DepartmentDto> getAllDepartments() {
 
         OrgMember orgMember = getCurrentOrgMember();
-        return departmentRepository.findAllByOrgOrderByOrg_DisplayNameAsc(orgMember.getOrg()).stream().map(department -> {
-            return DepartmentDto.fromDepartmentAndOrgMember(department, null);  // Assuming head is not needed here, otherwise fetch it
-        }).toList();
+        // Assuming head is not needed here, otherwise fetch it
+        return departmentRepository.findAllByOrgOrderByOrg_DisplayNameAsc(orgMember.getOrg()).stream().map(DepartmentDto::fromDepartmentAndOrgMember).toList();
     }
 
     /**
@@ -88,7 +87,9 @@ public class DepartmentServiceImpl extends CurrentValueRetriever implements Depa
         OrgMember orgMember = getCurrentOrgMember();
         Department department = getDepartmentByIdAndOrg(departmentId, orgMember.getOrg());
 
-        return DepartmentDto.fromDepartmentAndOrgMember(department, department.getHead());
+        DepartmentDto departmentDto = DepartmentDto.fromDepartmentAndOrgMember(department);
+        departmentDto.setHead(orgMemberService.getUserBasicInfo(department.getHead()));
+        return departmentDto;
     }
 
     /**
@@ -100,6 +101,8 @@ public class DepartmentServiceImpl extends CurrentValueRetriever implements Depa
     public DepartmentDto getUserDepartment() {
 
         OrgMember orgMember = getCurrentOrgMember();
-        return DepartmentDto.fromDepartmentAndOrgMember(orgMember.getDepartment(), orgMember);
+        DepartmentDto departmentDto = DepartmentDto.fromDepartmentAndOrgMember(orgMember.getDepartment());
+        departmentDto.setHead(orgMemberService.getUserBasicInfo(orgMember));
+        return departmentDto;
     }
 }

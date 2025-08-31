@@ -1,37 +1,30 @@
 export default [
     {
         "id": 1,
-        "title": "Home",
-        "route": "/team/drive/home"
+        "title": "Personal Space",
+        "icon": "fa-regular fa-user",
+        "color": "#4CAF50",
+        "route": "/store/personal_space",
     },
     {
         "id": 2,
-        "title": "Document",
-        "route": "/team/drive/files"
+        "title": "Team Space",
+        "icon": "fa fa-users",
+        "color": "#2196F3",
+        "route": "/store/team_space"
     },
     {
         "id": 3,
-        "title": "Folder",
-        "route": "/team/drive/folder"
-    },
-    {
-        "id": 3,
-        "title": "Starred",
-        "route": "/team/drive/starred"
+        "title": "Org Space",
+        "icon": "fa-regular fa-building",
+        "color": "#FF9800",
+        "route": "/store/org_space"
     },
     {
         "id": 4,
-        "title": "Shared",
-        "route": "/team/drive/shared"
-    },
-    {
-        "id": 5,
-        "title": "Recent",
-        "route": "/team/drive/recent"
-    },
-    {
-        "id": 6,
         "title": "Trash",
-        "route": "/team/drive/trash"
+        "icon": "fas fa-trash",
+        "color": "#F44336",
+        "route": "/store/trash"
     }
 ]

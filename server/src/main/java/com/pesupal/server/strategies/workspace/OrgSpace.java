@@ -16,7 +16,9 @@ import com.pesupal.server.service.interfaces.drive.FileService;
 import com.pesupal.server.service.interfaces.drive.PublicFolderService;
 import com.pesupal.server.service.interfaces.drive.SecuredFolderPermissionService;
 import com.pesupal.server.service.interfaces.drive.WorkdriveSpace;
+import com.pesupal.server.service.interfaces.org.OrgMemberService;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -31,6 +33,7 @@ public class OrgSpace extends WorkspaceSupportsPublicFolder implements Workdrive
     private final PublicFolderService publicFolderService;
     private final PublicFolderRepository publicFolderRepository;
     private final SecuredFolderPermissionService securedFolderPermissionService;
+    private final OrgMemberService orgMemberService;
 
     /**
      * Saves a folder in the organization space with security settings.
@@ -63,10 +66,12 @@ public class OrgSpace extends WorkspaceSupportsPublicFolder implements Workdrive
 
         // 1. Retrieve all subfolders in the given folder in the organization space
 
-        List<FileOrFolderDto> filesAndFolders = folderRepository.findAllBySpaceAndParentFolder(Workspace.ORG_SPACE, parentFolder)
+        Sort sort = Sort.by(Sort.Order.asc("name").ignoreCase());
+        List<FileOrFolderDto> filesAndFolders = folderRepository.findAllBySpaceAndParentFolderAndDeleted(Workspace.ORG_SPACE, parentFolder, false, sort)
                 .stream()
                 .map(folder -> {
-                    FolderDto folderDto = FolderDto.fromFolderAndOrgMember(folder, orgMember);
+                    FolderDto folderDto = FolderDto.fromFolder(folder);
+                    folderDto.setOwner(orgMemberService.getUserBasicInfo(folder.getCreatedBy()));
                     folderDto.setSecurity(folder.getPublicFolder().getSecurity());
                     folderDto.setType(FileOrFolder.FOLDER);
                     return folderDto;
@@ -74,7 +79,7 @@ public class OrgSpace extends WorkspaceSupportsPublicFolder implements Workdrive
 
         // 2. Retrieve all files in the given folder in the organization space
 
-        filesAndFolders.addAll(fileService.findAllByFolderAndOrgMember(parentFolder, orgMember));
+        filesAndFolders.addAll(fileService.findAllByFolderAndOrgMemberAndDeleted(parentFolder, orgMember, false));
 
         return filesAndFolders;
     }

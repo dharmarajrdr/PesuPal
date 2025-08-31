@@ -39,10 +39,10 @@ public class OrgSubscriptionHistoryServiceImpl implements OrgSubscriptionHistory
 
     public OrgSubscriptionHistoryServiceImpl(OrgService orgService, PaymentService paymentService, @Lazy OrgMemberService orgMemberService, TransactionService transactionService, RedisTemplate<String, Object> redisTemplate, SubscriptionPlanService subscriptionPlanService, OrgSubscriptionHistoryRepository orgSubscriptionHistoryRepository) {
         this.orgService = orgService;
+        this.redisTemplate = redisTemplate;
         this.paymentService = paymentService;
         this.orgMemberService = orgMemberService;
         this.transactionService = transactionService;
-        this.redisTemplate = redisTemplate;
         this.subscriptionPlanService = subscriptionPlanService;
         this.orgSubscriptionHistoryRepository = orgSubscriptionHistoryRepository;
     }
@@ -116,9 +116,13 @@ public class OrgSubscriptionHistoryServiceImpl implements OrgSubscriptionHistory
             throw new ActionProhibitedException("The subscription plan with code '" + code + "' is not active. Please choose an active plan.");
         }
 
-        LocalDateTime latestSubscriptionEndDate = getLatestSubscriptionEndDate(orgId);
-        if (latestSubscriptionEndDate == null) {
-            latestSubscriptionEndDate = LocalDateTime.now();
+        LocalDateTime latestSubscriptionEndDate = LocalDateTime.now();
+        Optional<OrgSubscriptionHistory> latestSubscription = getLatestSubscription(org.getId());
+        if (latestSubscription.isPresent()) {
+            OrgSubscriptionHistory orgSubscriptionHistory = latestSubscription.get();
+            if (orgSubscriptionHistory.getEndDate().isAfter(LocalDateTime.now())) {  // Subscription has not end yet
+                latestSubscriptionEndDate = orgSubscriptionHistory.getEndDate();
+            }
         }
         OrgSubscriptionHistory orgSubscriptionHistory = new OrgSubscriptionHistory();
         orgSubscriptionHistory.setOrg(org);
