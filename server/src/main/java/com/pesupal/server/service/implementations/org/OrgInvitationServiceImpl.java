@@ -1,6 +1,8 @@
 package com.pesupal.server.service.implementations.org;
 
 import com.pesupal.server.dto.request.EmailNotificationRequestDto;
+import com.pesupal.server.dto.response.org.OrgInvitationDto;
+import com.pesupal.server.enums.Role;
 import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.exceptions.PermissionDeniedException;
@@ -145,5 +147,25 @@ public class OrgInvitationServiceImpl implements OrgInvitationService {
     public List<OrgInvitation> getAllOrgInvitationsByUserEmail(String email) {
 
         return orgInvitationRepository.findAllByEmail(email);
+    }
+
+    /**
+     * Gets all invitations for the organization member's organization.
+     *
+     * @param orgMember
+     * @return
+     */
+    @Override
+    public List<OrgInvitationDto> getAllInvitations(OrgMember orgMember) {
+
+        if (!orgMember.getRole().equals(Role.SUPER_ADMIN)) {
+            throw new PermissionDeniedException("You do not have permission to view invitations");
+        }
+
+        return orgInvitationRepository.findAllByInviter_OrgOrderByInvitedAtDesc(orgMember.getOrg()).stream().map(orgInvitation -> {
+            OrgInvitationDto dto = OrgInvitationDto.fromOrgInvitation(orgInvitation);
+            dto.setInviter(orgMemberService.getUserPreview(orgInvitation.getInviter()));
+            return dto;
+        }).toList();
     }
 }
