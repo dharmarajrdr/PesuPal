@@ -1,5 +1,6 @@
 package com.pesupal.server.service.interfaces.org;
 
+import com.pesupal.server.dto.response.org.OrgInvitationDto;
 import com.pesupal.server.model.org.Org;
 import com.pesupal.server.model.user.OrgInvitation;
 import com.pesupal.server.model.user.OrgMember;
@@ -21,4 +22,6 @@ public interface OrgInvitationService {
     void resendInvitation(UUID invitationId, OrgMember currentOrgMember) throws MessagingException;
 
     List<OrgInvitation> getAllOrgInvitationsByUserEmail(String email);
+
+    List<OrgInvitationDto> getAllInvitations(OrgMember orgMember);
 }

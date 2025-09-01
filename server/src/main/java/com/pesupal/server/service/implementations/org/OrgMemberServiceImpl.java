@@ -405,10 +405,8 @@ public class OrgMemberServiceImpl implements OrgMemberService {
             throw new ActionProhibitedException("The member you are trying to update does not exist.");
         }
 
-        if (!orgMember.getPublicId().equals(currentOrgMember.getPublicId()) && !OrgHelper.isOrgOwner(orgMemberPublicId, org)) {
-            if (!hasPrivilegeToUpdateMember(org, currentOrgMember.getRole())) {
-                throw new PermissionDeniedException("You do not have permission to update members of this organization.");
-            }
+        if (!OrgHelper.isOrgOwner(orgMemberPublicId, org) && !hasPrivilegeToUpdateMember(org, currentOrgMember.getRole())) {
+            throw new PermissionDeniedException("You do not have permission to update members of this organization.");
         }
 
         addOrgMemberDto.applyToOrgMember(orgMember);
