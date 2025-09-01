@@ -14,6 +14,7 @@ import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.security.CustomUserDetails;
 import com.pesupal.server.service.interfaces.org.OrgMemberService;
 import com.pesupal.server.service.interfaces.org.OrgSubscriptionHistoryService;
+import jakarta.mail.MessagingException;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -35,10 +36,10 @@ public class OrgMemberController extends OrgSubscriptionManager {
     private final OrgSubscriptionHistoryService orgSubscriptionHistoryService;
 
     @PostMapping("/new_member")
-    public ResponseEntity<ApiResponseDto> addMemberToOrg(@RequestBody AddOrgMemberDto addOrgMemberDto) {
+    public ResponseEntity<ApiResponseDto> addMemberToOrg(@RequestBody AddOrgMemberDto addOrgMemberDto) throws MessagingException {
 
-        OrgMember orgMember = orgMemberService.addMemberToOrg(addOrgMemberDto, getCurrentOrgMember(), false);
-        return ResponseEntity.ok(new ApiResponseDto("Member added to organization successfully.", orgMember));
+        orgMemberService.addMemberToOrg(addOrgMemberDto, getCurrentOrgMember());
+        return ResponseEntity.ok(new ApiResponseDto("Invitation sent successfully."));
     }
 
     @PatchMapping("/{orgMemberPublicId}")
