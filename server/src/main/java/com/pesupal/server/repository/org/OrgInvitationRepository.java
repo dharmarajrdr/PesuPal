@@ -14,4 +14,6 @@ public interface OrgInvitationRepository extends JpaRepository<OrgInvitation, UU
     boolean existsByEmailAndInviter_Org(String email, Org org);
 
     List<OrgInvitation> findAllByEmail(String email);
+
+    List<OrgInvitation> findAllByInviter_OrgOrderByInvitedAtDesc(Org org);
 }
