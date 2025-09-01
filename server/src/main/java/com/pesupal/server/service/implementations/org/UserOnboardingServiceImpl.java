@@ -6,6 +6,7 @@ import com.pesupal.server.model.user.User;
 import com.pesupal.server.model.user.UserOnboarding;
 import com.pesupal.server.repository.org.UserOnboardingRepository;
 import com.pesupal.server.service.interfaces.UserService;
+import com.pesupal.server.service.interfaces.org.OrgMemberService;
 import com.pesupal.server.service.interfaces.org.UserOnboardingService;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -16,10 +17,12 @@ import java.util.UUID;
 public class UserOnboardingServiceImpl implements UserOnboardingService {
 
     private final UserService userService;
+    private final OrgMemberService orgMemberService;
     private final UserOnboardingRepository userOnboardingRepository;
 
-    public UserOnboardingServiceImpl(@Lazy UserService userService, UserOnboardingRepository userOnboardingRepository) {
+    public UserOnboardingServiceImpl(@Lazy UserService userService, UserOnboardingRepository userOnboardingRepository, @Lazy OrgMemberService orgMemberService) {
         this.userService = userService;
+        this.orgMemberService = orgMemberService;
         this.userOnboardingRepository = userOnboardingRepository;
     }
 
@@ -59,6 +62,8 @@ public class UserOnboardingServiceImpl implements UserOnboardingService {
         }
         userOnboarding.setEmailVerificationDone(true);
         userOnboardingRepository.save(userOnboarding);
+
+        orgMemberService.joinInAllInvitedOrgs(userOnboarding.getUser());
     }
 
     /**
