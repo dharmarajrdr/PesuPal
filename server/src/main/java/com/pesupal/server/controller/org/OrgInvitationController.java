@@ -2,6 +2,7 @@ package com.pesupal.server.controller.org;
 
 import com.pesupal.server.config.StaticConfig;
 import com.pesupal.server.dto.response.ApiResponseDto;
+import com.pesupal.server.dto.response.org.OrgInvitationDto;
 import com.pesupal.server.helpers.CurrentValueRetriever;
 import com.pesupal.server.service.interfaces.org.OrgInvitationService;
 import jakarta.mail.MessagingException;
@@ -11,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -34,5 +36,12 @@ public class OrgInvitationController extends CurrentValueRetriever {
 
         orgInvitationService.resendInvitation(invitationId, getCurrentOrgMember());
         return ResponseEntity.ok().body(new ApiResponseDto("Invitation resent successfully"));
+    }
+
+    @GetMapping("")
+    public ResponseEntity<ApiResponseDto> getAllInvitations() {
+
+        List<OrgInvitationDto> invitations = orgInvitationService.getAllInvitations(getCurrentOrgMember());
+        return ResponseEntity.ok().body(new ApiResponseDto("Invitations retrieved successfully", invitations));
     }
 }
