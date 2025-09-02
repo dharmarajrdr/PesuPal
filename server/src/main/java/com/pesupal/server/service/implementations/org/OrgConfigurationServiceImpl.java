@@ -28,6 +28,48 @@ public class OrgConfigurationServiceImpl implements OrgConfigurationService {
     }
 
     /**
+     * Checks if the role has the privilege to add a member to the organization.
+     *
+     * @param org
+     * @param role
+     * @return Boolean
+     */
+    @Override
+    public boolean hasPrivilegeToAddMember(Org org, Role role) {
+
+        OrgConfiguration orgConfiguration = getOrgConfigurationByOrgAndRole(org, role);
+        return orgConfiguration.isAddMember();
+    }
+
+    /**
+     * Checks if the role has the privilege to update a member in the organization.
+     *
+     * @param org
+     * @param role
+     * @return
+     */
+    @Override
+    public boolean hasPrivilegeToUpdateMember(Org org, Role role) {
+
+        OrgConfiguration orgConfiguration = getOrgConfigurationByOrgAndRole(org, role);
+        return orgConfiguration.isUpdateMember();
+    }
+
+    /**
+     * Checks if the role has the privilege to create a department
+     *
+     * @param org
+     * @param role
+     * @return
+     */
+    @Override
+    public boolean hasPrivilegeToCreateDepartment(Org org, Role role) {
+
+        OrgConfiguration orgConfiguration = getOrgConfigurationByOrgAndRole(org, role);
+        return orgConfiguration.isCreateDepartment();
+    }
+
+    /**
      * Initializes the organization configuration for the given organization.
      *
      * @param org
