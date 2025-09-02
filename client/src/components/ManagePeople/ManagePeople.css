@@ -28,7 +28,7 @@
     width: 25px;
 }
 
-#invitation-icon {
+#more-options-icon {
     background-color: var(--primary-color);
     color: white;
     border-radius: 5px;
@@ -40,7 +40,7 @@
     text-align: center;
 }
 
-#invitation-icon:hover,
+#more-options-icon:hover,
 .add-btn:hover {
     background-color: var(--primary-color-active);
     transition-duration: 0.25s;

@@ -1,4 +1,4 @@
-import './OrgMemberList.css'
+import './SuperAdminsList.css'
 import Person from './Person'
 import Loader from '../Loader'
 import MemberStatus from './MemberStatus'
@@ -43,7 +43,7 @@ const NoMembersFound = () => {
     </div>
 }
 
-const OrgMemberList = ({ searchQuery }) => {
+const SuperAdminsList = ({ searchQuery }) => {
 
     const sortOrder = 'ASC';
     const sortBy = 'employeeId';
@@ -53,7 +53,7 @@ const OrgMemberList = ({ searchQuery }) => {
     const [loading, setLoading] = useState(true);
 
     const getUsers = () => {
-        apiRequest(`/api/v1/people/search?query=${searchQuery}&sortBy=${sortBy}&sortOrder=${sortOrder}`, 'GET').then(({ data }) => {
+        apiRequest(`/api/v1/people/super-admins?query=${searchQuery}&sortBy=${sortBy}&sortOrder=${sortOrder}`, 'GET').then(({ data }) => {
             setMembers(data);
         }).catch(({ message }) => {
             dispatch(showPopup({ message, type: 'error' }));
@@ -102,4 +102,4 @@ const OrgMemberList = ({ searchQuery }) => {
     )
 }
 
-export default OrgMemberList
+export default SuperAdminsList;

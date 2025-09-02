@@ -2,6 +2,7 @@ package com.pesupal.server.service.implementations.org;
 
 import com.pesupal.server.dto.request.EmailNotificationRequestDto;
 import com.pesupal.server.dto.response.org.OrgInvitationDto;
+import com.pesupal.server.enums.InvitationStatus;
 import com.pesupal.server.enums.Role;
 import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.exceptions.DataNotFoundException;
@@ -56,7 +57,7 @@ public class OrgInvitationServiceImpl implements OrgInvitationService {
     @Override
     public boolean hasAlreadyInvited(String email, Org org) {
 
-        return orgInvitationRepository.existsByEmailAndInviter_Org(email, org);
+        return orgInvitationRepository.existsByEmailAndInviter_OrgAndStatusNot(email, org, InvitationStatus.REVOKED);
     }
 
     /**
@@ -69,12 +70,12 @@ public class OrgInvitationServiceImpl implements OrgInvitationService {
 
         OrgInvitation orgInvitation = orgInvitationRepository.findById(invitationId).orElseThrow(() -> new DataNotFoundException("Invitation not found"));
 
-        if (orgInvitation.isAccepted()) {
+        if (orgInvitation.getStatus().equals(InvitationStatus.ACCEPTED)) {
             throw new ActionProhibitedException("This invitation has already been accepted");
         }
 
-        orgInvitation.setAccepted(true);
-        orgInvitation.setAcceptedAt(java.time.LocalDateTime.now());
+        orgInvitation.setStatus(InvitationStatus.ACCEPTED);
+        orgInvitation.setLastUpdatedAt(LocalDateTime.now());
         orgInvitationRepository.save(orgInvitation);
 
         Optional<User> optionalUser = userRepository.findByEmail(orgInvitation.getEmail());
@@ -127,9 +128,7 @@ public class OrgInvitationServiceImpl implements OrgInvitationService {
             throw new PermissionDeniedException("You do not have permission to resend this invitation");
         }
 
-        if (orgInvitation.isAccepted()) {
-            throw new ActionProhibitedException("This invitation has already been accepted");
-        }
+        proceedIfInvitationIsPending(orgInvitation.getStatus());
 
         sendInvitationEmail(orgInvitation, orgInvitation.getEmail());
 
@@ -167,5 +166,39 @@ public class OrgInvitationServiceImpl implements OrgInvitationService {
             dto.setInviter(orgMemberService.getUserPreview(orgInvitation.getInviter()));
             return dto;
         }).toList();
+    }
+
+    /**
+     * Revoke the given invitation.
+     *
+     * @param invitationId
+     * @param currentOrgMember
+     */
+    @Override
+    public void revokeInvitation(UUID invitationId, OrgMember currentOrgMember) {
+
+        OrgInvitation orgInvitation = orgInvitationRepository.findById(invitationId).orElseThrow(() -> new DataNotFoundException("Invitation not found"));
+
+        if (!orgInvitation.getInviter().getPublicId().equals(currentOrgMember.getPublicId())) {
+            throw new PermissionDeniedException("You do not have permission to revoke this invitation");
+        }
+
+        proceedIfInvitationIsPending(orgInvitation.getStatus());
+
+        orgInvitation.setStatus(InvitationStatus.REVOKED);
+        orgInvitation.setLastUpdatedAt(LocalDateTime.now());
+        orgInvitationRepository.save(orgInvitation);
+    }
+
+    private void proceedIfInvitationIsPending(InvitationStatus status) {
+
+        if (status.equals(InvitationStatus.ACTION_PENDING)) {
+            return;
+        }
+
+        switch (status) {
+            case ACCEPTED -> throw new ActionProhibitedException("This invitation has already been accepted");
+            case REVOKED -> throw new ActionProhibitedException("This invitation has already been revoked");
+        }
     }
 }

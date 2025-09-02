@@ -24,4 +24,6 @@ public interface OrgInvitationService {
     List<OrgInvitation> getAllOrgInvitationsByUserEmail(String email);
 
     List<OrgInvitationDto> getAllInvitations(OrgMember orgMember);
+
+    void revokeInvitation(UUID invitationId, OrgMember currentOrgMember);
 }
