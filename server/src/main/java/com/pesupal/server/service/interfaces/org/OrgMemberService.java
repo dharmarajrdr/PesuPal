@@ -34,8 +34,6 @@ public interface OrgMemberService {
 
     void addMemberToOrg(AddOrgMemberDto addOrgMemberDto, OrgMember orgMember) throws MessagingException;
 
-    void validateUserIsOrgMember(User user, Org org);
-
     List<UserBasicInfoDto> getAllOrgMembers(OrgMember orgMember);
 
     List<UserBasicInfoDto> getSearchedOrgMembers(OrgMember orgMember, String search, Pageable pageable);

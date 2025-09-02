@@ -1,17 +1,16 @@
 package com.pesupal.server.controller.org;
 
+import com.pesupal.server.dto.request.org.CreateDepartmentDto;
 import com.pesupal.server.dto.response.ApiResponseDto;
 import com.pesupal.server.dto.response.UserBasicInfoDto;
 import com.pesupal.server.dto.response.org.DepartmentDto;
 import com.pesupal.server.helpers.CurrentValueRetriever;
+import com.pesupal.server.model.department.Department;
 import com.pesupal.server.service.interfaces.org.DepartmentService;
 import com.pesupal.server.service.interfaces.org.OrgMemberService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -49,5 +48,13 @@ public class DepartmentController extends CurrentValueRetriever {
 
         List<DepartmentDto> departments = departmentService.getAllDepartments();
         return ResponseEntity.ok().body(new ApiResponseDto("Departments retrieved successfully", departments));
+    }
+
+    @PostMapping("")
+    public ResponseEntity<ApiResponseDto> createDepartment(@RequestBody CreateDepartmentDto createDepartmentDto) {
+
+        Department department = departmentService.createDepartment(createDepartmentDto);
+        DepartmentDto departmentDto = DepartmentDto.fromDepartment(department);
+        return ResponseEntity.ok().body(new ApiResponseDto("Department created successfully", departmentDto));
     }
 }

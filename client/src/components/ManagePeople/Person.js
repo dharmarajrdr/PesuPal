@@ -3,12 +3,12 @@ import { useState } from "react";
 
 const FirstChar = ({ displayName }) => {
 
-    return <p className='first-char-of-name'>{displayName.charAt(0).toUpperCase()}</p>
+    return displayName ? <p className='first-char-of-name'>{displayName?.charAt(0)?.toUpperCase()}</p> : null;
 }
 
 const Person = ({ person }) => {
 
-    const { displayName, email, displayPicture } = person;
+    const { displayName, email, displayPicture } = person || {};
     const [showDisplayPicture, setShowDisplayPicture] = useState(displayPicture !== null && displayPicture !== undefined);
 
     return <div className='FRCS person-column'>

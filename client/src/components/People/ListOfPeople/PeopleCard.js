@@ -46,7 +46,7 @@ const PeopleCard = ({ person }) => {
                 <span className='color777 fs10 mB5 designation' title={designation}>{designation}</span>
             </div>
             <div className='mT5 FRCC'>
-                <i className='profile_contacts fa fa-comment' style={{ backgroundColor: 'blue' }} onClick={redirectToChatHandler} />
+                <i className='profile_contacts fa fa-comment' style={{ backgroundColor: '#3591ff' }} onClick={redirectToChatHandler} />
                 <i className='profile_contacts fa fa-phone' style={{ backgroundColor: 'green' }} />
                 <i className='profile_contacts fa fa-video' style={{ backgroundColor: 'red' }} />
             </div>

@@ -46,7 +46,7 @@ const OrgMember = ({ member }) => {
                 </div>
             </div>
             <div className='FRCE' id='right'>
-                <i className='profile_contacts fa fa-comment' style={{ backgroundColor: 'blue' }} onClick={chatClickHandler} />
+                <i className='profile_contacts fa fa-comment' style={{ backgroundColor: '#3591ff' }} onClick={chatClickHandler} />
                 <i className='profile_contacts fa fa-phone' style={{ backgroundColor: 'green' }} />
                 <i className='profile_contacts fa fa-video' style={{ backgroundColor: 'red' }} />
             </div>
