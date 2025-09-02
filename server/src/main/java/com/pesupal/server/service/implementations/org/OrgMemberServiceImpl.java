@@ -6,6 +6,7 @@ import com.pesupal.server.dto.response.UserBasicInfoDto;
 import com.pesupal.server.dto.response.UserPreviewDto;
 import com.pesupal.server.dto.response.org.LatestSubscriptionDto;
 import com.pesupal.server.dto.response.org.OrgDetailDto;
+import com.pesupal.server.enums.InvitationStatus;
 import com.pesupal.server.enums.Role;
 import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.exceptions.DataNotFoundException;
@@ -429,7 +430,7 @@ public class OrgMemberServiceImpl implements OrgMemberService {
             throw new ActionProhibitedException("You are already a member of this organization.");
         }
 
-        if (!orgInvitation.isAccepted()) {
+        if (!orgInvitation.getStatus().equals(InvitationStatus.ACCEPTED)) {
             throw new ActionProhibitedException("Invitation is not being accepted.");
         }
 
@@ -454,7 +455,7 @@ public class OrgMemberServiceImpl implements OrgMemberService {
 
         List<OrgInvitation> invitedOrgs = orgInvitationService.getAllOrgInvitationsByUserEmail(user.getEmail());
         for (OrgInvitation orgInvitation : invitedOrgs) {
-            if (!orgInvitation.isAccepted()) {
+            if (!orgInvitation.getStatus().equals(InvitationStatus.ACCEPTED)) {
                 continue;
             }
             try {

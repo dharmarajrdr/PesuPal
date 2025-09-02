@@ -1,5 +1,6 @@
 package com.pesupal.server.model.user;
 
+import com.pesupal.server.enums.InvitationStatus;
 import com.pesupal.server.model.UUIDBaseModel;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -28,9 +29,9 @@ public class OrgInvitation extends UUIDBaseModel {
     @ManyToOne
     private OrgMember inviter;
 
-    private boolean accepted;
+    private InvitationStatus status;
 
     private LocalDateTime invitedAt = LocalDateTime.now();
 
-    private LocalDateTime acceptedAt;
+    private LocalDateTime lastUpdatedAt; // Accepted time or Revoked time
 }
