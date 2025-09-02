@@ -19,13 +19,14 @@ import ModuleBuilderLayout from './components/Team/ManageWork/ModuleBuilder/Modu
 
 const SubscriptionNotExpiredRoutes = () => {
 
+    const INFORM_PRESENCE_EVERY_SECONDS = 50;
     const presenceService = usePresenceService();
     const { currentOrgId } = useSelector(state => state.org);
 
     useWebSocket({ 'onPresenceUpdate': presenceService.onPresenceUpdate, 'orgId': currentOrgId });
 
     useEffect(() => {
-        presenceService.informUserOnlineAtInterval(15);
+        presenceService.informUserOnlineAtInterval(INFORM_PRESENCE_EVERY_SECONDS);
     }, [currentOrgId]);
 
     return (
