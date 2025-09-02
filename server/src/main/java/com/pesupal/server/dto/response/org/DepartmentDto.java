@@ -17,7 +17,7 @@ public class DepartmentDto {
 
     private UserBasicInfoDto head;
 
-    public static DepartmentDto fromDepartmentAndOrgMember(Department department) {
+    public static DepartmentDto fromDepartment(Department department) {
 
         DepartmentDto dto = new DepartmentDto();
         dto.setId(department.getPublicId());
