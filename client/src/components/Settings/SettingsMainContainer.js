@@ -1,9 +1,9 @@
-import { Navigate, Route, Routes } from 'react-router-dom'
-import SubscriptionPlan from './subscription/SubscriptionPlan'
-import PermissionDenied from '../Auth/PermissionDenied'
-import ManagePeopleLayout from '../ManagePeople/ManagePeopleLayout'
 import GeneralLayout from './general/GeneralLayout'
 import AccountLayout from './account/AccountLayout'
+import PermissionDenied from '../Auth/PermissionDenied'
+import { Navigate, Route, Routes } from 'react-router-dom'
+import SubscriptionPlan from './subscription/SubscriptionPlan'
+import ManagePeopleLayout from '../ManagePeople/ManagePeopleLayout'
 
 const SettingsMainContainer = ({ width }) => {
 
