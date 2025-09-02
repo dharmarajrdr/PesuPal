@@ -2,9 +2,7 @@ package com.pesupal.server.model.user;
 
 import com.pesupal.server.enums.InvitationStatus;
 import com.pesupal.server.model.UUIDBaseModel;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -29,6 +27,8 @@ public class OrgInvitation extends UUIDBaseModel {
     @ManyToOne
     private OrgMember inviter;
 
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private InvitationStatus status;
 
     private LocalDateTime invitedAt = LocalDateTime.now();

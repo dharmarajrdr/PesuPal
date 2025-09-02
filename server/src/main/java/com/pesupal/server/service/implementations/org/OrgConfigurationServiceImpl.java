@@ -35,12 +35,15 @@ public class OrgConfigurationServiceImpl implements OrgConfigurationService {
     @Override
     public void initializeOrgConfiguration(Org org) {
 
+        OrgConfiguration superAdminConfiguration = OrgConfiguration.getInitialConfiguration(Role.SUPER_ADMIN);
         OrgConfiguration adminConfiguration = OrgConfiguration.getInitialConfiguration(Role.ADMIN);
         OrgConfiguration userConfiguration = OrgConfiguration.getInitialConfiguration(Role.USER);
 
+        superAdminConfiguration.setOrg(org);
         adminConfiguration.setOrg(org);
         userConfiguration.setOrg(org);
 
+        orgConfigurationRepository.save(superAdminConfiguration);
         orgConfigurationRepository.save(adminConfiguration);
         orgConfigurationRepository.save(userConfiguration);
     }
