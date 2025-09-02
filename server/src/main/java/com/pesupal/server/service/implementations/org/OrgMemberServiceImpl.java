@@ -466,4 +466,39 @@ public class OrgMemberServiceImpl implements OrgMemberService {
         }
     }
 
+    /**
+     * Fetch all super admins in the org
+     *
+     * @param currentOrgMember
+     * @return
+     */
+    @Override
+    public List<UserBasicInfoDto> getAllSuperAdmins(OrgMember currentOrgMember) {
+
+        Org org = currentOrgMember.getOrg();
+
+        return orgMemberRepository.findAllByOrgAndRoleOrderByEmployeeId(org, Role.SUPER_ADMIN).stream().map(orgMember -> {
+            UserBasicInfoDto userBasicInfoDto = UserBasicInfoDto.fromOrgMember(orgMember);
+            userBasicInfoDto.setDisplayPicture(mediaService.generatePresignedUrl(orgMember.getDisplayPicture()));
+            return userBasicInfoDto;
+        }).toList();
+    }
+
+    /**
+     * Fetch all inactive members in an org
+     *
+     * @param currentOrgMember
+     * @return
+     */
+    @Override
+    public List<UserBasicInfoDto> getAllInactiveMembers(OrgMember currentOrgMember) {
+
+        Org org = currentOrgMember.getOrg();
+
+        return orgMemberRepository.findAllByOrgAndArchivedOrderByEmployeeId(org, true).stream().map(orgMember -> {
+            UserBasicInfoDto userBasicInfoDto = UserBasicInfoDto.fromOrgMember(orgMember);
+            userBasicInfoDto.setDisplayPicture(mediaService.generatePresignedUrl(orgMember.getDisplayPicture()));
+            return userBasicInfoDto;
+        }).toList();
+    }
 }

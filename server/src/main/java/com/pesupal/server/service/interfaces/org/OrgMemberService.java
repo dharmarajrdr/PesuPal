@@ -51,4 +51,8 @@ public interface OrgMemberService {
     void joinInOrg(OrgInvitation orgInvitation, User user);
 
     void joinInAllInvitedOrgs(User user);
+
+    List<UserBasicInfoDto> getAllSuperAdmins(OrgMember currentOrgMember);
+
+    List<UserBasicInfoDto> getAllInactiveMembers(OrgMember currentOrgMember);
 }
