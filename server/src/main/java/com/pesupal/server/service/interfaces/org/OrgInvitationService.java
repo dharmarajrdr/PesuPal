@@ -26,4 +26,6 @@ public interface OrgInvitationService {
     List<OrgInvitationDto> getAllInvitations(OrgMember orgMember);
 
     void revokeInvitation(UUID invitationId, OrgMember currentOrgMember);
+
+    List<OrgInvitationDto> getAllPendingInvitations(OrgMember currentOrgMember);
 }

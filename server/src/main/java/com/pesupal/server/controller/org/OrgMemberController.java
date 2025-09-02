@@ -63,6 +63,20 @@ public class OrgMemberController extends OrgSubscriptionManager {
         return ResponseEntity.ok(new ApiResponseDto("List of organization members retrieved successfully.", orgMembers));
     }
 
+    @GetMapping("/super-admins")
+    public ResponseEntity<ApiResponseDto> getAllSuperAdmins() {
+
+        List<UserBasicInfoDto> superAdmin = orgMemberService.getAllSuperAdmins(getCurrentOrgMember());
+        return ResponseEntity.ok(new ApiResponseDto("Super Admins fetched successfully.", superAdmin));
+    }
+
+    @GetMapping("/inactive-members")
+    public ResponseEntity<ApiResponseDto> getAllInactiveMembers() {
+
+        List<UserBasicInfoDto> inactiveMembers = orgMemberService.getAllInactiveMembers(getCurrentOrgMember());
+        return ResponseEntity.ok(new ApiResponseDto("Inactive members fetched successfully.", inactiveMembers));
+    }
+
     @GetMapping("/search")
     public ResponseEntity<ApiResponseDto> getSearchedOrgMembers(@RequestParam(name = "query", defaultValue = "") String search,
                                                                 @RequestParam(defaultValue = "0") int page,

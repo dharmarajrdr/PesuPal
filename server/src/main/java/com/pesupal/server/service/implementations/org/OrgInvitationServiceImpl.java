@@ -108,7 +108,7 @@ public class OrgInvitationServiceImpl implements OrgInvitationService {
     @Transactional
     public void shareInvitation(OrgMember addedBy, String email, String displayName) throws MessagingException {
 
-        OrgInvitation orgInvitation = OrgInvitation.builder().inviter(addedBy).displayName(displayName).email(email).invitedAt(LocalDateTime.now()).build();
+        OrgInvitation orgInvitation = OrgInvitation.builder().inviter(addedBy).status(InvitationStatus.ACTION_PENDING).displayName(displayName).email(email).invitedAt(LocalDateTime.now()).build();
         orgInvitationRepository.save(orgInvitation);
 
 //        sendInvitationEmail(orgInvitation, email);
@@ -162,6 +162,26 @@ public class OrgInvitationServiceImpl implements OrgInvitationService {
         }
 
         return orgInvitationRepository.findAllByInviter_OrgOrderByInvitedAtDesc(orgMember.getOrg()).stream().map(orgInvitation -> {
+            OrgInvitationDto dto = OrgInvitationDto.fromOrgInvitation(orgInvitation);
+            dto.setInviter(orgMemberService.getUserPreview(orgInvitation.getInviter()));
+            return dto;
+        }).toList();
+    }
+
+    /**
+     * Fetch the pending invites in current org
+     *
+     * @param orgMember
+     * @return
+     */
+    @Override
+    public List<OrgInvitationDto> getAllPendingInvitations(OrgMember orgMember) {
+
+        if (!orgMember.getRole().equals(Role.SUPER_ADMIN)) {
+            throw new PermissionDeniedException("You do not have permission to view invitations");
+        }
+
+        return orgInvitationRepository.findAllByInviter_OrgAndStatusOrderByInvitedAtDesc(orgMember.getOrg(), InvitationStatus.ACTION_PENDING).stream().map(orgInvitation -> {
             OrgInvitationDto dto = OrgInvitationDto.fromOrgInvitation(orgInvitation);
             dto.setInviter(orgMemberService.getUserPreview(orgInvitation.getInviter()));
             return dto;

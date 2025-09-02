@@ -51,4 +51,11 @@ public class OrgInvitationController extends CurrentValueRetriever {
         List<OrgInvitationDto> invitations = orgInvitationService.getAllInvitations(getCurrentOrgMember());
         return ResponseEntity.ok().body(new ApiResponseDto("Invitations retrieved successfully", invitations));
     }
+
+    @GetMapping("/pending-actions")
+    public ResponseEntity<ApiResponseDto> getAllPendingActions() {
+
+        List<OrgInvitationDto> pendingInvitation = orgInvitationService.getAllPendingInvitations(getCurrentOrgMember());
+        return ResponseEntity.ok().body(new ApiResponseDto("Pending invitations fetched successfully", pendingInvitation));
+    }
 }
