@@ -1,6 +1,7 @@
 package com.pesupal.server.dto.response.org;
 
 import com.pesupal.server.dto.response.UserPreviewDto;
+import com.pesupal.server.enums.InvitationStatus;
 import com.pesupal.server.model.user.OrgInvitation;
 import lombok.Data;
 
@@ -18,11 +19,11 @@ public class OrgInvitationDto {
 
     private UserPreviewDto inviter;
 
-    private boolean accepted;
+    private InvitationStatus status;
 
     private LocalDateTime invitedAt;
 
-    private LocalDateTime acceptedAt;
+    private LocalDateTime lastUpdatedAt;
 
     public static OrgInvitationDto fromOrgInvitation(OrgInvitation orgInvitation) {
 
@@ -30,9 +31,9 @@ public class OrgInvitationDto {
         dto.setInvitationId(orgInvitation.getId());
         dto.setEmail(orgInvitation.getEmail());
         dto.setDisplayName(orgInvitation.getDisplayName());
-        dto.setAccepted(orgInvitation.isAccepted());
+        dto.setStatus(orgInvitation.getStatus());
         dto.setInvitedAt(orgInvitation.getInvitedAt());
-        dto.setAcceptedAt(orgInvitation.getAcceptedAt());
+        dto.setLastUpdatedAt(orgInvitation.getLastUpdatedAt());
         return dto;
     }
 }

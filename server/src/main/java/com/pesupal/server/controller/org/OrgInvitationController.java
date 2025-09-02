@@ -38,6 +38,13 @@ public class OrgInvitationController extends CurrentValueRetriever {
         return ResponseEntity.ok().body(new ApiResponseDto("Invitation resent successfully"));
     }
 
+    @DeleteMapping("/revoke/{invitationId}")
+    public ResponseEntity<ApiResponseDto> revokeInvitation(@PathVariable UUID invitationId) {
+
+        orgInvitationService.revokeInvitation(invitationId, getCurrentOrgMember());
+        return ResponseEntity.ok().body(new ApiResponseDto("Invite revoked successfully"));
+    }
+
     @GetMapping("")
     public ResponseEntity<ApiResponseDto> getAllInvitations() {
 
