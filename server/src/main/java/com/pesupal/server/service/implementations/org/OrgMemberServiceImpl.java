@@ -15,7 +15,6 @@ import com.pesupal.server.helpers.OrgHelper;
 import com.pesupal.server.model.chat.direct_message.DirectMessageChat;
 import com.pesupal.server.model.department.Department;
 import com.pesupal.server.model.org.Org;
-import com.pesupal.server.model.org.OrgConfiguration;
 import com.pesupal.server.model.org.OrgSubscriptionHistory;
 import com.pesupal.server.model.user.Designation;
 import com.pesupal.server.model.user.OrgInvitation;
@@ -109,19 +108,6 @@ public class OrgMemberServiceImpl implements OrgMemberService {
     }
 
     /**
-     * Checks if the role has the privilege to add a member to the organization.
-     *
-     * @param org
-     * @param role
-     * @return Boolean
-     */
-    private Boolean hasPrivilegeToAddMember(Org org, Role role) {
-
-        OrgConfiguration orgConfiguration = orgConfigurationService.getOrgConfigurationByOrgAndRole(org, role);
-        return orgConfiguration.getAddMember();
-    }
-
-    /**
      * Retrieve user's profile as basic info
      *
      * @param orgMember
@@ -132,19 +118,6 @@ public class OrgMemberServiceImpl implements OrgMemberService {
         UserBasicInfoDto userBasicInfoDto = UserBasicInfoDto.fromOrgMember(orgMember);
         userBasicInfoDto.setDisplayPicture(mediaService.generatePresignedUrl(orgMember.getDisplayPicture()));
         return userBasicInfoDto;
-    }
-
-    /**
-     * Checks if the role has the privilege to update a member in the organization.
-     *
-     * @param org
-     * @param role
-     * @return
-     */
-    private Boolean hasPrivilegeToUpdateMember(Org org, Role role) {
-
-        OrgConfiguration orgConfiguration = orgConfigurationService.getOrgConfigurationByOrgAndRole(org, role);
-        return orgConfiguration.getUpdateMember();
     }
 
     /**
@@ -268,7 +241,7 @@ public class OrgMemberServiceImpl implements OrgMemberService {
 
         Org org = addedBy.getOrg();
 
-        if (!hasPrivilegeToAddMember(org, addedBy.getRole())) {
+        if (!orgConfigurationService.hasPrivilegeToAddMember(org, addedBy.getRole())) {
             throw new PermissionDeniedException("You do not have permission to add members to this organization.");
         }
 
@@ -283,20 +256,6 @@ public class OrgMemberServiceImpl implements OrgMemberService {
         }
 
         orgInvitationService.shareInvitation(addedBy, userToAdd, addOrgMemberDto.getDisplayName());
-    }
-
-    /**
-     * Validates if a user is a member of an organization.
-     *
-     * @param user
-     * @param org
-     */
-    @Override
-    public void validateUserIsOrgMember(User user, Org org) {
-
-        if (!existsByUserAndOrg(user, org)) {
-            throw new DataNotFoundException("User with ID " + user.getId() + " is not a member of this org.");
-        }
     }
 
     /**
@@ -406,7 +365,7 @@ public class OrgMemberServiceImpl implements OrgMemberService {
             throw new ActionProhibitedException("The member you are trying to update does not exist.");
         }
 
-        if (!OrgHelper.isOrgOwner(orgMemberPublicId, org) && !hasPrivilegeToUpdateMember(org, currentOrgMember.getRole())) {
+        if (!OrgHelper.isOrgOwner(orgMemberPublicId, org) && !orgConfigurationService.hasPrivilegeToUpdateMember(org, currentOrgMember.getRole())) {
             throw new PermissionDeniedException("You do not have permission to update members of this organization.");
         }
 
