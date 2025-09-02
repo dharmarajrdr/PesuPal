@@ -1,9 +1,9 @@
-import { showPopup } from '../../store/reducers/PopupSlice';
-import { StatusIndicator } from '../Auth/utils';
-import UserAvatar from '../User/UserAvatar';
 import './OrgMembers.css';
 import { useDispatch } from 'react-redux';
+import UserAvatar from '../User/UserAvatar';
 import { useNavigate } from 'react-router-dom';
+import { StatusIndicator } from '../Auth/utils';
+import { showPopup } from '../../store/reducers/PopupSlice';
 
 const NoMembersAvailable = ({ message }) => {
     return (
