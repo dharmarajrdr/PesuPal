@@ -1,5 +1,6 @@
 package com.pesupal.server.repository.org;
 
+import com.pesupal.server.enums.Role;
 import com.pesupal.server.model.department.Department;
 import com.pesupal.server.model.org.Org;
 import com.pesupal.server.model.user.OrgMember;
@@ -58,6 +59,10 @@ public interface OrgMemberRepository extends JpaRepository<OrgMember, Long> {
     Page<OrgMember> fuzzySearchOrgMembers(@Param("orgId") Long orgId, @Param("search") String search, Pageable pageable);
 
     void deleteAllByOrg(Org org);
-    
+
     boolean existsByUser_EmailAndOrg(String userEmail, Org org);
+
+    List<OrgMember> findAllByOrgAndRoleOrderByEmployeeId(Org org, Role role);
+
+    List<OrgMember> findAllByOrgAndArchivedOrderByEmployeeId(Org org, boolean archived);
 }
