@@ -13,8 +13,16 @@
     padding: 10px 25px 10px 15px;
     cursor: pointer;
     color: var(--primary-color-active);
+    background-color: #fff;
     border-bottom: 1px solid #eee;
     user-select: none;
+    border-left: 5px solid transparent;
+}
+
+#options-container .option.selected {
+    background-color: #eee;
+    border-left: 5px solid var(--primary-color-active);
+    pointer-events: none;
 }
 
 #options-container .option:hover {
