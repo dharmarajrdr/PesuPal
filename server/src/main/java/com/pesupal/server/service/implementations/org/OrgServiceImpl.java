@@ -83,8 +83,8 @@ public class OrgServiceImpl implements OrgService {
         org.setActive(true);
         orgRepository.save(org);
 
-        orgConfigurationService.initializeOrgConfiguration(org);
         OrgMember orgMember = orgMemberService.joinOrgAsFirstMember(createOrgDto, org, owner);
+        orgConfigurationService.initializeOrgConfiguration(orgMember);
         orgSubscriptionHistoryService.addSubscription(org.getId(), "FREE_TRIAL", null);
         return OrgCreatedDto.fromOrgMember(orgMember);
     }
