@@ -86,13 +86,18 @@ const ManagePeopleHeader = ({ setShowAddUserLayout, searchTerm, setSearchQuery }
         setSelectedOption(options[0]);
     }, [currentOption]);
 
+    const addUserHandler = () => {
+        setShowAddUserLayout(true);
+        setIsOptionOpen(false);
+    }
+
     return (
         <div className='FRCB w100' id='manage-people-header'>
             <input className="search-input" placeholder="Search people..." value={searchTerm} onChange={(e) => setSearchQuery(e.target.value)} />
             <div className="FRCE">
                 <i className={selectedOption?.icon} id="more-options-icon" onClick={() => setIsOptionOpen(!isOptionOpen)} ></i>
                 {isOptionOpen && <OptionsModal options={options} style={{ top: '65px', right: '145px' }} />}
-                <button className="add-btn" onClick={() => setShowAddUserLayout(true)}><i className="fa fa-user-plus colorFFF w20 pR5" />Add User</button>
+                <button className="add-btn" onClick={addUserHandler}><i className="fa fa-user-plus colorFFF w20 pR5" />Add User</button>
             </div>
         </div>
     )
