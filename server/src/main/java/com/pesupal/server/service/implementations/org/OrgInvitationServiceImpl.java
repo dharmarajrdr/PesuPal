@@ -1,6 +1,7 @@
 package com.pesupal.server.service.implementations.org;
 
 import com.pesupal.server.dto.request.EmailNotificationRequestDto;
+import com.pesupal.server.dto.request.org.AddOrgMemberDto;
 import com.pesupal.server.dto.response.org.OrgInvitationDto;
 import com.pesupal.server.enums.InvitationStatus;
 import com.pesupal.server.enums.Role;
@@ -13,6 +14,8 @@ import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.model.user.User;
 import com.pesupal.server.repository.UserRepository;
 import com.pesupal.server.repository.org.OrgInvitationRepository;
+import com.pesupal.server.repository.org.OrgMemberRepository;
+import com.pesupal.server.service.interfaces.org.OrgConfigurationService;
 import com.pesupal.server.service.interfaces.org.OrgInvitationService;
 import com.pesupal.server.service.interfaces.org.OrgMemberService;
 import com.pesupal.server.strategies.notification.EmailNotification;
@@ -35,6 +38,8 @@ public class OrgInvitationServiceImpl implements OrgInvitationService {
     private final OrgMemberService orgMemberService;
     private final EmailNotification emailNotification;
     private final OrgInvitationRepository orgInvitationRepository;
+    private final OrgConfigurationService orgConfigurationService;
+    private final OrgMemberRepository orgMemberRepository;
 
     /**
      * Saves an organization invitation.
@@ -101,17 +106,37 @@ public class OrgInvitationServiceImpl implements OrgInvitationService {
      * Shares an organization invitation with a user.
      *
      * @param addedBy
-     * @param email
+     * @param addedBy
      * @throws MessagingException
      */
     @Override
     @Transactional
-    public void shareInvitation(OrgMember addedBy, String email, String displayName) throws MessagingException {
+    public OrgInvitationDto shareInvitation(OrgMember addedBy, AddOrgMemberDto addOrgMemberDto) throws MessagingException {
 
-        OrgInvitation orgInvitation = OrgInvitation.builder().inviter(addedBy).status(InvitationStatus.ACTION_PENDING).displayName(displayName).email(email).invitedAt(LocalDateTime.now()).build();
+        Org org = addedBy.getOrg();
+
+        if (!orgConfigurationService.hasPrivilegeToAddMember(org, addedBy.getRole())) {
+            throw new PermissionDeniedException("You do not have permission to add members to this organization.");
+        }
+
+        String userToAdd = addOrgMemberDto.getEmail().toLowerCase().trim();
+
+        if (orgMemberRepository.existsByUser_EmailAndOrg(userToAdd, org)) {
+            throw new ActionProhibitedException("User is already a member of this organization.");
+        }
+
+        if (hasAlreadyInvited(userToAdd, org)) {
+            throw new ActionProhibitedException("This user has already been invited to join the organization.");
+        }
+
+        OrgInvitation orgInvitation = OrgInvitation.builder().inviter(addedBy).status(InvitationStatus.ACTION_PENDING).displayName(addOrgMemberDto.getDisplayName()).email(addOrgMemberDto.getEmail()).invitedAt(LocalDateTime.now()).build();
         orgInvitationRepository.save(orgInvitation);
 
 //        sendInvitationEmail(orgInvitation, email);
+
+        OrgInvitationDto orgInvitationDto = OrgInvitationDto.fromOrgInvitation(orgInvitation);
+        orgInvitationDto.setInviter(orgMemberService.getUserPreview(addedBy));
+        return orgInvitationDto;
     }
 
     /**
