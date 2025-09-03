@@ -2,12 +2,13 @@ import './PendingInvites.css'
 import Person from './Person'
 import Loader from '../Loader'
 import Inviter from './Inviter'
-import { useDispatch } from 'react-redux'
 import { apiRequest } from '../../http_request'
 import { useEffect, useRef, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import { showPopup } from '../../store/reducers/PopupSlice'
 import { hideLoader, showLoader } from '../../store/reducers/VerticalLoaderSlice'
 import { hideConfirmationPopup, showConfirmationPopup } from '../../store/reducers/ConfirmationPopupSlice'
+import { deleteUserByInvitationId, setManageUserTitle, setUsers } from '../../store/reducers/ManageUsersSlice'
 
 const Actions = ({ invitationId }) => {
 
@@ -61,6 +62,7 @@ const Actions = ({ invitationId }) => {
                     onClick: () => {
                         apiRequest(`/api/v1/org-invitations/revoke/${invitationId}`, 'DELETE').then(({ message }) => {
                             dispatch(showPopup({ message, type: 'success' }));
+                            dispatch(deleteUserByInvitationId(invitationId));
                             _finally();
                         }).catch(({ message }) => {
                             dispatch(showPopup({ message, type: 'error' }));
@@ -88,12 +90,11 @@ const Actions = ({ invitationId }) => {
 const Row = ({ person }) => {
 
     const { invitationId, employeeId, archived, inviter, invitedAt } = person || {};
-    Object.assign(inviter, { invitedAt });
 
     return (
         <div className='row FRCS' key={invitationId}>
             <div className='column'><Person person={person} /></div>
-            <div className='column'><Inviter inviter={inviter} /></div>
+            <div className='column'><Inviter inviter={inviter} invitedAt={invitedAt} /></div>
             <div className='column'><Actions invitationId={invitationId} /></div>
         </div>
     )
@@ -116,12 +117,12 @@ const PendingInvites = ({ searchQuery }) => {
     const sortBy = 'employeeId';
     const dispatch = useDispatch();
     const firstRender = useRef(true);
-    const [members, setMembers] = useState([]);
     const [loading, setLoading] = useState(true);
+    const { members } = useSelector(state => state.manageUsers);
 
     const getUsers = () => {
         apiRequest(`/api/v1/org-invitations/pending-actions?query=${searchQuery}&sortBy=${sortBy}&sortOrder=${sortOrder}`, 'GET').then(({ data }) => {
-            setMembers(data);
+            dispatch(setUsers(data));
         }).catch(({ message }) => {
             dispatch(showPopup({ message, type: 'error' }));
         }).finally(() => {
@@ -131,6 +132,7 @@ const PendingInvites = ({ searchQuery }) => {
     }
 
     useEffect(() => {
+        dispatch(setManageUserTitle('Pending Invites'));
         setLoading(true);
         getUsers();
     }, []);
@@ -151,7 +153,7 @@ const PendingInvites = ({ searchQuery }) => {
     }, [searchQuery]);
 
     return loading ? <Loader /> : (
-        <div class='manage-people-body'>
+        <div className='manage-people-body'>
             <div className='w100 manage-people-table' id='pending-invites-table' cellPadding={0} cellSpacing={0}>
 
                 <div className='row header w100 FRCS'>
