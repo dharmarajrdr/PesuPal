@@ -9,7 +9,6 @@ import com.pesupal.server.model.org.Org;
 import com.pesupal.server.model.user.OrgInvitation;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.model.user.User;
-import jakarta.mail.MessagingException;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
@@ -31,8 +30,6 @@ public interface OrgMemberService {
     OrgMember joinOrgAsFirstMember(CreateOrgDto createOrgDto, Org org, User user);
 
     List<OrgDetailDto> listOfOrgUserPartOf(Long userId);
-
-    void addMemberToOrg(AddOrgMemberDto addOrgMemberDto, OrgMember orgMember) throws MessagingException;
 
     List<UserBasicInfoDto> getAllOrgMembers(OrgMember orgMember);
 

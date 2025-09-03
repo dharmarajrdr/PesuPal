@@ -27,11 +27,9 @@ import com.pesupal.server.service.interfaces.MediaService;
 import com.pesupal.server.service.interfaces.UserService;
 import com.pesupal.server.service.interfaces.chat.direct_message.DirectMessageChatService;
 import com.pesupal.server.service.interfaces.org.*;
-import jakarta.mail.MessagingException;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -227,35 +225,6 @@ public class OrgMemberServiceImpl implements OrgMemberService {
             orgDetailDtos.add(orgDetailDto);
         }
         return orgDetailDtos;
-    }
-
-    /**
-     * Adds a member to an organization.
-     *
-     * @param addOrgMemberDto
-     * @return OrgMember
-     */
-    @Override
-    @Transactional
-    public void addMemberToOrg(AddOrgMemberDto addOrgMemberDto, OrgMember addedBy) throws MessagingException {
-
-        Org org = addedBy.getOrg();
-
-        if (!orgConfigurationService.hasPrivilegeToAddMember(org, addedBy.getRole())) {
-            throw new PermissionDeniedException("You do not have permission to add members to this organization.");
-        }
-
-        String userToAdd = addOrgMemberDto.getEmail().toLowerCase().trim();
-
-        if (orgMemberRepository.existsByUser_EmailAndOrg(userToAdd, org)) {
-            throw new ActionProhibitedException("User is already a member of this organization.");
-        }
-
-        if (orgInvitationService.hasAlreadyInvited(userToAdd, org)) {
-            throw new ActionProhibitedException("This user has already been invited to join the organization.");
-        }
-
-        orgInvitationService.shareInvitation(addedBy, userToAdd, addOrgMemberDto.getDisplayName());
     }
 
     /**

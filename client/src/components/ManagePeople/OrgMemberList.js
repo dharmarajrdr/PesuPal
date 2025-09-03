@@ -1,14 +1,15 @@
+import Role from './Role'
 import './OrgMemberList.css'
 import Person from './Person'
 import Loader from '../Loader'
+import EmployeeId from './EmployeeId'
 import MemberStatus from './MemberStatus'
-import { useDispatch } from 'react-redux'
 import { apiRequest } from '../../http_request'
 import { useEffect, useRef, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import { showPopup } from '../../store/reducers/PopupSlice'
+import { setUsers } from '../../store/reducers/ManageUsersSlice'
 import { hideLoader, showLoader } from '../../store/reducers/VerticalLoaderSlice'
-import EmployeeId from './EmployeeId'
-import Role from './Role'
 
 const Actions = () => {
 
@@ -49,12 +50,12 @@ const OrgMemberList = ({ searchQuery }) => {
     const sortBy = 'employeeId';
     const dispatch = useDispatch();
     const firstRender = useRef(true);
-    const [members, setMembers] = useState([]);
     const [loading, setLoading] = useState(true);
+    const { members } = useSelector(state => state.manageUsers);
 
     const getUsers = () => {
         apiRequest(`/api/v1/people/search?query=${searchQuery}&sortBy=${sortBy}&sortOrder=${sortOrder}`, 'GET').then(({ data }) => {
-            setMembers(data);
+            dispatch(setUsers(data));
         }).catch(({ message }) => {
             dispatch(showPopup({ message, type: 'error' }));
         }).finally(() => {

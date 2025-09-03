@@ -1,6 +1,7 @@
 package com.pesupal.server.controller.org;
 
 import com.pesupal.server.config.StaticConfig;
+import com.pesupal.server.dto.request.org.AddOrgMemberDto;
 import com.pesupal.server.dto.response.ApiResponseDto;
 import com.pesupal.server.dto.response.org.OrgInvitationDto;
 import com.pesupal.server.helpers.CurrentValueRetriever;
@@ -29,6 +30,13 @@ public class OrgInvitationController extends CurrentValueRetriever {
 
         orgInvitationService.acceptInvitation(invitationId);
         return ResponseEntity.status(HttpStatus.FOUND).location(URI.create(LOGIN_PAGE_URL)).build();
+    }
+
+    @PostMapping("")
+    public ResponseEntity<ApiResponseDto> createInvitation(@RequestBody AddOrgMemberDto addOrgMemberDto) throws MessagingException {
+
+        OrgInvitationDto orgInvitationDto = orgInvitationService.shareInvitation(getCurrentOrgMember(), addOrgMemberDto);
+        return ResponseEntity.ok().body(new ApiResponseDto("Invitation sent successfully", orgInvitationDto));
     }
 
     @PatchMapping("/resend/{invitationId}")

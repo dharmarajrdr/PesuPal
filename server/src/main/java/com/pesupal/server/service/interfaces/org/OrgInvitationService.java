@@ -1,5 +1,6 @@
 package com.pesupal.server.service.interfaces.org;
 
+import com.pesupal.server.dto.request.org.AddOrgMemberDto;
 import com.pesupal.server.dto.response.org.OrgInvitationDto;
 import com.pesupal.server.model.org.Org;
 import com.pesupal.server.model.user.OrgInvitation;
@@ -17,7 +18,7 @@ public interface OrgInvitationService {
 
     void acceptInvitation(UUID invitationId);
 
-    void shareInvitation(OrgMember addedBy, String email, String displayName) throws MessagingException;
+    OrgInvitationDto shareInvitation(OrgMember addedBy, AddOrgMemberDto addOrgMemberDto) throws MessagingException;
 
     void resendInvitation(UUID invitationId, OrgMember currentOrgMember) throws MessagingException;
 

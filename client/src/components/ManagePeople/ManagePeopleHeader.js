@@ -1,10 +1,13 @@
+import { useDispatch } from "react-redux";
 import { useEffect, useState } from "react"
 import OptionsModal from "../Utils/OptionsModal";
 import { useNavigate, useParams } from "react-router";
+import { setManageUserTitle } from "../../store/reducers/ManageUsersSlice";
 
 const ManagePeopleHeader = ({ setShowAddUserLayout, searchTerm, setSearchQuery }) => {
 
     const navigate = useNavigate();
+    const dispatch = useDispatch();
     const { '*': currentOption } = useParams();
     const [isOptionOpen, setIsOptionOpen] = useState(false);
     const [selectedOption, setSelectedOption] = useState(null);
@@ -16,6 +19,7 @@ const ManagePeopleHeader = ({ setShowAddUserLayout, searchTerm, setSearchQuery }
             selected: selectedOption?.name === 'All Members',
             onClick: (e) => {
                 e.stopPropagation();
+                dispatch(setManageUserTitle('All Members'));
                 navigate('/settings/manage-people/all-members');
                 setIsOptionOpen(false);
             }
@@ -27,6 +31,7 @@ const ManagePeopleHeader = ({ setShowAddUserLayout, searchTerm, setSearchQuery }
             selected: selectedOption?.name === 'Super Admins',
             onClick: (e) => {
                 e.stopPropagation();
+                dispatch(setManageUserTitle('Super Admins'));
                 navigate('/settings/manage-people/super-admins');
                 setIsOptionOpen(false);
             }
@@ -39,6 +44,7 @@ const ManagePeopleHeader = ({ setShowAddUserLayout, searchTerm, setSearchQuery }
             count: 5,
             onClick: (e) => {
                 e.stopPropagation();
+                dispatch(setManageUserTitle('Pending Invites'));
                 navigate('/settings/manage-people/pending-invites');
                 setIsOptionOpen(false);
             }
@@ -51,6 +57,7 @@ const ManagePeopleHeader = ({ setShowAddUserLayout, searchTerm, setSearchQuery }
             count: 2000,
             onClick: (e) => {
                 e.stopPropagation();
+                dispatch(setManageUserTitle('Pending Role Assignments'));
                 navigate('/settings/manage-people/pending-role-assignments');
                 setIsOptionOpen(false);
             }
@@ -62,6 +69,7 @@ const ManagePeopleHeader = ({ setShowAddUserLayout, searchTerm, setSearchQuery }
             selected: selectedOption?.name === 'Inactive Members',
             onClick: (e) => {
                 e.stopPropagation();
+                dispatch(setManageUserTitle('Inactive Members'));
                 navigate('/settings/manage-people/inactive-members');
                 setIsOptionOpen(false);
             }
