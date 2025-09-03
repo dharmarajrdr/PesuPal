@@ -1,8 +1,8 @@
 package com.pesupal.server.dto.response.org;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.pesupal.server.enums.Role;
 import com.pesupal.server.model.org.Org;
+import com.pesupal.server.model.org.OrgRole;
 import lombok.Data;
 
 import java.net.URL;
@@ -19,7 +19,7 @@ public class OrgDetailDto {
 
     private URL displayPicture;
 
-    private Role role;
+    private OrgRole role;
 
     private Integer members;
 
