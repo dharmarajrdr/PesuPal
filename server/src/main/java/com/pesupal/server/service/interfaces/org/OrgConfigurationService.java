@@ -1,18 +1,17 @@
 package com.pesupal.server.service.interfaces.org;
 
-import com.pesupal.server.enums.Role;
-import com.pesupal.server.model.org.Org;
-import com.pesupal.server.model.org.OrgConfiguration;
+import com.pesupal.server.dto.request.org.OrgConfigurationDto;
+import com.pesupal.server.enums.OrgAction;
+import com.pesupal.server.model.org.OrgRole;
+import com.pesupal.server.model.user.OrgMember;
 
 public interface OrgConfigurationService {
 
-    OrgConfiguration getOrgConfigurationByOrgAndRole(Org org, Role role);
+    boolean hasPrivilegeTo(OrgAction orgAction, OrgRole role);
 
-    boolean hasPrivilegeToAddMember(Org org, Role role);
+    void initializeOrgConfiguration(OrgMember owner);
 
-    boolean hasPrivilegeToUpdateMember(Org org, Role role);
+    void createConfiguration(OrgConfigurationDto createOrgConfigurationDto, OrgMember currentOrgMember);
 
-    boolean hasPrivilegeToCreateDepartment(Org org, Role role);
-
-    void initializeOrgConfiguration(Org org);
+    void removeConfiguration(OrgConfigurationDto removeConfigurationDto, OrgMember currentOrgMember);
 }
