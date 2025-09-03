@@ -17,6 +17,7 @@ const Actions = ({ invitationId }) => {
 
     const _finally = () => {
         setIsActive(false);
+        dispatch(hideLoader());
         dispatch(hideConfirmationPopup());
     }
 
@@ -30,6 +31,7 @@ const Actions = ({ invitationId }) => {
                     title: 'Resend',
                     color: '#097b8a',
                     onClick: () => {
+                        dispatch(showLoader());
                         apiRequest(`/api/v1/org-invitations/resend/${invitationId}`, 'PATCH').then(({ message }) => {
                             dispatch(showPopup({ message, type: 'success' }));
                             _finally();
