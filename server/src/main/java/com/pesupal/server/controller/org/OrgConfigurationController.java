@@ -2,11 +2,14 @@ package com.pesupal.server.controller.org;
 
 import com.pesupal.server.dto.request.org.OrgConfigurationDto;
 import com.pesupal.server.dto.response.ApiResponseDto;
+import com.pesupal.server.dto.response.org.OrgActionRolesDto;
 import com.pesupal.server.helpers.CurrentValueRetriever;
 import com.pesupal.server.service.interfaces.org.OrgConfigurationService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @AllArgsConstructor
@@ -20,6 +23,13 @@ public class OrgConfigurationController extends CurrentValueRetriever {
 
         orgConfigurationService.createConfiguration(createOrgConfigurationDto, getCurrentOrgMember());
         return ResponseEntity.ok().body(new ApiResponseDto("Action '" + createOrgConfigurationDto.getAction().name() + "' configured."));
+    }
+
+    @GetMapping("")
+    public ResponseEntity<ApiResponseDto> getOrgConfiguration() {
+
+        List<OrgActionRolesDto> permittedActions = orgConfigurationService.getPermittedActionsInOrg(getCurrentOrgMember());
+        return ResponseEntity.ok().body(new ApiResponseDto("Org configurations fetched successfully.", permittedActions));
     }
 
     @DeleteMapping("")

@@ -1,10 +1,12 @@
 package com.pesupal.server.dto.response.org;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.pesupal.server.dto.response.UserPreviewDto;
 import com.pesupal.server.model.org.OrgRole;
 import lombok.Data;
 
 @Data
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class OrgRoleDto {
 
     private Long roleId;
