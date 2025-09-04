@@ -19,11 +19,15 @@ const Header = ({ roles }) => {
 const Body = ({ roles, permissions }) => {
 
     return <div id="org-roles-table-body" className="FCSS w100">
-        {permissions.map(permission => (
-            <div key={permission.name} className="FRCS row">
-                <div className="col">{permission.name}</div>
+        {permissions.map(permission => {
+
+            const { action, roles: currentRoles } = permission;
+            const currentRolesNames = currentRoles.map(r => r.name);
+
+            return <div key={action.actionId} className="FRCS row">
+                <div className="col">{action.title}</div>
                 {roles.map((role) => {
-                    const allowed = permission.roles.includes(role);
+                    const allowed = currentRolesNames.includes(role);
                     return (
                         <div key={role} className="col">
                             {allowed ? <Checked /> : <Crossed />}
@@ -31,7 +35,7 @@ const Body = ({ roles, permissions }) => {
                     );
                 })}
             </div>
-        ))}
+        })}
     </div>
 }
 
@@ -41,14 +45,48 @@ const OrgRolesTable = () => {
 
     const permissions = [
         {
-            name: "Create Project",
-            roles: ["Super Admin", "Admin"]
+            "action": {
+                "actionId": 6,
+                "title": "Update Org"
+            },
+            "roles": [
+                {
+                    "roleId": 1,
+                    "name": "Super Admin"
+                }
+            ]
         },
         {
-            name: "Delete Project",
-            roles: ["Super Admin"]
+            "action": {
+                "actionId": 10,
+                "title": "Create Role"
+            },
+            "roles": [
+                {
+                    "roleId": 1,
+                    "name": "Super Admin"
+                },
+                {
+                    "roleId": 2,
+                    "name": "Member"
+                }
+            ]
+        },
+        {
+            "action": {
+                "actionId": 1,
+                "title": "Add Member"
+            },
+            "roles": [
+                {
+                    "roleId": 1,
+                    "name": "Super Admin"
+                }
+            ]
         }
     ]
+
+    permissions.sort((a, b) => a.action.actionId - b.action.actionId);
 
     return <div className="FCSS w100 noScrollbar" id="org-roles-table">
         <Header roles={roles} />

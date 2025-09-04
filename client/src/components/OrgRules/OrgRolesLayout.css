@@ -87,7 +87,7 @@
 }
 
 #org-roles-table .col:first-child {
-    width: 500px;
+    width: 250px;
     position: sticky;
     left: 0;
     box-shadow: 2px 0 5px -2px var(--box-shadow-color);
