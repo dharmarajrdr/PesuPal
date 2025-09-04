@@ -1,0 +1,113 @@
+#org-roles-layout {
+    height: 100vh;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+#org-roles-content {
+    height: 100%;
+    width: 100%;
+    background-color: #fff;
+    border-radius: 5px;
+}
+
+#org-roles-header {
+    border-bottom: 1px solid #e0e0e0;
+    padding: 10px 20px;
+    margin-bottom: 10px;
+}
+
+#org-roles-header h3 {
+    font-size: 16px;
+    font-weight: 500;
+}
+
+#org-roles-header button {
+    color: white;
+    border: none;
+    padding: 7px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+#org-roles-header #new-role-button {
+    border: 1px solid var(--primary-color);
+    background-color: var(--primary-color);
+}
+
+#org-roles-header #new-role-button:hover {
+    background-color: var(--primary-color-active);
+}
+
+#org-roles-header #manage-roles-button,
+#org-roles-header #manage-roles-button i {
+    background-color: #e5e5e5;
+    color: var(--primary-color);
+}
+
+#org-roles-header #manage-roles-button:hover {
+    background-color: #ddd;
+    color: #000;
+}
+
+#org-roles-table {
+    width: 100%;
+    overflow-x: auto;
+    padding-bottom: 10px;
+    height: calc(100% - 65px);
+}
+
+#org-roles-table-header {
+    background-color: #eee;
+}
+
+#org-roles-table-header .col:first-child {
+    background-color: #eee;
+}
+
+#org-roles-table-header .col,
+#org-roles-table-header .col .role-name {
+    font-weight: 500;
+}
+
+#org-roles-table-header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+#org-roles-table .col {
+    font-weight: 300;
+    font-size: 14px;
+    padding: 15px;
+    width: 200px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+#org-roles-table .col:first-child {
+    width: 500px;
+    position: sticky;
+    left: 0;
+    box-shadow: 2px 0 5px -2px var(--box-shadow-color);
+}
+
+
+#org-roles-table-body .col:first-child {
+    background-color: #fff;
+}
+
+#org-roles-table .col:not(:first-child) {
+    text-align: center;
+    border-left: 1px solid #e0e0e0;
+}
+
+#org-roles-table .row {
+    border-bottom: 1px solid #eee;
+    min-width: 100%;
+}
+
+#org-roles-table-body .row .col:not(:first-child) {
+    cursor: pointer;
+}
