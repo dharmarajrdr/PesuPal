@@ -28,7 +28,7 @@ public class OrgServiceImpl implements OrgService {
     private final OrgConfigurationService orgConfigurationService;
     private final OrgSubscriptionHistoryService orgSubscriptionHistoryService;
 
-    public OrgServiceImpl(UserService userService, OrgRepository orgRepository, OrgConfigurationService orgConfigurationService, @Lazy OrgMemberService orgMemberService, @Lazy OrgSubscriptionHistoryService orgSubscriptionHistoryService, UserOnboardingService userOnboardingService) {
+    public OrgServiceImpl(@Lazy UserService userService, OrgRepository orgRepository, OrgConfigurationService orgConfigurationService, @Lazy OrgMemberService orgMemberService, @Lazy OrgSubscriptionHistoryService orgSubscriptionHistoryService, @Lazy UserOnboardingService userOnboardingService) {
         this.userService = userService;
         this.orgRepository = orgRepository;
         this.orgMemberService = orgMemberService;

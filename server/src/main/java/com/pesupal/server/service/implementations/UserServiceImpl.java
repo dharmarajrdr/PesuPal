@@ -9,7 +9,6 @@ import com.pesupal.server.model.user.UserOnboarding;
 import com.pesupal.server.repository.UserRepository;
 import com.pesupal.server.service.interfaces.UserService;
 import com.pesupal.server.service.interfaces.org.UserOnboardingService;
-import com.pesupal.server.strategies.notification.EmailNotification;
 import com.pesupal.server.strategies.notification_template.SignupConfirmationTemplate;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -22,7 +21,6 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final EmailNotification emailNotification;
     private final UserOnboardingService userOnboardingService;
 
     /**

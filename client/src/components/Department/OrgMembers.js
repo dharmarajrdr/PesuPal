@@ -1,9 +1,9 @@
-import { showPopup } from '../../store/reducers/PopupSlice';
-import { StatusIndicator } from '../Auth/utils';
-import UserAvatar from '../User/UserAvatar';
 import './OrgMembers.css';
 import { useDispatch } from 'react-redux';
+import UserAvatar from '../User/UserAvatar';
 import { useNavigate } from 'react-router-dom';
+import { StatusIndicator } from '../Auth/utils';
+import { showPopup } from '../../store/reducers/PopupSlice';
 
 const NoMembersAvailable = ({ message }) => {
     return (
@@ -46,7 +46,7 @@ const OrgMember = ({ member }) => {
                 </div>
             </div>
             <div className='FRCE' id='right'>
-                <i className='profile_contacts fa fa-comment' style={{ backgroundColor: 'blue' }} onClick={chatClickHandler} />
+                <i className='profile_contacts fa fa-comment' style={{ backgroundColor: '#3591ff' }} onClick={chatClickHandler} />
                 <i className='profile_contacts fa fa-phone' style={{ backgroundColor: 'green' }} />
                 <i className='profile_contacts fa fa-video' style={{ backgroundColor: 'red' }} />
             </div>

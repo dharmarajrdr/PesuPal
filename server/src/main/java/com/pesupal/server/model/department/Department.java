@@ -18,6 +18,9 @@ public class Department extends PublicAccessModel {
 
     private String description;
 
+    @ManyToOne
+    private Department parent;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore
     private Org org;

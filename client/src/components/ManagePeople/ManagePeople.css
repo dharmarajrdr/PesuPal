@@ -1,6 +1,5 @@
 .manage-people-container {
     padding: 20px;
-    background: white;
     overflow: scroll;
     font-family: 'Segoe UI', sans-serif;
 }
@@ -25,9 +24,31 @@
     cursor: pointer;
 }
 
+.add-btn i {
+    width: 25px;
+}
+
+#more-options-icon {
+    background-color: var(--primary-color);
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 10px;
+    width: 35px;
+    height: 35px;
+    line-height: 35px;
+    text-align: center;
+}
+
+#more-options-icon:hover,
+.add-btn:hover {
+    background-color: var(--primary-color-active);
+    transition-duration: 0.25s;
+}
+
 .search-input {
     width: 100%;
-    padding: 12px;
+    padding: 12px 20px;
     border: 1px solid #ddd;
     border-radius: 8px;
 }

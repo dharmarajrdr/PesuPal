@@ -18,26 +18,29 @@ public class OrgConfiguration extends BaseModel {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    private Boolean inviteMember;
+    private boolean inviteMember;
 
-    private Boolean addMember;
+    private boolean addMember;
 
-    private Boolean removeMember;
+    private boolean removeMember;
 
-    private Boolean updateMember;
+    private boolean updateMember;
 
-    private Boolean updateOrg;
+    private boolean updateOrg;
 
-    private Boolean deleteOrg;
+    private boolean deleteOrg;
 
-    private Boolean leaveOrg;
+    private boolean leaveOrg;
 
-    private Boolean createGroup;
+    private boolean createGroup;
+
+    private boolean createDepartment;
 
     public static OrgConfiguration getInitialConfiguration(Role role) {
 
         OrgConfiguration orgConfiguration = new OrgConfiguration();
         orgConfiguration.setCreateGroup(true);
+        orgConfiguration.setCreateDepartment(true);
         switch (role) {
             case ADMIN: {
                 orgConfiguration.setRole(role);
@@ -48,6 +51,7 @@ public class OrgConfiguration extends BaseModel {
                 orgConfiguration.setUpdateOrg(true);
                 orgConfiguration.setDeleteOrg(true);
                 orgConfiguration.setLeaveOrg(true);
+                orgConfiguration.setCreateDepartment(false);
                 break;
             }
             case USER: {
@@ -59,6 +63,7 @@ public class OrgConfiguration extends BaseModel {
                 orgConfiguration.setUpdateOrg(false);
                 orgConfiguration.setDeleteOrg(false);
                 orgConfiguration.setLeaveOrg(true);
+                orgConfiguration.setCreateDepartment(false);
                 break;
             }
             default: {

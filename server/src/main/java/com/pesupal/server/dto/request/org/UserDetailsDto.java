@@ -10,15 +10,12 @@ public class UserDetailsDto {
 
     private String displayName;
 
-    private String userName;
-
     private UUID displayPicture;
 
     public OrgMember toOrgMember() {
 
         OrgMember orgMember = new OrgMember();
         orgMember.setDisplayName(this.displayName);
-        orgMember.setUserName(this.userName);
         orgMember.setDisplayPicture(this.displayPicture);
         return orgMember;
     }

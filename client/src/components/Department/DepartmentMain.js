@@ -50,7 +50,7 @@ const DepartmentMain = () => {
     return loading ? <Loader /> :
         error ? <ErrorMessage message={error} /> :
             members.length ? (
-                <div id="department-main" className='w100 h100 FRSB'>
+                <div id="department-main" className='w100 h100 FRSB p5'>
                     <OrgMembers title="Available Members" orgMembersList={availableMembers} noMembersAvailableMessage="Currently, all of them are offline." />
                     <OrgMembers title="Offline Members" orgMembersList={unavailableMembers} noMembersAvailableMessage="Currently, all of them are online." />
                 </div>

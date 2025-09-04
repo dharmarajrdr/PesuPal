@@ -31,7 +31,7 @@ const DepartmentList = () => {
     }, [currentDepartment?.id, dispatch]);
 
     const chooseDepartmentHandler = (e) => {
-        const selectedDepartment = departments.find(dept => dept.id === parseInt(e.target.value));
+        const selectedDepartment = departments.find(dept => dept.id === e.target.value);
         if (selectedDepartment) {
             dispatch(setCurrentDepartmentId(selectedDepartment.id));
             dispatch(setCurrentDepartmentName(selectedDepartment.name));

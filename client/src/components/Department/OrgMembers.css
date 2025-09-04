@@ -2,7 +2,7 @@
     padding: 10px;
     padding-top: 0;
     margin: 10px;
-    height: calc(100vh - 120px);
+    height: calc(100vh - 130px);
     box-sizing: border-box;
     background-color: var(--pure-white);
     border-radius: 5px;
@@ -16,9 +16,8 @@
 
 #OrgMembers .status-title {
     border-bottom: 1px solid #ccc;
-    padding-top: 20px;
-    padding-bottom: 5px;
     margin-bottom: 10px;
+    padding: 15px 10px 10px 10px;
     position: sticky;
     top: 0;
     background-color: var(--pure-white);
@@ -43,11 +42,11 @@
 }
 
 #OrgMembers .status-title.offline_members .status-span {
-    color: #ff9800;
+    color: #adadad;
 }
 
 #OrgMembers .status-title.offline_members i {
-    color: #ff9800;
+    color: #adadad;
 }
 
 .org-member {
