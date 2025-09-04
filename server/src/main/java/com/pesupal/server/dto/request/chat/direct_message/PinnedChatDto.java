@@ -1,6 +1,7 @@
 package com.pesupal.server.dto.request.chat.direct_message;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.pesupal.server.enums.MemberStatus;
 import com.pesupal.server.model.chat.direct_message.DirectMessageChat;
 import com.pesupal.server.model.chat.direct_message.PinnedDirectMessage;
 import com.pesupal.server.model.chat.group_message.Group;
@@ -16,11 +17,13 @@ public class PinnedChatDto {
 
     private Long id;
 
+    private String userId;
+
     private String displayName;
 
     private URL displayPicture;
 
-    private String status;
+    private MemberStatus status;
 
     private String chatId;
 
@@ -33,6 +36,7 @@ public class PinnedChatDto {
         PinnedChatDto dto = new PinnedChatDto();
         dto.setDisplayName(pinnedUser.getDisplayName());
         dto.setStatus(pinnedUser.getStatus());
+        dto.setUserId(pinnedUser.getPublicId());
         dto.setChatId(pinnedChat.getPublicId());
         dto.setId(pinnedDirectMessage.getId());
         return dto;

@@ -1,12 +1,12 @@
 package com.pesupal.server.service.implementations.org;
 
 import com.pesupal.server.dto.request.org.AddOrgMemberDto;
-import com.pesupal.server.dto.request.org.CreateDesignationDto;
 import com.pesupal.server.dto.request.org.CreateOrgDto;
 import com.pesupal.server.dto.response.UserBasicInfoDto;
 import com.pesupal.server.dto.response.UserPreviewDto;
 import com.pesupal.server.dto.response.org.LatestSubscriptionDto;
 import com.pesupal.server.dto.response.org.OrgDetailDto;
+import com.pesupal.server.enums.InvitationStatus;
 import com.pesupal.server.enums.Role;
 import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.exceptions.DataNotFoundException;
@@ -15,9 +15,9 @@ import com.pesupal.server.helpers.OrgHelper;
 import com.pesupal.server.model.chat.direct_message.DirectMessageChat;
 import com.pesupal.server.model.department.Department;
 import com.pesupal.server.model.org.Org;
-import com.pesupal.server.model.org.OrgConfiguration;
 import com.pesupal.server.model.org.OrgSubscriptionHistory;
 import com.pesupal.server.model.user.Designation;
+import com.pesupal.server.model.user.OrgInvitation;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.model.user.User;
 import com.pesupal.server.repository.org.DepartmentRepository;
@@ -28,7 +28,7 @@ import com.pesupal.server.service.interfaces.UserService;
 import com.pesupal.server.service.interfaces.chat.direct_message.DirectMessageChatService;
 import com.pesupal.server.service.interfaces.org.*;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -41,23 +41,23 @@ public class OrgMemberServiceImpl implements OrgMemberService {
     private final UserService userService;
     private final AuthService authService;
     private final MediaService mediaService;
-    private final DepartmentService departmentService;
     private final DesignationService designationService;
     private final OrgMemberRepository orgMemberRepository;
+    private final OrgInvitationService orgInvitationService;
     private final DepartmentRepository departmentRepository;
     private final OrgConfigurationService orgConfigurationService;
     private final DirectMessageChatService directMessageChatService;
     private final OrgSubscriptionHistoryService orgSubscriptionHistoryService;
 
-    public OrgMemberServiceImpl(OrgService orgService, UserService userService, AuthService authService, @Lazy DepartmentService departmentService, DesignationService designationService, OrgMemberRepository orgMemberRepository, OrgConfigurationService orgConfigurationService, OrgSubscriptionHistoryService orgSubscriptionHistoryService, DirectMessageChatService directMessageChatService, DepartmentRepository departmentRepository, MediaService mediaService) {
+    public OrgMemberServiceImpl(@Lazy OrgService orgService, @Lazy UserService userService, AuthService authService, @Lazy DesignationService designationService, OrgMemberRepository orgMemberRepository, OrgConfigurationService orgConfigurationService, OrgSubscriptionHistoryService orgSubscriptionHistoryService, DirectMessageChatService directMessageChatService, DepartmentRepository departmentRepository, MediaService mediaService, @Lazy OrgInvitationService orgInvitationService) {
         this.orgService = orgService;
         this.userService = userService;
         this.authService = authService;
         this.mediaService = mediaService;
-        this.departmentService = departmentService;
         this.designationService = designationService;
         this.orgMemberRepository = orgMemberRepository;
         this.departmentRepository = departmentRepository;
+        this.orgInvitationService = orgInvitationService;
         this.orgConfigurationService = orgConfigurationService;
         this.directMessageChatService = directMessageChatService;
         this.orgSubscriptionHistoryService = orgSubscriptionHistoryService;
@@ -106,19 +106,6 @@ public class OrgMemberServiceImpl implements OrgMemberService {
     }
 
     /**
-     * Checks if the role has the privilege to add a member to the organization.
-     *
-     * @param org
-     * @param role
-     * @return Boolean
-     */
-    private Boolean hasPrivilegeToAddMember(Org org, Role role) {
-
-        OrgConfiguration orgConfiguration = orgConfigurationService.getOrgConfigurationByOrgAndRole(org, role);
-        return orgConfiguration.getAddMember();
-    }
-
-    /**
      * Retrieve user's profile as basic info
      *
      * @param orgMember
@@ -129,19 +116,6 @@ public class OrgMemberServiceImpl implements OrgMemberService {
         UserBasicInfoDto userBasicInfoDto = UserBasicInfoDto.fromOrgMember(orgMember);
         userBasicInfoDto.setDisplayPicture(mediaService.generatePresignedUrl(orgMember.getDisplayPicture()));
         return userBasicInfoDto;
-    }
-
-    /**
-     * Checks if the role has the privilege to update a member in the organization.
-     *
-     * @param org
-     * @param role
-     * @return
-     */
-    private Boolean hasPrivilegeToUpdateMember(Org org, Role role) {
-
-        OrgConfiguration orgConfiguration = orgConfigurationService.getOrgConfigurationByOrgAndRole(org, role);
-        return orgConfiguration.getUpdateMember();
     }
 
     /**
@@ -183,18 +157,19 @@ public class OrgMemberServiceImpl implements OrgMemberService {
 
     private Designation createDummyDesignationForNewOrg(Org org, String designationName) {
 
-        CreateDesignationDto createDesignationDto = new CreateDesignationDto();
-        createDesignationDto.setName(designationName);
-        createDesignationDto.setSeniorityLevel(10L);
-        createDesignationDto.setOrgId(org.getId());
-        return designationService.createDesignation(createDesignationDto);
+        Designation designation = new Designation();
+        designation.setOrg(org);
+        designation.setName(designationName);
+        designation.setSeniorityLevel(10L);
+        return designationService.save(designation);
     }
 
-    private Department createDummyDepartmentForNewOrg(String departmentName) {
+    private Department createDummyDepartmentForNewOrg(String departmentName, Org org) {
 
         Department department = new Department();
         department.setName(departmentName);
         department.setHead(null);
+        department.setOrg(org);
         return departmentRepository.save(department);
     }
 
@@ -210,7 +185,7 @@ public class OrgMemberServiceImpl implements OrgMemberService {
             throw new ActionProhibitedException("You are already a member of this organization.");
         }
 
-        Department department = createDummyDepartmentForNewOrg("Executive Department");
+        Department department = createDummyDepartmentForNewOrg("Executive Department", org);
         Designation designation = createDummyDesignationForNewOrg(org, "CEO");
 
         OrgMember newOrgMember = createOrgDto.getUser().toOrgMember();
@@ -222,7 +197,6 @@ public class OrgMemberServiceImpl implements OrgMemberService {
         newOrgMember.setDesignation(designation);
         newOrgMember.setEmployeeId(1);
         newOrgMember.setRole(Role.ADMIN);
-        newOrgMember.setStatus("Away");     // Default status
         return orgMemberRepository.save(newOrgMember);
     }
 
@@ -254,58 +228,6 @@ public class OrgMemberServiceImpl implements OrgMemberService {
     }
 
     /**
-     * Adds a member to an organization.
-     *
-     * @param addOrgMemberDto
-     * @return OrgMember
-     */
-    @Override
-    public OrgMember addMemberToOrg(AddOrgMemberDto addOrgMemberDto, OrgMember currentUser, boolean firstMember) {
-
-        Org org = currentUser.getOrg();
-        User userToAdd = userService.getUserById(addOrgMemberDto.getUserId());
-
-        OrgMember addedBy = firstMember ? null : currentUser;
-
-        if (addedBy != null) {
-
-            if (!hasPrivilegeToAddMember(org, addedBy.getRole())) {
-                throw new PermissionDeniedException("You do not have permission to add members to this organization.");
-            }
-        }
-
-        if (existsByUserAndOrg(userToAdd, org)) {
-            throw new ActionProhibitedException("User is already a member of this organization.");
-        }
-
-        OrgMember manager = firstMember ? null : getOrgMemberByPublicId(addOrgMemberDto.getManagerId());
-
-        OrgMember newOrgMember = addOrgMemberDto.toOrgMember();
-        newOrgMember.setAddedBy(addedBy);
-        newOrgMember.setManager(manager);
-        newOrgMember.setOrg(org);
-        newOrgMember.setUser(userToAdd);
-        newOrgMember.setDepartment(departmentService.getDepartmentById(addOrgMemberDto.getDepartmentId()));
-        newOrgMember.setDesignation(designationService.getDesignationById(addOrgMemberDto.getDesignationId()));
-        newOrgMember.setEmployeeId(countOrgMembersByOrg(org));
-        return orgMemberRepository.save(newOrgMember);
-    }
-
-    /**
-     * Validates if a user is a member of an organization.
-     *
-     * @param user
-     * @param org
-     */
-    @Override
-    public void validateUserIsOrgMember(User user, Org org) {
-
-        if (!existsByUserAndOrg(user, org)) {
-            throw new DataNotFoundException("User with ID " + user.getId() + " is not a member of this org.");
-        }
-    }
-
-    /**
      * Retrieves all members of an organization.
      *
      * @param currentOrgMember
@@ -334,12 +256,12 @@ public class OrgMemberServiceImpl implements OrgMemberService {
      * @return
      */
     @Override
-    public List<UserPreviewDto> getSearchedOrgMembers(OrgMember orgMember, String search, int page, int size) {
+    public List<UserBasicInfoDto> getSearchedOrgMembers(OrgMember orgMember, String search, Pageable pageable) {
 
         Long orgId = orgMember.getOrg().getId();
-        List<OrgMember> orgMembers = orgMemberRepository.searchOrgMembers(orgId, search, PageRequest.of(page, size)).getContent();
+        List<OrgMember> orgMembers = orgMemberRepository.searchOrgMembers(orgId, search, pageable).getContent();
         return orgMembers.stream().map(om -> {
-            UserPreviewDto userPreviewDto = getUserPreview(om);
+            UserBasicInfoDto userPreviewDto = getUserBasicInfo(om);
             DirectMessageChat directMessageChat = directMessageChatService.getOrCreateDirectMessageChat(orgMember, om);
             if (directMessageChat != null) {
                 userPreviewDto.setChatId(directMessageChat.getPublicId());
@@ -412,19 +334,99 @@ public class OrgMemberServiceImpl implements OrgMemberService {
             throw new ActionProhibitedException("The member you are trying to update does not exist.");
         }
 
-        if (!orgMember.getPublicId().equals(currentOrgMember.getPublicId()) && !OrgHelper.isOrgOwner(orgMemberPublicId, org)) {
-            if (!hasPrivilegeToUpdateMember(org, currentOrgMember.getRole())) {
-                throw new PermissionDeniedException("You do not have permission to update members of this organization.");
-            }
-        }
-
-        if (addOrgMemberDto.getUserName() != null) {
-            if (orgMemberRepository.existsByUserNameAndOrg(addOrgMemberDto.getUserName(), org)) {
-                throw new ActionProhibitedException("Username " + addOrgMemberDto.getUserName() + " is already taken. Please choose a different username.");
-            }
+        if (!OrgHelper.isOrgOwner(orgMemberPublicId, org) && !orgConfigurationService.hasPrivilegeToUpdateMember(org, currentOrgMember.getRole())) {
+            throw new PermissionDeniedException("You do not have permission to update members of this organization.");
         }
 
         addOrgMemberDto.applyToOrgMember(orgMember);
         orgMemberRepository.save(orgMember);
+    }
+
+    /**
+     * Joins an organization using an invitation.
+     * This method will be typically called after a user accepts an invitation.
+     *
+     * @param orgInvitation
+     * @param user
+     */
+    @Override
+    public void joinInOrg(OrgInvitation orgInvitation, User user) {
+
+        Org org = orgInvitation.getInviter().getOrg();
+
+        if (existsByUserAndOrg(user, org)) {
+            throw new ActionProhibitedException("You are already a member of this organization.");
+        }
+
+        if (!orgInvitation.getStatus().equals(InvitationStatus.ACCEPTED)) {
+            throw new ActionProhibitedException("Invitation is not being accepted.");
+        }
+
+        OrgMember orgMember = new OrgMember();
+        orgMember.setOrg(org);
+        orgMember.setUser(user);
+        orgMember.setRole(Role.USER);
+        orgMember.setAddedBy(orgInvitation.getInviter());
+        orgMember.setDisplayName(orgInvitation.getDisplayName());
+        orgMember.setEmployeeId(countOrgMembersByOrg(org));
+        orgMemberRepository.save(orgMember);
+    }
+
+    /**
+     * Joins all organizations that have invited the user with the given email.
+     * This method will be typically called after a user completed their email verification.
+     *
+     * @param user
+     */
+    @Override
+    public void joinInAllInvitedOrgs(User user) {
+
+        List<OrgInvitation> invitedOrgs = orgInvitationService.getAllOrgInvitationsByUserEmail(user.getEmail());
+        for (OrgInvitation orgInvitation : invitedOrgs) {
+            if (!orgInvitation.getStatus().equals(InvitationStatus.ACCEPTED)) {
+                continue;
+            }
+            try {
+                joinInOrg(orgInvitation, user);
+            } catch (Exception e) {
+                System.err.println("Failed to join org." + e);
+            }
+        }
+    }
+
+    /**
+     * Fetch all super admins in the org
+     *
+     * @param currentOrgMember
+     * @return
+     */
+    @Override
+    public List<UserBasicInfoDto> getAllSuperAdmins(OrgMember currentOrgMember) {
+
+        Org org = currentOrgMember.getOrg();
+
+        return orgMemberRepository.findAllByOrgAndRoleOrderByEmployeeId(org, Role.SUPER_ADMIN).stream().map(orgMember -> {
+            UserBasicInfoDto userBasicInfoDto = UserBasicInfoDto.fromOrgMember(orgMember);
+            userBasicInfoDto.setDisplayPicture(mediaService.generatePresignedUrl(orgMember.getDisplayPicture()));
+            return userBasicInfoDto;
+        }).toList();
+    }
+
+    /**
+     * Fetch all inactive members in an org
+     *
+     * @param currentOrgMember
+     * @return
+     */
+    @Override
+    public List<UserBasicInfoDto> getAllInactiveMembers(OrgMember currentOrgMember) {
+
+        Org org = currentOrgMember.getOrg();
+
+        return orgMemberRepository.findAllByOrgAndArchivedOrderByEmployeeId(org, true).stream().map(orgMember -> {
+            UserBasicInfoDto userBasicInfoDto = UserBasicInfoDto.fromOrgMember(orgMember);
+            userBasicInfoDto.setDisplayPicture(mediaService.generatePresignedUrl(orgMember.getDisplayPicture()));
+            return userBasicInfoDto;
+        }).toList();
     }
 }

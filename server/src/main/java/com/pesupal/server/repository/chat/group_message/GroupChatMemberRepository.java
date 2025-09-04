@@ -35,7 +35,6 @@ public interface GroupChatMemberRepository extends JpaRepository<GroupChatMember
                     FROM OrgMember om
                     WHERE (
                         LOWER(om.displayName) LIKE LOWER(CONCAT('%', :search, '%'))
-                        OR LOWER(om.userName) LIKE LOWER(CONCAT('%', :search, '%'))
                     )
                     AND om.org.id = :orgId
                     AND om.id NOT IN (

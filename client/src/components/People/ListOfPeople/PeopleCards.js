@@ -1,9 +1,11 @@
-import { useEffect, useRef, useState } from 'react';
-import PeopleCard from './PeopleCard';
 import './PeopleCards.css';
-import { apiRequest } from '../../../http_request';
 import Loader from '../../Loader';
+import PeopleCard from './PeopleCard';
 import ErrorMessage from '../../ErrorMessage';
+import { useEffect, useRef, useState } from 'react';
+import { apiRequest } from '../../../http_request';
+import { useDispatch, useSelector } from 'react-redux';
+import { setPeople } from '../../../store/reducers/PeopleSlice';
 
 const NoPeopleFound = () => {
 
@@ -13,22 +15,24 @@ const NoPeopleFound = () => {
                 <i className='fa fa-users mR5' />
                 No members found
             </p>
-            <p className='w100 alignCenter'>Recruit some people to your organization</p>
         </div>
     )
 }
 
-const PeopleCards = ({ searchUser, people, setPeople }) => {
+const PeopleCards = () => {
 
+    const dispatch = useDispatch();
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(true);
+
+    const { people, searchUser } = useSelector(state => state.people);
 
     const firstRender = useRef(true);
 
     const getUsers = () => {
-        apiRequest(`/api/v1/people/search?query=${searchUser.trim()}`, "GET").then(({ data }) => {
+        apiRequest(`/api/v1/people/search?query=${searchUser.trim()}&sortBy=displayName&sortOrder=ASC`, "GET").then(({ data }) => {
             setLoading(false);
-            setPeople(data);
+            dispatch(setPeople(data));
         }).catch(({ message }) => {
             setLoading(false);
             setError(message);

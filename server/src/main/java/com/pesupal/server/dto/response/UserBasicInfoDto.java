@@ -1,6 +1,7 @@
 package com.pesupal.server.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.pesupal.server.enums.MemberStatus;
 import com.pesupal.server.model.user.OrgMember;
 import lombok.Data;
 
@@ -20,7 +21,7 @@ public class UserBasicInfoDto {
 
     private String department;
 
-    private String status;
+    private MemberStatus status;
 
     private String email;
 
@@ -40,6 +41,7 @@ public class UserBasicInfoDto {
         userBasicInfoDto.setStatus(orgMember.getStatus());
         userBasicInfoDto.setEmail(orgMember.getUser().getEmail());
         userBasicInfoDto.setPhone(orgMember.getUser().getPhone());
+        userBasicInfoDto.setEmployeeId(orgMember.getEmployeeId());
         if (orgMember.getOrg().isShowEmployeeId()) {
             userBasicInfoDto.setEmployeeId(orgMember.getEmployeeId());
         }
