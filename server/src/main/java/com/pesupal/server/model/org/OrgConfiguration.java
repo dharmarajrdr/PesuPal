@@ -6,7 +6,7 @@ import com.pesupal.server.model.BaseModel;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.ManyToOne;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
@@ -20,7 +20,7 @@ import java.util.List;
 @NoArgsConstructor
 public class OrgConfiguration extends BaseModel {
 
-    @OneToOne
+    @ManyToOne
     private OrgRole role;
 
     @Enumerated(EnumType.STRING)
