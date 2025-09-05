@@ -1,0 +1,7 @@
+#new-rules-content {
+    width: 500px;
+    min-height: 500px;
+    border-radius: 5px;
+    background-color: #fff;
+    z-index: 10;
+}
