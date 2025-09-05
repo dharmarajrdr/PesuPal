@@ -8,7 +8,6 @@ import com.pesupal.server.dto.response.org.LatestSubscriptionDto;
 import com.pesupal.server.dto.response.org.OrgDetailDto;
 import com.pesupal.server.enums.InvitationStatus;
 import com.pesupal.server.enums.OrgAction;
-import com.pesupal.server.enums.Role;
 import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.exceptions.PermissionDeniedException;
@@ -16,6 +15,7 @@ import com.pesupal.server.helpers.OrgHelper;
 import com.pesupal.server.model.chat.direct_message.DirectMessageChat;
 import com.pesupal.server.model.department.Department;
 import com.pesupal.server.model.org.Org;
+import com.pesupal.server.model.org.OrgRole;
 import com.pesupal.server.model.org.OrgSubscriptionHistory;
 import com.pesupal.server.model.user.Designation;
 import com.pesupal.server.model.user.OrgInvitation;
@@ -406,7 +406,9 @@ public class OrgMemberServiceImpl implements OrgMemberService {
 
         Org org = currentOrgMember.getOrg();
 
-        return orgMemberRepository.findAllByOrgAndRoleOrderByEmployeeId(org, Role.SUPER_ADMIN).stream().map(orgMember -> {
+        OrgRole role = orgRoleService.getRoleByOrgAndName(org, "Super Admin");
+
+        return orgMemberRepository.findAllByRoleOrderByEmployeeId(role).stream().map(orgMember -> {
             UserBasicInfoDto userBasicInfoDto = UserBasicInfoDto.fromOrgMember(orgMember);
             userBasicInfoDto.setDisplayPicture(mediaService.generatePresignedUrl(orgMember.getDisplayPicture()));
             return userBasicInfoDto;
