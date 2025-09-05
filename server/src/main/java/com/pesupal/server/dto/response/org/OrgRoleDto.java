@@ -13,12 +13,17 @@ public class OrgRoleDto {
 
     private String name;
 
+    private String description;
+
     private UserPreviewDto createdBy;
+
+    private Integer memberCount;
 
     public static OrgRoleDto fromOrgRole(OrgRole orgRole) {
 
         OrgRoleDto orgRoleDto = new OrgRoleDto();
         orgRoleDto.setRoleId(orgRole.getId());
+        orgRoleDto.setDescription(orgRole.getDescription());
         orgRoleDto.setName(orgRole.getName());
         return orgRoleDto;
     }
