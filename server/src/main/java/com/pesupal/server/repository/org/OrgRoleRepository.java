@@ -6,11 +6,14 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface OrgRoleRepository extends JpaRepository<OrgRole, Long> {
 
-    List<OrgRole> findAllByCreatedBy_Org(Org createdByOrg);
-
     boolean existsByCreatedBy_OrgAndName(Org createdByOrg, String name);
+
+    Optional<OrgRole> findByNameAndCreatedBy_Org(String name, Org createdByOrg);
+
+    List<OrgRole> findAllByCreatedBy_OrgOrderByName(Org org);
 }

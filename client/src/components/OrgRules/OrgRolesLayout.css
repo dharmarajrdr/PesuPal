@@ -7,13 +7,11 @@
 #org-roles-content {
     height: 100%;
     width: 100%;
-    background-color: #fff;
     border-radius: 5px;
 }
 
 #org-roles-header {
-    border-bottom: 1px solid #e0e0e0;
-    padding: 10px 20px;
+    padding: 10px 0px;
     margin-bottom: 10px;
 }
 
@@ -39,14 +37,13 @@
     background-color: var(--primary-color-active);
 }
 
-#org-roles-header #manage-roles-button,
-#org-roles-header #manage-roles-button i {
-    background-color: #e5e5e5;
+#org-roles-header #manage-roles-button {
+    background-color: #fff;
     color: var(--primary-color);
 }
 
 #org-roles-header #manage-roles-button:hover {
-    background-color: #ddd;
+    background-color: #fafafa;
     color: #000;
 }
 
@@ -55,14 +52,22 @@
     overflow-x: auto;
     padding-bottom: 10px;
     height: calc(100% - 65px);
+    background-color: #fff;
+    border-radius: 5px;
 }
 
 #org-roles-table-header {
-    background-color: #eee;
+    background-color: var(--tertiary-color);
+    color: #fff;
 }
 
 #org-roles-table-header .col:first-child {
-    background-color: #eee;
+    background-color: var(--tertiary-color);
+    color: #fff;
+}
+
+#org-roles-table-header .role-name {
+    color: #fff;
 }
 
 #org-roles-table-header .col,

@@ -4,7 +4,6 @@ export default [
         route: '/team/dashboard',
         icon: 'fa fa-tachometer',
         active: false,
-        notify_count: 0,
         has_access: true
     },
     {
@@ -12,7 +11,6 @@ export default [
         route: '/team/collaborate',
         icon: 'fa fa-bullhorn',
         active: false,
-        notify_count: 1,
         has_access: true
     },
     {
@@ -20,7 +18,6 @@ export default [
         route: '/team/projects',
         icon: 'fa fa-project-diagram',
         active: false,
-        notify_count: 0,
         has_access: true
     },
     {
@@ -28,7 +25,6 @@ export default [
         route: '/team/attendance',
         icon: 'fa fa-calendar-check',
         active: false,
-        notify_count: 1,
         has_access: true
     },
     {
@@ -36,7 +32,6 @@ export default [
         route: '/team/knowledge',
         icon: 'fa fa-book',
         active: false,
-        notify_count: 1,
         has_access: true
     },
     {
@@ -44,7 +39,6 @@ export default [
         route: '/team/performance',
         icon: 'fa fa-chart-line',
         active: false,
-        notify_count: 0,
         has_access: false
     },
     {
@@ -52,7 +46,6 @@ export default [
         route: '/team/calendar',
         icon: 'fa fa-calendar-alt',
         active: false,
-        notify_count: 1,
         has_access: true
     },
     {
@@ -67,14 +60,12 @@ export default [
         route: '/team/requirements',
         icon: 'fa-solid fa-hand-holding-hand',
         active: false,
-        notify_count: 1,
     },
     {
         title: 'Roles',
         route: '/team/roles',
         icon: 'fa fa-user-tag',
         active: false,
-        notify_count: 0,
         has_access: false
     },
     {
@@ -82,7 +73,6 @@ export default [
         route: '/team/departments',
         icon: 'fa fa-sitemap',
         active: false,
-        notify_count: 0,
         has_access: false
     },
     {
@@ -90,7 +80,6 @@ export default [
         route: '/team/settings',
         icon: 'fa fa-cogs',
         active: false,
-        notify_count: 0,
         has_access: true
     }
 ]

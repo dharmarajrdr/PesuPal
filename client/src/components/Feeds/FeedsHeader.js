@@ -1,6 +1,7 @@
 import './FeedsHeader.css'
 import { useDispatch } from 'react-redux';
 import { resetPostData, showCreatePostModal } from '../../store/reducers/PostSlice';
+import NotifyCount from '../NotifyCount';
 
 const FeedsSearchBar = ({ searchText, setSearchText }) => {
 
@@ -23,7 +24,7 @@ const HeaderRight = () => {
     return <div className='FRCS pR' id='FeedsRightPanelHeader'>
         <div className='pR' id='feeds-notifications'>
             <i className="fa-solid fa-bell w15"></i>
-            <b className='notifyCount'>17</b>
+            <NotifyCount count={0} />
         </div>
         <button id='create-post-button' onClick={showCreatePostModalHandler} className='FRCC'>
             <i className="fa-solid fa-plus w15"></i>

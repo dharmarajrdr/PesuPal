@@ -1,5 +1,6 @@
 package com.pesupal.server.service.implementations.org;
 
+import com.pesupal.server.dto.request.org.CreateRoleDto;
 import com.pesupal.server.dto.request.org.OrgConfigurationDto;
 import com.pesupal.server.dto.response.org.OrgActionDto;
 import com.pesupal.server.dto.response.org.OrgActionRolesDto;
@@ -13,6 +14,7 @@ import com.pesupal.server.model.org.OrgConfiguration;
 import com.pesupal.server.model.org.OrgRole;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.repository.org.OrgConfigurationRepository;
+import com.pesupal.server.repository.org.OrgMemberRepository;
 import com.pesupal.server.service.interfaces.org.OrgConfigurationService;
 import com.pesupal.server.service.interfaces.org.OrgRoleService;
 import org.springframework.context.annotation.Lazy;
@@ -27,10 +29,12 @@ import java.util.Map;
 public class OrgConfigurationServiceImpl implements OrgConfigurationService {
 
     private final OrgRoleService orgRoleService;
+    private final OrgMemberRepository orgMemberRepository;
     private final OrgConfigurationRepository orgConfigurationRepository;
 
-    public OrgConfigurationServiceImpl(@Lazy OrgRoleService orgRoleService, OrgConfigurationRepository orgConfigurationRepository) {
+    public OrgConfigurationServiceImpl(@Lazy OrgRoleService orgRoleService, OrgConfigurationRepository orgConfigurationRepository, OrgMemberRepository orgMemberRepository) {
         this.orgRoleService = orgRoleService;
+        this.orgMemberRepository = orgMemberRepository;
         this.orgConfigurationRepository = orgConfigurationRepository;
     }
 
@@ -54,14 +58,20 @@ public class OrgConfigurationServiceImpl implements OrgConfigurationService {
     @Override
     public void initializeOrgConfiguration(OrgMember owner) {
 
-        OrgRole superAdmin = orgRoleService.createOrgRoleInternal("Super Admin", owner);
-        OrgRole member = orgRoleService.createOrgRoleInternal("Member", owner);
+        CreateRoleDto createSuperAdminRoleDto = CreateRoleDto.builder().name("Super Admin").description("Role with all permissions").build();
+        CreateRoleDto createMemberRoleDto = CreateRoleDto.builder().name("Member").description("Default role with limited permissions").build();
+
+        OrgRole superAdmin = orgRoleService.createOrgRoleInternal(createSuperAdminRoleDto, owner);
+        OrgRole member = orgRoleService.createOrgRoleInternal(createMemberRoleDto, owner);
 
         List<OrgConfiguration> superAdminConfigurations = OrgConfiguration.getInitialConfiguration(superAdmin);
         List<OrgConfiguration> userConfigurations = OrgConfiguration.getInitialConfiguration(member);
 
         orgConfigurationRepository.saveAll(superAdminConfigurations);
         orgConfigurationRepository.saveAll(userConfigurations);
+
+        owner.setRole(superAdmin);
+        orgMemberRepository.save(owner);
     }
 
     /**

@@ -9,6 +9,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @AllArgsConstructor
 @RequestMapping("/api/v1/org-role")
@@ -19,8 +21,22 @@ public class OrgRoleController extends CurrentValueRetriever {
     @PostMapping("")
     public ResponseEntity<ApiResponseDto> createRole(@RequestBody CreateRoleDto createRoleDto) {
 
-        OrgRoleDto orgRole = orgRoleService.createOrgRole(createRoleDto.getName(), getCurrentOrgMember());
+        OrgRoleDto orgRole = orgRoleService.createOrgRole(createRoleDto, getCurrentOrgMember());
         return ResponseEntity.ok().body(new ApiResponseDto("Role created successfully", orgRole));
+    }
+
+    @PatchMapping("/{roleId}")
+    public ResponseEntity<ApiResponseDto> updateRole(@PathVariable Long roleId, @RequestBody CreateRoleDto updateRoleDto) {
+
+        OrgRoleDto orgRole = orgRoleService.updateOrgRole(roleId, updateRoleDto, getCurrentOrgMember());
+        return ResponseEntity.ok().body(new ApiResponseDto("Role updated successfully", orgRole));
+    }
+
+    @GetMapping("")
+    public ResponseEntity<ApiResponseDto> getAllRoles() {
+
+        List<OrgRoleDto> roles = orgRoleService.getAllRoles(getCurrentOrgMember());
+        return ResponseEntity.ok().body(new ApiResponseDto("Roles fetched successfully", roles));
     }
 
     @DeleteMapping("/{roleId}")
