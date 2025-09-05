@@ -62,10 +62,10 @@ public class OrgConfiguration extends BaseModel {
     public static List<OrgConfiguration> getInitialConfiguration(OrgRole role) {
 
         switch (role.getName()) {
-            case "SUPER_ADMIN": {
+            case "Super Admin": {
                 return superAdminConfigurations(role);
             }
-            case "MEMBER": {
+            case "Member": {
                 return memberConfigurations(role);
             }
             default: {
