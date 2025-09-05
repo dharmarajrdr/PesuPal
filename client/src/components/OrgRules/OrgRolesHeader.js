@@ -1,4 +1,4 @@
-const OrgRolesHeader = () => {
+const OrgRolesHeader = ({ setShowNewRoleLayout }) => {
 
     return <div id='org-roles-header' className='FRCB'>
         <h3>Roles & Permissions</h3>
@@ -6,7 +6,7 @@ const OrgRolesHeader = () => {
             <button id="manage-roles-button">
                 <i className='fa fa-cog w15 colorFFF' aria-hidden='true'></i> Manage Roles
             </button>
-            <button className="mL10" id="new-role-button">
+            <button className="mL10" id="new-role-button" onClick={() => setShowNewRoleLayout(true)}>
                 <i className='fa fa-plus w15 colorFFF' aria-hidden='true'></i> New Role
             </button>
         </div>
