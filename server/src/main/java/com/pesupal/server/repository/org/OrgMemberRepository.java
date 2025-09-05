@@ -3,6 +3,7 @@ package com.pesupal.server.repository.org;
 import com.pesupal.server.enums.Role;
 import com.pesupal.server.model.department.Department;
 import com.pesupal.server.model.org.Org;
+import com.pesupal.server.model.org.OrgRole;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.model.user.User;
 import org.springframework.data.domain.Page;
@@ -65,4 +66,6 @@ public interface OrgMemberRepository extends JpaRepository<OrgMember, Long> {
     List<OrgMember> findAllByOrgAndRoleOrderByEmployeeId(Org org, Role role);
 
     List<OrgMember> findAllByOrgAndArchivedOrderByEmployeeId(Org org, boolean archived);
+
+    boolean existsByRole(OrgRole role);
 }

@@ -1,92 +1,142 @@
 package com.pesupal.server.service.implementations.org;
 
-import com.pesupal.server.enums.Role;
+import com.pesupal.server.dto.request.org.OrgConfigurationDto;
+import com.pesupal.server.dto.response.org.OrgActionDto;
+import com.pesupal.server.dto.response.org.OrgActionRolesDto;
+import com.pesupal.server.dto.response.org.OrgRoleDto;
+import com.pesupal.server.enums.OrgAction;
+import com.pesupal.server.exceptions.DataNotFoundException;
+import com.pesupal.server.exceptions.DuplicateDataReceivedException;
+import com.pesupal.server.exceptions.PermissionDeniedException;
 import com.pesupal.server.model.org.Org;
 import com.pesupal.server.model.org.OrgConfiguration;
+import com.pesupal.server.model.org.OrgRole;
+import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.repository.org.OrgConfigurationRepository;
 import com.pesupal.server.service.interfaces.org.OrgConfigurationService;
-import lombok.AllArgsConstructor;
+import com.pesupal.server.service.interfaces.org.OrgRoleService;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 @Service
-@AllArgsConstructor
 public class OrgConfigurationServiceImpl implements OrgConfigurationService {
 
+    private final OrgRoleService orgRoleService;
     private final OrgConfigurationRepository orgConfigurationRepository;
 
-    /**
-     * Retrieves the organization configuration based on the organization and role.
-     *
-     * @param org
-     * @param role
-     * @return OrgConfiguration
-     */
-    @Override
-    public OrgConfiguration getOrgConfigurationByOrgAndRole(Org org, Role role) {
-
-        return orgConfigurationRepository.findByOrgAndRole(org, role).orElseThrow(() -> new IllegalArgumentException("Org configuration not found."));
+    public OrgConfigurationServiceImpl(@Lazy OrgRoleService orgRoleService, OrgConfigurationRepository orgConfigurationRepository) {
+        this.orgRoleService = orgRoleService;
+        this.orgConfigurationRepository = orgConfigurationRepository;
     }
 
     /**
      * Checks if the role has the privilege to add a member to the organization.
      *
-     * @param org
      * @param role
      * @return Boolean
      */
     @Override
-    public boolean hasPrivilegeToAddMember(Org org, Role role) {
+    public boolean hasPrivilegeTo(OrgAction orgAction, OrgRole role) {
 
-        OrgConfiguration orgConfiguration = getOrgConfigurationByOrgAndRole(org, role);
-        return orgConfiguration.isAddMember();
-    }
-
-    /**
-     * Checks if the role has the privilege to update a member in the organization.
-     *
-     * @param org
-     * @param role
-     * @return
-     */
-    @Override
-    public boolean hasPrivilegeToUpdateMember(Org org, Role role) {
-
-        OrgConfiguration orgConfiguration = getOrgConfigurationByOrgAndRole(org, role);
-        return orgConfiguration.isUpdateMember();
-    }
-
-    /**
-     * Checks if the role has the privilege to create a department
-     *
-     * @param org
-     * @param role
-     * @return
-     */
-    @Override
-    public boolean hasPrivilegeToCreateDepartment(Org org, Role role) {
-
-        OrgConfiguration orgConfiguration = getOrgConfigurationByOrgAndRole(org, role);
-        return orgConfiguration.isCreateDepartment();
+        return orgConfigurationRepository.existsByRoleAndPermittedAction(role, orgAction);
     }
 
     /**
      * Initializes the organization configuration for the given organization.
      *
-     * @param org
+     * @param owner
      */
     @Override
-    public void initializeOrgConfiguration(Org org) {
+    public void initializeOrgConfiguration(OrgMember owner) {
 
-        OrgConfiguration superAdminConfiguration = OrgConfiguration.getInitialConfiguration(Role.SUPER_ADMIN);
-        OrgConfiguration adminConfiguration = OrgConfiguration.getInitialConfiguration(Role.ADMIN);
-        OrgConfiguration userConfiguration = OrgConfiguration.getInitialConfiguration(Role.USER);
+        OrgRole superAdmin = orgRoleService.createOrgRoleInternal("Super Admin", owner);
+        OrgRole member = orgRoleService.createOrgRoleInternal("Member", owner);
 
-        superAdminConfiguration.setOrg(org);
-        adminConfiguration.setOrg(org);
-        userConfiguration.setOrg(org);
+        List<OrgConfiguration> superAdminConfigurations = OrgConfiguration.getInitialConfiguration(superAdmin);
+        List<OrgConfiguration> userConfigurations = OrgConfiguration.getInitialConfiguration(member);
 
-        orgConfigurationRepository.save(superAdminConfiguration);
-        orgConfigurationRepository.save(adminConfiguration);
-        orgConfigurationRepository.save(userConfiguration);
+        orgConfigurationRepository.saveAll(superAdminConfigurations);
+        orgConfigurationRepository.saveAll(userConfigurations);
+    }
+
+    /**
+     * Create new org configuration
+     *
+     * @param createOrgConfigurationDto
+     * @return
+     */
+    @Override
+    public void createConfiguration(OrgConfigurationDto createOrgConfigurationDto, OrgMember currentOrgMember) {
+
+        Long roleId = createOrgConfigurationDto.getRoleId();
+        OrgAction orgAction = createOrgConfigurationDto.getAction();
+        OrgRole orgRole = orgRoleService.getRoleById(roleId);
+
+        if (!orgRole.getCreatedBy().getId().equals(currentOrgMember.getId())) {
+            throw new PermissionDeniedException("You don't have permission to update configuration for this role.");
+        }
+
+        if (orgConfigurationRepository.existsByRoleAndPermittedAction(orgRole, orgAction)) {
+            throw new DuplicateDataReceivedException("Configuration for action '" + orgAction.name() + "' and role '" + orgRole.getName() + "' already exists.");
+        }
+
+        OrgConfiguration orgConfiguration = OrgConfiguration.builder().permittedAction(orgAction).role(orgRole).build();
+        orgConfigurationRepository.save(orgConfiguration);
+    }
+
+    /**
+     * Revoke the permission
+     *
+     * @param removeConfigurationDto
+     * @return
+     */
+    @Override
+    public void removeConfiguration(OrgConfigurationDto removeConfigurationDto, OrgMember currentOrgMember) {
+
+        Long roleId = removeConfigurationDto.getRoleId();
+        OrgAction orgAction = removeConfigurationDto.getAction();
+        OrgRole orgRole = orgRoleService.getRoleById(roleId);
+
+        if (!orgRole.getCreatedBy().getId().equals(currentOrgMember.getId())) {
+            throw new PermissionDeniedException("You don't have permission to update configuration for this role.");
+        }
+
+        OrgConfiguration orgConfiguration = orgConfigurationRepository.findByRoleAndPermittedAction(orgRole, orgAction)
+                .orElseThrow(() -> new DataNotFoundException("No configuration found for action '" + orgAction.name() + "' and role '" + orgRole.getName() + "'."));
+
+        orgConfigurationRepository.delete(orgConfiguration);
+    }
+
+    /**
+     * Get permitted actions in the organization
+     *
+     * @param currentOrgMember
+     * @return
+     */
+    @Override
+    public List<OrgActionRolesDto> getPermittedActionsInOrg(OrgMember currentOrgMember) {
+
+        Org org = currentOrgMember.getOrg();
+        Map<OrgAction, List<OrgRoleDto>> permittedActionsMap = new HashMap<>();
+        List<OrgActionRolesDto> permittedActionsList = new ArrayList<>();
+
+        List<OrgConfiguration> orgConfigurations = orgConfigurationRepository.findAllByRole_CreatedBy_Org(org);
+        for (OrgConfiguration config : orgConfigurations) {
+            OrgAction orgAction = config.getPermittedAction();
+            OrgRoleDto orgRole = OrgRoleDto.fromOrgRole(config.getRole());
+            permittedActionsMap.computeIfAbsent(orgAction, k -> new ArrayList<>()).add(orgRole);
+        }
+
+        for (Map.Entry<OrgAction, List<OrgRoleDto>> entry : permittedActionsMap.entrySet()) {
+            OrgActionRolesDto dto = new OrgActionRolesDto(OrgActionDto.fromOrgAction(entry.getKey()), entry.getValue());
+            permittedActionsList.add(dto);
+        }
+
+        return permittedActionsList;
     }
 }

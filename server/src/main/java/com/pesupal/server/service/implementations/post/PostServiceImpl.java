@@ -5,6 +5,7 @@ import com.pesupal.server.dto.request.post.CreatePostMentionsDto;
 import com.pesupal.server.dto.response.UserPreviewDto;
 import com.pesupal.server.dto.response.post.*;
 import com.pesupal.server.enums.FeedRetriever;
+import com.pesupal.server.enums.OrgAction;
 import com.pesupal.server.enums.PostStatus;
 import com.pesupal.server.enums.SortOrder;
 import com.pesupal.server.exceptions.ActionProhibitedException;
@@ -20,6 +21,7 @@ import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.model.user.User;
 import com.pesupal.server.repository.post.PostRepository;
 import com.pesupal.server.service.interfaces.MediaService;
+import com.pesupal.server.service.interfaces.org.OrgConfigurationService;
 import com.pesupal.server.service.interfaces.org.OrgMemberService;
 import com.pesupal.server.service.interfaces.post.*;
 import jakarta.transaction.Transactional;
@@ -48,6 +50,7 @@ public class PostServiceImpl extends CurrentValueRetriever implements PostServic
     private final PostMediaService postMediaService;
     private final PostMentionService postMentionService;
     private final RedisTemplate<String, Object> redisTemplate;
+    private final OrgConfigurationService orgConfigurationService;
     private final FeedRetrieverServiceFactory feedRetrieverServiceFactory;
     private final TrendingPostsAnalyserFactory trendingPostsAnalyserFactory;
 
@@ -91,6 +94,14 @@ public class PostServiceImpl extends CurrentValueRetriever implements PostServic
     public Post createPostInternal(CreatePostDto createPostDto) {
 
         OrgMember creator = getCurrentOrgMember();
+
+        if (!orgConfigurationService.hasPrivilegeTo(OrgAction.CREATE_POST, creator.getRole())) {
+            throw new PermissionDeniedException("You don't have permission to create post.");
+        }
+
+        if (!createPostDto.getMediaIds().isEmpty() && orgConfigurationService.hasPrivilegeTo(OrgAction.ATTACH_MEDIA_IN_POST, creator.getRole())) {
+            throw new PermissionDeniedException("You don't have permission to attach media in post.");
+        }
 
         validateCreatePostDto(createPostDto, creator);
 
