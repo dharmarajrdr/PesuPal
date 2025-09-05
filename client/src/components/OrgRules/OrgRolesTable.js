@@ -9,7 +9,7 @@ const Header = ({ roles }) => {
             <div key={role} className="col">
                 <div className="FRCC">
                     <span className="role-name">{role}</span>
-                    <span className="pL5 fs10 color555">(<i className="fa fa-users fs10 color555 w15"></i> 20202)</span>
+                    <span className="pL5 fs10 colorDDD">(<i className="fa fa-users fs10 colorDDD w15"></i> 20202)</span>
                 </div>
             </div>
         ))}
@@ -41,34 +41,19 @@ const Body = ({ roles, permissions }) => {
 
 const OrgRolesTable = () => {
 
-    const roles = ["Super Admin", "Admin", "Member", "Guest", "External"];
+    const roles = ["Super Admin", "Member"];
 
     const permissions = [
         {
             "action": {
-                "actionId": 6,
-                "title": "Update Org"
+                "actionId": 3,
+                "title": "Update Member"
             },
             "roles": [
                 {
-                    "roleId": 1,
-                    "name": "Super Admin"
-                }
-            ]
-        },
-        {
-            "action": {
-                "actionId": 10,
-                "title": "Create Role"
-            },
-            "roles": [
-                {
-                    "roleId": 1,
-                    "name": "Super Admin"
-                },
-                {
-                    "roleId": 2,
-                    "name": "Member"
+                    "roleId": 14,
+                    "name": "Super Admin",
+                    "description": "Role with all permissions"
                 }
             ]
         },
@@ -79,8 +64,152 @@ const OrgRolesTable = () => {
             },
             "roles": [
                 {
-                    "roleId": 1,
-                    "name": "Super Admin"
+                    "roleId": 14,
+                    "name": "Super Admin",
+                    "description": "Role with all permissions"
+                }
+            ]
+        },
+        {
+            "action": {
+                "actionId": 4,
+                "title": "Leave Org"
+            },
+            "roles": [
+                {
+                    "roleId": 14,
+                    "name": "Super Admin",
+                    "description": "Role with all permissions"
+                }
+            ]
+        },
+        {
+            "action": {
+                "actionId": 9,
+                "title": "Create Group"
+            },
+            "roles": [
+                {
+                    "roleId": 14,
+                    "name": "Super Admin",
+                    "description": "Role with all permissions"
+                }
+            ]
+        },
+        {
+            "action": {
+                "actionId": 6,
+                "title": "Update Org"
+            },
+            "roles": [
+                {
+                    "roleId": 14,
+                    "name": "Super Admin",
+                    "description": "Role with all permissions"
+                }
+            ]
+        },
+        {
+            "action": {
+                "actionId": 8,
+                "title": "Attach Media in Post"
+            },
+            "roles": [
+                {
+                    "roleId": 14,
+                    "name": "Super Admin",
+                    "description": "Role with all permissions"
+                }
+            ]
+        },
+        {
+            "action": {
+                "actionId": 2,
+                "title": "Remove Member"
+            },
+            "roles": [
+                {
+                    "roleId": 14,
+                    "name": "Super Admin",
+                    "description": "Role with all permissions"
+                }
+            ]
+        },
+        {
+            "action": {
+                "actionId": 12,
+                "title": "Update Department"
+            },
+            "roles": [
+                {
+                    "roleId": 14,
+                    "name": "Super Admin",
+                    "description": "Role with all permissions"
+                }
+            ]
+        },
+        {
+            "action": {
+                "actionId": 10,
+                "title": "Create Role"
+            },
+            "roles": [
+                {
+                    "roleId": 14,
+                    "name": "Super Admin",
+                    "description": "Role with all permissions"
+                }
+            ]
+        },
+        {
+            "action": {
+                "actionId": 7,
+                "title": "Create Post"
+            },
+            "roles": [
+                {
+                    "roleId": 14,
+                    "name": "Super Admin",
+                    "description": "Role with all permissions"
+                }
+            ]
+        },
+        {
+            "action": {
+                "actionId": 5,
+                "title": "Delete Org"
+            },
+            "roles": [
+                {
+                    "roleId": 14,
+                    "name": "Super Admin",
+                    "description": "Role with all permissions"
+                }
+            ]
+        },
+        {
+            "action": {
+                "actionId": 13,
+                "title": "Access Store"
+            },
+            "roles": [
+                {
+                    "roleId": 14,
+                    "name": "Super Admin",
+                    "description": "Role with all permissions"
+                }
+            ]
+        },
+        {
+            "action": {
+                "actionId": 11,
+                "title": "Create Department"
+            },
+            "roles": [
+                {
+                    "roleId": 14,
+                    "name": "Super Admin",
+                    "description": "Role with all permissions"
                 }
             ]
         }
