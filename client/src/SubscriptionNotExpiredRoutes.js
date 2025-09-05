@@ -19,7 +19,7 @@ import ModuleBuilderLayout from './components/Team/ManageWork/ModuleBuilder/Modu
 
 const SubscriptionNotExpiredRoutes = () => {
 
-    const INFORM_PRESENCE_EVERY_SECONDS = 50;
+    const INFORM_PRESENCE_EVERY_SECONDS = 15;
     const presenceService = usePresenceService();
     const { currentOrgId } = useSelector(state => state.org);
 

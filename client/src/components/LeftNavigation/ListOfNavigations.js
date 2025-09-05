@@ -6,8 +6,7 @@ export default {
             'icon': 'fa-regular fa-newspaper',
             "fontWeight": 300,
             'route': '/feeds',
-            'isActive': false,
-            'notifyCount': '99'
+            'isActive': false
         },
         {
             'id': 2,
@@ -15,8 +14,7 @@ export default {
             'icon': 'fa-regular fa-comments',
             "fontWeight": 300,
             'route': '/chat',
-            'isActive': false,
-            'notifyCount': '21'
+            'isActive': false
         },
         {
             'id': 3,
@@ -24,8 +22,7 @@ export default {
             'icon': 'fa-regular fa-address-card',
             "fontWeight": 300,
             'route': '/people',
-            'isActive': false,
-            'notifyCount': '0'
+            'isActive': false
         },
         {
             'id': 4,
@@ -33,8 +30,7 @@ export default {
             'icon': 'fa-regular fa-people-group',
             "fontWeight": 600,
             'route': '/team',
-            'isActive': false,
-            'notifyCount': '5'
+            'isActive': false
         },
         {
             "id": 5,
@@ -42,8 +38,7 @@ export default {
             "icon": "fa-solid fa-chart-gantt",
             "fontWeight": 600,
             "route": "/manage/module",
-            "isActive": false,
-            "notifyCount": "0"
+            "isActive": false
         },
         {
             'id': 6,
@@ -51,8 +46,7 @@ export default {
             'icon': 'fa-regular fa-folder-open',
             "fontWeight": 300,
             'route': '/store',
-            'isActive': false,
-            'notifyCount': '0'
+            'isActive': false
         },
         {
             "id": 7,
@@ -60,8 +54,7 @@ export default {
             "icon": "fa-regular fa-ellipsis-h",
             "fontWeight": 600,
             "route": "/more",
-            "isActive": false,
-            "notifyCount": "0"
+            "isActive": false
         }
     ],
     'bottom': [
