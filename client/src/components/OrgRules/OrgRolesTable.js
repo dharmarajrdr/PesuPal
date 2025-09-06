@@ -33,10 +33,10 @@ const Body = ({ roles, permissions }) => {
 
             return <div key={action.actionId} className="FRCS row">
                 <div className="col">{action.title}</div>
-                {roles.map((role) => {
-                    const allowed = currentRolesNames.includes(role);
+                {roles.map(({ name, roleId }) => {
+                    const allowed = currentRolesNames.includes(name);
                     return (
-                        <div key={role} className="col">
+                        <div key={roleId} className="col">
                             {allowed ? <Checked /> : <Crossed />}
                         </div>
                     );
