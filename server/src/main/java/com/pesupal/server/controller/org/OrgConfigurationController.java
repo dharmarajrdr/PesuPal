@@ -16,20 +16,20 @@ import java.util.Map;
 @RequestMapping("/api/v1/org-configuration")
 public class OrgConfigurationController extends CurrentValueRetriever {
 
-    private final OrgConfigurationService orgConfigurationService;
     private final OrgRoleService orgRoleService;
+    private final OrgConfigurationService orgConfigurationService;
 
     @PostMapping("")
     public ResponseEntity<ApiResponseDto> createConfiguration(@RequestBody OrgConfigurationDto createOrgConfigurationDto) {
 
         orgConfigurationService.createConfiguration(createOrgConfigurationDto, getCurrentOrgMember());
-        return ResponseEntity.ok().body(new ApiResponseDto("Action '" + createOrgConfigurationDto.getAction().name() + "' configured."));
+        return ResponseEntity.ok().body(new ApiResponseDto("Action permitted successfully."));
     }
 
     @GetMapping("")
     public ResponseEntity<ApiResponseDto> getOrgConfiguration() {
 
-        Map configurations = Map.ofEntries(
+        Map<String, Object> configurations = Map.ofEntries(
                 Map.entry("permissions", orgConfigurationService.getPermittedActionsInOrg(getCurrentOrgMember())),
                 Map.entry("roles", orgRoleService.getAllRoles(getCurrentOrgMember()))
         );
@@ -40,6 +40,6 @@ public class OrgConfigurationController extends CurrentValueRetriever {
     public ResponseEntity<ApiResponseDto> revokePermission(@RequestBody OrgConfigurationDto deleteOrgConfigurationDto) {
 
         orgConfigurationService.removeConfiguration(deleteOrgConfigurationDto, getCurrentOrgMember());
-        return ResponseEntity.ok().body(new ApiResponseDto("Action '" + deleteOrgConfigurationDto.getAction().name() + "' configuration removed."));
+        return ResponseEntity.ok().body(new ApiResponseDto("Action revoked successfully."));
     }
 }

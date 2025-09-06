@@ -28,22 +28,46 @@ const Body = ({ roles, permissions }) => {
     return <div id="org-roles-table-body" className="FCSS w100">
         {permissions.map(permission => {
 
-            const { action, roles: currentRoles } = permission;
+            const { action, roles: currentRoles } = permission || {};
+            const { actionId, title } = action || {};
             const currentRolesNames = currentRoles.map(r => r.name);
 
-            return <div key={action.actionId} className="FRCS row">
-                <div className="col">{action.title}</div>
-                {roles.map(({ name, roleId }) => {
+            return <div key={actionId} className="FRCS row">
+                <div className="col">{title}</div>
+                {roles.map((role) => {
+                    const { name, roleId } = role;
                     const allowed = currentRolesNames.includes(name);
                     return (
-                        <div key={roleId} className="col">
-                            {allowed ? <Checked /> : <Crossed />}
-                        </div>
+                        <Cell key={roleId} role={role} allowed={allowed} action={action} />
                     );
                 })}
             </div>
         })}
     </div>
+}
+
+const Cell = ({ role, action, allowed }) => {
+
+    const dispatch = useDispatch();
+    const { roleId, name: roleName } = role;
+    const { actionId, title: actionTitle } = action;
+    const [isAllowed, setIsAllowed] = useState(allowed);
+    
+    const updateConfigurationHandler = () => {
+        const message = `Permission to "${actionTitle}" for role "${roleName}" has been ${isAllowed ? 'revoked' : 'granted'}.`;
+        apiRequest(`/api/v1/org-configuration`, isAllowed ? 'DELETE' : 'POST', { roleId, actionId }).then(() => {
+            setIsAllowed(!isAllowed);
+            dispatch(showPopup({ message, type: 'success' }));
+        }).catch(({ message }) => {
+            dispatch(showPopup({ message, type: 'error' }));
+        });
+    }
+
+    return (
+        <div key={roleId} className="col" onClick={updateConfigurationHandler}>
+            {isAllowed ? <Checked /> : <Crossed />}
+        </div>
+    );
 }
 
 const OrgRolesTable = () => {

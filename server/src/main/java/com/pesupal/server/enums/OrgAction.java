@@ -28,4 +28,13 @@ public enum OrgAction {
 
     private final int actionId;
     private final String title;
+
+    public static OrgAction fromId(int id) {
+        for (OrgAction action : OrgAction.values()) {
+            if (action.getActionId() == id) {
+                return action;
+            }
+        }
+        throw new IllegalArgumentException("No OrgAction with id " + id);
+    }
 }
