@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { apiRequest } from '../../http_request';
 import { showPopup } from '../../store/reducers/PopupSlice';
+import { addNewRole } from '../../store/reducers/OrgRolePermissionsSlice';
 import { hideConfirmationPopup, showConfirmationPopup } from '../../store/reducers/ConfirmationPopupSlice';
 
 const NewRolesLayout = ({ onCloseNewRoleLayout }) => {
@@ -31,10 +32,11 @@ const NewRolesLayout = ({ onCloseNewRoleLayout }) => {
                             apiRequest(`/api/v1/org-role`, 'POST', {
                                 name: roleName,
                                 description: roleDescription
-                            }).then(({ message }) => {
+                            }).then(({ message, data }) => {
                                 dispatch(hideConfirmationPopup());
                                 dispatch(showPopup({ message, type: 'success' }));
                                 onCloseNewRoleLayout();
+                                dispatch(addNewRole(data));
                             }).catch(({ message }) => {
                                 dispatch(showPopup({ message, type: 'error' }));
                             });

@@ -84,7 +84,8 @@ public class OrgConfigurationServiceImpl implements OrgConfigurationService {
     public void createConfiguration(OrgConfigurationDto createOrgConfigurationDto, OrgMember currentOrgMember) {
 
         Long roleId = createOrgConfigurationDto.getRoleId();
-        OrgAction orgAction = createOrgConfigurationDto.getAction();
+        int actionId = createOrgConfigurationDto.getActionId();
+        OrgAction orgAction = OrgAction.fromId(actionId);
         OrgRole orgRole = orgRoleService.getRoleById(roleId);
 
         if (!orgRole.getCreatedBy().getId().equals(currentOrgMember.getId())) {
@@ -109,7 +110,8 @@ public class OrgConfigurationServiceImpl implements OrgConfigurationService {
     public void removeConfiguration(OrgConfigurationDto removeConfigurationDto, OrgMember currentOrgMember) {
 
         Long roleId = removeConfigurationDto.getRoleId();
-        OrgAction orgAction = removeConfigurationDto.getAction();
+        int actionId = removeConfigurationDto.getActionId();
+        OrgAction orgAction = OrgAction.fromId(actionId);
         OrgRole orgRole = orgRoleService.getRoleById(roleId);
 
         if (!orgRole.getCreatedBy().getId().equals(currentOrgMember.getId())) {
