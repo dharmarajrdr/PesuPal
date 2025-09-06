@@ -2,14 +2,14 @@ package com.pesupal.server.controller.org;
 
 import com.pesupal.server.dto.request.org.OrgConfigurationDto;
 import com.pesupal.server.dto.response.ApiResponseDto;
-import com.pesupal.server.dto.response.org.OrgActionRolesDto;
 import com.pesupal.server.helpers.CurrentValueRetriever;
 import com.pesupal.server.service.interfaces.org.OrgConfigurationService;
+import com.pesupal.server.service.interfaces.org.OrgRoleService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.Map;
 
 @RestController
 @AllArgsConstructor
@@ -17,6 +17,7 @@ import java.util.List;
 public class OrgConfigurationController extends CurrentValueRetriever {
 
     private final OrgConfigurationService orgConfigurationService;
+    private final OrgRoleService orgRoleService;
 
     @PostMapping("")
     public ResponseEntity<ApiResponseDto> createConfiguration(@RequestBody OrgConfigurationDto createOrgConfigurationDto) {
@@ -28,8 +29,11 @@ public class OrgConfigurationController extends CurrentValueRetriever {
     @GetMapping("")
     public ResponseEntity<ApiResponseDto> getOrgConfiguration() {
 
-        List<OrgActionRolesDto> permittedActions = orgConfigurationService.getPermittedActionsInOrg(getCurrentOrgMember());
-        return ResponseEntity.ok().body(new ApiResponseDto("Org configurations fetched successfully.", permittedActions));
+        Map configurations = Map.ofEntries(
+                Map.entry("permissions", orgConfigurationService.getPermittedActionsInOrg(getCurrentOrgMember())),
+                Map.entry("roles", orgRoleService.getAllRoles(getCurrentOrgMember()))
+        );
+        return ResponseEntity.ok().body(new ApiResponseDto("Org configurations fetched successfully.", configurations));
     }
 
     @DeleteMapping("")

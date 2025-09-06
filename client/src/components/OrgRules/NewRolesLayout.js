@@ -32,11 +32,11 @@ const NewRolesLayout = ({ onCloseNewRoleLayout }) => {
                             apiRequest(`/api/v1/org-role`, 'POST', {
                                 name: roleName,
                                 description: roleDescription
-                            }).then(({ message }) => {
+                            }).then(({ message, data }) => {
                                 dispatch(hideConfirmationPopup());
                                 dispatch(showPopup({ message, type: 'success' }));
                                 onCloseNewRoleLayout();
-                                dispatch(addNewRole(roleName));
+                                dispatch(addNewRole(data));
                             }).catch(({ message }) => {
                                 dispatch(showPopup({ message, type: 'error' }));
                             });

@@ -1,10 +1,11 @@
 import './ManageRoles.css';
 import Loader from '../Loader';
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from 'react';
 import { apiRequest } from '../../http_request';
 import { showPopup } from '../../store/reducers/PopupSlice';
 import { hideConfirmationPopup, showConfirmationPopup } from '../../store/reducers/ConfirmationPopupSlice';
+import { deleteOrgRole, updateOrgRole } from '../../store/reducers/OrgRolePermissionsSlice';
 
 const RolesList = ({ roles, currentRole, setCurrentRole }) => {
 
@@ -167,37 +168,30 @@ const ManageRoles = ({ onCloseManageRoles }) => {
     }
 
     const dispatch = useDispatch();
-    const [roles, setRoles] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const { roles } = useSelector(state => state.orgRolePermissions);
     const [currentRole, setCurrentRole] = useState(null);
     const updateCurrentRole = (updatedRole) => {
         setCurrentRole(updatedRole);
-        setRoles(roles.map(role => role.roleId === updatedRole.roleId ? updatedRole : role).sort((a, b) => a.name.localeCompare(b.name)));
+        dispatch(updateOrgRole(updatedRole));
     }
 
     const deleteCurrentRole = () => {
         setCurrentRole(null);
-        setRoles(roles.filter(role => role.roleId !== currentRole.roleId));
+        dispatch(deleteOrgRole(currentRole.roleId));
     }
 
     useEffect(() => {
-        apiRequest(`/api/v1/org-role`, 'GET').then(({ data }) => {
-            setRoles(data);
-            setLoading(false);
-        }).catch(({ message }) => {
-            setLoading(false);
-            dispatch(showPopup({ message, type: 'error' }));
-        });
-    }, []);
+        setCurrentRole(roles[0] || null);
+    }, [roles]);
 
     return (
         <div className='entire-screen-overlay' id='manage-roles-layout' onClick={onClose}>
             <div id='manage-roles-content' className='centerMe FCSS'>
                 <h3 className='w100'>Manage Roles</h3>
-                {loading ? <Loader /> : <div id='manage-roles-body' className='w100 FRSS'>
+                <div id='manage-roles-body' className='w100 FRSS'>
                     <RolesList roles={roles} currentRole={currentRole} setCurrentRole={setCurrentRole} />
                     <RoleDetail currentRole={currentRole} updateCurrentRole={updateCurrentRole} deleteCurrentRole={deleteCurrentRole} />
-                </div>}
+                </div>
             </div>
         </div>
     )

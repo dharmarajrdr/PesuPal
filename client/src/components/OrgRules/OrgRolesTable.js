@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { apiRequest } from "../../http_request";
 import { useDispatch, useSelector } from "react-redux";
 import { showPopup } from "../../store/reducers/PopupSlice";
-import { setPermissions } from "../../store/reducers/OrgRolePermissionsSlice";
+import { setOrgRoles, setPermissions } from "../../store/reducers/OrgRolePermissionsSlice";
 
 const Checked = () => <i className='fa fa-check checked' />;
 const Crossed = () => <i className='fa fa-times crossed' />;
@@ -12,10 +12,10 @@ const Header = ({ roles }) => {
 
     return <div id="org-roles-table-header" className="FRCS row">
         <div className="col">Actions</div>
-        {roles.map(role => (
-            <div key={role} className="col">
+        {roles.map(({ roleId, name }) => (
+            <div key={roleId} className="col">
                 <div className="FRCC">
-                    <span className="role-name">{role}</span>
+                    <span className="role-name">{name}</span>
                     {/* <span className="pL5 fs10 colorDDD">(<i className="fa fa-users fs10 colorDDD w15"></i> 20202)</span> */}
                 </div>
             </div>
@@ -54,8 +54,10 @@ const OrgRolesTable = () => {
 
     useEffect(() => {
         apiRequest(`/api/v1/org-configuration`, 'GET').then(({ data }) => {
-            data.sort((a, b) => a.action.actionId - b.action.actionId);
-            dispatch(setPermissions(data));
+            const { permissions, roles } = data || {};
+            permissions.sort((a, b) => a.action.actionId - b.action.actionId);
+            dispatch(setPermissions(permissions));
+            dispatch(setOrgRoles(roles));
             setLoading(false);
         }).catch(({ message }) => {
             dispatch(showPopup({ message, type: 'error' }));
