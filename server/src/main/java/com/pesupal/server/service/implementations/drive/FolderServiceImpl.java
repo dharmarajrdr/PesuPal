@@ -17,7 +17,6 @@ import com.pesupal.server.repository.drive.FileRepository;
 import com.pesupal.server.repository.drive.FolderRepository;
 import com.pesupal.server.service.interfaces.drive.FolderService;
 import com.pesupal.server.service.interfaces.drive.WorkdriveSpace;
-import com.pesupal.server.service.interfaces.org.OrgConfigurationService;
 import com.pesupal.server.service.interfaces.org.OrgMemberService;
 import jakarta.transaction.Transactional;
 import org.springframework.context.annotation.Lazy;
@@ -33,14 +32,12 @@ public class FolderServiceImpl extends CurrentValueRetriever implements FolderSe
     private final FolderRepository folderRepository;
     private final WorkspaceFactory workspaceFactory;
     private final OrgMemberService orgMemberService;
-    private final OrgConfigurationService orgConfigurationService;
 
-    public FolderServiceImpl(FolderRepository folderRepository, @Lazy WorkspaceFactory workspaceFactory, FileRepository fileRepository, OrgMemberService orgMemberService, OrgConfigurationService orgConfigurationService) {
+    public FolderServiceImpl(FolderRepository folderRepository, @Lazy WorkspaceFactory workspaceFactory, FileRepository fileRepository, OrgMemberService orgMemberService) {
         this.fileRepository = fileRepository;
         this.folderRepository = folderRepository;
         this.workspaceFactory = workspaceFactory;
         this.orgMemberService = orgMemberService;
-        this.orgConfigurationService = orgConfigurationService;
     }
 
     /**
@@ -55,7 +52,7 @@ public class FolderServiceImpl extends CurrentValueRetriever implements FolderSe
 
         OrgMember orgMember = getCurrentOrgMember();
 
-        if (folderRepository.existsByNameAndSpaceAndParentFolder_PublicIdAndDeleted(createFolderDto.getName(), createFolderDto.getSpace(), createFolderDto.getParentFolderId(), false)) {
+        if (folderRepository.existsByNameAndSpaceAndParentFolder_PublicIdAndCreatedBy_OrgAndDeleted(createFolderDto.getName(), createFolderDto.getSpace(), createFolderDto.getParentFolderId(), orgMember.getOrg(), false)) {
             throw new ActionProhibitedException("A folder with the name '" + createFolderDto.getName() + "' already exists.");
         }
 
