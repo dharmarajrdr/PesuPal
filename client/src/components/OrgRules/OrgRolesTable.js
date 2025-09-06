@@ -1,3 +1,10 @@
+import Loader from "../Loader";
+import { useEffect, useState } from "react";
+import { apiRequest } from "../../http_request";
+import { useDispatch, useSelector } from "react-redux";
+import { showPopup } from "../../store/reducers/PopupSlice";
+import { setPermissions } from "../../store/reducers/OrgRolePermissionsSlice";
+
 const Checked = () => <i className='fa fa-check checked' />;
 const Crossed = () => <i className='fa fa-times crossed' />;
 
@@ -9,7 +16,7 @@ const Header = ({ roles }) => {
             <div key={role} className="col">
                 <div className="FRCC">
                     <span className="role-name">{role}</span>
-                    <span className="pL5 fs10 colorDDD">(<i className="fa fa-users fs10 colorDDD w15"></i> 20202)</span>
+                    {/* <span className="pL5 fs10 colorDDD">(<i className="fa fa-users fs10 colorDDD w15"></i> 20202)</span> */}
                 </div>
             </div>
         ))}
@@ -41,183 +48,22 @@ const Body = ({ roles, permissions }) => {
 
 const OrgRolesTable = () => {
 
-    const roles = ["Super Admin", "Member"];
+    const dispatch = useDispatch();
+    const [loading, setLoading] = useState(true);
+    const { permissions, roles } = useSelector(state => state.orgRolePermissions);
 
-    const permissions = [
-        {
-            "action": {
-                "actionId": 3,
-                "title": "Update Member"
-            },
-            "roles": [
-                {
-                    "roleId": 14,
-                    "name": "Super Admin",
-                    "description": "Role with all permissions"
-                }
-            ]
-        },
-        {
-            "action": {
-                "actionId": 1,
-                "title": "Add Member"
-            },
-            "roles": [
-                {
-                    "roleId": 14,
-                    "name": "Super Admin",
-                    "description": "Role with all permissions"
-                }
-            ]
-        },
-        {
-            "action": {
-                "actionId": 4,
-                "title": "Leave Org"
-            },
-            "roles": [
-                {
-                    "roleId": 14,
-                    "name": "Super Admin",
-                    "description": "Role with all permissions"
-                }
-            ]
-        },
-        {
-            "action": {
-                "actionId": 9,
-                "title": "Create Group"
-            },
-            "roles": [
-                {
-                    "roleId": 14,
-                    "name": "Super Admin",
-                    "description": "Role with all permissions"
-                }
-            ]
-        },
-        {
-            "action": {
-                "actionId": 6,
-                "title": "Update Org"
-            },
-            "roles": [
-                {
-                    "roleId": 14,
-                    "name": "Super Admin",
-                    "description": "Role with all permissions"
-                }
-            ]
-        },
-        {
-            "action": {
-                "actionId": 8,
-                "title": "Attach Media in Post"
-            },
-            "roles": [
-                {
-                    "roleId": 14,
-                    "name": "Super Admin",
-                    "description": "Role with all permissions"
-                }
-            ]
-        },
-        {
-            "action": {
-                "actionId": 2,
-                "title": "Remove Member"
-            },
-            "roles": [
-                {
-                    "roleId": 14,
-                    "name": "Super Admin",
-                    "description": "Role with all permissions"
-                }
-            ]
-        },
-        {
-            "action": {
-                "actionId": 12,
-                "title": "Update Department"
-            },
-            "roles": [
-                {
-                    "roleId": 14,
-                    "name": "Super Admin",
-                    "description": "Role with all permissions"
-                }
-            ]
-        },
-        {
-            "action": {
-                "actionId": 10,
-                "title": "Create Role"
-            },
-            "roles": [
-                {
-                    "roleId": 14,
-                    "name": "Super Admin",
-                    "description": "Role with all permissions"
-                }
-            ]
-        },
-        {
-            "action": {
-                "actionId": 7,
-                "title": "Create Post"
-            },
-            "roles": [
-                {
-                    "roleId": 14,
-                    "name": "Super Admin",
-                    "description": "Role with all permissions"
-                }
-            ]
-        },
-        {
-            "action": {
-                "actionId": 5,
-                "title": "Delete Org"
-            },
-            "roles": [
-                {
-                    "roleId": 14,
-                    "name": "Super Admin",
-                    "description": "Role with all permissions"
-                }
-            ]
-        },
-        {
-            "action": {
-                "actionId": 13,
-                "title": "Access Store"
-            },
-            "roles": [
-                {
-                    "roleId": 14,
-                    "name": "Super Admin",
-                    "description": "Role with all permissions"
-                }
-            ]
-        },
-        {
-            "action": {
-                "actionId": 11,
-                "title": "Create Department"
-            },
-            "roles": [
-                {
-                    "roleId": 14,
-                    "name": "Super Admin",
-                    "description": "Role with all permissions"
-                }
-            ]
-        }
-    ]
+    useEffect(() => {
+        apiRequest(`/api/v1/org-configuration`, 'GET').then(({ data }) => {
+            data.sort((a, b) => a.action.actionId - b.action.actionId);
+            dispatch(setPermissions(data));
+            setLoading(false);
+        }).catch(({ message }) => {
+            dispatch(showPopup({ message, type: 'error' }));
+            setLoading(false);
+        });
+    }, []);
 
-    permissions.sort((a, b) => a.action.actionId - b.action.actionId);
-
-    return <div className="FCSS w100 noScrollbar" id="org-roles-table">
+    return loading ? <Loader /> : <div className="FCSS w100 noScrollbar" id="org-roles-table">
         <Header roles={roles} />
         <Body roles={roles} permissions={permissions} />
     </div>

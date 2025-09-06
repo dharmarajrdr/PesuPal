@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { apiRequest } from '../../http_request';
 import { showPopup } from '../../store/reducers/PopupSlice';
+import { addNewRole } from '../../store/reducers/OrgRolePermissionsSlice';
 import { hideConfirmationPopup, showConfirmationPopup } from '../../store/reducers/ConfirmationPopupSlice';
 
 const NewRolesLayout = ({ onCloseNewRoleLayout }) => {
@@ -35,6 +36,7 @@ const NewRolesLayout = ({ onCloseNewRoleLayout }) => {
                                 dispatch(hideConfirmationPopup());
                                 dispatch(showPopup({ message, type: 'success' }));
                                 onCloseNewRoleLayout();
+                                dispatch(addNewRole(roleName));
                             }).catch(({ message }) => {
                                 dispatch(showPopup({ message, type: 'error' }));
                             });
