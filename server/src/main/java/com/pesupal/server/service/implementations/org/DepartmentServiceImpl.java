@@ -3,6 +3,7 @@ package com.pesupal.server.service.implementations.org;
 import com.pesupal.server.dto.request.org.CreateDepartmentDto;
 import com.pesupal.server.dto.response.UserBasicInfoDto;
 import com.pesupal.server.dto.response.org.DepartmentDto;
+import com.pesupal.server.enums.OrgAction;
 import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.exceptions.DuplicateDataReceivedException;
 import com.pesupal.server.exceptions.PermissionDeniedException;
@@ -49,7 +50,7 @@ public class DepartmentServiceImpl extends CurrentValueRetriever implements Depa
 
         OrgMember orgMember = getCurrentOrgMember();
 
-        if (!orgConfigurationService.hasPrivilegeToCreateDepartment(orgMember.getOrg(), orgMember.getRole())) {
+        if (!orgConfigurationService.hasPrivilegeTo(OrgAction.CREATE_DEPARTMENT, orgMember.getRole())) {
             throw new PermissionDeniedException("You don't have permission to create department.");
         }
 

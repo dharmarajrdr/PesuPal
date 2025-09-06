@@ -86,9 +86,11 @@ public class JobOpeningServiceImpl extends CurrentValueRetriever implements JobO
         OrgMember orgMember = getCurrentOrgMember();
         Long orgId = orgMember.getOrg().getId();
         JobOpeningStatus status = jobOpeningFilterDto.getStatus();
-        if (!StaticConfig.HUMAN_RESOURCE_ROLES.contains(orgMember.getRole().name())) {
-            throw new PermissionDeniedException("You do not have permission to view job openings.");
-        }
+
+//      if (!StaticConfig.HUMAN_RESOURCE_ROLES.contains(orgMember.getRole().name())) {
+//          throw new PermissionDeniedException("You do not have permission to view job openings.");
+//      }
+
         return jobOpeningRepository.findAllByOrgIdAndStatusOrderByCreatedAtDesc(orgId, status).stream().map(jobOpening -> {
             JobOpeningDto jobOpeningDto = JobOpeningDto.fromJobOpening(jobOpening);
             jobOpeningDto.setCreatedBy(orgMemberService.getUserBasicInfo(jobOpening.getHiringManager()));

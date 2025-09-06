@@ -7,7 +7,7 @@ import com.pesupal.server.dto.response.UserPreviewDto;
 import com.pesupal.server.dto.response.org.LatestSubscriptionDto;
 import com.pesupal.server.dto.response.org.OrgDetailDto;
 import com.pesupal.server.enums.InvitationStatus;
-import com.pesupal.server.enums.Role;
+import com.pesupal.server.enums.OrgAction;
 import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.exceptions.PermissionDeniedException;
@@ -15,6 +15,7 @@ import com.pesupal.server.helpers.OrgHelper;
 import com.pesupal.server.model.chat.direct_message.DirectMessageChat;
 import com.pesupal.server.model.department.Department;
 import com.pesupal.server.model.org.Org;
+import com.pesupal.server.model.org.OrgRole;
 import com.pesupal.server.model.org.OrgSubscriptionHistory;
 import com.pesupal.server.model.user.Designation;
 import com.pesupal.server.model.user.OrgInvitation;
@@ -41,6 +42,7 @@ public class OrgMemberServiceImpl implements OrgMemberService {
     private final UserService userService;
     private final AuthService authService;
     private final MediaService mediaService;
+    private final OrgRoleService orgRoleService;
     private final DesignationService designationService;
     private final OrgMemberRepository orgMemberRepository;
     private final OrgInvitationService orgInvitationService;
@@ -49,11 +51,12 @@ public class OrgMemberServiceImpl implements OrgMemberService {
     private final DirectMessageChatService directMessageChatService;
     private final OrgSubscriptionHistoryService orgSubscriptionHistoryService;
 
-    public OrgMemberServiceImpl(@Lazy OrgService orgService, @Lazy UserService userService, AuthService authService, @Lazy DesignationService designationService, OrgMemberRepository orgMemberRepository, OrgConfigurationService orgConfigurationService, OrgSubscriptionHistoryService orgSubscriptionHistoryService, DirectMessageChatService directMessageChatService, DepartmentRepository departmentRepository, MediaService mediaService, @Lazy OrgInvitationService orgInvitationService) {
+    public OrgMemberServiceImpl(@Lazy OrgService orgService, @Lazy UserService userService, AuthService authService, @Lazy DesignationService designationService, OrgMemberRepository orgMemberRepository, OrgConfigurationService orgConfigurationService, OrgSubscriptionHistoryService orgSubscriptionHistoryService, DirectMessageChatService directMessageChatService, DepartmentRepository departmentRepository, MediaService mediaService, @Lazy OrgInvitationService orgInvitationService, OrgRoleService orgRoleService) {
         this.orgService = orgService;
         this.userService = userService;
         this.authService = authService;
         this.mediaService = mediaService;
+        this.orgRoleService = orgRoleService;
         this.designationService = designationService;
         this.orgMemberRepository = orgMemberRepository;
         this.departmentRepository = departmentRepository;
@@ -196,7 +199,6 @@ public class OrgMemberServiceImpl implements OrgMemberService {
         newOrgMember.setDepartment(department);
         newOrgMember.setDesignation(designation);
         newOrgMember.setEmployeeId(1);
-        newOrgMember.setRole(Role.ADMIN);
         return orgMemberRepository.save(newOrgMember);
     }
 
@@ -334,7 +336,7 @@ public class OrgMemberServiceImpl implements OrgMemberService {
             throw new ActionProhibitedException("The member you are trying to update does not exist.");
         }
 
-        if (!OrgHelper.isOrgOwner(orgMemberPublicId, org) && !orgConfigurationService.hasPrivilegeToUpdateMember(org, currentOrgMember.getRole())) {
+        if (!OrgHelper.isOrgOwner(orgMemberPublicId, org) && !orgConfigurationService.hasPrivilegeTo(OrgAction.UPDATE_MEMBER, currentOrgMember.getRole())) {
             throw new PermissionDeniedException("You do not have permission to update members of this organization.");
         }
 
@@ -365,7 +367,6 @@ public class OrgMemberServiceImpl implements OrgMemberService {
         OrgMember orgMember = new OrgMember();
         orgMember.setOrg(org);
         orgMember.setUser(user);
-        orgMember.setRole(Role.USER);
         orgMember.setAddedBy(orgInvitation.getInviter());
         orgMember.setDisplayName(orgInvitation.getDisplayName());
         orgMember.setEmployeeId(countOrgMembersByOrg(org));
@@ -405,7 +406,9 @@ public class OrgMemberServiceImpl implements OrgMemberService {
 
         Org org = currentOrgMember.getOrg();
 
-        return orgMemberRepository.findAllByOrgAndRoleOrderByEmployeeId(org, Role.SUPER_ADMIN).stream().map(orgMember -> {
+        OrgRole role = orgRoleService.getRoleByOrgAndName(org, "Super Admin");
+
+        return orgMemberRepository.findAllByRoleOrderByEmployeeId(role).stream().map(orgMember -> {
             UserBasicInfoDto userBasicInfoDto = UserBasicInfoDto.fromOrgMember(orgMember);
             userBasicInfoDto.setDisplayPicture(mediaService.generatePresignedUrl(orgMember.getDisplayPicture()));
             return userBasicInfoDto;

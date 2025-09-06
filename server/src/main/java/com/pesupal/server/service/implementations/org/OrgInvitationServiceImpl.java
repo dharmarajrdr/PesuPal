@@ -4,6 +4,7 @@ import com.pesupal.server.dto.request.EmailNotificationRequestDto;
 import com.pesupal.server.dto.request.org.AddOrgMemberDto;
 import com.pesupal.server.dto.response.org.OrgInvitationDto;
 import com.pesupal.server.enums.InvitationStatus;
+import com.pesupal.server.enums.OrgAction;
 import com.pesupal.server.enums.Role;
 import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.exceptions.DataNotFoundException;
@@ -37,9 +38,9 @@ public class OrgInvitationServiceImpl implements OrgInvitationService {
     private final UserRepository userRepository;
     private final OrgMemberService orgMemberService;
     private final EmailNotification emailNotification;
+    private final OrgMemberRepository orgMemberRepository;
     private final OrgInvitationRepository orgInvitationRepository;
     private final OrgConfigurationService orgConfigurationService;
-    private final OrgMemberRepository orgMemberRepository;
 
     /**
      * Saves an organization invitation.
@@ -115,7 +116,7 @@ public class OrgInvitationServiceImpl implements OrgInvitationService {
 
         Org org = addedBy.getOrg();
 
-        if (!orgConfigurationService.hasPrivilegeToAddMember(org, addedBy.getRole())) {
+        if (!orgConfigurationService.hasPrivilegeTo(OrgAction.ADD_MEMBER, addedBy.getRole())) {
             throw new PermissionDeniedException("You do not have permission to add members to this organization.");
         }
 
