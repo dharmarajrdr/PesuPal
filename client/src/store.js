@@ -28,6 +28,7 @@ import FullScreenImageSlice from './store/reducers/FullScreenImageSlice';
 import ConfirmationPopupSlice from './store/reducers/ConfirmationPopupSlice';
 import OrgRolePermissionsSlice from './store/reducers/OrgRolePermissionsSlice';
 import CurrentChatPreviewSlice from './store/reducers/CurrentChatPreviewSlice';
+import FileCategoryShortcutSlice from './store/reducers/FileCategoryShortcutSlice';
 import ShowChatHeaderOptionsModalSlice from './store/reducers/ShowChatHeaderOptionsModalSlice';
 
 const store = configureStore({
@@ -59,6 +60,7 @@ const store = configureStore({
         confirmationPopup: ConfirmationPopupSlice,
         orgRolePermissions: OrgRolePermissionsSlice,
         pinnedDirectMessage: PinnedDirectMessageSlice,
+        fileCategoryShortcut: FileCategoryShortcutSlice,
         currentChatPreviewSlice: CurrentChatPreviewSlice,
         showChatHeaderOptionsModalSlice: ShowChatHeaderOptionsModalSlice
     }),
