@@ -9,39 +9,55 @@ import MyProfileSlice from './store/reducers/MyProfileSlice';
 import PopupSlice from './store/reducers/PopupSlice';
 import { configureStore } from '@reduxjs/toolkit';
 import { combineReducers } from 'redux';
+import OrgSlice from './store/reducers/OrgSlice';
 import DriveSlice from './store/reducers/DriveSlice';
+import PeopleSlice from './store/reducers/PeopleSlice';
 import ProfileSlice from './store/reducers/ProfileSlice';
-import CurrentOrgSlice from './store/reducers/CurrentOrgSlice';
-import ModuleFilterSlice from './store/reducers/ModuleFilterSlice';
-import ActiveChatTabSlice from './store/reducers/ActiveChatTabSlice';
-import LeftNavigationSlice from './store/reducers/LeftNavigationSlice';
+import CreateOrgSlice from './store/reducers/CreateOrgSlice';
+import DepartmentSlice from './store/reducers/DepartmentSlice';
+import SinglePostSlice from './store/reducers/SinglePostSlice';
+import ManageUsersSlice from './store/reducers/ManageUsersSlice';
 import ConversationSlice from './store/reducers/ConversationSlice';
-import ConfirmationPopupSlice from './store/reducers/ConfirmationPopupSlice';
+import ModuleFilterSlice from './store/reducers/ModuleFilterSlice';
 import CurrentModuleSlice from './store/reducers/CurrentModuleSlice';
+import TrendingPostsSlice from './store/reducers/TrendingPostsSlice';
+import ActiveChatTabSlice from './store/reducers/ActiveChatTabSlice';
 import SupportTicketsSlice from './store/reducers/SupportTicketsSlice';
+import LeftNavigationSlice from './store/reducers/LeftNavigationSlice';
+import FullScreenImageSlice from './store/reducers/FullScreenImageSlice';
+import ConfirmationPopupSlice from './store/reducers/ConfirmationPopupSlice';
+import OrgRolePermissionsSlice from './store/reducers/OrgRolePermissionsSlice';
 import CurrentChatPreviewSlice from './store/reducers/CurrentChatPreviewSlice';
 import ShowChatHeaderOptionsModalSlice from './store/reducers/ShowChatHeaderOptionsModalSlice';
 
 const store = configureStore({
     reducer: combineReducers({
+        org: OrgSlice,
         popup: PopupSlice,
         drive: DriveSlice,
         posts: PostReducer,
+        people: PeopleSlice,
         chatId: ChatIdSlice,
         profile: ProfileSlice,
         myProfile: MyProfileSlice,
-        currentOrg: CurrentOrgSlice,
+        createOrg: CreateOrgSlice,
+        singlePost: SinglePostSlice,
+        department: DepartmentSlice,
+        manageUsers: ManageUsersSlice,
         recentChats: RecentChatsSlice,
         Navigation: NavigationReducers,
         moduleFilter: ModuleFilterSlice,
         conversation: ConversationSlice,
         activeChatTab: ActiveChatTabSlice,
+        trendingPosts: TrendingPostsSlice,
         currentModule: CurrentModuleSlice,
         supportTickets: SupportTicketsSlice,
         leftNavigation: LeftNavigationSlice,
         VerticalLoader: VerticalLoaderSlice,
+        fullScreenImage: FullScreenImageSlice,
         activeRecentChat: ActiveRecentChatSlice,
         confirmationPopup: ConfirmationPopupSlice,
+        orgRolePermissions: OrgRolePermissionsSlice,
         pinnedDirectMessage: PinnedDirectMessageSlice,
         currentChatPreviewSlice: CurrentChatPreviewSlice,
         showChatHeaderOptionsModalSlice: ShowChatHeaderOptionsModalSlice

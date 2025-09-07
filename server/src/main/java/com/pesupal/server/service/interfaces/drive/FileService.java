@@ -11,6 +11,8 @@ import java.util.List;
 
 public interface FileService {
 
+    FileDto fromFileAndOrgMember(File file, OrgMember owner);
+
     List<FileOrFolderDto> findAllByFolderAndOrgMemberAndDeleted(Folder parentFolder, OrgMember orgMember, boolean deleted);
 
     FileDto createFile(CreateFileDto createFileDto) throws Exception;

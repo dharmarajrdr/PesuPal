@@ -12,10 +12,10 @@ import com.pesupal.server.model.post.PollOption;
 import com.pesupal.server.model.post.Post;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.repository.post.PollRepository;
-import com.pesupal.server.service.interfaces.org.OrgMemberService;
 import com.pesupal.server.service.interfaces.post.PollService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Set;
@@ -26,7 +26,6 @@ import java.util.stream.Collectors;
 public class PollServiceImpl extends CurrentValueRetriever implements PollService {
 
     private final PollRepository pollRepository;
-    private final OrgMemberService orgMemberService;
 
     /**
      * Fetches the poll associated with a given post.
@@ -57,6 +56,7 @@ public class PollServiceImpl extends CurrentValueRetriever implements PollServic
      * @return
      */
     @Override
+    @Transactional
     public Poll createPoll(CreatePollDto createPollDto, Post post) {
 
         validateNewPoll(createPollDto);

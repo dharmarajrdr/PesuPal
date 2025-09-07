@@ -33,6 +33,13 @@ public class ModuleController {
         return ResponseEntity.ok().body(new ApiResponseDto("Module retrieved successfully", moduleDto));
     }
 
+    @PatchMapping("/{moduleId}")
+    public ResponseEntity<ApiResponseDto> updateModule(@PathVariable String moduleId, @RequestBody CreateModuleDto createModuleDto) {
+
+        moduleService.updateModule(moduleId, createModuleDto);
+        return ResponseEntity.ok().body(new ApiResponseDto("Module updated successfully"));
+    }
+
     @PatchMapping("/{moduleId}/publish")
     public ResponseEntity<ApiResponseDto> publishModule(@PathVariable String moduleId) {
 

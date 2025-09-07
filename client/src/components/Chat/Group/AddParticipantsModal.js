@@ -1,12 +1,12 @@
-import { useEffect, useState } from 'react';
+import Loader from '../../Loader';
 import './AddParticipantsModal.css';
 import { useDispatch } from "react-redux";
-import { hideConfirmationPopup, showConfirmationPopup } from '../../../store/reducers/ConfirmationPopupSlice';
+import { useEffect, useRef, useState } from 'react';
 import { apiRequest } from '../../../http_request';
 import { showPopup } from '../../../store/reducers/PopupSlice';
-import { increaseParticipantsCount, updateCurrentChatPreview } from '../../../store/reducers/CurrentChatPreviewSlice';
-import Loader from '../../Loader';
 import { showProfile } from '../../../store/reducers/ProfileSlice';
+import { increaseParticipantsCount } from '../../../store/reducers/CurrentChatPreviewSlice';
+import { hideConfirmationPopup, showConfirmationPopup } from '../../../store/reducers/ConfirmationPopupSlice';
 
 const SearchUsers = ({ searchQuery, setSearchQuery }) => {
     return (
@@ -17,10 +17,16 @@ const SearchUsers = ({ searchQuery, setSearchQuery }) => {
     );
 }
 
+const FirstChar = ({ displayName }) => {
+
+    return <p className='first-char-of-name'>{displayName.charAt(0).toUpperCase()}</p>
+}
+
 const AddUser = ({ user, groupId }) => {
 
     const dispatch = useDispatch();
     const { id, displayPicture, displayName, email } = user || {};
+    const [showDisplayPicture, setShowDisplayPicture] = useState(displayPicture != null);
 
     const addUserHandler = () => {
         dispatch(showConfirmationPopup({
@@ -50,7 +56,7 @@ const AddUser = ({ user, groupId }) => {
 
     return <div key={id} className='user-preview FRCB w100'>
         <div className='FRCS'>
-            <img src={displayPicture} alt={displayName} className='img_30_30 mR10' onClick={() => { dispatch(showProfile(id)); }} />
+            {showDisplayPicture ? <img src={displayPicture} onError={() => setShowDisplayPicture(false)} alt={displayName} className='img_30_30 mR10' onClick={() => { dispatch(showProfile(id)); }} /> : <FirstChar displayName={displayName} />}
             <div className='FCSS'>
                 <h6>{displayName}</h6>
                 <span className='fs10 mT2 color999'>{email}</span>
@@ -91,6 +97,8 @@ const AddParticipantsModal = ({ groupId, onClose }) => {
     const [page, setPage] = useState(0);
     const [size, setSize] = useState(10);
 
+    const firstRender = useRef(true);
+
     const getUsers = () => {
         apiRequest(`/api/v1/group-chat-member/non-participants/${groupId}?search=${searchQuery}&page=${page}&size=${size}`, 'GET').then(({ data }) => {
             setUsers(data);
@@ -106,6 +114,10 @@ const AddParticipantsModal = ({ groupId, onClose }) => {
 
     // Fetch users when the search query changes - Debounce with a delay
     useEffect(() => {
+        if (firstRender.current) {
+            firstRender.current = false;
+            return;
+        }
         const timer = setTimeout(getUsers, debounceDelay);
         return () => clearTimeout(timer);
     }, [searchQuery]);

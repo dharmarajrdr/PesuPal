@@ -3,12 +3,17 @@ package com.pesupal.server.model.post;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.pesupal.server.model.BaseModel;
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 
-@Data
+@Getter
+@Setter
 @Entity
+@EqualsAndHashCode(callSuper = false)
 public class PollOption extends BaseModel {
 
     @ManyToOne(cascade = CascadeType.ALL)
@@ -19,5 +24,6 @@ public class PollOption extends BaseModel {
     private String option;
 
     @OneToMany(mappedBy = "pollOption", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<PollVoter> voters;
+    @JsonIgnore
+    private List<PollVoter> voters = new ArrayList<>();
 }

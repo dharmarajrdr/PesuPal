@@ -1,7 +1,7 @@
 package com.pesupal.server.repository.org;
 
-import com.pesupal.server.model.department.Department;
 import com.pesupal.server.model.org.Org;
+import com.pesupal.server.model.org.OrgRole;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.model.user.User;
 import org.springframework.data.domain.Page;
@@ -29,8 +29,6 @@ public interface OrgMemberRepository extends JpaRepository<OrgMember, Long> {
 
     List<OrgMember> findAllByOrgIdOrderByDisplayNameAsc(Long orgId);
 
-    List<OrgMember> findAllByOrgAndDepartmentOrderByDisplayName(Org org, Department department);
-
     Optional<OrgMember> findByUser_PublicIdAndOrg_PublicId(String publicUserId, String publicOrgId);
 
     Optional<OrgMember> findByPublicId(String publicId);
@@ -38,8 +36,8 @@ public interface OrgMemberRepository extends JpaRepository<OrgMember, Long> {
     @Query("""
                 SELECT o FROM OrgMember o
                 WHERE o.org.id = :orgId
-                    AND (LOWER(o.displayName) LIKE LOWER(CONCAT('%', :search, '%')) OR LOWER(o.user.email) LIKE LOWER(CONCAT('%', :search, '%')))
-                ORDER BY o.displayName ASC
+                    AND (LOWER(o.displayName) LIKE LOWER(CONCAT('%', :search, '%'))
+                    OR LOWER(o.user.email) LIKE LOWER(CONCAT('%', :search, '%')))
             """)
     Page<OrgMember> searchOrgMembers(@Param("orgId") Long orgId, @Param("search") String search, Pageable pageable);
 
@@ -57,4 +55,15 @@ public interface OrgMemberRepository extends JpaRepository<OrgMember, Long> {
             nativeQuery = true)
     Page<OrgMember> fuzzySearchOrgMembers(@Param("orgId") Long orgId, @Param("search") String search, Pageable pageable);
 
+    void deleteAllByOrg(Org org);
+
+    boolean existsByUser_EmailAndOrg(String userEmail, Org org);
+
+    List<OrgMember> findAllByRoleOrderByEmployeeId(OrgRole role);
+
+    List<OrgMember> findAllByOrgAndArchivedOrderByEmployeeId(Org org, boolean archived);
+
+    boolean existsByRole(OrgRole role);
+
+    Integer countByRole(OrgRole orgRole);
 }

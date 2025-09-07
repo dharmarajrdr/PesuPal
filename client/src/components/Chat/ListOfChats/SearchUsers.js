@@ -1,9 +1,9 @@
 import './SearchUsers.css'
-import { useEffect, useRef, useState } from 'react';
-import OptionsModal from '../../Utils/OptionsModal';
-import CreateGroupModal from '../Group/CreateGroupModal';
-import { useDispatch, useSelector } from 'react-redux';
+import StartNewChat from '../StartNewChat';
 import { apiRequest } from '../../../http_request';
+import { useEffect, useRef, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import CreateGroupModal from '../Group/CreateGroupModal';
 import { setRecentChats } from '../../../store/reducers/RecentChatsSlice';
 
 const SearchUsers = ({ searchChat, setSearchChat }) => {
@@ -14,8 +14,8 @@ const SearchUsers = ({ searchChat, setSearchChat }) => {
     const [page, setPage] = useState(0);
     const [size, setSize] = useState(10);
     const activeChatTab = useSelector(state => state.activeChatTab);
-    const [showOptionsModal, setShowOptionsModal] = useState(false);
     const [showCreateGroupModal, setShowCreateGroupModal] = useState(false);
+    const [showStartNewChatModal, setShowStartNewChatModal] = useState(false);
 
     const { recentChatsApi, chatMode } = activeChatTab;
 
@@ -35,7 +35,6 @@ const SearchUsers = ({ searchChat, setSearchChat }) => {
         "name": "Create Group",
         "onClick": () => {
             setShowCreateGroupModal(true);
-            setShowOptionsModal(false);
         }
     }];
 
@@ -55,6 +54,14 @@ const SearchUsers = ({ searchChat, setSearchChat }) => {
         return () => clearTimeout(handler);
     }, [searchChat]);
 
+    const newChatIconClicked = () => {
+        if (chatMode === 'DIRECT_MESSAGE') {
+            setShowStartNewChatModal(true);
+        } else {
+            setShowCreateGroupModal(true);
+        }
+    }
+
     return (
         <div className='FRCB w100' id='SearchUserQuickAction'>
             <i className='fas fa-bars navbar cursP' onClick={showLeftNavContainer}></i>
@@ -63,9 +70,9 @@ const SearchUsers = ({ searchChat, setSearchChat }) => {
                 <i className='fas fa-search'></i>
             </div>
 
+            {showStartNewChatModal && <StartNewChat onClose={() => setShowStartNewChatModal(false)} />}
             {showCreateGroupModal && <CreateGroupModal setShowCreateGroupModal={setShowCreateGroupModal} />}
-            {showOptionsModal && <OptionsModal options={options} style={{ right: '-140px', top: '10px' }} />}
-            <i className='fas fa-plus quickActions cursP' onClick={() => setShowOptionsModal(!showOptionsModal)}></i>
+            <i className='fas fa-plus quickActions cursP' onClick={newChatIconClicked}></i>
         </div>
     )
 }

@@ -1,10 +1,13 @@
-import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { apiRequest } from "../../../http_request";
 import './UserPostsLayout.css'; // Assuming you have a CSS file for styling
 import Loader from "../../Loader";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import ErrorMessage from "../../ErrorMessage";
+import { apiRequest } from "../../../http_request";
+import { useDispatch, useSelector } from "react-redux";
 import PostList from "../../Feeds/FeedsMainPanel/PostList";
+import { setPosts } from "../../../store/reducers/PostSlice";
+import CreateNewPost from '../../Feeds/FeedsMainPanel/CreateNewPost';
 
 const NoPostsAvailable = () => {
 
@@ -24,7 +27,8 @@ const UserPostsLayout = () => {
   const size = 10; // Number of posts per page
   const sortOrder = 'DESC'; // Sorting order for posts, can be 'ASC'
   const { userId } = useParams();
-  const [posts, setPosts] = useState([]);
+  const dispatch = useDispatch();
+  const { list: posts } = useSelector(state => state.posts);
   const [page, setPage] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -34,7 +38,7 @@ const UserPostsLayout = () => {
 
     apiRequest(`/api/v1/post/user/${userId}?page=${page}&size=${size}&sort_order=${sortOrder}`, 'GET').then(({ data, info }) => {
       setLoading(false);
-      setPosts(prevPosts => [...prevPosts, ...data]);
+      dispatch(setPosts(data));
       setPage(prevPage => prevPage + 1);
       setHasMore(info.hasMoreRecords);
     }).catch(({ message }) => {
@@ -55,6 +59,7 @@ const UserPostsLayout = () => {
 
   return (
     <div id='user-posts-layout' className='posts-layout FCCS w100 h100' onClick={overlayClickHandler}>
+      <CreateNewPost />
       <div id="postsList">
         {loading ? <Loader /> :
           error ? <ErrorMessage /> :

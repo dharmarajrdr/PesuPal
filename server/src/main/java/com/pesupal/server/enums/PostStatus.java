@@ -4,6 +4,7 @@ public enum PostStatus {
 
     DRAFT,
     PUBLISHED,
+    SCHEDULED,
     ARCHIVED,
     DELETED
 }

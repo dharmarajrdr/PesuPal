@@ -15,4 +15,6 @@ public interface PostCommentService {
     List<PostCommentDto> getPostComments(String postId);
 
     PostComment getPostCommentById(Long commentId);
+
+    void updateComment(Long commentId, CreatePostCommentDto updateCommentDto);
 }

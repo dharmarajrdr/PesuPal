@@ -1,13 +1,16 @@
 import Post from './Post';
+import { useState } from 'react';
+import { useSelector } from 'react-redux';
+import PostsLikedBy from './PostsLikedBy';
 
-const PostList = ({ posts, activePostId, setActivePostId }) => {
+const PostList = () => {
+
+    const { list: posts } = useSelector(state => state.posts);
+    const [showPostLikesById, setShowPostLikesById] = useState(null);
 
     return <>
-        {posts.map((post, index) =>
-            <Post isOptionOpen={activePostId === post.id}
-                onToggleOption={() => {
-                    setActivePostId((prev) => (prev === post.id ? null : post.id));
-                }} key={index} post={post} />)}
+        {showPostLikesById && <PostsLikedBy postId={showPostLikesById} closeShowLikesList={() => setShowPostLikesById(null)} />}
+        {posts.map((post, index) => <Post key={index} post={post} setShowPostLikesById={setShowPostLikesById} />)}
     </>
 }
 

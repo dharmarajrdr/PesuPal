@@ -117,7 +117,13 @@ public class CandidateServiceImpl implements CandidateService {
             candidateTimeline.setDescription("Applied for job opening.");
         }
         candidate.setTimeline(List.of(candidateTimeline));
-        return CandidateDto.fromCandidateAndOrgMember(candidateRepository.save(candidate), referredByOrgMember);
+        CandidateDto candidateDto = CandidateDto.fromCandidate(candidateRepository.save(candidate));
+        if (referredByOrgMember != null) {
+            candidateDto.setReferredBy(orgMemberService.getUserBasicInfo(referredByOrgMember));
+        }
+        candidateDto.getJobOpening().setCreatedBy(orgMemberService.getUserBasicInfo(jobOpening.getHiringManager()));
+        ;
+        return candidateDto;
     }
 
     /**

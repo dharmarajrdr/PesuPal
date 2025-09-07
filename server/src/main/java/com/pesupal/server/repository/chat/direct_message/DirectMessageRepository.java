@@ -26,6 +26,7 @@ public interface DirectMessageRepository extends JpaRepository<DirectMessage, Lo
                 om.display_picture AS displayPicture,
                 om.display_name AS displayName,
                 om.status AS userStatus,
+                om.public_id AS userId,
             
                 CASE
                     WHEN dm.sender_id = :userId THEN 'Me'
@@ -44,12 +45,12 @@ public interface DirectMessageRepository extends JpaRepository<DirectMessage, Lo
             
             JOIN direct_message_chat dmc ON dmc.id = dm.direct_message_chat_id
             
-            JOIN org_member om ON om.user_id = CASE
+            JOIN org_member om ON om.id = CASE
                     WHEN dm.sender_id = :userId THEN dm.receiver_id
                     ELSE dm.sender_id
                 END AND om.org_id = :orgId
             
-            JOIN org_member sender_member ON sender_member.user_id = dm.sender_id AND sender_member.org_id = :orgId
+            JOIN org_member sender_member ON sender_member.id = dm.sender_id AND sender_member.org_id = :orgId
             
             JOIN (
                 SELECT direct_message_chat_id, MAX(id) AS latest_id

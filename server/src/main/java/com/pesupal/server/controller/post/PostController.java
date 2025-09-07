@@ -4,12 +4,14 @@ import com.pesupal.server.dto.request.post.CreatePostDto;
 import com.pesupal.server.dto.response.ApiResponseDto;
 import com.pesupal.server.dto.response.post.PostDto;
 import com.pesupal.server.dto.response.post.PostsListDto;
+import com.pesupal.server.enums.PostStatus;
 import com.pesupal.server.enums.SortOrder;
-import com.pesupal.server.model.post.Post;
 import com.pesupal.server.service.interfaces.post.PostService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @AllArgsConstructor
@@ -21,8 +23,16 @@ public class PostController {
     @PostMapping("/create")
     public ResponseEntity<ApiResponseDto> createPost(@RequestBody CreatePostDto createPostDto) {
 
-        Post post = postService.createPost(createPostDto);
+        createPostDto.setStatus(PostStatus.PUBLISHED);
+        PostDto post = postService.createPost(createPostDto);
         return ResponseEntity.ok().body(new ApiResponseDto("Post created successfully", post));
+    }
+
+    @GetMapping("/feeds")
+    public ResponseEntity<ApiResponseDto> getFeeds(@RequestParam(required = false, defaultValue = "") String search, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size, @RequestParam(name = "sort_order", defaultValue = "DESC") String sortOrder) {
+
+        PostsListDto posts = search.trim().length() <= 3 ? postService.getFeeds(page, size, SortOrder.valueOf(sortOrder)) : postService.searchPosts(search, page, size);
+        return ResponseEntity.ok().body(new ApiResponseDto("Posts retrieved successfully.", posts.getPosts(), posts.getInfo()));
     }
 
     @GetMapping("/{postId}")
@@ -33,10 +43,7 @@ public class PostController {
     }
 
     @GetMapping("/user/{userId}")
-    public ResponseEntity<ApiResponseDto> getPostsByUserId(@PathVariable(name = "userId") String postOwnerId,
-                                                           @RequestParam(defaultValue = "0") int page,
-                                                           @RequestParam(defaultValue = "10") int size,
-                                                           @RequestParam(name = "sort_order", defaultValue = "DESC") String sortOrder) {
+    public ResponseEntity<ApiResponseDto> getPostsByUserId(@PathVariable(name = "userId") String postOwnerId, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size, @RequestParam(name = "sort_order", defaultValue = "DESC") String sortOrder) {
 
 
         PostsListDto posts = postService.getPostByUserId(postOwnerId, page, size, SortOrder.valueOf(sortOrder));
@@ -44,14 +51,18 @@ public class PostController {
     }
 
     @GetMapping("/tag/{tag}")
-    public ResponseEntity<ApiResponseDto> getPostsByTag(@PathVariable(name = "tag") String tag,
-                                                        @RequestParam(defaultValue = "0") int page,
-                                                        @RequestParam(defaultValue = "10") int size,
-                                                        @RequestParam(name = "sort_order", defaultValue = "DESC") String sortOrder) {
+    public ResponseEntity<ApiResponseDto> getPostsByTag(@PathVariable(name = "tag") String tag, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size, @RequestParam(name = "sort_order", defaultValue = "DESC") String sortOrder) {
 
 
         PostsListDto posts = postService.getPostByTag("#" + tag, page, size, SortOrder.valueOf(sortOrder));
         return ResponseEntity.ok().body(new ApiResponseDto("Posts retrieved successfully.", posts.getPosts(), posts.getInfo()));
+    }
+
+    @GetMapping("/trending")
+    public ResponseEntity<ApiResponseDto> getTrendingPosts(@RequestParam(defaultValue = "5", required = false) int limit) {
+
+        List<PostDto> trendingPosts = postService.getTrendingPosts(limit);
+        return ResponseEntity.ok().body(new ApiResponseDto("Trending posts retrieved successfully.", trendingPosts));
     }
 
     @PutMapping("/archive/{postId}")
@@ -64,8 +75,8 @@ public class PostController {
     @PatchMapping("/{postId}")
     public ResponseEntity<ApiResponseDto> updatePost(@PathVariable String postId, @RequestBody CreatePostDto createPostDto) {
 
-        Post post = postService.updatePost(postId, createPostDto);
-        return ResponseEntity.ok().body(new ApiResponseDto("Post updated successfully", post));
+        PostDto postDto = postService.updatePost(postId, createPostDto);
+        return ResponseEntity.ok().body(new ApiResponseDto("Post updated successfully", postDto));
     }
 
     @DeleteMapping("/{postId}")
@@ -74,4 +85,5 @@ public class PostController {
         postService.deletePost(postId);
         return ResponseEntity.ok().body(new ApiResponseDto("Post deleted successfully"));
     }
+
 }
