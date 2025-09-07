@@ -4,7 +4,8 @@ const OrgRolePermissionsSlice = createSlice({
     name: 'orgRolePermissions',
     initialState: {
         roles: [],
-        permissions: []
+        permissions: [],
+        hasPrivilegeToCreateOrgRole: false
     },
     reducers: {
         setPermissions: (state, action) => {
@@ -25,9 +26,12 @@ const OrgRolePermissionsSlice = createSlice({
             // sort roles by name after adding new role
             state.roles.push(action.payload);
             state.roles.sort((a, b) => a.name.localeCompare(b.name));
+        },
+        setHasPrivilegeToCreateOrgRole: (state, action) => {
+            state.hasPrivilegeToCreateOrgRole = action.payload;
         }
     }
 })
 
-export const { setPermissions, setOrgRoles, addNewRole, updateOrgRole, deleteOrgRole } = OrgRolePermissionsSlice.actions;
+export const { setPermissions, setOrgRoles, addNewRole, updateOrgRole, deleteOrgRole, setHasPrivilegeToCreateOrgRole } = OrgRolePermissionsSlice.actions;
 export default OrgRolePermissionsSlice.reducer;
