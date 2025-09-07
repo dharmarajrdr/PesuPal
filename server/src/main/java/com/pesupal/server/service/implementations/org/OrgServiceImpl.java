@@ -7,6 +7,7 @@ import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.exceptions.DuplicateDataReceivedException;
 import com.pesupal.server.exceptions.PermissionDeniedException;
+import com.pesupal.server.helpers.OrgHelper;
 import com.pesupal.server.model.org.Org;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.model.user.User;
@@ -92,17 +93,13 @@ public class OrgServiceImpl implements OrgService {
     /**
      * Deletes an organization permanently.
      *
-     * @param orgPublicId
      * @param orgMember
      */
     @Override
     @Transactional
-    public void deleteOrg(String orgPublicId, OrgMember orgMember) {
+    public void deleteOrg(OrgMember orgMember) {
 
         Org org = orgMember.getOrg();
-        if (!org.getPublicId().equals(orgPublicId)) {
-            throw new ActionProhibitedException("You are not allowed to delete this organization.");
-        }
 
         if (!org.getOwner().getId().equals(orgMember.getId())) {
             throw new PermissionDeniedException("You do not have permission to delete this organization.");
@@ -117,6 +114,26 @@ public class OrgServiceImpl implements OrgService {
         // Stop all schedules associated with the org
 
         // Garbage collect all data associated with the org - Scheduled task
+    }
+
+    /**
+     * Allows an org member to leave the organization.
+     *
+     * @param orgMember
+     */
+    @Transactional
+    @Override
+    public void leaveOrg(OrgMember orgMember) {
+
+        Org org = orgMember.getOrg();
+
+        if (OrgHelper.isOrgOwner(orgMember.getPublicId(), org)) {
+            throw new ActionProhibitedException("You cannot leave the organization as you are the owner. Please transfer ownership or delete the organization.");
+        }
+
+        orgMemberService.removeOrgMember(orgMember);
+
+        // Stop all schedules associated with the user in the org
     }
 
     /**
