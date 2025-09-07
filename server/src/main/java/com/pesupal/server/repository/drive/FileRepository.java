@@ -23,4 +23,6 @@ public interface FileRepository extends JpaRepository<File, Long> {
     List<File> findAllByCreator_Org(Org creatorOrg);
 
     List<File> findAllByCreator_OrgAndFolder_Space(Org org, Workspace workspace);
+
+    List<File> findAllByDeleted(boolean deleted);
 }
