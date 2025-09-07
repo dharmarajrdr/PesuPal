@@ -5,7 +5,9 @@ import com.pesupal.server.dto.response.drive.FileOrFolderDto;
 import com.pesupal.server.dto.response.drive.FolderDto;
 import com.pesupal.server.enums.CRUD;
 import com.pesupal.server.enums.FileOrFolder;
+import com.pesupal.server.enums.OrgAction;
 import com.pesupal.server.enums.Workspace;
+import com.pesupal.server.exceptions.PermissionDeniedException;
 import com.pesupal.server.helpers.WorkspaceSupportsPublicFolder;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.model.workdrive.Folder;
@@ -16,6 +18,7 @@ import com.pesupal.server.service.interfaces.drive.FileService;
 import com.pesupal.server.service.interfaces.drive.PublicFolderService;
 import com.pesupal.server.service.interfaces.drive.SecuredFolderPermissionService;
 import com.pesupal.server.service.interfaces.drive.WorkdriveSpace;
+import com.pesupal.server.service.interfaces.org.OrgConfigurationService;
 import com.pesupal.server.service.interfaces.org.OrgMemberService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Sort;
@@ -30,10 +33,11 @@ public class OrgSpace extends WorkspaceSupportsPublicFolder implements Workdrive
 
     private final FileService fileService;
     private final FolderRepository folderRepository;
+    private final OrgMemberService orgMemberService;
     private final PublicFolderService publicFolderService;
     private final PublicFolderRepository publicFolderRepository;
+    private final OrgConfigurationService orgConfigurationService;
     private final SecuredFolderPermissionService securedFolderPermissionService;
-    private final OrgMemberService orgMemberService;
 
     /**
      * Saves a folder in the organization space with security settings.
@@ -43,6 +47,10 @@ public class OrgSpace extends WorkspaceSupportsPublicFolder implements Workdrive
      */
     @Override
     public Folder save(Folder folder, CreateFolderDto createFolderDto, OrgMember orgMember) {
+
+        if (!orgConfigurationService.hasPrivilegeTo(OrgAction.ACCESS_STORE, orgMember.getRole())) {
+            throw new PermissionDeniedException("You do not have permission to access the organization drive");
+        }
 
         ensureNecessaryPermissionInsideSecuredFolder(folder.getParentFolder(), orgMember, CRUD.CREATE, securedFolderPermissionService, publicFolderService);
 
@@ -61,6 +69,10 @@ public class OrgSpace extends WorkspaceSupportsPublicFolder implements Workdrive
      */
     @Override
     public List<FileOrFolderDto> findAllFilesAndFoldersByOrgMemberAndFolder(OrgMember orgMember, Folder parentFolder) {
+
+        if (!orgConfigurationService.hasPrivilegeTo(OrgAction.ACCESS_STORE, orgMember.getRole())) {
+            throw new PermissionDeniedException("You do not have permission to access the organization drive");
+        }
 
         ensureNecessaryPermissionInsideSecuredFolder(parentFolder, orgMember, CRUD.READ, securedFolderPermissionService, publicFolderService);
 

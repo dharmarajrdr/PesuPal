@@ -36,11 +36,10 @@ const AuthModal = ({ setIsSubscriptionExpired, setAuthenticated, setServerDown }
             setAuthenticated(true);
             const { statusCode } = data || {};
             if (!statusCode) {
-                setServerDown(true);
-            } else {
-                sessionStorage.removeItem('token');
-                navigate('/signin');
+                return setServerDown(true);
             }
+            sessionStorage.removeItem('token');
+            navigate('/signin');
         });
     }, []);
 

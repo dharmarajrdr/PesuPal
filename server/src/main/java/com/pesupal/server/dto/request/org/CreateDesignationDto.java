@@ -10,8 +10,6 @@ public class CreateDesignationDto {
 
     private Long seniorityLevel;
 
-    private Long orgId;
-
     public Designation getDesignation() {
 
         Designation designation = new Designation();

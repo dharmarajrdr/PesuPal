@@ -22,7 +22,7 @@ const NoChatsFound = () => {
     )
 }
 
-const RecentChats = ({ searchChat }) => {
+const RecentChats = ({ searchChat, recentChatsRef }) => {
 
     const [page, setPage] = useState(0);
     const [size, setSize] = useState(25);
@@ -55,14 +55,15 @@ const RecentChats = ({ searchChat }) => {
     }
 
     return activeChatTab ? (
-        <div id='RecentChats' className='FCCS w100 pT5'>
+        <div id='RecentChats' className='FCCS w100 pT5' ref={recentChatsRef}>
             {
                 loading ? <Loader /> :
                     error ? <ErrorMessage message={error} /> :
-                        recentChats?.length ?
-                            recentChats.map((recentChat, index) =>
+                        recentChats?.length ? <div id='recent-chats-list'>
+                            {recentChats.map((recentChat, index) =>
                                 <RecentChat key={index} recentChat={recentChat} openChatHandler={openChatHandler} />
-                            ) : <NoChatsFound />
+                            )}
+                        </div> : <NoChatsFound />
             }
         </div>
     ) : null;

@@ -18,6 +18,13 @@ const pinnedDirectMessageSlice = createSlice({
                 state.pinnedDirectMessages.push(action.payload);
             }
         },
+        updateMemberStatusInPinnedDirectMessages: (state, action) => {
+            const { userId, status } = action.payload;
+            const memberIndex = state.pinnedDirectMessages.findIndex(member => member.userId === userId);
+            if (memberIndex !== -1) {
+                state.pinnedDirectMessages[memberIndex].status = status;
+            }
+        },
         updatePinnedDirectMessage: (state, action) => {
             const { chatId } = action.payload;
             const index = state.pinnedDirectMessages.findIndex(
@@ -38,6 +45,6 @@ const pinnedDirectMessageSlice = createSlice({
     }
 });
 
-export const { setPinnedDirectMessages, addPinnedDirectMessage, updatePinnedDirectMessage, removePinnedDirectMessage } = pinnedDirectMessageSlice.actions;
+export const { setPinnedDirectMessages, addPinnedDirectMessage, updatePinnedDirectMessage, updateMemberStatusInPinnedDirectMessages, removePinnedDirectMessage } = pinnedDirectMessageSlice.actions;
 
 export default pinnedDirectMessageSlice.reducer;

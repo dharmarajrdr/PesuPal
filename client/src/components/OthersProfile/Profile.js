@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import './Profile.css'
 import { useEffect, useState } from 'react';
 import { apiRequest } from '../../http_request';
@@ -49,12 +49,13 @@ const NavigationLink = ({ to, icon, label, count }) => {
 const Profile = () => {
 
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     const [error, setError] = useState(null);
     const [profile, setProfile] = useState(null);
     const [loading, setLoading] = useState(true);
     const userId = useSelector(state => state.profile);
 
-    const { displayName, designation, department, displayPicture, Social, phone, email, employeeId } = profile || {};
+    const { displayName, designation, department, displayPicture, Social, phone, email, employeeId, chatId } = profile || {};
     const [displayPictureUrl, setShowDisplayPictureUrl] = useState('/images/anonymous.jpg');
 
     useEffect(() => {
@@ -66,6 +67,7 @@ const Profile = () => {
         apiRequest("/api/v1/profile/" + userId, "GET").then(({ data }) => {
             setLoading(false);
             setProfile(data);
+            console.log(data);
             if (data.displayPicture) {
                 setShowDisplayPictureUrl(data.displayPicture);
             }
@@ -75,8 +77,13 @@ const Profile = () => {
         });
     }, [userId]);
 
-    const closeProfileOverlay = () => {
+    const closeProfileOverlay = (e) => {
+        if (e.target.id !== 'ProfileOverlay') return;
         dispatch(hideProfile());
+    }
+
+    const goToChat = () => {
+        navigate(`/chat/messages/${chatId}`);
     }
 
     return userId ? (
@@ -99,7 +106,7 @@ const Profile = () => {
                                     <p id='profile_dept' title='Department'>{department}</p>
                                 </div>
                                 <div className='row mT10'>
-                                    <i className='profile_contacts fa fa-comment' style={{ backgroundColor: 'blue' }} />
+                                    <i className='profile_contacts fa fa-comment' style={{ backgroundColor: '#3591ff' }} onClick={goToChat} />
                                     <i className='profile_contacts fa fa-phone' style={{ backgroundColor: 'green' }} />
                                     <i className='profile_contacts fa fa-video' style={{ backgroundColor: 'red' }} />
                                 </div>

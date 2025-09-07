@@ -6,8 +6,10 @@ import com.pesupal.server.dto.response.UserBasicInfoDto;
 import com.pesupal.server.dto.response.UserPreviewDto;
 import com.pesupal.server.dto.response.org.OrgDetailDto;
 import com.pesupal.server.model.org.Org;
+import com.pesupal.server.model.user.OrgInvitation;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.model.user.User;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -23,21 +25,15 @@ public interface OrgMemberService {
 
     Boolean existsByUserAndOrg(User user, Org org);
 
-    List<UserBasicInfoDto> getAllMembers(Long departmentId, OrgMember orgMember);
-
     Boolean existsByUserIdAndOrgId(Long userId, Long orgId);
 
     OrgMember joinOrgAsFirstMember(CreateOrgDto createOrgDto, Org org, User user);
 
     List<OrgDetailDto> listOfOrgUserPartOf(Long userId);
 
-    OrgMember addMemberToOrg(AddOrgMemberDto addOrgMemberDto, OrgMember orgMember, boolean firstMember);
-
-    void validateUserIsOrgMember(User user, Org org);
-
     List<UserBasicInfoDto> getAllOrgMembers(OrgMember orgMember);
 
-    List<UserPreviewDto> getSearchedOrgMembers(OrgMember orgMember, String search, int page, int size);
+    List<UserBasicInfoDto> getSearchedOrgMembers(OrgMember orgMember, String search, Pageable pageable);
 
     UserPreviewDto getUserPreview(OrgMember orgMember);
 
@@ -46,4 +42,12 @@ public interface OrgMemberService {
     void removeAllOrgMembers(Org org);
 
     void updateOrgMember(String orgMemberPublicId, AddOrgMemberDto addOrgMemberDto, OrgMember currentOrgMember);
+
+    void joinInOrg(OrgInvitation orgInvitation, User user);
+
+    void joinInAllInvitedOrgs(User user);
+
+    List<UserBasicInfoDto> getAllSuperAdmins(OrgMember currentOrgMember);
+
+    List<UserBasicInfoDto> getAllInactiveMembers(OrgMember currentOrgMember);
 }

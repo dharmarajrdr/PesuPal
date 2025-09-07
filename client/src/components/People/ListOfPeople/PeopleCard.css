@@ -39,6 +39,14 @@
   object-fit: cover;
 }
 
+.img_name_dept .designation {
+  width: 75%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: center;
+}
+
 .PeopleCard .three_dots {
   position: absolute;
   right: 15px;

@@ -1,5 +1,7 @@
 package com.pesupal.server.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.pesupal.server.enums.MemberStatus;
 import com.pesupal.server.model.user.OrgMember;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,6 +14,7 @@ import java.net.URL;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class UserPreviewDto {
 
     private String id;
@@ -24,6 +27,8 @@ public class UserPreviewDto {
 
     private String chatId;
 
+    private MemberStatus status;
+
     public static UserPreviewDto fromOrgMember(OrgMember orgMember) {
 
         if (orgMember == null) {
@@ -34,6 +39,7 @@ public class UserPreviewDto {
         userPreviewDto.setId(orgMember.getPublicId());
         userPreviewDto.setDisplayName(orgMember.getDisplayName());
         userPreviewDto.setArchived(orgMember.isArchived());
+        userPreviewDto.setStatus(orgMember.getStatus());
         return userPreviewDto;
     }
 }

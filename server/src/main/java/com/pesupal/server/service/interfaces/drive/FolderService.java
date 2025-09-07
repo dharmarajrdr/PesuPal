@@ -14,8 +14,6 @@ public interface FolderService {
 
     FolderDto createFolder(CreateFolderDto createFolderDto);
 
-    Folder getFolderById(Long folderId);
-
     Folder getFolderByPublicId(String folderId);
 
     List<FileOrFolderDto> getAllFolders(String folderId);
