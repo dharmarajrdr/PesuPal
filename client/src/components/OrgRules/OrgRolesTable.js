@@ -8,6 +8,18 @@ import { setOrgRoles, setPermissions } from "../../store/reducers/OrgRolePermiss
 const Checked = () => <i className='fa fa-check checked' />;
 const Crossed = () => <i className='fa fa-times crossed' />;
 
+const NoPermissionsFound = () => {
+
+    return (
+        <div className='FCCC w100 h100P' id='no-data-found'>
+            <p className='FRCC w100'>
+                <i className='fa fa-lock w15 mR5' />
+                No permissions found.
+            </p>
+        </div>
+    )
+}
+
 const Header = ({ roles }) => {
 
     return <div id="org-roles-table-header" className="FRCS row">
@@ -25,8 +37,8 @@ const Header = ({ roles }) => {
 
 const Body = ({ roles, permissions }) => {
 
-    return <div id="org-roles-table-body" className="FCSS w100">
-        {permissions.map(permission => {
+    return <div id="org-roles-table-body" className="FCSS w100 h100P">
+        {permissions.length ? permissions.map(permission => {
 
             const { action, roles: currentRoles } = permission || {};
             const { actionId, title } = action || {};
@@ -42,7 +54,7 @@ const Body = ({ roles, permissions }) => {
                     );
                 })}
             </div>
-        })}
+        }) : <NoPermissionsFound />}
     </div>
 }
 
@@ -52,7 +64,7 @@ const Cell = ({ role, action, allowed }) => {
     const { roleId, name: roleName } = role;
     const { actionId, title: actionTitle } = action;
     const [isAllowed, setIsAllowed] = useState(allowed);
-    
+
     const updateConfigurationHandler = () => {
         const message = `Permission to "${actionTitle}" for role "${roleName}" has been ${isAllowed ? 'revoked' : 'granted'}.`;
         apiRequest(`/api/v1/org-configuration`, isAllowed ? 'DELETE' : 'POST', { roleId, actionId }).then(() => {
