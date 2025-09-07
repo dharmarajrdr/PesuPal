@@ -4,7 +4,6 @@ import com.pesupal.server.dto.request.post.CreatePostDto;
 import com.pesupal.server.dto.request.post.CreatePostMentionsDto;
 import com.pesupal.server.dto.response.UserPreviewDto;
 import com.pesupal.server.dto.response.post.*;
-import com.pesupal.server.enums.FeedRetriever;
 import com.pesupal.server.enums.OrgAction;
 import com.pesupal.server.enums.PostStatus;
 import com.pesupal.server.enums.SortOrder;
@@ -12,7 +11,6 @@ import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.exceptions.MandatoryDataMissingException;
 import com.pesupal.server.exceptions.PermissionDeniedException;
-import com.pesupal.server.factory.FeedRetrieverServiceFactory;
 import com.pesupal.server.factory.TrendingPostsAnalyserFactory;
 import com.pesupal.server.helpers.CurrentValueRetriever;
 import com.pesupal.server.helpers.DateTimeUtil;
@@ -51,7 +49,6 @@ public class PostServiceImpl extends CurrentValueRetriever implements PostServic
     private final PostMentionService postMentionService;
     private final RedisTemplate<String, Object> redisTemplate;
     private final OrgConfigurationService orgConfigurationService;
-    private final FeedRetrieverServiceFactory feedRetrieverServiceFactory;
     private final TrendingPostsAnalyserFactory trendingPostsAnalyserFactory;
 
     private final static int MAXIMUM_TAGS_PER_POST = 10;
@@ -59,7 +56,6 @@ public class PostServiceImpl extends CurrentValueRetriever implements PostServic
     private final static String TRENDING_POSTS_KEY = "trending:posts";
     private final static Duration TRENDING_POSTS_CACHE_DURATION = Duration.ofHours(6);
     private final static String TRENDING_POSTS_ANALYSER_ALGORITHM = "ENGAGEMENT_BASED";
-    private final static FeedRetriever feedRetrieverAlgorithm = FeedRetriever.SIMPLE_FEED_RETRIEVER_ALGORITHM;
 
     /**
      * To validate the CreatePostDto before performing any operations.
@@ -377,21 +373,6 @@ public class PostServiceImpl extends CurrentValueRetriever implements PostServic
     }
 
     /**
-     * Retrieves the feed for the current user.
-     *
-     * @param page
-     * @param size
-     * @param sortOrder
-     * @return
-     */
-    @Override
-    public PostsListDto getFeeds(int page, int size, SortOrder sortOrder) {
-
-        FeedRetrieverService feedRetrieverService = feedRetrieverServiceFactory.getFeedRetrieverService(feedRetrieverAlgorithm);
-        return feedRetrieverService.getFeeds(page, size, sortOrder, getCurrentOrgMember());
-    }
-
-    /**
      * Retrieves trending posts.
      *
      * @param limit
@@ -454,11 +435,13 @@ public class PostServiceImpl extends CurrentValueRetriever implements PostServic
                 .filter(word -> !word.isBlank())
                 .collect(Collectors.joining(" | "));
 
+        boolean hasPrivilegeToCreatePost = orgConfigurationService.hasPrivilegeTo(OrgAction.CREATE_POST, orgMember.getRole());
+
         Pageable pageable = PageRequest.of(page, size, Sort.by("created_at").descending());
         Slice<Post> posts = postRepository.searchPostsByOrg(orgMember.getOrg().getId(), tsQuery, pageable);
         List<PostDto> postDtos = new ArrayList<>(posts.getContent().stream().map(post -> getPostDtoFromPostAndOrgMember(post, orgMember)).toList());
         PostsListDto postsListDto = new PostsListDto();
-        postsListDto.setInfo(Map.of("hasMoreRecords", posts.hasNext()));
+        postsListDto.setInfo(Map.of("hasMoreRecords", posts.hasNext(), "hasPrivilegeToCreatePost", hasPrivilegeToCreatePost));
         postsListDto.setPosts(postDtos);
         return postsListDto;
     }

@@ -33,4 +33,11 @@ public class FileController extends CurrentValueRetriever {
         Map<String, SpaceStatDto> stats = fileService.getSpaceStats(space);
         return ResponseEntity.ok().body(new ApiResponseDto("Space stats retrieved successfully", stats));
     }
+
+    @DeleteMapping("/file/{fileId}")
+    public ResponseEntity<ApiResponseDto> deleteFile(@PathVariable String fileId) throws Exception {
+
+        fileService.deleteFile(fileId);
+        return ResponseEntity.ok().body(new ApiResponseDto("File deleted successfully", null));
+    }
 }

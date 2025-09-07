@@ -17,10 +17,12 @@ import com.pesupal.server.repository.drive.FileRepository;
 import com.pesupal.server.service.interfaces.drive.FileService;
 import com.pesupal.server.service.interfaces.drive.FolderService;
 import com.pesupal.server.service.interfaces.org.OrgMemberService;
-import jakarta.transaction.Transactional;
+import com.pesupal.server.strategies.media_storage.S3Service;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Sort;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.List;
@@ -30,6 +32,7 @@ import java.util.Map;
 @AllArgsConstructor
 public class FileServiceImpl extends CurrentValueRetriever implements FileService {
 
+    private final S3Service s3Service;
     private final FolderService folderService;
     private final FileRepository fileRepository;
     private final OrgMemberService orgMemberService;
@@ -142,4 +145,32 @@ public class FileServiceImpl extends CurrentValueRetriever implements FileServic
         return statDtoMap;
     }
 
+    /**
+     * Deletes a file by its ID.
+     *
+     * @param fileId
+     */
+    @Override
+    @Transactional
+    public void deleteFile(String fileId) {
+
+        File file = getFileByPublicId(fileId);
+        file.setDeleted(true);
+        fileRepository.save(file);
+        folderService.updateFolderSizeRecursively(file.getFolder(), file.getSize(), Arithmetic.MINUS);
+    }
+
+    /**
+     * Performs garbage collection on media files that are no longer associated with any file records.
+     * This method removes orphaned media files from the repository and s3 storage.
+     */
+    @Scheduled(cron = "${aws.s3.garbage-collection.cron}")
+    public void garbageCollect() {
+
+        List<File> deletedFiles = fileRepository.findAllByDeleted(true);
+        for (File deletedFile : deletedFiles) {
+            s3Service.deleteFile(deletedFile.getMediaId());
+        }
+        fileRepository.deleteAll(deletedFiles);
+    }
 }

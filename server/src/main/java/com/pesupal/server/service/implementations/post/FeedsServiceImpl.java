@@ -1,7 +1,13 @@
 package com.pesupal.server.service.implementations.post;
 
+import com.pesupal.server.dto.response.post.PostsListDto;
 import com.pesupal.server.dto.response.post.QuoteDto;
+import com.pesupal.server.enums.FeedRetriever;
+import com.pesupal.server.enums.SortOrder;
 import com.pesupal.server.exceptions.ThirdPartyFailedException;
+import com.pesupal.server.factory.FeedRetrieverServiceFactory;
+import com.pesupal.server.helpers.CurrentValueRetriever;
+import com.pesupal.server.service.interfaces.post.FeedRetrieverService;
 import com.pesupal.server.service.interfaces.post.FeedsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,7 +22,7 @@ import org.springframework.web.client.RestTemplate;
 import java.time.Duration;
 
 @Service
-public class FeedsServiceImpl implements FeedsService {
+public class FeedsServiceImpl extends CurrentValueRetriever implements FeedsService {
 
     @Value("${ninja.api.key}")
     private String ninjaApiKey;
@@ -25,6 +31,10 @@ public class FeedsServiceImpl implements FeedsService {
     private RedisTemplate<String, Object> redisTemplate;
 
     private final static String DAILY_QUOTE_KEY = "daily-quotes";
+    @Autowired
+    private FeedRetrieverServiceFactory feedRetrieverServiceFactory;
+
+    private final static FeedRetriever feedRetrieverAlgorithm = FeedRetriever.SIMPLE_FEED_RETRIEVER_ALGORITHM;
 
     /**
      * Fetched the quote of the day from third party service
@@ -55,5 +65,20 @@ public class FeedsServiceImpl implements FeedsService {
             return quoteDto;
         }
         throw new ThirdPartyFailedException("Failed to fetch quote of the day from third party service.");
+    }
+
+    /**
+     * Retrieves the feed for the current user.
+     *
+     * @param page
+     * @param size
+     * @param sortOrder
+     * @return
+     */
+    @Override
+    public PostsListDto getFeeds(int page, int size, SortOrder sortOrder) {
+
+        FeedRetrieverService feedRetrieverService = feedRetrieverServiceFactory.getFeedRetrieverService(feedRetrieverAlgorithm);
+        return feedRetrieverService.getFeeds(page, size, sortOrder, getCurrentOrgMember());
     }
 }
