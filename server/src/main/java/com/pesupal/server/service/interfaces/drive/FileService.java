@@ -25,4 +25,6 @@ public interface FileService {
     File getFileByPublicId(String publicId);
 
     Map<String, SpaceStatDto> getSpaceStats(Workspace space);
+
+    void deleteFile(String fileId);
 }
