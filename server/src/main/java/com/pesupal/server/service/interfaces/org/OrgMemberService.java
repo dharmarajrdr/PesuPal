@@ -50,4 +50,6 @@ public interface OrgMemberService {
     List<UserBasicInfoDto> getAllSuperAdmins(OrgMember currentOrgMember);
 
     List<UserBasicInfoDto> getAllInactiveMembers(OrgMember currentOrgMember);
+
+    void removeOrgMember(OrgMember orgMember);
 }

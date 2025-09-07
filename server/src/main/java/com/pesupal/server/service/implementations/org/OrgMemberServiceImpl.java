@@ -432,4 +432,24 @@ public class OrgMemberServiceImpl implements OrgMemberService {
             return userBasicInfoDto;
         }).toList();
     }
+
+    /**
+     * Removes an organization member.
+     *
+     * @param orgMember
+     */
+    @Override
+    public void removeOrgMember(OrgMember orgMember) {
+
+        if (orgMember.isArchived()) {
+            throw new ActionProhibitedException("Member is already inactive.");
+        }
+
+        if (OrgHelper.isOrgOwner(orgMember.getPublicId(), orgMember.getOrg())) {
+            throw new ActionProhibitedException("You cannot remove the owner of the organization.");
+        }
+
+        orgMember.setArchived(true);
+        orgMemberRepository.save(orgMember);
+    }
 }
