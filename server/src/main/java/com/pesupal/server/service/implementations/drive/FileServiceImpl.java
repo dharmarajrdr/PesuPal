@@ -3,10 +3,13 @@ package com.pesupal.server.service.implementations.drive;
 import com.pesupal.server.dto.request.drive.CreateFileDto;
 import com.pesupal.server.dto.response.drive.FileDto;
 import com.pesupal.server.dto.response.drive.FileOrFolderDto;
+import com.pesupal.server.dto.response.drive.SpaceStatDto;
 import com.pesupal.server.enums.Arithmetic;
 import com.pesupal.server.enums.FileOrFolder;
+import com.pesupal.server.enums.Workspace;
 import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.helpers.CurrentValueRetriever;
+import com.pesupal.server.helpers.FileHelper;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.model.workdrive.File;
 import com.pesupal.server.model.workdrive.Folder;
@@ -19,7 +22,9 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @AllArgsConstructor
@@ -109,6 +114,32 @@ public class FileServiceImpl extends CurrentValueRetriever implements FileServic
     public File getFileByPublicId(String publicId) {
 
         return fileRepository.findByPublicId(publicId).orElseThrow(() -> new DataNotFoundException("File with public ID " + publicId + " not found."));
+    }
+
+    /**
+     * Retrieves space statistics for a given workspace.
+     *
+     * @param space
+     * @return
+     */
+    @Override
+    public Map<String, SpaceStatDto> getSpaceStats(Workspace space) {
+
+        Map<String, SpaceStatDto> statDtoMap = new HashMap<>();
+        List<File> files = fileRepository.findAllByCreator_OrgAndFolder_Space(getCurrentOrgMember().getOrg(), space);
+        for (File file : files) {
+            String extension = FileHelper.getExtensionGroup(file.getExtension());
+            SpaceStatDto spaceStatDto = statDtoMap.getOrDefault(extension, new SpaceStatDto());
+            if (!statDtoMap.containsKey(extension)) {
+                spaceStatDto.setCount(1);
+                spaceStatDto.setSize(file.getSize());
+                statDtoMap.put(extension, spaceStatDto);
+                continue;
+            }
+            spaceStatDto.setCount(spaceStatDto.getCount() + 1);
+            spaceStatDto.setSize(spaceStatDto.getSize() + file.getSize());
+        }
+        return statDtoMap;
     }
 
 }
