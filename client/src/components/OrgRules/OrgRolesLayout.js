@@ -7,8 +7,8 @@ import NewRolesLayout from './NewRolesLayout';
 
 const OrgRolesLayout = () => {
 
-    const [showNewRoleLayout, setShowNewRoleLayout] = useState(false);
     const [showManageRoles, setShowManageRoles] = useState(false);
+    const [showNewRoleLayout, setShowNewRoleLayout] = useState(false);
 
     const onCloseNewRoleLayout = () => {
         setShowNewRoleLayout(false);

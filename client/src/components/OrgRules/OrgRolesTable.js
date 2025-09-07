@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { apiRequest } from "../../http_request";
 import { useDispatch, useSelector } from "react-redux";
 import { showPopup } from "../../store/reducers/PopupSlice";
-import { setOrgRoles, setPermissions } from "../../store/reducers/OrgRolePermissionsSlice";
+import { setHasPrivilegeToCreateOrgRole, setOrgRoles, setPermissions } from "../../store/reducers/OrgRolePermissionsSlice";
 
 const Checked = () => <i className='fa fa-check checked' />;
 const Crossed = () => <i className='fa fa-times crossed' />;
@@ -89,10 +89,11 @@ const OrgRolesTable = () => {
     const { permissions, roles } = useSelector(state => state.orgRolePermissions);
 
     useEffect(() => {
-        apiRequest(`/api/v1/org-configuration`, 'GET').then(({ data }) => {
+        apiRequest(`/api/v1/org-configuration`, 'GET').then(({ data, info }) => {
             const { permissions, roles } = data || {};
             permissions.sort((a, b) => a.action.actionId - b.action.actionId);
             dispatch(setPermissions(permissions));
+            dispatch(setHasPrivilegeToCreateOrgRole(info.hasPrivilegeToCreateOrgRole));
             dispatch(setOrgRoles(roles));
             setLoading(false);
         }).catch(({ message }) => {

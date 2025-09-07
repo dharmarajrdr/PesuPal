@@ -2,7 +2,9 @@ package com.pesupal.server.controller.org;
 
 import com.pesupal.server.dto.request.org.OrgConfigurationDto;
 import com.pesupal.server.dto.response.ApiResponseDto;
+import com.pesupal.server.enums.OrgAction;
 import com.pesupal.server.helpers.CurrentValueRetriever;
+import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.service.interfaces.org.OrgConfigurationService;
 import com.pesupal.server.service.interfaces.org.OrgRoleService;
 import lombok.AllArgsConstructor;
@@ -29,11 +31,15 @@ public class OrgConfigurationController extends CurrentValueRetriever {
     @GetMapping("")
     public ResponseEntity<ApiResponseDto> getOrgConfiguration() {
 
+        OrgMember orgMember = getCurrentOrgMember();
+
         Map<String, Object> configurations = Map.ofEntries(
-                Map.entry("permissions", orgConfigurationService.getPermittedActionsInOrg(getCurrentOrgMember())),
-                Map.entry("roles", orgRoleService.getAllRoles(getCurrentOrgMember()))
+                Map.entry("permissions", orgConfigurationService.getPermittedActionsInOrg(orgMember)),
+                Map.entry("roles", orgRoleService.getAllRoles(orgMember))
         );
-        return ResponseEntity.ok().body(new ApiResponseDto("Org configurations fetched successfully.", configurations));
+        boolean hasPrivilegeToCreateOrgRole = orgConfigurationService.hasPrivilegeTo(OrgAction.CREATE_ORG_ROLE, orgMember.getRole());
+        Map<String, Object> info = Map.of("hasPrivilegeToCreateOrgRole", hasPrivilegeToCreateOrgRole);
+        return ResponseEntity.ok().body(new ApiResponseDto("Org configurations fetched successfully.", configurations, info));
     }
 
     @DeleteMapping("")
