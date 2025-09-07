@@ -34,11 +34,11 @@ public class TeamSpace extends WorkspaceSupportsPublicFolder implements Workdriv
 
     private final FileService fileService;
     private final FolderRepository folderRepository;
+    private final OrgMemberService orgMemberService;
     private final PublicFolderService publicFolderService;
     private final TeamFolderRepository teamFolderRepository;
     private final PublicFolderRepository publicFolderRepository;
     private final SecuredFolderPermissionService securedFolderPermissionService;
-    private final OrgMemberService orgMemberService;
 
     /**
      * Saves a folder in the team space and associates it with the public folder and team folder.
