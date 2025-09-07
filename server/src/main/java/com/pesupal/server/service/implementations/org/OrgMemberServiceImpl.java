@@ -213,7 +213,7 @@ public class OrgMemberServiceImpl implements OrgMemberService {
 
         List<OrgDetailDto> orgDetailDtos = new ArrayList<>();
         User user = userService.getUserById(userId);
-        List<OrgMember> orgMembers = orgMemberRepository.findByUser(user);
+        List<OrgMember> orgMembers = orgMemberRepository.findByUserAndArchivedAndOrg_Active(user, false, true);
         orgMembers.sort((o1, o2) -> o1.getOrg().getDisplayName().compareToIgnoreCase(o2.getOrg().getDisplayName()));
         for (OrgMember orgMember : orgMembers) {
             Org org = orgMember.getOrg();
@@ -316,7 +316,11 @@ public class OrgMemberServiceImpl implements OrgMemberService {
     @Override
     public void removeAllOrgMembers(Org org) {
 
-        orgMemberRepository.deleteAllByOrg(org);
+        List<OrgMember> orgMembers = orgMemberRepository.findAllByOrg(org);
+        for (OrgMember orgMember : orgMembers) {
+            orgMember.setArchived(true);
+        }
+        orgMemberRepository.saveAll(orgMembers);
     }
 
     /**

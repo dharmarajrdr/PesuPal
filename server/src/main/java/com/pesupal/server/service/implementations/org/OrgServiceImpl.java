@@ -101,7 +101,7 @@ public class OrgServiceImpl implements OrgService {
 
         Org org = orgMember.getOrg();
 
-        if (!org.getOwner().getId().equals(orgMember.getId())) {
+        if (!OrgHelper.isOrgOwner(orgMember.getUser().getPublicId(), orgMember.getOrg())) {
             throw new PermissionDeniedException("You do not have permission to delete this organization.");
         }
 
