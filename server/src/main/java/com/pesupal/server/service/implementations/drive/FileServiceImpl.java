@@ -10,14 +10,15 @@ import com.pesupal.server.enums.Workspace;
 import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.helpers.CurrentValueRetriever;
 import com.pesupal.server.helpers.FileHelper;
+import com.pesupal.server.model.org.Org;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.model.workdrive.File;
 import com.pesupal.server.model.workdrive.Folder;
 import com.pesupal.server.repository.drive.FileRepository;
+import com.pesupal.server.service.interfaces.MediaService;
 import com.pesupal.server.service.interfaces.drive.FileService;
 import com.pesupal.server.service.interfaces.drive.FolderService;
 import com.pesupal.server.service.interfaces.org.OrgMemberService;
-import com.pesupal.server.strategies.media_storage.S3Service;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -32,7 +33,7 @@ import java.util.Map;
 @AllArgsConstructor
 public class FileServiceImpl extends CurrentValueRetriever implements FileService {
 
-    private final S3Service s3Service;
+    private final MediaService mediaService;
     private final FolderService folderService;
     private final FileRepository fileRepository;
     private final OrgMemberService orgMemberService;
@@ -161,16 +162,38 @@ public class FileServiceImpl extends CurrentValueRetriever implements FileServic
     }
 
     /**
+     * Delete all file by org
+     *
+     * @param files
+     */
+    private void deleteAll(List<File> files) {
+
+        for (File file : files) {
+            mediaService.deleteFile(file.getMediaId());
+        }
+        fileRepository.deleteAll(files);
+    }
+
+    /**
+     * Deleted all file by org
+     *
+     * @param deletedOrg
+     */
+    @Override
+    public void deleteAllByOrg(Org deletedOrg) {
+
+        List<File> deleteFiles = fileRepository.findAllByCreator_Org(deletedOrg);
+        deleteAll(deleteFiles);
+    }
+
+    /**
      * Performs garbage collection on media files that are no longer associated with any file records.
      * This method removes orphaned media files from the repository and s3 storage.
      */
     @Scheduled(cron = "${aws.s3.garbage-collection.cron}")
     public void garbageCollect() {
 
-        List<File> deletedFiles = fileRepository.findAllByDeleted(true);
-        for (File deletedFile : deletedFiles) {
-            s3Service.deleteFile(deletedFile.getMediaId());
-        }
-        fileRepository.deleteAll(deletedFiles);
+        List<File> deleteFiles = fileRepository.findAllByDeleted(true);
+        deleteAll(deleteFiles);
     }
 }
