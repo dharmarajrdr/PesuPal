@@ -1,9 +1,9 @@
 package com.pesupal.server.helpers;
 
 import com.pesupal.server.config.RequestContext;
-import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.exceptions.MandatoryDataMissingException;
 import com.pesupal.server.exceptions.OrganizationNotSelectedException;
+import com.pesupal.server.exceptions.PermissionDeniedException;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.security.CustomUserDetails;
 import com.pesupal.server.security.SecurityUtil;
@@ -52,7 +52,7 @@ public class CurrentValueRetriever {
         }
         OrgMember orgMember = orgMemberService.getOrgMemberByPublicId(orgMemberPublicId);
         if (orgMember.isArchived()) {
-            throw new ActionProhibitedException("You are no longer part of this org.");
+            throw new PermissionDeniedException("You are no longer part of this org.");
         }
         return orgMember;
     }

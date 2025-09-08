@@ -40,7 +40,12 @@ const LeftNavigation = () => {
                 const updatedProfile = { ...profile, image: data.displayPicture, icon: null };
                 setProfile(updatedProfile);
             }
-        }).catch(({ message }) => {
+        }).catch(({ message, statusCode }) => {
+            if (statusCode == 403) {
+                sessionStorage.removeItem('token');
+                document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/';
+                return window.location.href = '/signin';
+            }
             dispatch(showPopup({ message, type: 'error' }));
             console.error("Error fetching profile:", message);
         });
