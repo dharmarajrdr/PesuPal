@@ -52,4 +52,6 @@ public interface OrgMemberService {
     List<UserBasicInfoDto> getAllInactiveMembers(OrgMember currentOrgMember);
 
     void removeOrgMember(OrgMember orgMember);
+
+    void stopAllSchedulesByOrgMember(OrgMember orgMember);
 }

@@ -27,7 +27,10 @@ import com.pesupal.server.service.interfaces.AuthService;
 import com.pesupal.server.service.interfaces.MediaService;
 import com.pesupal.server.service.interfaces.UserService;
 import com.pesupal.server.service.interfaces.chat.direct_message.DirectMessageChatService;
+import com.pesupal.server.service.interfaces.chat.direct_message.DirectMessageService;
+import com.pesupal.server.service.interfaces.chat.group_message.GroupChatMessageService;
 import com.pesupal.server.service.interfaces.org.*;
+import com.pesupal.server.service.interfaces.post.PostService;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -41,27 +44,33 @@ public class OrgMemberServiceImpl implements OrgMemberService {
     private final OrgService orgService;
     private final UserService userService;
     private final AuthService authService;
+    private final PostService postService;
     private final MediaService mediaService;
     private final OrgRoleService orgRoleService;
     private final DesignationService designationService;
     private final OrgMemberRepository orgMemberRepository;
     private final OrgInvitationService orgInvitationService;
     private final DepartmentRepository departmentRepository;
+    private final DirectMessageService directMessageService;
     private final OrgConfigurationService orgConfigurationService;
+    private final GroupChatMessageService groupChatMessageService;
     private final DirectMessageChatService directMessageChatService;
     private final OrgSubscriptionHistoryService orgSubscriptionHistoryService;
 
-    public OrgMemberServiceImpl(@Lazy OrgService orgService, @Lazy UserService userService, AuthService authService, @Lazy DesignationService designationService, OrgMemberRepository orgMemberRepository, OrgConfigurationService orgConfigurationService, OrgSubscriptionHistoryService orgSubscriptionHistoryService, DirectMessageChatService directMessageChatService, DepartmentRepository departmentRepository, MediaService mediaService, @Lazy OrgInvitationService orgInvitationService, OrgRoleService orgRoleService) {
+    public OrgMemberServiceImpl(@Lazy OrgService orgService, @Lazy UserService userService, AuthService authService, @Lazy DesignationService designationService, OrgMemberRepository orgMemberRepository, OrgConfigurationService orgConfigurationService, @Lazy OrgSubscriptionHistoryService orgSubscriptionHistoryService, DirectMessageChatService directMessageChatService, DepartmentRepository departmentRepository, MediaService mediaService, @Lazy OrgInvitationService orgInvitationService, OrgRoleService orgRoleService, @Lazy DirectMessageService directMessageService, @Lazy GroupChatMessageService groupChatMessageService, @Lazy PostService postService) {
         this.orgService = orgService;
         this.userService = userService;
         this.authService = authService;
+        this.postService = postService;
         this.mediaService = mediaService;
         this.orgRoleService = orgRoleService;
         this.designationService = designationService;
         this.orgMemberRepository = orgMemberRepository;
         this.departmentRepository = departmentRepository;
         this.orgInvitationService = orgInvitationService;
+        this.directMessageService = directMessageService;
         this.orgConfigurationService = orgConfigurationService;
+        this.groupChatMessageService = groupChatMessageService;
         this.directMessageChatService = directMessageChatService;
         this.orgSubscriptionHistoryService = orgSubscriptionHistoryService;
     }
@@ -455,5 +464,18 @@ public class OrgMemberServiceImpl implements OrgMemberService {
 
         orgMember.setArchived(true);
         orgMemberRepository.save(orgMember);
+    }
+
+    /**
+     * Stops all schedules associated with an organization member.
+     *
+     * @param orgMember
+     */
+    @Override
+    public void stopAllSchedulesByOrgMember(OrgMember orgMember) {
+
+        directMessageService.unscheduleAllMessagesByOrgMember(orgMember);
+        groupChatMessageService.unscheduleAllMessagesByOrgMember(orgMember);
+        postService.unscheduleAllPostsByOrgMember(orgMember);
     }
 }
