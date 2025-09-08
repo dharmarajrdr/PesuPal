@@ -36,8 +36,10 @@ const LeftNavigation = () => {
     useEffect(() => {
         apiRequest("/api/v1/people/profile", "GET").then(({ data }) => {
             dispatch(setMyProfile(data));
-            const updatedProfile = { ...profile, image: data.displayPicture, icon: null };
-            setProfile(updatedProfile);
+            if (data.displayPicture) {
+                const updatedProfile = { ...profile, image: data.displayPicture, icon: null };
+                setProfile(updatedProfile);
+            }
         }).catch(({ message }) => {
             dispatch(showPopup({ message, type: 'error' }));
             console.error("Error fetching profile:", message);
