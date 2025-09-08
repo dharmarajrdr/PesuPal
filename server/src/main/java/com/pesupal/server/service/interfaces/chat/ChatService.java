@@ -29,4 +29,6 @@ public interface ChatService<T> {
     void deleteSchedule(Long messageId);
 
     void deleteAllScheduledMessages(String chatId);
+
+    void unscheduleAllMessagesByOrgMember(OrgMember orgMember);
 }
