@@ -27,7 +27,10 @@ import com.pesupal.server.service.interfaces.AuthService;
 import com.pesupal.server.service.interfaces.MediaService;
 import com.pesupal.server.service.interfaces.UserService;
 import com.pesupal.server.service.interfaces.chat.direct_message.DirectMessageChatService;
+import com.pesupal.server.service.interfaces.chat.direct_message.DirectMessageService;
+import com.pesupal.server.service.interfaces.chat.group_message.GroupChatMessageService;
 import com.pesupal.server.service.interfaces.org.*;
+import com.pesupal.server.service.interfaces.post.PostService;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -41,27 +44,33 @@ public class OrgMemberServiceImpl implements OrgMemberService {
     private final OrgService orgService;
     private final UserService userService;
     private final AuthService authService;
+    private final PostService postService;
     private final MediaService mediaService;
     private final OrgRoleService orgRoleService;
     private final DesignationService designationService;
     private final OrgMemberRepository orgMemberRepository;
     private final OrgInvitationService orgInvitationService;
     private final DepartmentRepository departmentRepository;
+    private final DirectMessageService directMessageService;
     private final OrgConfigurationService orgConfigurationService;
+    private final GroupChatMessageService groupChatMessageService;
     private final DirectMessageChatService directMessageChatService;
     private final OrgSubscriptionHistoryService orgSubscriptionHistoryService;
 
-    public OrgMemberServiceImpl(@Lazy OrgService orgService, @Lazy UserService userService, AuthService authService, @Lazy DesignationService designationService, OrgMemberRepository orgMemberRepository, OrgConfigurationService orgConfigurationService, OrgSubscriptionHistoryService orgSubscriptionHistoryService, DirectMessageChatService directMessageChatService, DepartmentRepository departmentRepository, MediaService mediaService, @Lazy OrgInvitationService orgInvitationService, OrgRoleService orgRoleService) {
+    public OrgMemberServiceImpl(@Lazy OrgService orgService, @Lazy UserService userService, AuthService authService, @Lazy DesignationService designationService, OrgMemberRepository orgMemberRepository, OrgConfigurationService orgConfigurationService, @Lazy OrgSubscriptionHistoryService orgSubscriptionHistoryService, DirectMessageChatService directMessageChatService, DepartmentRepository departmentRepository, MediaService mediaService, @Lazy OrgInvitationService orgInvitationService, OrgRoleService orgRoleService, @Lazy DirectMessageService directMessageService, @Lazy GroupChatMessageService groupChatMessageService, @Lazy PostService postService) {
         this.orgService = orgService;
         this.userService = userService;
         this.authService = authService;
+        this.postService = postService;
         this.mediaService = mediaService;
         this.orgRoleService = orgRoleService;
         this.designationService = designationService;
         this.orgMemberRepository = orgMemberRepository;
         this.departmentRepository = departmentRepository;
         this.orgInvitationService = orgInvitationService;
+        this.directMessageService = directMessageService;
         this.orgConfigurationService = orgConfigurationService;
+        this.groupChatMessageService = groupChatMessageService;
         this.directMessageChatService = directMessageChatService;
         this.orgSubscriptionHistoryService = orgSubscriptionHistoryService;
     }
@@ -213,7 +222,7 @@ public class OrgMemberServiceImpl implements OrgMemberService {
 
         List<OrgDetailDto> orgDetailDtos = new ArrayList<>();
         User user = userService.getUserById(userId);
-        List<OrgMember> orgMembers = orgMemberRepository.findByUser(user);
+        List<OrgMember> orgMembers = orgMemberRepository.findByUserAndArchivedAndOrg_Active(user, false, true);
         orgMembers.sort((o1, o2) -> o1.getOrg().getDisplayName().compareToIgnoreCase(o2.getOrg().getDisplayName()));
         for (OrgMember orgMember : orgMembers) {
             Org org = orgMember.getOrg();
@@ -316,7 +325,11 @@ public class OrgMemberServiceImpl implements OrgMemberService {
     @Override
     public void removeAllOrgMembers(Org org) {
 
-        orgMemberRepository.deleteAllByOrg(org);
+        List<OrgMember> orgMembers = orgMemberRepository.findAllByOrg(org);
+        for (OrgMember orgMember : orgMembers) {
+            orgMember.setArchived(true);
+        }
+        orgMemberRepository.saveAll(orgMembers);
     }
 
     /**
@@ -431,5 +444,38 @@ public class OrgMemberServiceImpl implements OrgMemberService {
             userBasicInfoDto.setDisplayPicture(mediaService.generatePresignedUrl(orgMember.getDisplayPicture()));
             return userBasicInfoDto;
         }).toList();
+    }
+
+    /**
+     * Removes an organization member.
+     *
+     * @param orgMember
+     */
+    @Override
+    public void removeOrgMember(OrgMember orgMember) {
+
+        if (orgMember.isArchived()) {
+            throw new ActionProhibitedException("Member is already inactive.");
+        }
+
+        if (OrgHelper.isOrgOwner(orgMember.getPublicId(), orgMember.getOrg())) {
+            throw new ActionProhibitedException("You cannot remove the owner of the organization.");
+        }
+
+        orgMember.setArchived(true);
+        orgMemberRepository.save(orgMember);
+    }
+
+    /**
+     * Stops all schedules associated with an organization member.
+     *
+     * @param orgMember
+     */
+    @Override
+    public void stopAllSchedulesByOrgMember(OrgMember orgMember) {
+
+        directMessageService.unscheduleAllMessagesByOrgMember(orgMember);
+        groupChatMessageService.unscheduleAllMessagesByOrgMember(orgMember);
+        postService.unscheduleAllPostsByOrgMember(orgMember);
     }
 }

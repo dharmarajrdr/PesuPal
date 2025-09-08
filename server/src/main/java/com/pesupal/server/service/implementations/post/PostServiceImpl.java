@@ -14,6 +14,7 @@ import com.pesupal.server.exceptions.PermissionDeniedException;
 import com.pesupal.server.factory.TrendingPostsAnalyserFactory;
 import com.pesupal.server.helpers.CurrentValueRetriever;
 import com.pesupal.server.helpers.DateTimeUtil;
+import com.pesupal.server.model.org.Org;
 import com.pesupal.server.model.post.*;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.model.user.User;
@@ -447,6 +448,35 @@ public class PostServiceImpl extends CurrentValueRetriever implements PostServic
     }
 
     /**
+     * Unschedules all posts created by a specific organization member.
+     *
+     * @param orgMember
+     */
+    @Override
+    public void unscheduleAllPostsByOrgMember(OrgMember orgMember) {
+
+        List<Post> scheduledPosts = postRepository.findAllByCreatorAndStatus(orgMember, PostStatus.SCHEDULED);
+        for (Post post : scheduledPosts) {
+            redisTemplate.opsForZSet().remove(SCHEDULED_POST_KEY, post.getId());
+        }
+        postRepository.deleteAll(scheduledPosts);
+    }
+
+    /**
+     * Deletes all posts associated with a specific organization.
+     *
+     * @param deletedOrg
+     */
+    @Override
+    public void deleteAllByOrg(Org deletedOrg) {
+
+        List<Post> posts = postRepository.findAllByCreator_Org(deletedOrg);
+        for (Post post : posts) {
+            deletePost(post.getPublicId());
+        }
+    }
+
+    /**
      * Archives a post by its ID.
      *
      * @param postId
@@ -486,7 +516,6 @@ public class PostServiceImpl extends CurrentValueRetriever implements PostServic
         Page<PostTag> postPage = postTagService.findAllByTagAndOrgId(tag, orgId, pageable);
         List<PostDto> postDtos = new ArrayList<>(postPage.getContent().stream().map(postTag -> {
             Post post = postTag.getPost();
-            OrgMember postOwnerOrgMember = orgMemberService.getOrgMemberByUserIdAndOrgId(post.getCreator().getId(), orgId);
             PostDto postDto = getPostDtoFromPostAndOrgMember(post, orgMember);
             postDto.setCreator(post.getCreator().getId().equals(orgMemberId));
             postDto.setLiked(isLiked(post.getLikes(), orgMember.getUser()));

@@ -577,6 +577,22 @@ public class GroupChatMessageServiceImpl extends CurrentValueRetriever implement
     }
 
     /**
+     * Unschedules all messages scheduled by a specific organization member.
+     *
+     * @param orgMember
+     */
+    @Override
+    public void unscheduleAllMessagesByOrgMember(OrgMember orgMember) {
+
+        List<GroupChatMessage> scheduledGroupMessages = groupChatMessageRepository.findAllBySenderAndMessageStatus(orgMember, MessageStatus.SCHEDULED);
+        for (GroupChatMessage scheduledGroupChatMessage : scheduledGroupMessages) {
+            redisTemplate.opsForZSet().remove(SCHEDULED_MESSAGE_KEY, scheduledGroupChatMessage.getId());
+            groupMessageMediaFileService.unlinkMediaFilesByGroupMessage(scheduledGroupChatMessage);
+        }
+        groupChatMessageRepository.deleteAll(scheduledGroupMessages);
+    }
+
+    /**
      * Scheduled task to broadcast messages that are due for delivery.
      */
     @Scheduled(cron = "0 * * * * *")

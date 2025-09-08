@@ -5,6 +5,7 @@ import com.pesupal.server.dto.response.drive.FileDto;
 import com.pesupal.server.dto.response.drive.FileOrFolderDto;
 import com.pesupal.server.dto.response.drive.SpaceStatDto;
 import com.pesupal.server.enums.Workspace;
+import com.pesupal.server.model.org.Org;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.model.workdrive.File;
 import com.pesupal.server.model.workdrive.Folder;
@@ -27,4 +28,6 @@ public interface FileService {
     Map<String, SpaceStatDto> getSpaceStats(Workspace space);
 
     void deleteFile(String fileId);
+
+    void deleteAllByOrg(Org deletedOrg);
 }
