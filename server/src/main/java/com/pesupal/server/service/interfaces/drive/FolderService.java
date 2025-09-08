@@ -6,13 +6,14 @@ import com.pesupal.server.dto.response.drive.FolderDto;
 import com.pesupal.server.dto.response.drive.FolderPreviewDto;
 import com.pesupal.server.enums.Arithmetic;
 import com.pesupal.server.enums.Workspace;
+import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.model.workdrive.Folder;
 
 import java.util.List;
 
 public interface FolderService {
 
-    FolderDto createFolder(CreateFolderDto createFolderDto);
+    FolderDto createFolder(CreateFolderDto createFolderDto, OrgMember orgMember);
 
     Folder getFolderByPublicId(String folderId);
 

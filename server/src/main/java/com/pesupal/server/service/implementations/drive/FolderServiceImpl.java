@@ -48,9 +48,7 @@ public class FolderServiceImpl extends CurrentValueRetriever implements FolderSe
      */
     @Override
     @Transactional
-    public FolderDto createFolder(CreateFolderDto createFolderDto) {
-
-        OrgMember orgMember = getCurrentOrgMember();
+    public FolderDto createFolder(CreateFolderDto createFolderDto, OrgMember orgMember) {
 
         if (folderRepository.existsByNameAndSpaceAndParentFolder_PublicIdAndCreatedBy_OrgAndDeleted(createFolderDto.getName(), createFolderDto.getSpace(), createFolderDto.getParentFolderId(), orgMember.getOrg(), false)) {
             throw new ActionProhibitedException("A folder with the name '" + createFolderDto.getName() + "' already exists.");
