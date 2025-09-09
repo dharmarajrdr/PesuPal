@@ -28,13 +28,6 @@ public class PostController {
         return ResponseEntity.ok().body(new ApiResponseDto("Post created successfully", post));
     }
 
-    @GetMapping("/feeds")
-    public ResponseEntity<ApiResponseDto> getFeeds(@RequestParam(required = false, defaultValue = "") String search, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size, @RequestParam(name = "sort_order", defaultValue = "DESC") String sortOrder) {
-
-        PostsListDto posts = search.trim().length() <= 3 ? postService.getFeeds(page, size, SortOrder.valueOf(sortOrder)) : postService.searchPosts(search, page, size);
-        return ResponseEntity.ok().body(new ApiResponseDto("Posts retrieved successfully.", posts.getPosts(), posts.getInfo()));
-    }
-
     @GetMapping("/{postId}")
     public ResponseEntity<ApiResponseDto> getPostById(@PathVariable String postId) {
 

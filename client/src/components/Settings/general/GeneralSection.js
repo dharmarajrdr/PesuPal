@@ -7,7 +7,7 @@ const GeneralSection = ({ title, description, warning, bgColor, items, addItemBu
             <div className="FRCB section-title-wrapper">
                 <h3 className="section-title">{title}</h3>
                 <button className="add-item-button" onClick={addItemButton.onClick} style={{ backgroundColor: bgColor }}>
-                    <i className={`${addItemButton.icon} mR5 colorFFF`} aria-hidden="true"></i> {addItemButton.title}
+                    <i className={`${addItemButton.icon} mR5 colorFFF w15`} aria-hidden="true"></i> {addItemButton.title}
                 </button>
             </div>
 
@@ -15,7 +15,7 @@ const GeneralSection = ({ title, description, warning, bgColor, items, addItemBu
 
             {warning && (
                 <div className="section-warning">
-                    <i className='fa fa-exclamation-triangle' aria-hidden="true"></i>
+                    <i className='fa fa-exclamation-triangle w15' aria-hidden="true"></i>
                     <span>{warning}</span>
                 </div>
             )}

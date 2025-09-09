@@ -22,10 +22,10 @@ public class LatestSubscriptionDto {
         LatestSubscriptionDto dto = new LatestSubscriptionDto();
         dto.setPlanName(subscriptionPlan.getCode());
         dto.setExpiryDate(orgSubscriptionHistory.getEndDate());
-        long daysLeftToExpire = Duration.between(LocalDateTime.now(), orgSubscriptionHistory.getEndDate()).toDays();
-        if (daysLeftToExpire < 0) {
+        long minutesLeftToExpire = Duration.between(LocalDateTime.now(), orgSubscriptionHistory.getEndDate()).toMinutes();
+        if (minutesLeftToExpire <= 0) {
             dto.setStatus("Inactive");
-        } else if (daysLeftToExpire <= 7) {
+        } else if (minutesLeftToExpire <= 7 * 60 * 24) { // 7 days
             dto.setStatus("Expiring Soon");
         } else {
             dto.setStatus("Active");

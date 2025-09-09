@@ -1,7 +1,7 @@
-import { Navigate, Route, Routes } from 'react-router-dom'
 import AllUsers from './ListOfPeople/AllUsers'
-import UserPostsLayout from './UserPosts/UserPostsLayout'
 import PageNotFound from '../Auth/PageNotFound'
+import { Route, Routes } from 'react-router-dom'
+import UserPostsLayout from './UserPosts/UserPostsLayout'
 
 const PeopleLayout = () => {
     return (

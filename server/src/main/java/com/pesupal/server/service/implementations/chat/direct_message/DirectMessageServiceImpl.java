@@ -285,7 +285,6 @@ public class DirectMessageServiceImpl extends CurrentValueRetriever implements D
         DirectMessage directMessage = new DirectMessage();
         directMessage.setSender(sender);
         directMessage.setReceiver(receiver);
-        directMessage.setOrg(org);
         directMessage.setDirectMessageChat(directMessageChat);
         directMessage.setContainsMedia(containsMedia);
         directMessage.setReadReceipt(ReadReceipt.SENT);
@@ -450,7 +449,7 @@ public class DirectMessageServiceImpl extends CurrentValueRetriever implements D
         directMessage.setMessageStatus(MessageStatus.SENT);
         directMessage.setCreatedAt(LocalDateTime.now());
         directMessageRepository.save(directMessage);
-        MessageDto messageDto = toMessageDto(directMessage, directMessage.getOrg().getId(), memo);
+        MessageDto messageDto = toMessageDto(directMessage, directMessage.getSender().getOrg().getId(), memo);
         broadcastMessage(messageDto, messagingTemplate);
     }
 
@@ -541,5 +540,21 @@ public class DirectMessageServiceImpl extends CurrentValueRetriever implements D
             } catch (Exception ignored) {
             }
         }
+    }
+
+    /**
+     * Unschedules all messages scheduled by a specific organization member.
+     *
+     * @param orgMember
+     */
+    @Override
+    public void unscheduleAllMessagesByOrgMember(OrgMember orgMember) {
+
+        List<DirectMessage> scheduledDirectMessages = directMessageRepository.findAllBySenderOrReceiverAndMessageStatus(orgMember, orgMember, MessageStatus.SCHEDULED);
+        for (DirectMessage scheduledDirectMessage : scheduledDirectMessages) {
+            redisTemplate.opsForZSet().remove(SCHEDULED_MESSAGE_KEY, scheduledDirectMessage.getId());
+            directMessageMediaFileService.unlinkMediaFilesByDirectMessage(scheduledDirectMessage);
+        }
+        directMessageRepository.deleteAll(scheduledDirectMessages);
     }
 }

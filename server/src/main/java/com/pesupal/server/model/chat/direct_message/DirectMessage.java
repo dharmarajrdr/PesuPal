@@ -4,7 +4,6 @@ import com.pesupal.server.enums.MessageType;
 import com.pesupal.server.enums.ReadReceipt;
 import com.pesupal.server.model.CreationTimeAuditable;
 import com.pesupal.server.model.chat.MessageStatus;
-import com.pesupal.server.model.org.Org;
 import com.pesupal.server.model.user.OrgMember;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -12,9 +11,6 @@ import lombok.Data;
 @Data
 @Entity
 public class DirectMessage extends CreationTimeAuditable {
-
-    @ManyToOne
-    private Org org;
 
     @ManyToOne
     private OrgMember sender;
