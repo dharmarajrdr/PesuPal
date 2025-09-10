@@ -39,6 +39,10 @@
   color: #777;
 }
 
+.quickActions {
+  width: 35px;
+}
+
 .navbar {
   display: none;
 }

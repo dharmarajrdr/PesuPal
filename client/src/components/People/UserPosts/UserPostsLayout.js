@@ -7,6 +7,7 @@ import { apiRequest } from "../../../http_request";
 import { useDispatch, useSelector } from "react-redux";
 import PostList from "../../Feeds/FeedsMainPanel/PostList";
 import { setPosts } from "../../../store/reducers/PostSlice";
+import CreateNewPost from '../../Feeds/FeedsMainPanel/CreateNewPost';
 
 const NoPostsAvailable = () => {
 
@@ -58,6 +59,7 @@ const UserPostsLayout = () => {
 
   return (
     <div id='user-posts-layout' className='posts-layout FCCS w100 h100' onClick={overlayClickHandler}>
+      <CreateNewPost />
       <div id="postsList">
         {loading ? <Loader /> :
           error ? <ErrorMessage /> :

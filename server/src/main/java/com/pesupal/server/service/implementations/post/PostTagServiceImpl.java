@@ -34,6 +34,15 @@ public class PostTagServiceImpl implements PostTagService {
         return postTagRepository.findAllByTag_NameAndPost_Org_IdAndPost_StatusOrderByPost_CreatedAtDesc(tagName, orgId, PostStatus.PUBLISHED, pageable);
     }
 
+    private Set<String> sanitizeTags(Set<String> tags) {
+        return tags.stream().map(tag -> {
+            if (!tag.startsWith("#")) {
+                return "#" + tag;
+            }
+            return tag;
+        }).collect(Collectors.toSet());
+    }
+
     /**
      * Saves all tags associated with a post.
      *
@@ -44,16 +53,11 @@ public class PostTagServiceImpl implements PostTagService {
     @Transactional
     public List<PostTag> saveAll(Set<String> tags, Post post) {
 
-        if (tags.isEmpty()) {
+        if (tags == null || tags.isEmpty()) {
             return new ArrayList<>();
         }
 
-        tags = tags.stream().map(tag -> {
-            if (!tag.startsWith("#")) {
-                return "#" + tag;
-            }
-            return tag;
-        }).collect(Collectors.toSet());
+        tags = sanitizeTags(tags);
 
         List<PostTag> postTags = tags.stream().map(tagName -> {
             PostTag postTag = new PostTag();
@@ -63,4 +67,42 @@ public class PostTagServiceImpl implements PostTagService {
         }).toList();
         return postTagRepository.saveAll(postTags);
     }
+
+    /**
+     * Updates the tags associated with a post.
+     *
+     * @param post
+     * @param tags
+     */
+    @Override
+    @Transactional
+    public List<PostTag> updateTags(Post post, Set<String> tags) {
+
+        if (tags == null) {
+            return post.getTags();
+        }
+
+        tags = sanitizeTags(tags);
+
+        List<PostTag> existingTags = post.getTags(); // managed persistent collection
+
+        // 1. Remove old tags
+        Set<String> finalTags = tags;
+        existingTags.removeIf(et -> !finalTags.contains(et.getTag().getName()));
+
+        // 2. Add new tags
+        for (String tag : tags) {
+            boolean exists = existingTags.stream()
+                    .anyMatch(et -> et.getTag().getName().equals(tag));
+            if (!exists) {
+                PostTag postTag = new PostTag();
+                postTag.setTag(tagService.createOrGet(tag));
+                postTag.setPost(post);
+                existingTags.add(postTag); // ✅ add to persistent collection
+            }
+        }
+
+        return existingTags; // same collection reference, no problem
+    }
+
 }

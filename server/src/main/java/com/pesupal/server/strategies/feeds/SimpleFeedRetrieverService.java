@@ -2,10 +2,12 @@ package com.pesupal.server.strategies.feeds;
 
 import com.pesupal.server.dto.response.post.PostDto;
 import com.pesupal.server.dto.response.post.PostsListDto;
+import com.pesupal.server.enums.OrgAction;
 import com.pesupal.server.enums.SortOrder;
 import com.pesupal.server.model.post.Post;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.repository.post.PostRepository;
+import com.pesupal.server.service.interfaces.org.OrgConfigurationService;
 import com.pesupal.server.service.interfaces.post.FeedRetrieverService;
 import com.pesupal.server.service.interfaces.post.PostService;
 import org.springframework.context.annotation.Lazy;
@@ -24,10 +26,12 @@ public class SimpleFeedRetrieverService implements FeedRetrieverService {
 
     private final PostService postService;
     private final PostRepository postRepository;
+    private final OrgConfigurationService orgConfigurationService;
 
-    public SimpleFeedRetrieverService(@Lazy PostService postService, PostRepository postRepository) {
+    public SimpleFeedRetrieverService(@Lazy PostService postService, PostRepository postRepository, OrgConfigurationService orgConfigurationService) {
         this.postService = postService;
         this.postRepository = postRepository;
+        this.orgConfigurationService = orgConfigurationService;
     }
 
     /**
@@ -47,15 +51,12 @@ public class SimpleFeedRetrieverService implements FeedRetrieverService {
         Pageable pageable = PageRequest.of(page, size, sort);
 
         Page<Post> posts = postRepository.getUnlikedPostsByOrgMember(orgMember.getOrg(), orgMember, pageable);
-        List<PostDto> postDtos = new ArrayList<>(posts.getContent().stream().map(post -> {
-            PostDto postDto = postService.getPostDtoFromPostAndOrgMember(post, post.getCreator());
-            postDto.setCreator(post.getCreator().getId().equals(orgMember.getId()));
-            postDto.setLiked(false);
-            return postDto;
-        }).toList());
+        List<PostDto> postDtos = new ArrayList<>(posts.getContent().stream().map(post -> postService.getPostDtoFromPostAndOrgMember(post, orgMember)).toList());
+
+        boolean hasPrivilegeToCreatePost = orgConfigurationService.hasPrivilegeTo(OrgAction.CREATE_POST, orgMember.getRole());
 
         PostsListDto postsListDto = new PostsListDto();
-        postsListDto.setInfo(Map.of("hasMoreRecords", posts.hasNext()));
+        postsListDto.setInfo(Map.of("hasMoreRecords", posts.hasNext(), "hasPrivilegeToCreatePost", hasPrivilegeToCreatePost));
         postsListDto.setPosts(postDtos);
         return postsListDto;
     }

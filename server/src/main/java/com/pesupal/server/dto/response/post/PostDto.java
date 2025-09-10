@@ -6,7 +6,6 @@ import com.pesupal.server.enums.PostStatus;
 import com.pesupal.server.model.post.Post;
 import lombok.Data;
 
-import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -26,7 +25,7 @@ public class PostDto {
 
     private List<String> tags;
 
-    private List<URL> media;
+    private List<PostMediaDto> media;
 
     private PostImpressionDto impression;
 
@@ -48,6 +47,8 @@ public class PostDto {
 
     private PostMentionsDto mentions;
 
+    private boolean allowAnonymousComments;
+
     public static PostDto fromPost(Post post) {
 
         PostDto postDto = new PostDto();
@@ -59,6 +60,7 @@ public class PostDto {
         postDto.setBookmarkable(post.isBookmarkable());
         postDto.setShareable(post.isShareable());
         postDto.setStatus(post.getStatus());
+        postDto.setAllowAnonymousComments(post.isAllowAnonymousComments());
         return postDto;
     }
 }

@@ -13,4 +13,6 @@ public interface PostTagService {
     Page<PostTag> findAllByTagAndOrgId(String tagName, Long orgId, Pageable pageable);
 
     List<PostTag> saveAll(Set<String> tags, Post post);
+
+    List<PostTag> updateTags(Post post, Set<String> tags);
 }

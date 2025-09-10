@@ -1,6 +1,7 @@
 package com.pesupal.server.service.interfaces.post;
 
 import com.pesupal.server.dto.response.MediaDto;
+import com.pesupal.server.model.org.Org;
 import com.pesupal.server.model.post.Post;
 import com.pesupal.server.model.post.PostMedia;
 
@@ -12,4 +13,8 @@ public interface PostMediaService {
     void unlinkMediaFromPost(Post post);
 
     List<PostMedia> saveAll(Set<MediaDto> mediaIds, Post post);
+
+    List<PostMedia> updatePostMedia(Post post, Set<MediaDto> mediaIds);
+
+    void deleteAllByOrg(Org deletedOrg);
 }

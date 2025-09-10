@@ -5,11 +5,13 @@ import com.pesupal.server.dto.response.post.PostCommentDto;
 import com.pesupal.server.enums.PostStatus;
 import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.exceptions.DataNotFoundException;
+import com.pesupal.server.exceptions.PermissionDeniedException;
 import com.pesupal.server.helpers.CurrentValueRetriever;
 import com.pesupal.server.model.post.Post;
 import com.pesupal.server.model.post.PostComment;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.repository.post.PostCommentRepository;
+import com.pesupal.server.service.interfaces.MediaService;
 import com.pesupal.server.service.interfaces.org.OrgMemberService;
 import com.pesupal.server.service.interfaces.post.PostCommentService;
 import com.pesupal.server.service.interfaces.post.PostService;
@@ -23,6 +25,7 @@ import java.util.*;
 public class PostCommentServiceImpl extends CurrentValueRetriever implements PostCommentService {
 
     private final PostService postService;
+    private final MediaService mediaService;
     private final OrgMemberService orgMemberService;
     private final PostCommentRepository postCommentRepository;
 
@@ -49,11 +52,16 @@ public class PostCommentServiceImpl extends CurrentValueRetriever implements Pos
             throw new ActionProhibitedException("Unable to comment on the post as it is not available.");
         }
 
+        if (createPostCommentDto.getAnonymous() && post.getCreator().getPublicId().equals(commenter.getPublicId())) {
+            throw new PermissionDeniedException("You cannot comment anonymously on your own post.");
+        }
+
         PostComment postComment = createPostCommentDto.toPostComment();
         postComment.setPost(post);
         postComment.setCommenter(commenter);
         PostCommentDto postCommentDto = PostCommentDto.fromPostCommentAndOrgMember(postCommentRepository.save(postComment), commenter);
         postCommentDto.setDeletable(true);
+        postCommentDto.setDisplayPicture(mediaService.generatePresignedUrl(postComment.getCommenter().getDisplayPicture()));
         return postCommentDto;
     }
 
@@ -109,6 +117,7 @@ public class PostCommentServiceImpl extends CurrentValueRetriever implements Pos
             }
             PostCommentDto postCommentDto = PostCommentDto.fromPostCommentAndOrgMember(postComment, memo.get(commentedById));
             postCommentDto.setDeletable(commentedById.equals(userId));
+            postCommentDto.setDisplayPicture(mediaService.generatePresignedUrl(postComment.getCommenter().getDisplayPicture()));
             return postCommentDto;
         }).toList());
         postCommentDtos.sort(Comparator.comparing(PostCommentDto::getCreatedAt).reversed());
@@ -125,5 +134,29 @@ public class PostCommentServiceImpl extends CurrentValueRetriever implements Pos
     public PostComment getPostCommentById(Long commentId) {
 
         return postCommentRepository.findById(commentId).orElseThrow(() -> new DataNotFoundException("Comment with ID " + commentId + " not found."));
+    }
+
+    /**
+     * Update comment based on its id
+     *
+     * @param commentId
+     * @param updateCommentDto
+     */
+    @Override
+    public void updateComment(Long commentId, CreatePostCommentDto updateCommentDto) {
+
+        OrgMember orgMember = getCurrentOrgMember();
+
+        PostComment postComment = getPostCommentById(commentId);
+        if (!postComment.getCommenter().getPublicId().equals(orgMember.getPublicId())) {
+            throw new PermissionDeniedException("You don't have permission to update this comment");
+        }
+
+        if (!postComment.getPost().getStatus().equals(PostStatus.PUBLISHED)) {
+            throw new ActionProhibitedException("Unable to comment as the post is not available");
+        }
+
+        updateCommentDto.applyToPostComment(postComment);
+        postCommentRepository.save(postComment);
     }
 }

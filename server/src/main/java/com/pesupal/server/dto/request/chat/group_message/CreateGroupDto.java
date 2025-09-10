@@ -4,6 +4,8 @@ import com.pesupal.server.enums.Visibility;
 import com.pesupal.server.model.chat.group_message.Group;
 import lombok.Data;
 
+import java.util.UUID;
+
 @Data
 public class CreateGroupDto {
 
@@ -11,7 +13,7 @@ public class CreateGroupDto {
 
     private String description;
 
-    private String displayPicture;
+    private UUID displayPicture;
 
     private Boolean displayPictureRemoved;
 
@@ -40,7 +42,7 @@ public class CreateGroupDto {
             group.setDescription(description.trim());
         }
         if (displayPicture != null) {
-            group.setDisplayPicture(displayPicture.trim());
+            group.setDisplayPicture(displayPicture);
         }
         if (displayPictureRemoved != null) {
             if (displayPictureRemoved) {

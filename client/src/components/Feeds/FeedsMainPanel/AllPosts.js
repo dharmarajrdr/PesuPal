@@ -6,12 +6,12 @@ import { apiRequest } from '../../../http_request';
 import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { showPopup } from '../../../store/reducers/PopupSlice';
-import { appendPosts, clearPosts } from '../../../store/reducers/PostSlice';
+import { appendPosts, clearPosts, setHasPrivilegeToCreatePost } from '../../../store/reducers/PostSlice';
 
 const NoPostsAvailable = () => {
 
     return (
-        <div className='FCCC w100 h100' id='no-data-found'>
+        <div className='FCCC w100' style={{ height: 'calc(100vh - 100px)' }} id='no-data-found'>
             <p className='FRCC w100'>
                 <i className='fa fa-exclamation-triangle mR5 w15'></i>
                 No posts available
@@ -21,7 +21,7 @@ const NoPostsAvailable = () => {
     )
 }
 
-const AllPosts = () => {
+const AllPosts = ({ searchText }) => {
 
     const size = 10; // Number of posts per page
     const sortOrder = 'DESC'; // Sorting order for posts, can be 'ASC'
@@ -33,16 +33,15 @@ const AllPosts = () => {
     const [fetching, setFetching] = useState(false);
     const { list: posts } = useSelector(state => state.posts);
 
+    const firstRender = useRef(true);
     const loadMorePostsRef = useRef(null);
 
-    useEffect(() => {
-        if (page == 0) {
-            dispatch(clearPosts());
-        }
-        apiRequest(`/api/v1/post/feeds?page=${page}&size=${size}&sort_order=${sortOrder}`, 'GET').then(({ data, info }) => {
+    const fetchPosts = async () => {
+        apiRequest(`/api/v1/feeds?search=${searchText}&page=${page}&size=${size}&sort_order=${sortOrder}`, 'GET').then(({ data, info }) => {
             setLoading(false);
             dispatch(appendPosts(data));
             setHasMore(info.hasMoreRecords);
+            dispatch(setHasPrivilegeToCreatePost(info.hasPrivilegeToCreatePost));
             setFetching(false);
         }).catch(({ message }) => {
             dispatch(showPopup({ message, type: 'error' }));
@@ -51,6 +50,53 @@ const AllPosts = () => {
             setHasMore(false);
             setFetching(false);
         });
+    }
+
+    useEffect(() => {
+        if (firstRender.current) {
+            firstRender.current = false;
+            return;
+        }
+
+        const text = searchText.trim();
+
+        // Case 1: search cleared → show default feed
+        if (text.length === 0) {
+            setPage(0);
+            setLoading(true);
+            setError(null);
+            setHasMore(false);
+            setFetching(false);
+            dispatch(clearPosts());
+            fetchPosts({ search: null }); // fetch default feed
+            return;
+        }
+
+        // Case 2: less than 3 chars → skip API
+        if (text.length < 3) {
+            return;
+        }
+
+        // Case 3: 3+ chars → debounce search
+        const delayDebounceFn = setTimeout(() => {
+            setPage(0);
+            setLoading(true);
+            setError(null);
+            setHasMore(false);
+            setFetching(false);
+            dispatch(clearPosts());
+            fetchPosts({ search: text }); // fetch with query
+        }, 700); // 700ms debounce is standard
+
+        return () => clearTimeout(delayDebounceFn);
+    }, [searchText]);
+
+
+    useEffect(() => {
+        if (page == 0) {
+            dispatch(clearPosts());
+        }
+        fetchPosts();
     }, [page]);
 
     useEffect(() => {
@@ -74,7 +120,7 @@ const AllPosts = () => {
 
     return (
         <div className='FCCS' id='AllPosts'>
-            <div id="postsList">
+            <div id="postsList" className='w100'>
                 {loading ? <Loader /> :
                     error ? <ErrorMessage /> :
                         posts.length ? <PostList /> : <NoPostsAvailable />}

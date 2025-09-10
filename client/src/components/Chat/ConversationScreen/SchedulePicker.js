@@ -1,6 +1,6 @@
-import { useEffect, useRef, useState } from "react";
-import { useDispatch } from "react-redux";
 import './SchedulePicker.css';
+import { useDispatch } from "react-redux";
+import { useEffect, useRef, useState } from "react";
 import { showPopup } from "../../../store/reducers/PopupSlice";
 
 const getMinDateTime = () => {
@@ -9,12 +9,12 @@ const getMinDateTime = () => {
     return now.toISOString().slice(0, 16);
 };
 
-const SchedulePicker = ({ onSchedule, onCancel, showPicker, setShowPicker }) => {
+const SchedulePicker = ({ onSchedule, onCancel, showPicker, setShowPicker, defaultTime }) => {
 
     const dispatch = useDispatch();
     const pickerRef = useRef(null);
     const schedulePickerRef = useRef(null);
-    const [scheduledTime, setScheduledTime] = useState("");
+    const [scheduledTime, setScheduledTime] = useState(defaultTime || "");
 
     const handleScheduleClick = () => {
         if (scheduledTime) {

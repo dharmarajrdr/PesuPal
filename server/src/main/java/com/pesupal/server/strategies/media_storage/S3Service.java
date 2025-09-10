@@ -47,11 +47,10 @@ public class S3Service implements MediaService {
 
         String extension = Objects.requireNonNull(file.getOriginalFilename()).substring(file.getOriginalFilename().lastIndexOf('.') + 1);
         UUID mediaId = UUID.randomUUID();
-        String fileNameWithExtension = mediaId + "." + extension;
         Long size = file.getSize();
 
         s3Client.putObject(
-                PutObjectRequest.builder().bucket(bucketName).key(fileNameWithExtension).build(),
+                PutObjectRequest.builder().bucket(bucketName).key(mediaId.toString()).build(),
                 RequestBody.fromBytes(file.getBytes())
         );
 
@@ -68,26 +67,24 @@ public class S3Service implements MediaService {
     public byte[] downloadFile(String key) {
 
         return s3Client.getObjectAsBytes(
-                GetObjectRequest.builder()
-                        .bucket(bucketName)
-                        .key(key)
-                        .build()
+                GetObjectRequest.builder().bucket(bucketName).key(key).build()
         ).asByteArray();
     }
 
     /**
      * Generates a pre-signed URL for accessing a file in the S3 bucket.
      *
-     * @param key
+     * @param mediaId
      * @return
      */
     @Override
-    public URL generatePresignedUrl(String key) {
+    public URL generatePresignedUrl(UUID mediaId) {
 
-        if (key == null || key.isEmpty()) {
-            throw new IllegalArgumentException("Key must not be null or empty");
+        if (mediaId == null) {
+            return null;
         }
 
+        String key = mediaId.toString();
         String redisKey = "s3-presigned-url:" + key;
         String cachedPresignedUrl = (String) redisTemplate.opsForValue().get(redisKey);
         Duration TTL = Duration.ofMinutes(5);
@@ -110,11 +107,16 @@ public class S3Service implements MediaService {
     /**
      * Deletes a file from the S3 bucket.
      *
-     * @param key
+     * @param mediaId
      */
     @Override
-    public void deleteFile(String key) {
+    public void deleteFile(UUID mediaId) {
 
+        if (mediaId == null) {
+            return;
+        }
+
+        String key = mediaId.toString();
         s3Client.deleteObject(software.amazon.awssdk.services.s3.model.DeleteObjectRequest.builder().bucket(bucketName).key(key).build());
     }
 }

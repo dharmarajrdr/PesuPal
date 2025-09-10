@@ -1,40 +1,29 @@
+import './ManagePeople.css';
 import { useState } from 'react';
 import AddUserLayout from './AddUserLayout';
-import './ManagePeople.css';
+import OrgMemberList from './OrgMemberList';
+import PendingInvites from './PendingInvites';
+import SuperAdminsList from './SuperAdminsList';
 import ManagePeopleHeader from './ManagePeopleHeader';
-
-const initialPeople = [
-    {
-        userId: "AMwYOJWFAkoQ",
-        displayName: "Dharmaraj R",
-        displayPicture: "https://www.updatenews360.com/english/wp-content/uploads/2022/04/Xefntr7z_400x400.jpg",
-        designation: "CEO",
-        department: "Executive Department",
-        status: "Away",
-        email: "dharmaraj.171215@gmail.com",
-        phone: "1234567890"
-    },
-    {
-        userId: "uexJUG4ral4j",
-        displayName: "Mohankumar R",
-        displayPicture: "https://pbs.twimg.com/media/E03qKiHUYAE9tNW.jpg:large",
-        designation: "CEO",
-        department: "Executive Department",
-        status: "Away",
-        email: "mohan.rmk@gmail.com",
-        phone: "8072113856",
-        chatId: "MHI3f5RkAQg6"
-    }
-];
+import { Navigate, Route, Routes } from 'react-router';
 
 const ManagePeople = () => {
 
-    const [showAddUserLayout, setShowAddUserLayout] = useState(true);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [showAddUserLayout, setShowAddUserLayout] = useState(false);
 
     return (
-        <div className="manage-people-container h100">
-            <ManagePeopleHeader setShowAddUserLayout={setShowAddUserLayout} />
+        <div className="manage-people-container w100 h100">
             {showAddUserLayout && <AddUserLayout setShowAddUserLayout={setShowAddUserLayout} />}
+            <ManagePeopleHeader setShowAddUserLayout={setShowAddUserLayout} searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+
+            <Routes>
+                <Route path="/all-members" element={<OrgMemberList searchQuery={searchQuery} />} />
+                <Route path="/super-admins" element={<SuperAdminsList searchQuery={searchQuery} />} />
+                <Route path="/pending-invites" element={<PendingInvites searchQuery={searchQuery} />} />
+                <Route path="/all-members" element={<OrgMemberList searchQuery={searchQuery} />} />
+                <Route path='*' element={<Navigate to="/settings/manage-people/all-members" />} />
+            </Routes>
         </div>
     );
 };

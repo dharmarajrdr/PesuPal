@@ -23,7 +23,7 @@ const RecentChat = ({ recentChat, openChatHandler }) => {
         <div className={`RecentChatContainer cursP FRCS w100 ${isActive ? 'active' : ''}`} onClick={() => openChatHandler(recentChat)}>
             <div className='pR'>
                 <UserAvatar displayPicture={image} displayName={name} />
-                {activeChatTab?.showStatusIndicator && <StatusIndicator status={status} />}
+                {activeChatTab?.showStatusIndicator && <StatusIndicator status={status} style={{ padding: '3px', bottom: '0px', right: '7px' }} />}
             </div>
             <div className='FCSC w100 name_message_date'>
                 <div className='FRCB w100'>

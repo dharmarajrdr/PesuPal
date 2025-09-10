@@ -1,55 +1,86 @@
 package com.pesupal.server.service.implementations.post;
 
 import com.pesupal.server.dto.request.post.CreatePostDto;
-import com.pesupal.server.dto.response.UserBasicInfoDto;
+import com.pesupal.server.dto.request.post.CreatePostMentionsDto;
 import com.pesupal.server.dto.response.UserPreviewDto;
 import com.pesupal.server.dto.response.post.*;
-import com.pesupal.server.enums.FeedRetriever;
+import com.pesupal.server.enums.OrgAction;
 import com.pesupal.server.enums.PostStatus;
 import com.pesupal.server.enums.SortOrder;
 import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.exceptions.DataNotFoundException;
+import com.pesupal.server.exceptions.MandatoryDataMissingException;
 import com.pesupal.server.exceptions.PermissionDeniedException;
-import com.pesupal.server.factory.FeedRetrieverServiceFactory;
+import com.pesupal.server.factory.TrendingPostsAnalyserFactory;
 import com.pesupal.server.helpers.CurrentValueRetriever;
 import com.pesupal.server.helpers.DateTimeUtil;
+import com.pesupal.server.model.org.Org;
 import com.pesupal.server.model.post.*;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.model.user.User;
 import com.pesupal.server.repository.post.PostRepository;
+import com.pesupal.server.service.interfaces.MediaService;
+import com.pesupal.server.service.interfaces.org.OrgConfigurationService;
 import com.pesupal.server.service.interfaces.org.OrgMemberService;
 import com.pesupal.server.service.interfaces.post.*;
-import com.pesupal.server.strategies.media_storage.S3Service;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
+import org.springframework.data.redis.RedisSystemException;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
 public class PostServiceImpl extends CurrentValueRetriever implements PostService {
 
-    private final S3Service s3Service;
-    private final TagService tagService;
     private final PollService pollService;
+    private final MediaService mediaService;
     private final PostRepository postRepository;
     private final PostTagService postTagService;
+    private final BookmarkService bookmarkService;
     private final OrgMemberService orgMemberService;
     private final PostMediaService postMediaService;
     private final PostMentionService postMentionService;
     private final RedisTemplate<String, Object> redisTemplate;
-    private final FeedRetrieverServiceFactory feedRetrieverServiceFactory;
+    private final OrgConfigurationService orgConfigurationService;
+    private final TrendingPostsAnalyserFactory trendingPostsAnalyserFactory;
 
-    private final static String SCHEDULED_POST_KEY = "scheduled_posts";
-    private final static FeedRetriever feedRetrieverAlgorithm = FeedRetriever.SIMPLE_FEED_RETRIEVER_ALGORITHM;
+    private final static int MAXIMUM_TAGS_PER_POST = 10;
+    private final static String SCHEDULED_POST_KEY = "scheduled:posts";
+    private final static String TRENDING_POSTS_KEY = "trending:posts";
+    private final static Duration TRENDING_POSTS_CACHE_DURATION = Duration.ofHours(6);
+    private final static String TRENDING_POSTS_ANALYSER_ALGORITHM = "ENGAGEMENT_BASED";
+
+    /**
+     * To validate the CreatePostDto before performing any operations.
+     *
+     * @param createPostDto
+     */
+    private void validateCreatePostDto(CreatePostDto createPostDto, OrgMember creator) {
+
+        if (createPostDto.getTags() != null && createPostDto.getTags().size() > MAXIMUM_TAGS_PER_POST) {
+            throw new ActionProhibitedException("A post can have a maximum of " + MAXIMUM_TAGS_PER_POST + " tags.");
+        }
+
+        CreatePostMentionsDto createPostMentionsDto = createPostDto.getMentions();
+        if (createPostMentionsDto != null && createPostMentionsDto.getLabel() != null) {
+            String label = createPostMentionsDto.getLabel().trim();
+            Set<String> data = createPostMentionsDto.getData();
+            if (!data.isEmpty() && label.isEmpty()) {
+                throw new MandatoryDataMissingException("Specify a label for the mention.");
+            }
+            if (data.stream().anyMatch(id -> id.equals(creator.getPublicId()))) {
+                throw new ActionProhibitedException("You cannot mention yourself in a post.");
+            }
+        }
+    }
 
     /**
      * Creates a new post - Internal use only.
@@ -61,12 +92,20 @@ public class PostServiceImpl extends CurrentValueRetriever implements PostServic
 
         OrgMember creator = getCurrentOrgMember();
 
-        boolean hasPoll = createPostDto.getPoll() != null;
+        if (!orgConfigurationService.hasPrivilegeTo(OrgAction.CREATE_POST, creator.getRole())) {
+            throw new PermissionDeniedException("You don't have permission to create post.");
+        }
 
+        if (!createPostDto.getMediaIds().isEmpty() && orgConfigurationService.hasPrivilegeTo(OrgAction.ATTACH_MEDIA_IN_POST, creator.getRole())) {
+            throw new PermissionDeniedException("You don't have permission to attach media in post.");
+        }
+
+        validateCreatePostDto(createPostDto, creator);
+
+        boolean hasPoll = createPostDto.getPoll() != null;
         Post post = createPostDto.toPost();
         post.setOrg(creator.getOrg());
         post.setCreator(creator);
-        post.setMedia(!createPostDto.getMediaIds().isEmpty());
         post.setHasPoll(hasPoll);
         postRepository.save(post);
         List<PostMedia> postMedia = postMediaService.saveAll(createPostDto.getMediaIds(), post);
@@ -93,10 +132,7 @@ public class PostServiceImpl extends CurrentValueRetriever implements PostServic
         OrgMember orgMember = getCurrentOrgMember();
 
         Post post = createPostInternal(createPostDto);
-        PostDto postDto = getPostDtoFromPostAndOrgMember(post, orgMember);
-        postDto.setCreator(true);
-        postDto.setLiked(false);
-        return postDto;
+        return getPostDtoFromPostAndOrgMember(post, orgMember);
     }
 
     /**
@@ -117,10 +153,7 @@ public class PostServiceImpl extends CurrentValueRetriever implements PostServic
         Post post = createPostInternal(createPostDto);
         long currentTimeMillis = DateTimeUtil.toEpochMilli(createPostDto.getScheduledAt());
         redisTemplate.opsForZSet().add(SCHEDULED_POST_KEY, post.getId(), currentTimeMillis);
-        PostDto postDto = getPostDtoFromPostAndOrgMember(post, orgMember);
-        postDto.setCreator(true);
-        postDto.setLiked(false);
-        return postDto;
+        return getPostDtoFromPostAndOrgMember(post, orgMember);
     }
 
     /**
@@ -192,6 +225,7 @@ public class PostServiceImpl extends CurrentValueRetriever implements PostServic
     }
 
     private boolean isLiked(List<PostLike> likes, User user) {
+
         return likes.stream().anyMatch(like -> Objects.equals(like.getLiker().getId(), user.getId()));
     }
 
@@ -212,7 +246,7 @@ public class PostServiceImpl extends CurrentValueRetriever implements PostServic
                 continue;
             }
             uniqueMemberIds.add(memberId);
-            userPreviews.add(UserPreviewDto.fromOrgMember(member));
+            userPreviews.add(orgMemberService.getUserPreview(member));
         }
         return userPreviews;
     }
@@ -228,12 +262,13 @@ public class PostServiceImpl extends CurrentValueRetriever implements PostServic
     public PostDto getPostDtoFromPostAndOrgMember(Post post, OrgMember orgMember) {
 
         PostDto postDto = PostDto.fromPost(post);
-        postDto.setTags(post.getTags().stream().map(postTag -> postTag.getTag().getName()).toList());
+        postDto.setTags(post.getTags().stream().map(postTag -> postTag.getTag().getName()).sorted().toList());
         postDto.setMedia(post.getPostMedia().stream().map(postMedia -> {
-            String key = postMedia.getMediaId() + "." + postMedia.getExtension();
-            return s3Service.generatePresignedUrl(key);
+            PostMediaDto postMediaDto = PostMediaDto.fromPostMedia(postMedia);
+            postMediaDto.setUrl(mediaService.generatePresignedUrl(postMedia.getMediaId()));
+            return postMediaDto;
         }).toList());
-        postDto.setOwner(UserBasicInfoDto.fromOrgMember(orgMember));
+        postDto.setOwner(orgMemberService.getUserBasicInfo(post.getCreator()));
         postDto.setImpression(PostImpressionDto.builder().likes(post.getLikes().size()).comments(post.getComments().size()).build());
         postDto.setBookmarked(false);   // Feature not implemented yet
         if (post.isHasPoll()) {
@@ -242,6 +277,9 @@ public class PostServiceImpl extends CurrentValueRetriever implements PostServic
         if (post.getPostMentionLabel() != null) {
             postDto.setMentions(new PostMentionsDto(post.getPostMentionLabel(), getUniqueMentions(post.getMentions())));
         }
+        postDto.setCreator(orgMember.getId().equals(post.getCreator().getId()));
+        postDto.setLiked(isLiked(post.getLikes(), orgMember.getUser()));
+        postDto.setBookmarked(bookmarkService.isBookmarked(post, orgMember));
         return postDto;
     }
 
@@ -255,7 +293,7 @@ public class PostServiceImpl extends CurrentValueRetriever implements PostServic
     @Override
     public Post getPostByIdAndOrgId(Long postId, Long orgId) {
 
-        return postRepository.findByIdAndOrgId(postId, orgId).orElseThrow(() -> new DataNotFoundException("Post with ID " + postId + " does not exist."));
+        return postRepository.findByIdAndOrgId(postId, orgId).orElseThrow(() -> new DataNotFoundException("Post does not exist."));
     }
 
     /**
@@ -270,10 +308,7 @@ public class PostServiceImpl extends CurrentValueRetriever implements PostServic
         OrgMember orgMember = getCurrentOrgMember();
         Long orgId = orgMember.getOrg().getId();
         Post post = getPostByPublicIdAndOrgId(postId, orgId);
-        OrgMember postOwner = orgMemberService.getOrgMemberByUserIdAndOrgId(post.getCreator().getId(), orgId);
-        PostDto postDto = getPostDtoFromPostAndOrgMember(post, postOwner);
-        postDto.setLiked(isLiked(post.getLikes(), orgMember.getUser()));
-        return postDto;
+        return getPostDtoFromPostAndOrgMember(post, orgMember);
     }
 
     /**
@@ -286,7 +321,7 @@ public class PostServiceImpl extends CurrentValueRetriever implements PostServic
     @Override
     public Post getPostByPublicIdAndOrgId(String postId, Long orgId) {
 
-        return postRepository.findByPublicIdAndOrgId(postId, orgId).orElseThrow(() -> new DataNotFoundException("Post with ID " + postId + " does not exist."));
+        return postRepository.findByPublicIdAndOrgId(postId, orgId).orElseThrow(() -> new DataNotFoundException("Post does not exist."));
     }
 
     /**
@@ -300,18 +335,11 @@ public class PostServiceImpl extends CurrentValueRetriever implements PostServic
         OrgMember orgMember = getCurrentOrgMember();
         Long orgId = orgMember.getOrg().getId();
 
-        OrgMember creator = orgMemberService.getOrgMemberByPublicId(creatorId);
-
         Sort sort = Sort.by(sortOrder == SortOrder.ASC ? Sort.Direction.ASC : Sort.Direction.DESC, "createdAt");
         Pageable pageable = PageRequest.of(page, size, sort);
         Page<Post> postPage = postRepository.findAllByOrgIdAndCreator_PublicIdAndStatus(orgId, creatorId, pageable, PostStatus.PUBLISHED);
 
-        List<PostDto> postDtos = new ArrayList<>(postPage.getContent().stream().map(post -> {
-            PostDto postDto = getPostDtoFromPostAndOrgMember(post, creator);
-            postDto.setCreator(post.getCreator().getId().equals(orgMember.getId()));
-            postDto.setLiked(isLiked(post.getLikes(), orgMember.getUser()));
-            return postDto;
-        }).toList());
+        List<PostDto> postDtos = new ArrayList<>(postPage.getContent().stream().map(post -> getPostDtoFromPostAndOrgMember(post, orgMember)).toList());
         PostsListDto postsListDto = new PostsListDto();
         postsListDto.setInfo(Map.of(
                 "hasMoreRecords", postPage.hasNext()
@@ -337,12 +365,7 @@ public class PostServiceImpl extends CurrentValueRetriever implements PostServic
         Pageable pageable = PageRequest.of(page, size, sort);
 
         Page<Post> posts = postRepository.findAllByCreatorAndStatusAndCreatedAtAfter(orgMember, PostStatus.SCHEDULED, LocalDateTime.now(), pageable);
-        List<PostDto> postDtos = new ArrayList<>(posts.getContent().stream().map(post -> {
-            PostDto postDto = getPostDtoFromPostAndOrgMember(post, orgMember);
-            postDto.setCreator(true);
-            postDto.setLiked(false);
-            return postDto;
-        }).toList());
+        List<PostDto> postDtos = new ArrayList<>(posts.getContent().stream().map(post -> getPostDtoFromPostAndOrgMember(post, orgMember)).toList());
 
         PostsListDto postsListDto = new PostsListDto();
         postsListDto.setInfo(Map.of("hasMoreRecords", posts.hasNext()));
@@ -351,18 +374,106 @@ public class PostServiceImpl extends CurrentValueRetriever implements PostServic
     }
 
     /**
-     * Retrieves the feed for the current user.
+     * Retrieves trending posts.
      *
-     * @param page
-     * @param size
-     * @param sortOrder
+     * @param limit
      * @return
      */
     @Override
-    public PostsListDto getFeeds(int page, int size, SortOrder sortOrder) {
+    @SuppressWarnings("unchecked")
+    public List<PostDto> getTrendingPosts(int limit) {
 
-        FeedRetrieverService feedRetrieverService = feedRetrieverServiceFactory.getFeedRetrieverService(feedRetrieverAlgorithm);
-        return feedRetrieverService.getFeeds(page, size, sortOrder, getCurrentOrgMember());
+        OrgMember orgMember = getCurrentOrgMember();
+
+        // Fetch post ids from redis.
+        String key = TRENDING_POSTS_KEY + ":{" + orgMember.getOrg().getId() + "}";
+        List<Object> postIds = redisTemplate.opsForList().range(key, 0, limit - 1);
+        if (postIds != null && !postIds.isEmpty()) {
+            List<PostDto> posts = new ArrayList<>();
+            for (Object id : postIds) {
+                postRepository.findById(Long.valueOf((String) id)).ifPresent(post -> posts.add(getPostDtoFromPostAndOrgMember(post, orgMember)));
+            }
+            return posts;
+        }
+
+        // If not found in redis, analyse and store in redis.
+        TrendingPostsAnalyser trendingPostsAnalyser = trendingPostsAnalyserFactory.getTrendingPostsAnalyser(TRENDING_POSTS_ANALYSER_ALGORITHM);
+        List<Post> newTrendingPosts = trendingPostsAnalyser.analyseTrendingPosts(orgMember.getOrg(), limit);
+
+        if (newTrendingPosts.isEmpty()) {
+            return List.of();
+        }
+
+        List<String> newTrendingPostIds = newTrendingPosts.stream().map(post -> post.getId().toString()).toList();
+        try {
+            redisTemplate.delete(key);  // Clear existing key if exists.
+            redisTemplate.opsForList().rightPushAll(key, newTrendingPostIds.toArray(new String[0]));
+            redisTemplate.expire(key, TRENDING_POSTS_CACHE_DURATION); // Set expiry same
+        } catch (RedisSystemException ignored) {
+        }
+        return newTrendingPosts.stream().map(post -> getPostDtoFromPostAndOrgMember(post, orgMember)).toList();
+    }
+
+    /**
+     * Searches posts based on a query string.
+     *
+     * @param query
+     * @param page
+     * @param size
+     * @return
+     */
+    @Override
+    public PostsListDto searchPosts(String query, int page, int size) {
+
+        if (query.length() < 3) {
+            throw new ActionProhibitedException("Search query must be at least 3 characters long.");
+        }
+
+        OrgMember orgMember = getCurrentOrgMember();
+
+        String tsQuery = Arrays.stream(query.split("\\s+"))
+                .map(word -> word.replaceAll("[^a-zA-Z0-9]", ""))
+                .filter(word -> !word.isBlank())
+                .collect(Collectors.joining(" | "));
+
+        boolean hasPrivilegeToCreatePost = orgConfigurationService.hasPrivilegeTo(OrgAction.CREATE_POST, orgMember.getRole());
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by("created_at").descending());
+        Slice<Post> posts = postRepository.searchPostsByOrg(orgMember.getOrg().getId(), tsQuery, pageable);
+        List<PostDto> postDtos = new ArrayList<>(posts.getContent().stream().map(post -> getPostDtoFromPostAndOrgMember(post, orgMember)).toList());
+        PostsListDto postsListDto = new PostsListDto();
+        postsListDto.setInfo(Map.of("hasMoreRecords", posts.hasNext(), "hasPrivilegeToCreatePost", hasPrivilegeToCreatePost));
+        postsListDto.setPosts(postDtos);
+        return postsListDto;
+    }
+
+    /**
+     * Unschedules all posts created by a specific organization member.
+     *
+     * @param orgMember
+     */
+    @Override
+    public void unscheduleAllPostsByOrgMember(OrgMember orgMember) {
+
+        List<Post> scheduledPosts = postRepository.findAllByCreatorAndStatus(orgMember, PostStatus.SCHEDULED);
+        for (Post post : scheduledPosts) {
+            redisTemplate.opsForZSet().remove(SCHEDULED_POST_KEY, post.getId());
+        }
+        postRepository.deleteAll(scheduledPosts);
+    }
+
+    /**
+     * Deletes all posts associated with a specific organization.
+     *
+     * @param deletedOrg
+     */
+    @Override
+    public void deleteAllByOrg(Org deletedOrg) {
+
+        List<Post> posts = postRepository.findAllByCreator_Org(deletedOrg);
+        for (Post post : posts) {
+            deletePost(post.getPublicId());
+        }
     }
 
     /**
@@ -405,8 +516,7 @@ public class PostServiceImpl extends CurrentValueRetriever implements PostServic
         Page<PostTag> postPage = postTagService.findAllByTagAndOrgId(tag, orgId, pageable);
         List<PostDto> postDtos = new ArrayList<>(postPage.getContent().stream().map(postTag -> {
             Post post = postTag.getPost();
-            OrgMember postOwnerOrgMember = orgMemberService.getOrgMemberByUserIdAndOrgId(post.getCreator().getId(), orgId);
-            PostDto postDto = getPostDtoFromPostAndOrgMember(post, postOwnerOrgMember);
+            PostDto postDto = getPostDtoFromPostAndOrgMember(post, orgMember);
             postDto.setCreator(post.getCreator().getId().equals(orgMemberId));
             postDto.setLiked(isLiked(post.getLikes(), orgMember.getUser()));
             return postDto;
@@ -428,11 +538,17 @@ public class PostServiceImpl extends CurrentValueRetriever implements PostServic
      * @return
      */
     @Override
-    public Post updatePost(String postId, CreatePostDto createPostDto) {
+    public PostDto updatePost(String postId, CreatePostDto createPostDto) {
 
         OrgMember orgMember = getCurrentOrgMember();
 
+        validateCreatePostDto(createPostDto, orgMember);
+
         Post post = getPostByPublicIdAndOrgId(postId, orgMember.getOrg().getId());
+
+        if (!post.getCreator().getPublicId().equals(orgMember.getPublicId())) {
+            throw new PermissionDeniedException("You do not have permission to update this post.");
+        }
 
         if (post.getStatus().equals(PostStatus.PUBLISHED)) {
             if (createPostDto.getScheduledAt() != null || PostStatus.SCHEDULED.equals(createPostDto.getStatus())) {
@@ -441,13 +557,19 @@ public class PostServiceImpl extends CurrentValueRetriever implements PostServic
         }
 
         createPostDto.applyToPost(post);
+
         postRepository.save(post);
+
+        post.setTags(postTagService.updateTags(post, createPostDto.getTags()));
+        post.setMentions(postMentionService.updateMentions(post, createPostDto.getMentions()));
+        post.setPostMedia(postMediaService.updatePostMedia(post, createPostDto.getMediaIds()));
 
         if (createPostDto.getScheduledAt() != null) {
             redisTemplate.opsForZSet().remove(SCHEDULED_POST_KEY, post.getId());
             redisTemplate.opsForZSet().add(SCHEDULED_POST_KEY, post.getId(), DateTimeUtil.toEpochMilli(createPostDto.getScheduledAt()));
         }
-        return post;
+
+        return getPostDtoFromPostAndOrgMember(post, orgMember);
     }
 
     /**
@@ -485,7 +607,7 @@ public class PostServiceImpl extends CurrentValueRetriever implements PostServic
     @Override
     public Post getPostByPublicId(String postId) {
 
-        return postRepository.findByPublicId(postId).orElseThrow(() -> new DataNotFoundException("Post with id " + postId + " does not exist."));
+        return postRepository.findByPublicId(postId).orElseThrow(() -> new DataNotFoundException("Post does not exist."));
     }
 
     /**
@@ -496,6 +618,6 @@ public class PostServiceImpl extends CurrentValueRetriever implements PostServic
      */
     public Post getPostById(Long postId) {
 
-        return postRepository.findById(postId).orElseThrow(() -> new DataNotFoundException("Post with id " + postId + " does not exist."));
+        return postRepository.findById(postId).orElseThrow(() -> new DataNotFoundException("Post does not exist."));
     }
 }

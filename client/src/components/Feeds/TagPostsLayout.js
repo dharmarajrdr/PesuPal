@@ -13,7 +13,7 @@ const NoPostsAvailable = () => {
     return (
         <div className='FCCC w100 h100' id='no-data-found'>
             <p className='FRCC w100'>
-                <i className='fa fa-exclamation-triangle mR5'></i>
+                <i className='fa fa-exclamation-triangle mR5 w15'></i>
                 No posts available
             </p>
             <p className='w100 alignCenter'>There are no posts available for this tag.</p>
@@ -78,12 +78,17 @@ const TagPostsLayout = () => {
 
     return (
         <div id='tag-posts-layout' className='posts-layout FCCS w100 h100' onClick={overlayClickHandler}>
-            <div id="postsList">
-                {loading ? <Loader /> :
-                    error ? <ErrorMessage /> :
-                        posts.length ? <TagsPage tag={tag} /> : <NoPostsAvailable />}
-            </div>
-            {hasMore && <Loader />}
+
+            {loading ? <Loader /> :
+                error ? <ErrorMessage /> :
+                    posts.length ? (
+                        <>
+                            <div id="postsList">
+                                <TagsPage tag={tag} />
+                            </div>
+                            {hasMore && <Loader />}
+                        </>
+                    ) : <NoPostsAvailable />}
         </div>
     )
 }

@@ -1,10 +1,10 @@
 import './FeedsMainPanel.css'
 import AllPosts from './AllPosts'
 
-const FeedsMainPanel = () => {
+const FeedsMainPanel = ({ searchText }) => {
     return (
         <div id='FeedsMainPanel'>
-            <AllPosts />
+            <AllPosts searchText={searchText} />
         </div>
     )
 }

@@ -15,6 +15,9 @@ import com.pesupal.server.security.CustomUserDetails;
 import com.pesupal.server.service.interfaces.org.OrgMemberService;
 import com.pesupal.server.service.interfaces.org.OrgSubscriptionHistoryService;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,22 +34,11 @@ public class OrgMemberController extends OrgSubscriptionManager {
     private final OrgMemberService orgMemberService;
     private final OrgSubscriptionHistoryService orgSubscriptionHistoryService;
 
-    @PostMapping("/new_member")
-    public ResponseEntity<ApiResponseDto> addMemberToOrg(@RequestBody AddOrgMemberDto addOrgMemberDto) {
+    @PatchMapping("/{orgMemberPublicId}")
+    public ResponseEntity<ApiResponseDto> updateOrgMember(@PathVariable String orgMemberPublicId, @RequestBody AddOrgMemberDto addOrgMemberDto) {
 
-        OrgMember orgMember = orgMemberService.addMemberToOrg(addOrgMemberDto, getCurrentOrgMember(), false);
-        return ResponseEntity.ok(new ApiResponseDto("Member added to organization successfully.", orgMember));
-    }
-
-    @GetMapping("/display-picture")
-    public ResponseEntity<ApiResponseDto> getOrgMemberImage(@RequestParam(required = false) Long userId) {
-
-        if (userId == null) {
-            userId = getCurrentUserId();
-        }
-
-        String imageUrl = orgMemberService.getOrgMemberImageByUserIdAndOrgId(userId, getCurrentOrgId());
-        return ResponseEntity.ok(new ApiResponseDto("Organization member image retrieved successfully.", imageUrl));
+        orgMemberService.updateOrgMember(orgMemberPublicId, addOrgMemberDto, getCurrentOrgMember());
+        return ResponseEntity.ok(new ApiResponseDto("Organization member updated successfully."));
     }
 
     @GetMapping("/orgs")
@@ -63,12 +55,30 @@ public class OrgMemberController extends OrgSubscriptionManager {
         return ResponseEntity.ok(new ApiResponseDto("List of organization members retrieved successfully.", orgMembers));
     }
 
+    @GetMapping("/super-admins")
+    public ResponseEntity<ApiResponseDto> getAllSuperAdmins() {
+
+        List<UserBasicInfoDto> superAdmin = orgMemberService.getAllSuperAdmins(getCurrentOrgMember());
+        return ResponseEntity.ok(new ApiResponseDto("Super Admins fetched successfully.", superAdmin));
+    }
+
+    @GetMapping("/inactive-members")
+    public ResponseEntity<ApiResponseDto> getAllInactiveMembers() {
+
+        List<UserBasicInfoDto> inactiveMembers = orgMemberService.getAllInactiveMembers(getCurrentOrgMember());
+        return ResponseEntity.ok(new ApiResponseDto("Inactive members fetched successfully.", inactiveMembers));
+    }
+
     @GetMapping("/search")
     public ResponseEntity<ApiResponseDto> getSearchedOrgMembers(@RequestParam(name = "query", defaultValue = "") String search,
                                                                 @RequestParam(defaultValue = "0") int page,
-                                                                @RequestParam(defaultValue = "10") int size) {
+                                                                @RequestParam(defaultValue = "10") int size,
+                                                                @RequestParam(defaultValue = "displayName") String sortBy,
+                                                                @RequestParam(defaultValue = "ASC") String sortOrder) {
 
-        List<UserPreviewDto> orgMembers = orgMemberService.getSearchedOrgMembers(getCurrentOrgMember(), search, page, size);
+        Sort sort = sortOrder.equalsIgnoreCase("DESC") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+        List<UserBasicInfoDto> orgMembers = orgMemberService.getSearchedOrgMembers(getCurrentOrgMember(), search, pageable);
         return ResponseEntity.ok(new ApiResponseDto("List of organization members retrieved successfully.", orgMembers));
     }
 
@@ -101,6 +111,7 @@ public class OrgMemberController extends OrgSubscriptionManager {
             OrgMember orgMember = orgMemberService.getOrgMemberByPublicId(orgMemberId);
             Org org = orgMember.getOrg();
             OrgSubscriptionHistory orgSubscriptionHistory = orgSubscriptionHistoryService.getLatestSubscription(org.getId()).orElseThrow(() -> new DataNotFoundException("No subscription history found for org with ID " + org.getId()));
+            userDetail.put("orgId", org.getPublicId());
             userDetail.put("orgMemberId", orgMemberId);
             userDetail.put("orgStatus", orgSubscriptionHistory.getEndDate().isBefore(LocalDateTime.now()) ? "Inactive" : "Active");
         }

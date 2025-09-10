@@ -1,20 +1,23 @@
 import './PostHeader.css';
 import utils from '../../../utils';
-import PostsLikedBy from './PostsLikedBy';
 import { useEffect, useState } from 'react';
 import { apiRequest } from '../../../http_request';
 import OptionsModal from '../../Utils/OptionsModal';
 import { useDispatch, useSelector } from 'react-redux';
 import { showPopup } from '../../../store/reducers/PopupSlice';
 import { showProfile } from '../../../store/reducers/ProfileSlice';
-import { deletePost, setActivePostId } from '../../../store/reducers/PostSlice';
 import { hideConfirmationPopup, showConfirmationPopup } from '../../../store/reducers/ConfirmationPopupSlice';
+import { deletePost, patchPost, setActivePostId, setPostData, showCreatePostModal } from '../../../store/reducers/PostSlice';
 
-const PostHeader = ({ userId, displayName, displayPicture, createdAt, postId, commentable, setCommentable, isCreator, poll, setShowPostLikesById }) => {
+const PostHeader = ({ post, commentable, setCommentable, poll, setShowPostLikesById }) => {
+
+    const { 'id': postId, owner, createdAt, 'creator': isCreator, allowAnonymousComments } = post || {};
+    const { userId, displayName, displayPicture } = owner || {};
 
     const dispatch = useDispatch();
     const [isOptionOpen, setIsOptionOpen] = useState(false);
     const { activePostId } = useSelector(state => state.posts); // only one can be open
+    const [commentAnonymous, setCommentAnonymous] = useState(allowAnonymousComments);
     const [pollUpdatable, setPollUpdatable] = useState(poll?.updatable);
 
     const onToggleOption = () => {
@@ -69,6 +72,17 @@ const PostHeader = ({ userId, displayName, displayPicture, createdAt, postId, co
             }
         },
         {
+            name: isCreator && 'Edit Post',
+            icon: 'fa fa-pen-to-square',
+            onClick: (e) => {
+                e.stopPropagation();
+                dispatch(setActivePostId(postId));
+                dispatch(setPostData(post));
+                dispatch(showCreatePostModal());
+                closeOptionsModal();
+            }
+        },
+        {
             name: isCreator && !isScheduledPost && `View Likes`,
             icon: `fa fa-users`,
             onClick: (e) => {
@@ -82,9 +96,40 @@ const PostHeader = ({ userId, displayName, displayPicture, createdAt, postId, co
             icon: 'fa fa-link',
             onClick: (e) => {
                 e.stopPropagation();
-                navigator.clipboard.writeText(`${window.location.origin}/post/${postId}`);
+                navigator.clipboard.writeText(`${window.location.origin}/feeds/post/${postId}`);
                 closeOptionsModal();
                 dispatch(showPopup({ message: 'Post link copied to clipboard', type: 'success' }));
+            }
+        },
+        {
+            name: isCreator && `${commentAnonymous ? 'Restrict' : 'Allow'} Anonymous Comments`,
+            icon: 'fa fa-user-secret',
+            onClick: (e) => {
+                e.stopPropagation();
+                dispatch(showConfirmationPopup({
+                    message: `Are you sure you want to ${commentAnonymous ? 'restrict' : 'allow'} anonymous comments on this post?`,
+                    options: [
+                        {
+                            title: `${commentAnonymous ? 'Restrict' : 'Allow'}`,
+                            color: `${commentAnonymous ? 'red' : 'green'}`,
+                            onClick: () => {
+                                apiRequest(`/api/v1/post/${postId}`, "PATCH", { 'allowAnonymousComments': !commentAnonymous }).then(({ data }) => {
+                                    setCommentAnonymous(!commentAnonymous);
+                                    dispatch(patchPost({ id: postId, allowAnonymousComments: !commentAnonymous }));
+                                    dispatch(showPopup({ message: `Anonymous comments ${!commentAnonymous ? 'enabled' : 'disabled'}`, type: 'success' }));
+                                    closeOptionsModal();
+                                }).catch(({ message }) => {
+                                    dispatch(showPopup({ message, type: 'error' }));
+                                });
+                            }
+                        },
+                        {
+                            title: "Cancel",
+                            color: "gray",
+                            onClick: () => dispatch(hideConfirmationPopup())
+                        }
+                    ]
+                }));
             }
         },
         {
