@@ -7,9 +7,10 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum Workspace {
 
-    ORG_SPACE("org"),
-    TEAM_SPACE("team"),
-    PERSONAL_SPACE("personal");
+    ORG_SPACE("org", "Org Space"),
+    TEAM_SPACE("team", "Team Space"),
+    PERSONAL_SPACE("personal", "Personal Space");
 
     private final String value;
+    private final String displayName;
 }

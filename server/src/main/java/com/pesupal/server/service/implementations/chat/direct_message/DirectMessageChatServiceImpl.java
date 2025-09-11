@@ -19,17 +19,6 @@ public class DirectMessageChatServiceImpl implements DirectMessageChatService {
     private final DirectMessageChatRepository directMessageChatRepository;
 
     /**
-     * @param orgMemberPublicId1
-     * @param orgMemberPublicId2
-     * @return
-     */
-    @Override
-    public DirectMessageChat getDirectMessageChat(String orgMemberPublicId1, String orgMemberPublicId2) {
-
-        return directMessageChatRepository.findByParticipants(orgMemberPublicId1, orgMemberPublicId2).orElseThrow(() -> new DataNotFoundException("No chat found yet."));
-    }
-
-    /**
      * Find or create the direct message between given users.
      *
      * @param user1

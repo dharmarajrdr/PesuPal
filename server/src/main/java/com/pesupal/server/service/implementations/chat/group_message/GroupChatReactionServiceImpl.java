@@ -1,6 +1,5 @@
 package com.pesupal.server.service.implementations.chat.group_message;
 
-import com.pesupal.server.dto.response.UserBasicInfoDto;
 import com.pesupal.server.dto.response.chat.ReactMessageResponseDto;
 import com.pesupal.server.enums.Reaction;
 import com.pesupal.server.exceptions.ActionProhibitedException;
@@ -14,6 +13,7 @@ import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.projections.ReactionCountProjection;
 import com.pesupal.server.repository.chat.group_message.GroupChatReactionRepository;
 import com.pesupal.server.service.interfaces.chat.group_message.GroupChatReactionService;
+import com.pesupal.server.service.interfaces.org.OrgMemberService;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
@@ -27,10 +27,12 @@ public class GroupChatReactionServiceImpl extends CurrentValueRetriever implemen
 
     private final GroupChatMessageServiceImpl groupChatMessageService;
     private final GroupChatReactionRepository groupChatReactionRepository;
+    private final OrgMemberService orgMemberService;
 
-    public GroupChatReactionServiceImpl(@Lazy GroupChatMessageServiceImpl groupChatMessageService, GroupChatReactionRepository groupChatReactionRepository) {
+    public GroupChatReactionServiceImpl(@Lazy GroupChatMessageServiceImpl groupChatMessageService, GroupChatReactionRepository groupChatReactionRepository, OrgMemberService orgMemberService) {
         this.groupChatMessageService = groupChatMessageService;
         this.groupChatReactionRepository = groupChatReactionRepository;
+        this.orgMemberService = orgMemberService;
     }
 
     /**
@@ -88,7 +90,7 @@ public class GroupChatReactionServiceImpl extends CurrentValueRetriever implemen
 
         groupChatReactionRepository.save(groupChatReaction);
 
-        return new ReactMessageResponseDto(groupChatReaction.getId(), reaction, groupChatReaction.getCreatedAt(), UserBasicInfoDto.fromOrgMember(reactor));
+        return new ReactMessageResponseDto(groupChatReaction.getId(), reaction, groupChatReaction.getCreatedAt(), orgMemberService.getUserBasicInfo(reactor));
     }
 
     /**

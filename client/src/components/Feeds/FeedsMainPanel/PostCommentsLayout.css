@@ -43,13 +43,13 @@
 }
 
 .comment-user-name {
-    font-size: 15px;
+    font-size: 14px;
     font-weight: 600;
     color: #333;
 }
 
 .comment-content {
-    font-size: 14px;
+    font-size: 13px;
     color: #555;
     margin-top: 5px;
 }
@@ -71,6 +71,7 @@
 
 #comments-list {
     height: calc(100% - 150px);
+    overflow-y: auto;
 }
 
 #create-comment {
@@ -81,17 +82,18 @@
     align-items: flex-start;
     gap: 10px;
     width: 100%;
+    height: 110px;
     padding: 15px;
     border-radius: 12px;
     box-shadow: 0 2px 6px var(--box-shadow-color);
 }
 
+.edit-comment-textarea,
 .create-comment-textarea {
-    flex-grow: 1;
     min-height: 80px;
     resize: vertical;
     padding: 12px;
-    font-size: 15px;
+    font-size: 13px;
     line-height: 1.5;
     border-radius: 8px;
     border: 1px solid #ccc;
@@ -101,9 +103,14 @@
     resize: none;
 }
 
+.edit-comment-textarea:focus,
 .create-comment-textarea:focus {
     border-color: #3f4c68;
     box-shadow: 0 0 0 2px rgba(63, 76, 104, 0.2);
+}
+
+.edit-comment-textarea {
+    min-height: auto;
 }
 
 .create-comment-button {
@@ -132,4 +139,44 @@
 .delete-comment:hover i {
     color: red;
     transition-duration: 0.2s;
+}
+
+.edit-comment:hover,
+.edit-comment:hover i {
+    color: #3978ff;
+    transition-duration: 0.2s;
+}
+
+#comment-anonymous-toggle {
+    cursor: pointer;
+    margin: 0;
+}
+
+#comment-anonymous-toggle * {
+    pointer-events: none;
+}
+
+#create-comment-emoji-toggle {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 20px;
+    color: #a8b3e2;
+    cursor: pointer;
+}
+
+#create-comment-emoji-picker {
+    position: absolute;
+    bottom: 100%;
+    right: 0;
+    z-index: 10;
+    border-radius: 8px;
+}
+
+.comment-replies-container {
+    width: 100%;
+}
+
+.comment-replies-container .comment-item {
+    padding: 10px 0px;
 }

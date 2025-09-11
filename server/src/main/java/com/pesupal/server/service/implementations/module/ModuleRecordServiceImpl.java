@@ -210,12 +210,10 @@ public class ModuleRecordServiceImpl extends CurrentValueRetriever implements Mo
 
         validateRecordsReadAccessibility(module, orgMember);
 
-        ModuleMember moduleMember = moduleMemberService.getModuleMemberByOrgMemberAndModule(orgMember, module);
-        ModuleRole moduleRole = moduleMember.getRole();
-        ModulePermission modulePermission = modulePermissionService.getModulePermissionByModuleAndRole(module, moduleRole);
-
-        if (!modulePermission.isReadRecord()) {
-            throw new PermissionDeniedException("You do not have permission to view this record.");
+        ModuleRole moduleRole = null;
+        if (module.getAccessibility().equals(ModuleAccessibility.SELECTIVE_MEMBERS)) {
+            ModuleMember moduleMember = moduleMemberService.getModuleMemberByOrgMemberAndModule(orgMember, module);
+            moduleRole = moduleMember.getRole();
         }
 
         ModuleRecordDto moduleRecordDto = ModuleRecordDto.fromModuleRecord(moduleRecord);

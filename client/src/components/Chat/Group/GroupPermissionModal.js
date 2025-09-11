@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react';
+import './PermissionModal.css';
 import Loader from '../../Loader';
-import './GroupPermissionModal.css';
 import { useDispatch } from 'react-redux';
+import { useEffect, useState } from 'react';
 import { apiRequest } from '../../../http_request';
 import { showPopup } from '../../../store/reducers/PopupSlice';
 
@@ -79,14 +79,14 @@ const GroupPermissionModal = ({ onClose, groupId }) => {
     const overlayClickHandler = (e) => {
         e.stopPropagation();
         e.preventDefault();
-        if (e.target.id === 'group-permission-modal') {
+        if (e.target.id === 'permission-modal') {
             onClose();
         }
     }
 
     return (
-        <div id='group-permission-modal' className='entire-screen-overlay FRSE' onClick={overlayClickHandler}>
-            <div id='group-permission-modal-content' className='FCCS'>
+        <div id='permission-modal' className='entire-screen-overlay FRSE' onClick={overlayClickHandler}>
+            <div id='permission-modal-content' className='FCCS'>
                 <h4 id='title'>Permissions</h4>
                 {loading ? <Loader /> :
                     noPermissionToAccess ? <NoPermissionToAccess /> :

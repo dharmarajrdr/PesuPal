@@ -5,17 +5,26 @@ import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.model.user.User;
 import com.pesupal.server.model.user.UserOnboarding;
 import com.pesupal.server.repository.org.UserOnboardingRepository;
+import com.pesupal.server.service.interfaces.UserService;
+import com.pesupal.server.service.interfaces.org.OrgMemberService;
 import com.pesupal.server.service.interfaces.org.UserOnboardingService;
-import lombok.AllArgsConstructor;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
 
 @Service
-@AllArgsConstructor
 public class UserOnboardingServiceImpl implements UserOnboardingService {
 
+    private final UserService userService;
+    private final OrgMemberService orgMemberService;
     private final UserOnboardingRepository userOnboardingRepository;
+
+    public UserOnboardingServiceImpl(@Lazy UserService userService, UserOnboardingRepository userOnboardingRepository, @Lazy OrgMemberService orgMemberService) {
+        this.userService = userService;
+        this.orgMemberService = orgMemberService;
+        this.userOnboardingRepository = userOnboardingRepository;
+    }
 
     /**
      * Retrieves the UserOnboarding entity by its invitation ID.
@@ -53,6 +62,8 @@ public class UserOnboardingServiceImpl implements UserOnboardingService {
         }
         userOnboarding.setEmailVerificationDone(true);
         userOnboardingRepository.save(userOnboarding);
+
+        orgMemberService.joinInAllInvitedOrgs(userOnboarding.getUser());
     }
 
     /**
@@ -83,10 +94,22 @@ public class UserOnboardingServiceImpl implements UserOnboardingService {
 
         UserOnboarding userOnboarding = getUserOnboardingByUser(user);
         if (!userOnboarding.isEmailVerificationDone()) {
-            throw new DataNotFoundException("User onboarding is pending. Please complete the email verification process.");
+            throw new ActionProhibitedException("User onboarding is pending. Please complete the email verification process.");
         }
         if (!userOnboarding.isPhoneVerificationDone()) {
-            throw new DataNotFoundException("User onboarding is pending. Please complete the phone verification process.");
+            throw new ActionProhibitedException("User onboarding is pending. Please complete the phone verification process.");
         }
+    }
+
+    /**
+     * Checks if the user with the given user ID has completed the onboarding verification.
+     *
+     * @param userId
+     */
+    @Override
+    public void hasDoneOnboardingVerification(String userId) {
+
+        User user = userService.getUserByPublicId(userId);
+        hasDoneOnboardingVerification(user);
     }
 }

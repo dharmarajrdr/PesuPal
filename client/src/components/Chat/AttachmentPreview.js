@@ -6,7 +6,7 @@ import AttachmentItem from './AttachmentItem';
 import { useState } from 'react';
 import { hideLoader, showLoader } from '../../store/reducers/VerticalLoaderSlice';
 
-const AttachmentPreview = ({ files, setFiles, clickSendMessageHandler }) => {
+const AttachmentPreview = ({ files, setFiles, afterUpload }) => {
 
     const dispatch = useDispatch();
     const [sending, setSending] = useState(false);
@@ -39,7 +39,7 @@ const AttachmentPreview = ({ files, setFiles, clickSendMessageHandler }) => {
 
             for (const { mediaId, file, extension, size } of files) {
                 const media = { mediaId, 'name': file.name, extension, size };
-                clickSendMessageHandler({ media });
+                afterUpload && afterUpload({ media });
                 await sleep(10); // wait 10ms before next send
             }
 

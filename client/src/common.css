@@ -401,6 +401,7 @@
   height: 20px;
   line-height: 20px;
   border-radius: 100%;
+  object-fit: cover;
 }
 
 .img_30_30 {
@@ -408,6 +409,7 @@
   height: 30px;
   line-height: 30px;
   border-radius: 100%;
+  object-fit: cover;
 }
 
 .img_40_40 {
@@ -415,6 +417,7 @@
   height: 40px;
   line-height: 40px;
   border-radius: 100%;
+  object-fit: cover;
 }
 
 .img_75_75 {
@@ -422,6 +425,7 @@
   height: 75px;
   line-height: 75px;
   border-radius: 100%;
+  object-fit: cover;
 }
 
 .alignCenter {
@@ -483,6 +487,10 @@
   width: calc(100% - 75px);
   height: 100vh;
   background-color: var(--bg-color);
+  overflow: hidden;
+}
+
+.overflowHidden {
   overflow: hidden;
 }
 
@@ -549,40 +557,6 @@ span {
   .Layout {
     width: 100%;
   }
-}
-
-.html-content-renderer b {
-  font-weight: 600;
-}
-
-.html-content-renderer u {
-  text-decoration: underline;
-}
-
-.html-content-renderer a,
-.html-content-renderer a * {
-  color: #007bff;
-  text-decoration: none;
-}
-
-.html-content-renderer a:hover {
-  text-decoration: underline;
-  color: #000bff;
-}
-
-.html-content-renderer em {
-  font-style: italic;
-}
-
-.html-content-renderer s,
-.html-content-renderer strike,
-.html-content-renderer del {
-  text-decoration: line-through;
-}
-
-.html-content-renderer ol,
-.html-content-renderer ul {
-  padding: 5px 20px;
 }
 
 /* Chrome, Safari, Edge, Opera */

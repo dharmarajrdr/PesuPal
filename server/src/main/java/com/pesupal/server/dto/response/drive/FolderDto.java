@@ -3,7 +3,6 @@ package com.pesupal.server.dto.response.drive;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.pesupal.server.dto.response.UserBasicInfoDto;
 import com.pesupal.server.enums.Security;
-import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.model.workdrive.Folder;
 import lombok.Data;
 
@@ -13,7 +12,7 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class FolderDto extends FileOrFolderDto {
 
-    private Long id;
+    private String id;
 
     private String name;
 
@@ -25,15 +24,15 @@ public class FolderDto extends FileOrFolderDto {
 
     private List<FolderDto> subFolders;
 
-    private List<FileDto> files;
+    private int files;
 
-    public static FolderDto fromFolderAndOrgMember(Folder folder, OrgMember orgMember) {
+    public static FolderDto fromFolder(Folder folder) {
 
         FolderDto folderDto = new FolderDto();
-        folderDto.setId(folder.getId());
+        folderDto.setId(folder.getPublicId());
         folderDto.setName(folder.getName());
-        folderDto.setSize(folderDto.getSize());
-        folderDto.setOwner(UserBasicInfoDto.fromOrgMember(orgMember));
+        folderDto.setSize(folder.getSize());
+        folderDto.setFiles(folder.getFiles().size());
         return folderDto;
     }
 }

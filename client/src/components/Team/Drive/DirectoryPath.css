@@ -1,0 +1,72 @@
+#directory-path {
+    display: flex;
+    align-items: center;
+    background-color: #fff;
+    padding: 10px 2px;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+    border-left: 5px solid var(--primary-color);
+    margin: 5px 0px;
+    height: 37px;
+}
+
+#directory-path>i {
+    padding: 0px 5px;
+    width: 25px;
+    color: var(--primary-color);
+}
+
+#directory-path #directory-list {
+    overflow-x: auto;
+    width: calc(100% - 75px);
+}
+
+#directory-path .directory-list-item {
+    color: white;
+    text-decoration: none;
+    padding: 0px 10px;
+    transition: background-color 0.3s;
+    border-left: 2px solid #aaa;
+    transform: skewX(-25deg);
+    position: relative;
+    left: -2px;
+}
+
+#directory-path .directory-list-item i,
+#directory-path .directory-list-item span {
+    transform: skewX(25deg);
+}
+
+#directory-path .directory-list-item span {
+    color: #555;
+    font-size: 14px;
+}
+
+#directory-path .directory-list-item:first-child {
+    border-left: none;
+}
+
+#directory-path .directory-list-item:last-child i,
+#directory-path .directory-list-item:last-child span {
+    color: var(--primary-color);
+    cursor: default;
+    font-weight: 600;
+}
+
+#directory-path .directory-list-item span:hover {
+    color: #222;
+}
+
+#directory-path #directory-settings {
+    width: 30px;
+    height: 30px;
+    line-height: 30px;
+    padding: 0px;
+    text-align: center;
+    cursor: pointer;
+    margin-right: 5px;
+}
+
+#directory-path #directory-settings:hover {
+    color: var(--primary-color-active);
+}

@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import './Profile.css'
 import { useEffect, useState } from 'react';
 import { apiRequest } from '../../http_request';
@@ -48,30 +48,43 @@ const NavigationLink = ({ to, icon, label, count }) => {
 
 const Profile = () => {
 
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const [error, setError] = useState(null);
     const [profile, setProfile] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
     const userId = useSelector(state => state.profile);
-    const dispatch = useDispatch();
+
+    const { displayName, designation, department, displayPicture, Social, phone, email, employeeId, chatId } = profile || {};
+    const [displayPictureUrl, setShowDisplayPictureUrl] = useState('/images/anonymous.jpg');
 
     useEffect(() => {
         if (userId == null) {
             return;
         }
+        setProfile(null);
+        setLoading(true);
         apiRequest("/api/v1/profile/" + userId, "GET").then(({ data }) => {
             setLoading(false);
             setProfile(data);
+            console.log(data);
+            if (data.displayPicture) {
+                setShowDisplayPictureUrl(data.displayPicture);
+            }
         }).catch(({ message }) => {
             setLoading(false);
             setError(message);
         });
     }, [userId]);
 
-    const closeProfileOverlay = () => {
+    const closeProfileOverlay = (e) => {
+        if (e.target.id !== 'ProfileOverlay') return;
         dispatch(hideProfile());
     }
 
-    const { displayName, designation, department, displayPicture, Social, phone, email, employeeId } = profile || {};
+    const goToChat = () => {
+        navigate(`/chat/messages/${chatId}`);
+    }
 
     return userId ? (
         <div id='ProfileOverlay' className='FRCE' onClick={closeProfileOverlay}>
@@ -79,7 +92,7 @@ const Profile = () => {
                 {loading ? <Loader /> :
                     error ? <ErrorMessage message={error} /> : <>
                         <div id='user_image_basic_info' className='FCCC'>
-                            <img src={displayPicture} id='user_photo' className='objectFitCover' />
+                            <img src={displayPictureUrl} id='user_photo' className='objectFitCover' onError={() => setShowDisplayPictureUrl('/images/anonymous.jpg')} />
                             <div id='user_basic_info' className='FCCC'>
                                 <div className='row'>
                                     <h4 id='profile_name'>{displayName}</h4>
@@ -93,7 +106,7 @@ const Profile = () => {
                                     <p id='profile_dept' title='Department'>{department}</p>
                                 </div>
                                 <div className='row mT10'>
-                                    <i className='profile_contacts fa fa-comment' style={{ backgroundColor: 'blue' }} />
+                                    <i className='profile_contacts fa fa-comment' style={{ backgroundColor: '#3591ff' }} onClick={goToChat} />
                                     <i className='profile_contacts fa fa-phone' style={{ backgroundColor: 'green' }} />
                                     <i className='profile_contacts fa fa-video' style={{ backgroundColor: 'red' }} />
                                 </div>

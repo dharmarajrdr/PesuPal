@@ -3,6 +3,7 @@ package com.pesupal.server.service.implementations.drive;
 import com.pesupal.server.dto.request.drive.CreateFolderDto;
 import com.pesupal.server.dto.response.drive.FileOrFolderDto;
 import com.pesupal.server.dto.response.drive.FolderDto;
+import com.pesupal.server.dto.response.drive.FolderPreviewDto;
 import com.pesupal.server.enums.Arithmetic;
 import com.pesupal.server.enums.Workspace;
 import com.pesupal.server.exceptions.ActionProhibitedException;
@@ -10,7 +11,9 @@ import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.factory.WorkspaceFactory;
 import com.pesupal.server.helpers.CurrentValueRetriever;
 import com.pesupal.server.model.user.OrgMember;
+import com.pesupal.server.model.workdrive.File;
 import com.pesupal.server.model.workdrive.Folder;
+import com.pesupal.server.repository.drive.FileRepository;
 import com.pesupal.server.repository.drive.FolderRepository;
 import com.pesupal.server.service.interfaces.drive.FolderService;
 import com.pesupal.server.service.interfaces.drive.WorkdriveSpace;
@@ -19,19 +22,22 @@ import jakarta.transaction.Transactional;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class FolderServiceImpl extends CurrentValueRetriever implements FolderService {
 
-    private final OrgMemberService orgMemberService;
+    private final FileRepository fileRepository;
     private final FolderRepository folderRepository;
     private final WorkspaceFactory workspaceFactory;
+    private final OrgMemberService orgMemberService;
 
-    public FolderServiceImpl(OrgMemberService orgMemberService, FolderRepository folderRepository, @Lazy WorkspaceFactory workspaceFactory) {
-        this.orgMemberService = orgMemberService;
+    public FolderServiceImpl(FolderRepository folderRepository, @Lazy WorkspaceFactory workspaceFactory, FileRepository fileRepository, OrgMemberService orgMemberService) {
+        this.fileRepository = fileRepository;
         this.folderRepository = folderRepository;
         this.workspaceFactory = workspaceFactory;
+        this.orgMemberService = orgMemberService;
     }
 
     /**
@@ -42,12 +48,9 @@ public class FolderServiceImpl extends CurrentValueRetriever implements FolderSe
      */
     @Override
     @Transactional
-    public FolderDto createFolder(CreateFolderDto createFolderDto) {
+    public FolderDto createFolder(CreateFolderDto createFolderDto, OrgMember orgMember) {
 
-        OrgMember orgMember = getCurrentOrgMember();
-        Long orgId = orgMember.getOrg().getId();
-
-        if (folderRepository.existsByNameAndSpaceAndParentFolder_PublicId(createFolderDto.getName(), createFolderDto.getSpace(), createFolderDto.getParentFolderId())) {
+        if (folderRepository.existsByNameAndSpaceAndParentFolder_PublicIdAndCreatedBy_OrgAndDeleted(createFolderDto.getName(), createFolderDto.getSpace(), createFolderDto.getParentFolderId(), orgMember.getOrg(), false)) {
             throw new ActionProhibitedException("A folder with the name '" + createFolderDto.getName() + "' already exists.");
         }
 
@@ -56,28 +59,22 @@ public class FolderServiceImpl extends CurrentValueRetriever implements FolderSe
         folder.setCreatedBy(orgMember);
         if (createFolderDto.getParentFolderId() != null) {
             Folder parentFolder = getFolderByPublicId(createFolderDto.getParentFolderId());
-            if (parentFolder != null && !parentFolder.getSpace().equals(createFolderDto.getSpace())) {
-                throw new IllegalArgumentException("Folder '" + parentFolder.getName() + "' does not belong to " + createFolderDto.getSpace().getValue() + " space.");
+            if (parentFolder != null) {
+                if (!parentFolder.getSpace().equals(createFolderDto.getSpace())) {
+                    throw new IllegalArgumentException("Folder '" + parentFolder.getName() + "' does not belong to " + createFolderDto.getSpace().getValue() + " space.");
+                }
+                if (parentFolder.isDeleted()) {
+                    throw new ActionProhibitedException("Unable to create folder under deleted folder.");
+                }
             }
             folder.setParentFolder(parentFolder);
         }
         WorkdriveSpace workdriveSpace = workspaceFactory.getFactory(createFolderDto.getSpace());
         folder = workdriveSpace.save(folder, createFolderDto, orgMember);
-        FolderDto folderDto = FolderDto.fromFolderAndOrgMember(folder, orgMember);
+        FolderDto folderDto = FolderDto.fromFolder(folder);
         folderDto.setSecurity(createFolderDto.getSecurity());
+        folderDto.setOwner(orgMemberService.getUserBasicInfo(orgMember));
         return folderDto;
-    }
-
-    /**
-     * Retrieves a folder by its ID.
-     *
-     * @param folderId
-     * @return Folder
-     */
-    @Override
-    public Folder getFolderById(Long folderId) {
-
-        return folderRepository.findById(folderId).orElseThrow(() -> new DataNotFoundException("Folder with ID " + folderId + " not found."));
     }
 
     /**
@@ -103,6 +100,9 @@ public class FolderServiceImpl extends CurrentValueRetriever implements FolderSe
 
         OrgMember orgMember = getCurrentOrgMember();
         Folder parentFolder = getFolderByPublicId(folderId);
+        if (parentFolder.isDeleted()) {
+            throw new DataNotFoundException("Folder not found or has been deleted.");
+        }
         Workspace workspace = parentFolder.getSpace();
         WorkdriveSpace workdriveSpace = workspaceFactory.getFactory(workspace);
         return workdriveSpace.findAllFilesAndFoldersByOrgMemberAndFolder(orgMember, parentFolder);
@@ -128,16 +128,82 @@ public class FolderServiceImpl extends CurrentValueRetriever implements FolderSe
      * @param folderId
      */
     @Override
-    public void deleteFolder(Long folderId) {
+    public void deleteFolder(String folderId) {
 
         OrgMember orgMember = getCurrentOrgMember();
-        Folder folder = getFolderById(folderId);
+        Folder folder = getFolderByPublicId(folderId);
 
         if (!folder.getCreatedBy().getId().equals(orgMember.getId())) {
             throw new ActionProhibitedException("You do not have permission to delete this folder.");
         }
 
-        folderRepository.delete(folder);
+        if (folder.isDeleted()) {
+            throw new ActionProhibitedException("This folder is already deleted.");
+        }
+
+        folder.setDeleted(true);
+        folderRepository.save(folder);
+
+        deleteSubFilesAndFolders(folder);
+    }
+
+    /**
+     * Recursively deletes all files and subfolders within a folder.
+     *
+     * @param folder
+     */
+    private void deleteSubFilesAndFolders(Folder folder) {
+
+        for (File file : folder.getFiles()) {
+            file.setDeleted(true);
+            fileRepository.save(file);
+        }
+        for (Folder subFolder : folder.getSubFolders()) {
+            subFolder.setDeleted(true);
+            folderRepository.save(subFolder);
+            deleteSubFilesAndFolders(subFolder);
+        }
+    }
+
+    /**
+     * Restores a deleted folder by its ID.
+     *
+     * @param folderId
+     */
+    @Override
+    public void restoreFolder(String folderId) {
+
+        OrgMember orgMember = getCurrentOrgMember();
+        Folder folder = getFolderByPublicId(folderId);
+
+        if (!folder.getCreatedBy().getId().equals(orgMember.getId())) {
+            throw new ActionProhibitedException("You do not have permission to restore this folder.");
+        }
+
+        if (!folder.isDeleted()) {
+            throw new ActionProhibitedException("This folder is not deleted and cannot be restored.");
+        }
+
+        folder.setDeleted(false);
+        folderRepository.save(folder);
+    }
+
+    /**
+     * Clears the contents of a folder by its ID.
+     *
+     * @param folderId
+     */
+    @Override
+    public void clearFolder(String folderId) {
+
+        Folder folder = getFolderByPublicId(folderId);
+        OrgMember orgMember = getCurrentOrgMember();
+
+        if (!folder.getCreatedBy().getId().equals(orgMember.getId())) {
+            throw new ActionProhibitedException("You do not have permission to clear this folder.");
+        }
+
+        deleteSubFilesAndFolders(folder);
     }
 
     /**
@@ -169,5 +235,31 @@ public class FolderServiceImpl extends CurrentValueRetriever implements FolderSe
         folder.setSize(currentSize + (arithmetic == Arithmetic.PLUS ? size : -size));
         folderRepository.save(folder);
         updateFolderSizeRecursively(folder.getParentFolder(), size, arithmetic);
+    }
+
+    /**
+     * Retrieves the parent folders of a given folder by its ID.
+     *
+     * @param folderId
+     * @return
+     */
+    @Override
+    public List<FolderPreviewDto> getParentFolders(String folderId) {
+
+        if (folderId == null) {
+            return List.of();
+        }
+
+        Folder folder = getFolderByPublicId(folderId);
+        Workspace space = folder.getSpace();
+
+        List<FolderPreviewDto> folderPreviewDtos = new ArrayList<>();
+        while (folder != null) {
+            FolderPreviewDto folderPreviewDto = FolderPreviewDto.fromFolder(folder);
+            folderPreviewDtos.add(0, folderPreviewDto); // Add to the beginning to maintain order
+            folder = folder.getParentFolder();
+        }
+        folderPreviewDtos.add(0, FolderPreviewDto.builder().name(space.getDisplayName()).id(null).space(space).build());
+        return folderPreviewDtos;
     }
 }

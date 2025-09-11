@@ -1,12 +1,12 @@
-import MessageDeleted from './MessageDeleted';
 import Message from './Message';
-import MessageActions from './MessageActions';
-import MessageMeta from './MessageMeta';
-import { useSelector } from 'react-redux';
-import UserAvatar from '../../User/UserAvatar';
-import FullScreenImageView from '../../FullScreenImageView';
 import { useState } from 'react';
+import MessageMeta from './MessageMeta';
+import MessageDeleted from './MessageDeleted';
+import MessageActions from './MessageActions';
+import UserAvatar from '../../User/UserAvatar';
+import { useDispatch, useSelector } from 'react-redux';
 import ScheduledMessageActions from './ScheduledMessageActions';
+import { showFullScreenImage } from '../../../store/reducers/FullScreenImageSlice';
 
 const extensionTagMapper = {
     "img": ["jpeg", "jpg", "png", "gif", "avif"],
@@ -25,13 +25,19 @@ const ResourceNotFound = () => {
 
 const ImageDisplayer = ({ media }) => {
 
+    const dispatch = useDispatch();
     const { mediaUrl } = media || {};
     const [imageError, setImageError] = useState(false);
-    const [showFullScreen, setShowFullScreen] = useState(false);
+
+    const showFullScreen = () => {
+        if (imageError) {
+            return;
+        }
+        dispatch(showFullScreenImage(mediaUrl));
+    }
 
     return mediaUrl ? <div className="message-media">
-        {showFullScreen && <FullScreenImageView mediaUrl={mediaUrl} onClose={() => setShowFullScreen(false)} />}
-        {imageError ? <ResourceNotFound /> : <img src={mediaUrl} alt="Media" className="media-image cursP" onError={() => setImageError(true)} onClick={() => setShowFullScreen(true)} />}
+        {imageError ? <ResourceNotFound /> : <img src={mediaUrl} alt="Media" className="media-image cursP" onError={() => setImageError(true)} onClick={showFullScreen} />}
     </div> : null;
 }
 

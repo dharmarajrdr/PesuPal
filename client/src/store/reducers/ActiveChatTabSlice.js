@@ -26,6 +26,11 @@ const details = {
         'reactMessageApi': '/api/v1/group-chat-reactions',
         'deleteMessageApi': '/api/v1/group-chat-message',
         'showStatusIndicator': false
+    },
+    'botMessage': {
+        'name': 'botMessage',
+        'chatMode': 'BOT_MESSAGE',
+        'route': '/chat/bots',
     }
 }
 

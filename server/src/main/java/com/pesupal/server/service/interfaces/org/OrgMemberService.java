@@ -1,12 +1,15 @@
 package com.pesupal.server.service.interfaces.org;
 
 import com.pesupal.server.dto.request.org.AddOrgMemberDto;
+import com.pesupal.server.dto.request.org.CreateOrgDto;
 import com.pesupal.server.dto.response.UserBasicInfoDto;
 import com.pesupal.server.dto.response.UserPreviewDto;
 import com.pesupal.server.dto.response.org.OrgDetailDto;
 import com.pesupal.server.model.org.Org;
+import com.pesupal.server.model.user.OrgInvitation;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.model.user.User;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -18,27 +21,37 @@ public interface OrgMemberService {
 
     OrgMember getOrgMemberByUserIdAndOrgId(Long userId, Long orgId);
 
-    Boolean existsByUserAndOrg(User user, Org org);
+    UserBasicInfoDto getUserBasicInfo(OrgMember orgMember);
 
-    List<UserBasicInfoDto> getAllMembers(Long departmentId, OrgMember orgMember);
+    Boolean existsByUserAndOrg(User user, Org org);
 
     Boolean existsByUserIdAndOrgId(Long userId, Long orgId);
 
-    OrgMember joinOrgAsFirstMember(User user, Org org);
+    OrgMember joinOrgAsFirstMember(CreateOrgDto createOrgDto, Org org, User user);
 
     List<OrgDetailDto> listOfOrgUserPartOf(Long userId);
 
-    OrgMember addMemberToOrg(AddOrgMemberDto addOrgMemberDto, OrgMember orgMember, boolean firstMember);
-
-    void validateUserIsOrgMember(User user, Org org);
-
     List<UserBasicInfoDto> getAllOrgMembers(OrgMember orgMember);
 
-    List<UserPreviewDto> getSearchedOrgMembers(OrgMember orgMember, String search, int page, int size);
-
-    String getOrgMemberImageByUserIdAndOrgId(Long userId, Long currentOrgId);
+    List<UserBasicInfoDto> getSearchedOrgMembers(OrgMember orgMember, String search, Pageable pageable);
 
     UserPreviewDto getUserPreview(OrgMember orgMember);
 
     String generateTokenWithOrgMemberId(String publicUserId, String publicOrgId);
+
+    void removeAllOrgMembers(Org org);
+
+    void updateOrgMember(String orgMemberPublicId, AddOrgMemberDto addOrgMemberDto, OrgMember currentOrgMember);
+
+    void joinInOrg(OrgInvitation orgInvitation, User user);
+
+    void joinInAllInvitedOrgs(User user);
+
+    List<UserBasicInfoDto> getAllSuperAdmins(OrgMember currentOrgMember);
+
+    List<UserBasicInfoDto> getAllInactiveMembers(OrgMember currentOrgMember);
+
+    void removeOrgMember(OrgMember orgMember);
+
+    void stopAllSchedulesByOrgMember(OrgMember orgMember);
 }

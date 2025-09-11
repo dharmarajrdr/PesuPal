@@ -12,9 +12,15 @@
   width: 100%;
   height: 100%;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
   overflow-x: hidden;
   overflow-y: auto;
+}
+
+#FeedsMainPanel .Post:first-child {
+  margin-top: 0;
 }
 
 @media screen and (max-width: 768px) {
