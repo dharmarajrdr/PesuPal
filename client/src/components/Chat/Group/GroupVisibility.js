@@ -4,7 +4,7 @@ const GroupVisibility = ({ isPublic, setIsPublic, groupVisibilityEditable }) => 
 
     groupVisibilityEditable = groupVisibilityEditable !== undefined ? groupVisibilityEditable : true;
 
-    return <div className="visibility-toggle-container">
+    return <div className="visibility-toggle-container w100">
         <label className="toggle-label">Visibility</label>
         <div className="segmented-toggle">
             <div className={`toggle-option ${isPublic ? 'active' : ''}`} onClick={() => groupVisibilityEditable ? setIsPublic(true) : null}>

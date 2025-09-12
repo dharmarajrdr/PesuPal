@@ -16,7 +16,7 @@ const ChatInputGroupArchived = () => {
             message: 'Are you sure you want to reopen this group?',
             options: [
                 {
-                    "title": "Yes",
+                    "title": "Reopen",
                     "color": "#00a434ff",
                     "onClick": () => {
                         apiRequest(`/api/v1/group/reopen/${groupId}`, 'PUT').then(({ message }) => {
@@ -30,8 +30,8 @@ const ChatInputGroupArchived = () => {
                     }
                 },
                 {
-                    "title": "No",
-                    "color": "#ff0000ff",
+                    "title": "Cancel",
+                    "color": "gray",
                     "onClick": () => dispatch(hideConfirmationPopup())
                 }
             ]

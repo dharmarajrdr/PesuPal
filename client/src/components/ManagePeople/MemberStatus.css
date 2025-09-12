@@ -1,0 +1,18 @@
+.manage-people-table .row .member-status span {
+    font-size: 13px;
+}
+
+.manage-people-table .row .member-status i {
+    font-size: 12px;
+}
+
+.manage-people-table .row .member-status.active span,
+.manage-people-table .row .member-status.active i {
+    color: green;
+    font-weight: 600;
+}
+
+.manage-people-table .row .member-status.inactive span,
+.manage-people-table .row .member-status.inactive i {
+    color: red;
+}

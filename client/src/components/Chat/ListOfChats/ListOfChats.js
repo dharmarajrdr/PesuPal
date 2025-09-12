@@ -1,12 +1,13 @@
 import './ListOfChats.css'
+import SubTabs from './SubTabs'
+import { useRef, useState } from 'react'
 import SearchUsers from './SearchUsers'
 import PinnedUsers from './PinnedUsers'
 import RecentChats from './RecentChats'
-import SubTabs from './SubTabs'
-import { useState } from 'react'
 
 const ListOfChats = () => {
 
+    const recentChatsRef = useRef(null);
     const [searchChat, setSearchChat] = useState('');
 
     return (
@@ -14,9 +15,9 @@ const ListOfChats = () => {
             <div id='searchPinnedFixedContainer'>
                 <SearchUsers searchChat={searchChat} setSearchChat={setSearchChat} />
                 <SubTabs />
-                <PinnedUsers />
+                <PinnedUsers recentChatsRef={recentChatsRef} />
             </div>
-            <RecentChats searchChat={searchChat} />
+            <RecentChats searchChat={searchChat} recentChatsRef={recentChatsRef} />
         </div>
     )
 }

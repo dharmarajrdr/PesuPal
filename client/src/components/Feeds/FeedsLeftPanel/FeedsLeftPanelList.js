@@ -1,51 +1,38 @@
 export default [
     {
-        'title': 'My Feed',
+        'title': 'Feeds',
         'icon': 'fa-regular fa-newspaper',
-        'is_active': true,
-        'color': '#0000FF',
-        'route': '/feeds/936252837'
+        'color': '#0963d8ff',
+        'route': '/feeds'
+    },
+    {
+        'title': 'Scheduled Posts',
+        'icon': 'fa-regular fa-calendar-days',
+        'color': '#aea10bff',
+        'route': '/feeds/scheduled-posts'
     },
     {
         'title': 'Bookmarks',
         'icon': 'fa-regular fa-bookmark',
         'color': '#008000',
-        'route': '/feeds/936252837'
+        'route': '/feeds/bookmarks'
     },
     {
-        'title': 'Read Later',
-        'icon': 'fa-regular fa-clock',
+        'title': 'Tags',
+        'icon': 'fa-solid fa-hashtag',
         'color': '#FFA500',
-        'route': '/feeds/936252837'
+        'route': '/feeds/tags'
     },
     {
-        'title': 'My Scheduled Posts',
-        'icon': 'fa-regular fa-calendar-days',
-        'color': '#FFC0CB',
-        'route': '/feeds/936252837'
-    },
-    {
-        'title': 'Posts I Follow',
-        'icon': 'fa-solid fa-hand-holding-heart',
-        'color': '#FF0000',
-        'route': '/feeds/936252837'
-    },
-    {
-        'title': 'Corp Announcements',
+        'title': 'Announcements',
         'icon': 'fa-solid fa-bullhorn',
         'color': '#800080',
-        'route': '/feeds/936252837'
+        'route': '/feeds/announcements'
     },
     {
         'title': 'Mandatory Reads',
         'icon': 'fa-solid fa-triangle-exclamation',
         'color': '#ff0000',
-        'route': '/feeds/936252837'
-    },
-    {
-        'title': 'Quick Links',
-        'icon': 'fa-solid fa-link',
-        'color': '#008080',
-        'route': '/feeds/936252837'
+        'route': '/feeds/mandatory-reads'
     }
 ]

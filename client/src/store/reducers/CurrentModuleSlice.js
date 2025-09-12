@@ -5,7 +5,8 @@ const CurrentModuleSlice = createSlice({
     initialState: {
         view: null,
         moduleId: null,
-        data: {}
+        data: {},
+        records: []
     },
     reducers: {
         setCurrentModuleId: (state, action) => {
@@ -17,16 +18,35 @@ const CurrentModuleSlice = createSlice({
         setCurrentModuleData: (state, action) => {
             return { ...state, 'data': action.payload }
         },
+        incrementModuleMemberCount: (state) => {
+            return { ...state, 'data': { ...state.data, 'memberCount': (state.data.memberCount || 0) + 1 } }
+        },
+        decrementModuleMemberCount: (state) => {
+            return { ...state, 'data': { ...state.data, 'memberCount': (state.data.memberCount || 0) - 1 } }
+        },
+        updateModuleData: (state, action) => {
+            return { ...state, 'data': { ...state.data, ...action.payload } }
+        },
+        setModuleRecords: (state, action) => {
+            return { ...state, 'records': action.payload }
+        },
+        addModuleRecord: (state, action) => {
+            return { ...state, 'records': [...state.records, action.payload] }
+        },
+        removeModuleRecord: (state, action) => {
+            return { ...state, 'records': state.records.filter(record => record.id !== action.payload.id) }
+        },
         resetCurrentModuleView: () => {
             return {
                 view: null,
                 moduleId: null,
-                data: {}
+                data: {},
+                records: []
             };
         }
     }
 })
 
-export const { setCurrentModuleView, setCurrentModuleId, setCurrentModuleData, resetCurrentModuleView } = CurrentModuleSlice.actions;
+export const { setCurrentModuleView, setCurrentModuleId, setCurrentModuleData, incrementModuleMemberCount, decrementModuleMemberCount, updateModuleData, setModuleRecords, addModuleRecord, removeModuleRecord, resetCurrentModuleView } = CurrentModuleSlice.actions;
 
 export default CurrentModuleSlice.reducer;

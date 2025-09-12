@@ -16,4 +16,6 @@ public interface DesignationService {
     List<DesignationProjection> getAllDesignations(Long orgId);
 
     Designation updateDesignation(Long id, UpdateDesignationDto updateDesignationDto);
+
+    Designation save(Designation designation);
 }

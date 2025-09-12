@@ -2,10 +2,10 @@ package com.pesupal.server.dto.response.post;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.pesupal.server.dto.response.UserBasicInfoDto;
+import com.pesupal.server.enums.PostStatus;
 import com.pesupal.server.model.post.Post;
 import lombok.Data;
 
-import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -25,7 +25,7 @@ public class PostDto {
 
     private List<String> tags;
 
-    private List<URL> media;
+    private List<PostMediaDto> media;
 
     private PostImpressionDto impression;
 
@@ -43,6 +43,12 @@ public class PostDto {
 
     private PollDto poll;
 
+    private PostStatus status;
+
+    private PostMentionsDto mentions;
+
+    private boolean allowAnonymousComments;
+
     public static PostDto fromPost(Post post) {
 
         PostDto postDto = new PostDto();
@@ -53,6 +59,8 @@ public class PostDto {
         postDto.setCommentable(post.isCommentable());
         postDto.setBookmarkable(post.isBookmarkable());
         postDto.setShareable(post.isShareable());
+        postDto.setStatus(post.getStatus());
+        postDto.setAllowAnonymousComments(post.isAllowAnonymousComments());
         return postDto;
     }
 }

@@ -1,10 +1,10 @@
-import { useNavigate } from 'react-router-dom';
 import './PageNotFound.css';
-import { useDispatch } from 'react-redux';
 import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { showLeftNavigation } from '../../store/reducers/LeftNavigationSlice';
 
-const InternalServerError = () => {
+const InternalServerError = ({ message = "Something went wrong. Please try again later." }) => {
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -16,8 +16,8 @@ const InternalServerError = () => {
     return (
         <div className="notfound-container w100 h100">
             <h1>500</h1>
-            <p>Something went wrong. Please try again later.</p>
-            <button onClick={() => navigate('/feeds')}>Go to Home</button>
+            <p>{message}</p>
+            <button onClick={() => navigate('/')}>Go to Home</button>
         </div>
     );
 };

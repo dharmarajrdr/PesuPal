@@ -21,4 +21,16 @@ public class CreateModuleDto {
         module.setAccessibility(accessibility);
         return module;
     }
+
+    public void applyToModule(Module module) {
+        if (name != null) {
+            module.setName(name);
+        }
+        if (description != null) {
+            module.setDescription(description);
+        }
+        if (accessibility != null) {
+            module.setAccessibility(accessibility);
+        }
+    }
 }

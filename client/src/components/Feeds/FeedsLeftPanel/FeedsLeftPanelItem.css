@@ -16,6 +16,7 @@
 
 #FeedsLeftPanelItem i {
   width: 40px;
+  margin-right: 10px;
 }
 
 #FeedsLeftPanelItem span {
@@ -26,5 +27,5 @@
 
 #FeedsLeftPanelItem.active i,
 #FeedsLeftPanelItem.active span {
-  color: var(--pure-white);
+  color: var(--pure-white) !important;
 }

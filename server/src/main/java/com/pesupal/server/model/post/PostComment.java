@@ -20,6 +20,8 @@ public class PostComment extends CreationTimeAuditable {
 
     @Column(nullable = false, length = 3000)
     private String message;
+    
+    private boolean anonymous;
 
     @OneToMany(mappedBy = "postComment", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<PostReply> replies = new ArrayList<>();
