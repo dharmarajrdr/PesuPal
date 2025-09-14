@@ -9,6 +9,7 @@ import com.pesupal.server.model.post.PostComment;
 import com.pesupal.server.model.post.PostReply;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.repository.post.PostReplyRepository;
+import com.pesupal.server.service.interfaces.MediaService;
 import com.pesupal.server.service.interfaces.org.OrgMemberService;
 import com.pesupal.server.service.interfaces.post.PostCommentService;
 import com.pesupal.server.service.interfaces.post.PostReplyService;
@@ -27,6 +28,7 @@ public class PostReplyServiceImpl extends CurrentValueRetriever implements PostR
     private final OrgMemberService orgMemberService;
     private final PostCommentService postCommentService;
     private final PostReplyRepository postReplyRepository;
+    private final MediaService mediaService;
 
     /**
      * Creates a reply to a post comment.
@@ -43,7 +45,9 @@ public class PostReplyServiceImpl extends CurrentValueRetriever implements PostR
         PostReply postReply = createReplyCommentDto.toPostReply();
         postReply.setPostComment(postComment);
         postReply.setReplier(orgMember);
-        return ReplyCommentDto.fromPostReplyAndOrgMember(postReplyRepository.save(postReply), orgMember);
+        ReplyCommentDto replyCommentDto = ReplyCommentDto.fromPostReplyAndOrgMember(postReplyRepository.save(postReply), orgMember);
+        replyCommentDto.setDisplayPicture(mediaService.generatePresignedUrl(orgMember.getDisplayPicture()));
+        return replyCommentDto;
     }
 
     /**
@@ -67,7 +71,9 @@ public class PostReplyServiceImpl extends CurrentValueRetriever implements PostR
             if (!memo.containsKey(replierId)) {
                 memo.put(replierId, orgMemberService.getOrgMemberByUserIdAndOrgId(replierId, orgId));
             }
-            return ReplyCommentDto.fromPostReplyAndOrgMember(postReply, memo.get(replierId));
+            ReplyCommentDto replyCommentDto = ReplyCommentDto.fromPostReplyAndOrgMember(postReply, memo.get(replierId));
+            replyCommentDto.setDisplayPicture(mediaService.generatePresignedUrl(postReply.getReplier().getDisplayPicture()));
+            return replyCommentDto;
         }).toList();
 
     }

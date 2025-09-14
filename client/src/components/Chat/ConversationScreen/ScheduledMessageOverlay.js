@@ -82,7 +82,14 @@ const ScheduledMessageOverlay = ({ onClose, chatId }) => {
                     title: 'Send',
                     color: 'green',
                     onClick: () => {
-                        dispatch(hideConfirmationPopup())
+                        apiRequest(`${retrieveConversationApi}/unschedule/all/${chatId}`, "PATCH").then(({ message }) => {
+                            dispatch(hideConfirmationPopup());
+                            setMessages([]);
+                            dispatch(showPopup({ message, type: 'success' }));
+                        }).catch(({ message }) => {
+                            dispatch(hideConfirmationPopup());
+                            dispatch(showPopup({ message, type: 'error' }));
+                        });
                     }
                 },
                 {

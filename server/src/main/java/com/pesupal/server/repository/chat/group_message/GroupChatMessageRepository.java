@@ -27,6 +27,8 @@ public interface GroupChatMessageRepository extends JpaRepository<GroupChatMessa
     List<GroupChatMessage> findAllByGroupAndSenderAndMessageStatus(Group group, OrgMember orgMember, MessageStatus messageStatus);
 
     void deleteAllByGroupAndMessageStatusIn(Group group, List<MessageStatus> sent);
-    
+
     List<GroupChatMessage> findAllByGroup_PublicIdAndSenderAndMessageStatusAndCreatedAtIsAfter(String groupId, OrgMember orgMember, MessageStatus messageStatus, LocalDateTime now);
+
+    List<GroupChatMessage> findAllBySenderAndMessageStatus(OrgMember sender, MessageStatus messageStatus);
 }

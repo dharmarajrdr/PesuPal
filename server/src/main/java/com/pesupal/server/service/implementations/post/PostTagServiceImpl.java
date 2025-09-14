@@ -53,7 +53,7 @@ public class PostTagServiceImpl implements PostTagService {
     @Transactional
     public List<PostTag> saveAll(Set<String> tags, Post post) {
 
-        if (tags.isEmpty()) {
+        if (tags == null || tags.isEmpty()) {
             return new ArrayList<>();
         }
 
@@ -77,6 +77,10 @@ public class PostTagServiceImpl implements PostTagService {
     @Override
     @Transactional
     public List<PostTag> updateTags(Post post, Set<String> tags) {
+
+        if (tags == null) {
+            return post.getTags();
+        }
 
         tags = sanitizeTags(tags);
 

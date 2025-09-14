@@ -46,7 +46,6 @@ public class JobOpeningDto {
         jobOpeningDto.setStatus(jobOpening.getStatus());
         jobOpeningDto.setJobType(jobOpening.getJobType());
         jobOpeningDto.setCriteria(jobOpening.getCriteria());
-        jobOpeningDto.setCreatedBy(UserBasicInfoDto.fromOrgMember(jobOpening.getHiringManager()));
         jobOpeningDto.setCandidatesCount(jobOpening.getCandidates() != null ? jobOpening.getCandidates().size() : 0);
         return jobOpeningDto;
     }

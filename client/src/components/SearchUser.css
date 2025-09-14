@@ -60,11 +60,19 @@
     background-color: #f0f0f0;
 }
 
+.first-char-of-name,
 .user-suggestion img {
     width: 25px;
     height: 25px;
     border-radius: 100%;
     margin-right: 5px;
+}
+
+.first-char-of-name {
+    text-align: center;
+    line-height: 24px;
+    background-color: var(--primary-color);
+    color: #fff;
 }
 
 .user-suggestion span {

@@ -9,7 +9,6 @@ import com.pesupal.server.model.user.UserOnboarding;
 import com.pesupal.server.repository.UserRepository;
 import com.pesupal.server.service.interfaces.UserService;
 import com.pesupal.server.service.interfaces.org.UserOnboardingService;
-import com.pesupal.server.strategies.notification.EmailNotification;
 import com.pesupal.server.strategies.notification_template.SignupConfirmationTemplate;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -22,7 +21,6 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final EmailNotification emailNotification;
     private final UserOnboardingService userOnboardingService;
 
     /**
@@ -34,7 +32,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getUserById(Long ownerId) {
 
-        return userRepository.findById(ownerId).orElseThrow(() -> new DataNotFoundException("User with id " + ownerId + " not found"));
+        return userRepository.findById(ownerId).orElseThrow(() -> new DataNotFoundException("User not found"));
     }
 
     /**
@@ -76,7 +74,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getUserByPublicId(String userPublicId) {
 
-        return userRepository.findByPublicId(userPublicId).orElseThrow(() -> new DataNotFoundException("User with ID '" + userPublicId + "' not found"));
+        return userRepository.findByPublicId(userPublicId).orElseThrow(() -> new DataNotFoundException("User not found"));
     }
 
 }

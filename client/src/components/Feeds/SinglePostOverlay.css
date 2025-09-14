@@ -5,7 +5,6 @@
     margin: 30px 0px;
     width: 60%;
     max-height: calc(100% - 60px);
-    overflow-y: auto;
 }
 
 #single-post-overlay-container .Post {

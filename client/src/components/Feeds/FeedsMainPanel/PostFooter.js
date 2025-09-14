@@ -6,8 +6,10 @@ import PostCommentsLayout from './PostCommentsLayout';
 import { showPopup } from '../../../store/reducers/PopupSlice';
 import { deletePost } from '../../../store/reducers/PostSlice';
 
-const Comment = ({ postId, commentable, comments }) => {
+const Comment = ({ post }) => {
 
+    const { commentable, impression } = post || {};
+    const { comments } = impression || {};
     const [showCommentsList, setShowCommentsList] = useState(false);
     const [commentsCount, setCommentsCount] = useState(comments || 0);
 
@@ -19,11 +21,11 @@ const Comment = ({ postId, commentable, comments }) => {
 
     return <>
         {commentable && <div className='postActions leftFooter FRCC mY5' onClick={() => setShowCommentsList(true)}><i className="fa-regular fa-comment"></i> {commentsCount}</div>}
-        {showCommentsList && <PostCommentsLayout postId={postId} setCommentsCount={setCommentsCount} closeShowCommentsList={closeShowCommentsList} commentable={commentable} />}
+        {showCommentsList && <PostCommentsLayout post={post} setCommentsCount={setCommentsCount} closeShowCommentsList={closeShowCommentsList} />}
     </>
 }
 
-const PostFooter = ({ post, commentable, bookmarkable, bookmarked }) => {
+const PostFooter = ({ post, bookmarkable, bookmarked }) => {
 
     const { id: postId, liked, impression } = post || {};
     const { likes, comments } = impression || {};
@@ -69,8 +71,8 @@ const PostFooter = ({ post, commentable, bookmarkable, bookmarked }) => {
 
     return <div className='PostFooter w100 FRCB'>
         <div className='FRCS'>
-            <div className={`postActions leftFooter FRCC mY5 ${likedPost && 'post-liked'}`} onClick={likeHandler}><i className={`fa-regular fa-thumbs-up`}></i> {likesCount}</div>
-            <Comment postId={postId} commentable={commentable} comments={comments} />
+            <div className={`postActions leftFooter FRCC mY5 ${likedPost && 'post-liked'}`} onClick={likeHandler}><i className={`fa-regular fa-thumbs-up w20`}></i> {likesCount}</div>
+            <Comment post={post} />
         </div>
         <div className='FRCE'>
             {bookmarkable && <div className={`postActions rightFooter FRCC mY5 ${bookmarkedPost && 'post-bookmarked'}`} onClick={bookmarkHandler}><i className={`fa-${bookmarkedPost ? 'solid' : 'regular'} fa-bookmark`}></i></div>}

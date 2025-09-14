@@ -9,11 +9,19 @@
 }
 
 #create-org-modal-content {
-    background: white;
+    background-color: #fff;
     padding: 24px;
-    border-radius: 8px;
-    min-width: 350px;
-    max-width: 400px;
+    min-width: 450px;
+    max-width: 500px;
+    border-radius: 10px;
+}
+
+#create-org-modal-content h2 {
+    font-size: 17px;
+}
+
+#create-org-modal-content .steps {
+    margin-top: 20px;
 }
 
 .org-input {
@@ -24,11 +32,13 @@
     border-radius: 4px;
 }
 
+.back-btn,
 .submit-btn,
 .cancel-btn {
-    padding: 10px 16px;
+    padding: 7px 16px;
     border: none;
     border-radius: 4px;
+    font-size: 12px;
     cursor: pointer;
 }
 
@@ -37,6 +47,23 @@
     color: white;
 }
 
+.back-btn {
+    background-color: var(--primary-color);
+    color: #fff;
+}
+
 .cancel-btn {
     background-color: #e0e0e0;
+}
+
+#verify-mail p {
+    margin-bottom: 20px;
+    font-size: 13px;
+    color: #555;
+}
+
+#step-3 #step-3-description {
+    color: #555;
+    font-size: 13px;
+    margin-bottom: 10px;
 }

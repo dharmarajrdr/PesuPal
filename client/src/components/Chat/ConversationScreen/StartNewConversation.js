@@ -25,7 +25,7 @@ const StartNewConversation = ({ clickSendMessageHandler }) => {
     return (currentChatPreview && myProfile) ? (<div id='start-new-conversation' className='FCCE'>
         {isDirectMessage && <div className='FRCC' id='users-avatars'>
             <UserAvatar displayPicture={myProfile.displayPicture} />
-            <UserAvatar displayPicture={otherUserDisplayPicture} />
+            <UserAvatar displayPicture={otherUserDisplayPicture} displayName={displayName} />
         </div>}
         <button id='say-hello-button' className='mT15' onClick={sayHelloButtonClickHandler}>
             Say Hello <i className="fa fa-hand w20" id='wave-hands'></i>
