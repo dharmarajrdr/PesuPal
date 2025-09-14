@@ -1,0 +1,41 @@
+#post-attachments {
+    max-height: 50px;
+    padding: 10px 10px 5px 0px;
+}
+
+#post-attachments .post-attachment-preview {
+    width: 75px;
+    height: 100%;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 2px 4px;
+    margin-right: 5px;
+}
+
+#post-attachments .post-attachment-preview img {
+    width: calc(100% - 20px);
+    height: 100%;
+    cursor: pointer;
+    object-fit: cover;
+}
+
+#post-attachments .post-attachment-preview i {
+    font-size: 10px;
+    width: 15px;
+    margin-left: 5px;
+    height: 100%;
+    line-height: 30px;
+    text-align: center;
+    cursor: pointer;
+    padding: 0;
+}
+
+#post-attachments .post-attachment-preview i:hover {
+    color: #333;
+    background-color: #f5f5f5;
+}
+
+#post-attachments .post-attachment-preview:hover {
+    border-color: #aaa;
+    background-color: #eee;
+}

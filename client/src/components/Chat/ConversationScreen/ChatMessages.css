@@ -310,18 +310,20 @@
     margin-bottom: 10vh;
 }
 
+#start-new-conversation .user-avatar-placeholder-first-character,
 #start-new-conversation #users-avatars img {
     width: 50px;
     height: 50px;
+    line-height: 50px;
     margin: 0;
     position: relative;
 }
 
-#start-new-conversation #users-avatars img:first-of-type {
+#start-new-conversation #users-avatars *:first-child {
     left: 5px;
 }
 
-#start-new-conversation #users-avatars img:last-of-type {
+#start-new-conversation #users-avatars *:last-child {
     right: 5px;
 }
 

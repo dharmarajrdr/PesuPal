@@ -64,7 +64,7 @@ public interface GroupRepository extends JpaRepository<Group, Long> {
                AND msg.created_at = latest_msg.latest
             
             JOIN org_member sender
-                ON sender.user_id = msg.sender_id
+                ON sender.id = msg.sender_id
                AND sender.org_id = :orgId
             
             WHERE LOWER(g.name) LIKE LOWER(CONCAT('%', :search, '%'))

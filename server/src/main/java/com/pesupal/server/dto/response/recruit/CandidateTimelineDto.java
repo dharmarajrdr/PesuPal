@@ -2,7 +2,6 @@ package com.pesupal.server.dto.response.recruit;
 
 import com.pesupal.server.dto.response.UserBasicInfoDto;
 import com.pesupal.server.model.recruit.CandidateTimeline;
-import com.pesupal.server.model.user.OrgMember;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -16,12 +15,11 @@ public class CandidateTimelineDto {
 
     private String description;
 
-    public static CandidateTimelineDto fromCandidateTimelineAndOrgMember(CandidateTimeline candidateTimeline, OrgMember orgMember) {
+    public static CandidateTimelineDto fromCandidateTimeline(CandidateTimeline candidateTimeline) {
 
         CandidateTimelineDto dto = new CandidateTimelineDto();
         dto.setCreatedAt(candidateTimeline.getCreatedAt());
         dto.setDescription(candidateTimeline.getDescription());
-        dto.setCreatedBy(UserBasicInfoDto.fromOrgMember(orgMember));
         return dto;
     }
 }

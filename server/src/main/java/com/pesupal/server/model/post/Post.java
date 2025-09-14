@@ -48,6 +48,8 @@ public class Post extends PublicAccessModel {
 
     private String postMentionLabel;
 
+    private boolean allowAnonymousComments;
+
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JsonIgnore
     private List<PostMention> mentions = new ArrayList<>();

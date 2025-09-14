@@ -1,0 +1,61 @@
+#new-roles-content {
+    width: 500px;
+    border-radius: 5px;
+    background-color: #fff;
+    z-index: 10;
+    padding: 20px;
+    box-shadow: 0px 4px 10px var(--box-shadow-color);
+}
+
+#new-roles-content h1 {
+    font-size: 18px;
+    font-weight: 400;
+    margin-bottom: 15px;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 5px;
+    color: #555;
+}
+
+#new-roles-content .row {
+    padding: 5px 0px;
+}
+
+#new-roles-content .row input {
+    width: 100%;
+    padding: 10px 15px;
+    font-size: 12px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+#new-roles-content .row input:focus {
+    outline: none;
+    transition-duration: 0.25s;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 5px var(--primary-color);
+}
+
+#new-roles-content .row button {
+    padding: 7px 15px;
+    font-size: 12px;
+    border: none;
+    border-radius: 5px;
+    color: #fff;
+    cursor: pointer;
+}
+
+#new-roles-content .row #create-role-button {
+    background-color: var(--primary-color);
+}
+
+#new-roles-content .row #create-role-button:hover {
+    background-color: var(--primary-color-active);
+}
+
+#new-roles-content .row #cancel-role-button {
+    background-color: gray;
+}
+
+#new-roles-content .row #cancel-role-button:hover {
+    background-color: darkgray;
+}

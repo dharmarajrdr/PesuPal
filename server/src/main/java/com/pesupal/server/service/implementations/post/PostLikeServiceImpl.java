@@ -8,6 +8,7 @@ import com.pesupal.server.model.post.Post;
 import com.pesupal.server.model.post.PostLike;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.repository.post.PostLikeRepository;
+import com.pesupal.server.service.interfaces.MediaService;
 import com.pesupal.server.service.interfaces.org.OrgMemberService;
 import com.pesupal.server.service.interfaces.post.PostLikeService;
 import com.pesupal.server.service.interfaces.post.PostService;
@@ -21,6 +22,7 @@ import java.util.List;
 public class PostLikeServiceImpl extends CurrentValueRetriever implements PostLikeService {
 
     private final PostService postService;
+    private final MediaService mediaService;
     private final OrgMemberService orgMemberService;
     private final PostLikeRepository postLikeRepository;
 
@@ -74,8 +76,9 @@ public class PostLikeServiceImpl extends CurrentValueRetriever implements PostLi
 
         OrgMember orgMember = getCurrentOrgMember();
         return postLikeRepository.findByPostPublicIdAndPost_OrgId(postId, orgMember.getOrg().getId()).stream().map(postLike -> {
-            OrgMember likerOrgMember = orgMemberService.getOrgMemberByUserIdAndOrgId(postLike.getLiker().getId(), orgMember.getOrg().getId());
+            OrgMember likerOrgMember = postLike.getLiker();
             PostLikesDto postLikesDto = PostLikesDto.fromOrgMember(likerOrgMember);
+            postLikesDto.setDisplayPicture(mediaService.generatePresignedUrl(likerOrgMember.getDisplayPicture()));
             postLikesDto.setCreatedAt(postLike.getCreatedAt());
             return postLikesDto;
         }).toList();

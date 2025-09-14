@@ -28,7 +28,6 @@ public interface ModuleMemberRepository extends JpaRepository<ModuleMember, Long
                     FROM OrgMember om
                     WHERE (
                         LOWER(om.displayName) LIKE LOWER(CONCAT('%', :search, '%'))
-                        OR LOWER(om.userName) LIKE LOWER(CONCAT('%', :search, '%'))
                     )
                     AND (
                             om.id NOT IN (
@@ -51,7 +50,6 @@ public interface ModuleMemberRepository extends JpaRepository<ModuleMember, Long
                     FROM ModuleMember mm
                     WHERE (
                         LOWER(mm.orgMember.displayName) LIKE LOWER(CONCAT('%', :search, '%'))
-                        OR LOWER(mm.orgMember.userName) LIKE LOWER(CONCAT('%', :search, '%'))
                     )
                     AND mm.module.publicId = :moduleId
                     AND mm.role IN ('MAINTAINER', 'MEMBER')

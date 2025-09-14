@@ -1,6 +1,5 @@
 package com.pesupal.server.service.implementations.chat.direct_message;
 
-import com.pesupal.server.dto.response.UserBasicInfoDto;
 import com.pesupal.server.dto.response.chat.ReactMessageResponseDto;
 import com.pesupal.server.enums.Reaction;
 import com.pesupal.server.exceptions.ActionProhibitedException;
@@ -15,6 +14,7 @@ import com.pesupal.server.projections.ReactionCountProjection;
 import com.pesupal.server.repository.chat.direct_message.DirectMessageReactionRepository;
 import com.pesupal.server.service.interfaces.chat.direct_message.DirectMessageReactionService;
 import com.pesupal.server.service.interfaces.chat.direct_message.DirectMessageService;
+import com.pesupal.server.service.interfaces.org.OrgMemberService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -29,6 +29,7 @@ public class DirectMessageReactionServiceImpl extends CurrentValueRetriever impl
 
     private final DirectMessageService directMessageService;
     private final DirectMessageReactionRepository directMessageReactionRepository;
+    private final OrgMemberService orgMemberService;
 
     /**
      * Retrieves a DirectMessageReaction by its ID.
@@ -77,7 +78,7 @@ public class DirectMessageReactionServiceImpl extends CurrentValueRetriever impl
 
         directMessageReactionRepository.save(directMessageReaction);
 
-        return new ReactMessageResponseDto(directMessageReaction.getId(), reaction, directMessageReaction.getCreatedAt(), UserBasicInfoDto.fromOrgMember(reactor));
+        return new ReactMessageResponseDto(directMessageReaction.getId(), reaction, directMessageReaction.getCreatedAt(), orgMemberService.getUserBasicInfo(reactor));
 
     }
 

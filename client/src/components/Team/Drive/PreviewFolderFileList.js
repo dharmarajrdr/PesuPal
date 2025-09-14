@@ -45,7 +45,7 @@ const PreviewFolderFileListItem = ({ item, activeItem, setActiveItem }) => {
                             title: 'Delete',
                             color: 'red',
                             onClick: () => {
-                                apiRequest(``, 'DELETE').then(({ message }) => {
+                                apiRequest(`/api/v1/workdrive/${activeItem.type.toLowerCase()}/${activeItem.id}`, 'DELETE').then(({ message }) => {
                                     dispatch(removeItem({ id }));
                                     dispatch(showPopup({ message, type: 'success' }));
                                 }).catch(({ message }) => {
@@ -63,6 +63,21 @@ const PreviewFolderFileListItem = ({ item, activeItem, setActiveItem }) => {
                         }
                     ]
                 }));
+            }
+        },
+        {
+            name: `Copy Link`,
+            icon: `fa fa-link`,
+            onClick: (e) => {
+                noLink(e);
+                const link = `${window.location.origin}/store/${space.toLowerCase()}/${type.toLowerCase()}/${id}`;
+                navigator.clipboard.writeText(link).then(() => {
+                    dispatch(showPopup({ message: 'Link copied to clipboard', type: 'success' }));
+                    setActiveItem(null);
+                }).catch(() => {
+                    dispatch(showPopup({ message: 'Failed to copy link', type: 'error' }));
+                    setActiveItem(null);
+                });
             }
         }
     ];
@@ -108,7 +123,7 @@ const PreviewFolderFileList = ({ title, subHeadings, items }) => {
                     {subHeadings.map(({ title, active }, index) => <span key={index} className={'subHeading color777 mL15 fs12 cursP ' + (active ? 'active' : null)}>{title}</span>)}
                 </div> */}
             </div>
-            <div id='list_of_items' className='pB10 FRSS noScrollbar'>
+            <div id='list_of_items' className='pB10 h100P FRSS noScrollbar'>
                 {items.map((item, index) => <PreviewFolderFileListItem key={index} item={item} activeItem={activeItem} setActiveItem={setActiveItem} />)}
             </div>
         </div>

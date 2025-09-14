@@ -12,13 +12,13 @@ const ImageContainer = ({ image, onEditClick, onDeleteClick, allowEdit }) => {
     </div>
 }
 
-const Placeholder = ({ onClick }) => {
+const Placeholder = ({ onClick, placeholder }) => {
     return <div className="FRCC" id="placeholder" onClick={onClick}>
-        <i className="fas fa-image"></i> Upload
+        <i className="fas fa-image"></i> {placeholder || "Upload"}
     </div>
 }
 
-const ImageUploader = ({ defaultImage, onImageSelect, style, allowEdit }) => {
+const ImageUploader = ({ defaultImage, onImageSelect, style, allowEdit, placeholder }) => {
 
     allowEdit = allowEdit != null ? allowEdit : true;
 
@@ -54,7 +54,7 @@ const ImageUploader = ({ defaultImage, onImageSelect, style, allowEdit }) => {
             <div id="image-preview" style={{ ...style }}>
                 {image ?
                     <ImageContainer allowEdit={allowEdit} image={image} onEditClick={handleImageClick} onDeleteClick={onDeleteClick} /> :
-                    <Placeholder onClick={handleImageClick} />
+                    <Placeholder onClick={handleImageClick} placeholder={placeholder} />
                 }
             </div>
             <input type="file" accept="image/*" ref={fileInputRef} style={{ display: "none" }} onChange={handleFileChange} />
