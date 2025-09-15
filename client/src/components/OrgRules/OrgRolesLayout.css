@@ -1,6 +1,7 @@
 #org-roles-layout {
     height: 100vh;
     padding: 20px;
+    width: calc(100% - 60px);
     box-sizing: border-box;
 }
 

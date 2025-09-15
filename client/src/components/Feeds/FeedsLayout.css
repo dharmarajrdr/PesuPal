@@ -1,6 +1,6 @@
 #FeedsLayout {
   overflow: hidden;
-  width: calc(100% - 75px);
+  width: 100%;
   background-color: var(--bg-color);
 }
 
