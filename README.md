@@ -68,13 +68,13 @@ For detailed documentation and guides, visit our [Wiki](https://github.com/dharm
 
 #### 📈 Schema
 
-Refer the [Schema Design](https://dbdiagram.io/d/PesuPal-6708a04e97a66db9a39e2394) for a detailed overview of the database.
+Refer the [Schema Design](https://dbdiagram.io/d/PesuPal-68c7b89d841b2935a690d90c) for a detailed overview of the database.
 
 <br/>
 
 #### 🤝 Contributing
 
-We welcome contributions! Please read our [Contributing Guidelines](CONTRIBUTING.md) for more details.
+We welcome contributions! Please read our the following instructions for contribution.
 
 1. Fork the repository.
 2. Create your feature branch:
