@@ -24,7 +24,9 @@ public enum OrgAction {
     CREATE_DEPARTMENT(11, "Create Department"),
     UPDATE_DEPARTMENT(12, "Update Department"),
 
-    ACCESS_STORE(13, "Access Store");
+    ACCESS_STORE(13, "Access Store"),
+
+    CREATE_BANNER(14, "Create Banner");
 
     private final int actionId;
     private final String title;
