@@ -19,7 +19,7 @@ const OrgRolesLayout = () => {
     }
 
     return (
-        <div id='org-roles-layout' className='w100'>
+        <div id='org-roles-layout' className='Layout'>
             <div id='org-roles-content'>
                 <OrgRolesHeader setShowNewRoleLayout={setShowNewRoleLayout} setShowManageRoles={setShowManageRoles} />
                 <OrgRolesTable />
