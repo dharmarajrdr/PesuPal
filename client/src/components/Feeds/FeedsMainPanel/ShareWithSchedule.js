@@ -3,47 +3,13 @@ import { useDispatch } from 'react-redux';
 import SchedulePicker from '../../Chat/ConversationScreen/SchedulePicker';
 import { hideConfirmationPopup, showConfirmationPopup } from '../../../store/reducers/ConfirmationPopupSlice';
 
-const ShareWithSchedule = ({ onShare, onSchedule, scheduledAt }) => {
+const ShareWithSchedule = ({ scheduleClickHandler, shareClickHandler, scheduledAt }) => {
 
     const dispatch = useDispatch();
     const [showPicker, setShowPicker] = useState(false);
     const [showSchedule, setShowSchedule] = useState(false);
 
-    const shareClickHandler = () => {
-        dispatch(showConfirmationPopup({
-            message: 'Are you sure you want to post this?',
-            options: [
-                {
-                    title: 'Post',
-                    color: 'green',
-                    onClick: onShare
-                },
-                {
-                    title: 'Cancel',
-                    color: 'gray',
-                    onClick: () => dispatch(hideConfirmationPopup())
-                }
-            ]
-        }));
-    }
-
-    const scheduleClickHandler = (scheduledAt) => {
-        dispatch(showConfirmationPopup({
-            message: 'Are you sure you want to schedule this post?',
-            options: [
-                {
-                    title: 'Schedule',
-                    color: 'green',
-                    onClick: () => onSchedule(scheduledAt)
-                },
-                {
-                    title: 'Cancel',
-                    color: 'gray',
-                    onClick: () => dispatch(hideConfirmationPopup())
-                }
-            ]
-        }));
-    }
+    
 
     return (
         <div className={`create-post-wrapper FCSS w100`}>

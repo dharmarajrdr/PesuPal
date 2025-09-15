@@ -12,6 +12,7 @@ import com.pesupal.server.repository.chat.group_message.GroupChatPinnedRepositor
 import com.pesupal.server.service.interfaces.MediaService;
 import com.pesupal.server.service.interfaces.chat.group_message.GroupChatPinnedService;
 import com.pesupal.server.service.interfaces.chat.group_message.GroupService;
+import com.pesupal.server.strategies.media_storage.S3Service;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
@@ -21,14 +22,16 @@ import java.util.Optional;
 @Service
 public class GroupChatPinnedServiceImpl extends CurrentValueRetriever implements GroupChatPinnedService {
 
+    private final S3Service s3Service;
     private final GroupService groupService;
-    private final GroupChatPinnedRepository groupChatPinnedRepository;
     private final MediaService mediaService;
+    private final GroupChatPinnedRepository groupChatPinnedRepository;
 
-    public GroupChatPinnedServiceImpl(@Lazy GroupService groupService, GroupChatPinnedRepository groupChatPinnedRepository, MediaService mediaService) {
+    public GroupChatPinnedServiceImpl(@Lazy GroupService groupService, GroupChatPinnedRepository groupChatPinnedRepository, MediaService mediaService, S3Service s3Service) {
+        this.s3Service = s3Service;
+        this.mediaService = mediaService;
         this.groupService = groupService;
         this.groupChatPinnedRepository = groupChatPinnedRepository;
-        this.mediaService = mediaService;
     }
 
     /**
@@ -58,8 +61,9 @@ public class GroupChatPinnedServiceImpl extends CurrentValueRetriever implements
         return groupChatPinnedRepository.findAllByPinnedByIdAndGroup_Org_IdOrderByOrderIndexAsc(userId, orgId).stream().map(groupChatPinned -> {
             PinnedChatDto pinnedChatDto = PinnedChatDto.fromUserAndOrgMemberAndPinnedGroupChatMessage(groupChatPinned);
             try {
-                pinnedChatDto.setDisplayPicture(mediaService.generatePresignedUrl(groupChatPinned.getGroup().getDisplayPicture()).toString());
-            } catch (Exception ignored) {
+                pinnedChatDto.setDisplayPicture(mediaService.generatePresignedUrl(groupChatPinned.getGroup().getDisplayPicture()));
+            } catch (Exception e) {
+                throw new RuntimeException(e);
             }
             return pinnedChatDto;
         }).toList();
@@ -115,7 +119,9 @@ public class GroupChatPinnedServiceImpl extends CurrentValueRetriever implements
         groupChatPinned.setGroup(group);
         groupChatPinned.setOrderIndex(createPinGroupChatMessageDto.getOrderIndex());
         groupChatPinnedRepository.save(groupChatPinned);
-        return PinnedChatDto.fromUserAndOrgMemberAndPinnedGroupChatMessage(groupChatPinned);
+        PinnedChatDto pinnedChatDto = PinnedChatDto.fromUserAndOrgMemberAndPinnedGroupChatMessage(groupChatPinned);
+        pinnedChatDto.setDisplayPicture(mediaService.generatePresignedUrl(group.getDisplayPicture()));
+        return pinnedChatDto;
     }
 
     /**

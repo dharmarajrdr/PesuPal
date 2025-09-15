@@ -20,6 +20,7 @@ import com.pesupal.server.service.interfaces.drive.FileService;
 import com.pesupal.server.service.interfaces.drive.PublicFolderService;
 import com.pesupal.server.service.interfaces.drive.SecuredFolderPermissionService;
 import com.pesupal.server.service.interfaces.drive.WorkdriveSpace;
+import com.pesupal.server.service.interfaces.org.OrgMemberService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
@@ -33,6 +34,7 @@ public class TeamSpace extends WorkspaceSupportsPublicFolder implements Workdriv
 
     private final FileService fileService;
     private final FolderRepository folderRepository;
+    private final OrgMemberService orgMemberService;
     private final PublicFolderService publicFolderService;
     private final TeamFolderRepository teamFolderRepository;
     private final PublicFolderRepository publicFolderRepository;
@@ -84,7 +86,8 @@ public class TeamSpace extends WorkspaceSupportsPublicFolder implements Workdriv
                 .stream()
                 .map(teamFolder -> {
                     Folder folder = teamFolder.getFolder();
-                    FolderDto folderDto = FolderDto.fromFolderAndOrgMember(folder, folder.getCreatedBy());
+                    FolderDto folderDto = FolderDto.fromFolder(folder);
+                    folderDto.setOwner(orgMemberService.getUserBasicInfo(folder.getCreatedBy()));
                     folderDto.setType(FileOrFolder.FOLDER);
                     folderDto.setSecurity(folder.getPublicFolder().getSecurity());
                     return folderDto;

@@ -1,25 +1,25 @@
 package com.pesupal.server.service.implementations.post;
 
 import com.pesupal.server.dto.response.MediaDto;
+import com.pesupal.server.model.org.Org;
 import com.pesupal.server.model.post.Post;
 import com.pesupal.server.model.post.PostMedia;
 import com.pesupal.server.repository.post.PostMediaRepository;
+import com.pesupal.server.service.interfaces.MediaService;
 import com.pesupal.server.service.interfaces.post.PostMediaService;
-import com.pesupal.server.strategies.media_storage.S3Service;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
 public class PostMediaServiceImpl implements PostMediaService {
 
-    private final S3Service s3Service;
+    private final MediaService mediaService;
     private final PostMediaRepository postMediaRepository;
 
     /**
@@ -28,10 +28,8 @@ public class PostMediaServiceImpl implements PostMediaService {
      * @param postMedia
      */
     private void deletePostMedia(PostMedia postMedia) {
-        UUID mediaId = postMedia.getMediaId();
-        String extension = postMedia.getExtension();
-        String key = mediaId + "." + extension;
-        s3Service.deleteFile(key);
+
+        mediaService.deleteFile(postMedia.getMediaId());
         postMedia.setPost(null);
         postMediaRepository.save(postMedia);
     }
@@ -58,12 +56,12 @@ public class PostMediaServiceImpl implements PostMediaService {
     @Transactional
     public List<PostMedia> saveAll(Set<MediaDto> mediaIds, Post post) {
 
-        if (mediaIds.isEmpty()) {
+        if (mediaIds == null || mediaIds.isEmpty()) {
             return List.of();
         }
 
         return mediaIds.stream().map(mediaId -> {
-            PostMedia postMedia = PostMedia.builder().post(post).mediaId(mediaId.getId()).extension(mediaId.getExtension()).build();
+            PostMedia postMedia = PostMedia.builder().post(post).mediaId(mediaId.getId()).build();
             return postMediaRepository.save(postMedia);
         }).collect(Collectors.toList());
     }
@@ -79,22 +77,39 @@ public class PostMediaServiceImpl implements PostMediaService {
     @Transactional
     public List<PostMedia> updatePostMedia(Post post, Set<MediaDto> mediaIds) {
 
+        if (mediaIds == null) {
+            return post.getPostMedia();
+        }
+
         List<PostMedia> existingMedia = post.getPostMedia(); // managed collection
 
         // 1. Remove old media
         existingMedia.removeIf(pm -> mediaIds.stream().noneMatch(dto -> dto.getId().equals(pm.getMediaId())));
 
         // 2. Add new media
-        if (mediaIds != null) {
-            for (MediaDto dto : mediaIds) {
-                boolean exists = existingMedia.stream().anyMatch(pm -> pm.getMediaId().equals(dto.getId()));
-                if (!exists) {
-                    PostMedia newMedia = PostMedia.builder().post(post).mediaId(dto.getId()).extension(dto.getExtension()).build();
-                    existingMedia.add(newMedia); // cascade handles persist
-                }
+        for (MediaDto dto : mediaIds) {
+            boolean exists = existingMedia.stream().anyMatch(pm -> pm.getMediaId().equals(dto.getId()));
+            if (!exists) {
+                PostMedia newMedia = PostMedia.builder().post(post).mediaId(dto.getId()).build();
+                existingMedia.add(newMedia); // cascade handles persist
             }
         }
 
         return existingMedia;
+    }
+
+    /**
+     * Delete all media associated with deleted org
+     *
+     * @param deletedOrg
+     */
+    @Override
+    public void deleteAllByOrg(Org deletedOrg) {
+
+        List<PostMedia> postMediaList = postMediaRepository.findAllByPost_Org(deletedOrg);
+        for (PostMedia postMedia : postMediaList) {
+            mediaService.deleteFile(postMedia.getMediaId());
+        }
+        postMediaRepository.deleteAll(postMediaList);
     }
 }

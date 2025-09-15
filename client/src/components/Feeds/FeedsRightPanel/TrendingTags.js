@@ -29,14 +29,14 @@ const TrendingTags = () => {
                 <i className='fa-regular fa-hashtag w15 mR5' style={{ color: 'orange' }} ></i>Trending tags
             </p>
             <div className='FRCC w100' id='TrendingTagsList'>
-                {loader ? <div className='FRCC w100'>
-                    <Loader />
-                </div> : tags.map((tag, index) => {
-                    const tagName = tag.startsWith('#') ? tag.slice(1) : tag;
-                    return (
-                        <Link to={`/feeds/tag/${tagName}`} key={index} className='TrendingTag'>{tag}</Link>
-                    )
-                })}
+                {loader ? <div className='FRCC w100'><Loader /></div> :
+                    tags.length ? tags.map((tag, index) => {
+                        const tagName = tag.startsWith('#') ? tag.slice(1) : tag;
+                        return (
+                            <Link to={`/feeds/tags/${tagName}`} key={index} className='TrendingTag'>{tag}</Link>
+                        )
+                    }) :
+                        <p className='FCCC w100 p20 color777 fs12'>No tags found!</p>}
             </div>
         </div>
     )

@@ -20,7 +20,7 @@ const subscribe = {
     }
 }
 
-const useWebSocket = ({ onPrivateMessage, onGroupMessage, onError, onMessageDelivery, onTyping, userId }) => {
+const useWebSocket = ({ onPrivateMessage, onGroupMessage, onError, onMessageDelivery, onTyping, userId, onPresenceUpdate, orgId }) => {
 
     const stompClientRef = useRef(null);
 
@@ -38,7 +38,8 @@ const useWebSocket = ({ onPrivateMessage, onGroupMessage, onError, onMessageDeli
                     { event: `/topic/group-message.${userId}`, callback: onGroupMessage },
                     { event: `/queue/errors.${userId}`, callback: onError },
                     { event: `/topic/message-delivery.${userId}`, callback: onMessageDelivery },
-                    { event: `/topic/typing.${userId}`, callback: onTyping }
+                    { event: `/topic/typing.${userId}`, callback: onTyping },
+                    { event: `/topic/presence.${orgId}`, callback: onPresenceUpdate }
                 ]);
 
             },

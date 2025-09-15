@@ -20,8 +20,10 @@ const FeaturePreview = ({ feature }) => {
 const MoreFeaturesList = () => {
 
     return (
-        <div id="more-features-list" className='FRSS w100'>
-            {ListOfAdditionalFeatures && ListOfAdditionalFeatures.map(feature => <FeaturePreview key={feature.id} feature={feature} />)}
+        <div id="more-features-list" className='FRSS'>
+            <div className='FRSS w100' id='more-features-list-container'>
+                {ListOfAdditionalFeatures && ListOfAdditionalFeatures.map(feature => <FeaturePreview key={feature.id} feature={feature} />)}
+            </div>
         </div>
     )
 }

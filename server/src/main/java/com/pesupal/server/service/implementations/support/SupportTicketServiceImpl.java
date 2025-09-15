@@ -11,8 +11,8 @@ import com.pesupal.server.model.support.TicketComment;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.repository.support.SupportTicketRepository;
 import com.pesupal.server.repository.support.TicketAttachmentRepository;
+import com.pesupal.server.service.interfaces.MediaService;
 import com.pesupal.server.service.interfaces.support.SupportTicketService;
-import com.pesupal.server.strategies.media_storage.S3Service;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -22,7 +22,7 @@ import java.util.List;
 @AllArgsConstructor
 public class SupportTicketServiceImpl extends CurrentValueRetriever implements SupportTicketService {
 
-    private final S3Service s3Service;
+    private final MediaService mediaService;
     private final SupportTicketRepository supportTicketRepository;
     private final TicketAttachmentRepository ticketAttachmentRepository;
 
@@ -81,8 +81,7 @@ public class SupportTicketServiceImpl extends CurrentValueRetriever implements S
         }
         SupportTicketDto supportTicketDto = SupportTicketDto.fromSupportTicket(supportTicket);
         supportTicketDto.setAttachments(supportTicketDto.getAttachments().stream().peek(ticketAttachmentDto -> {
-            String key = ticketAttachmentDto.getMediaId() + "." + ticketAttachmentDto.getExtension();
-            ticketAttachmentDto.setMediaUrl(s3Service.generatePresignedUrl(key));
+            ticketAttachmentDto.setMediaUrl(mediaService.generatePresignedUrl(ticketAttachmentDto.getMediaId()));
         }).toList());
         return supportTicketDto;
     }
@@ -98,8 +97,7 @@ public class SupportTicketServiceImpl extends CurrentValueRetriever implements S
         return supportTicketRepository.findByTicketOwnerOrderByCreatedAtDesc(getCurrentOrgMember()).stream().map(supportTicket -> {
             SupportTicketDto supportTicketDto = SupportTicketDto.fromSupportTicket(supportTicket);
             supportTicketDto.setAttachments(supportTicketDto.getAttachments().stream().peek(ticketAttachmentDto -> {
-                String key = ticketAttachmentDto.getMediaId() + "." + ticketAttachmentDto.getExtension();
-                ticketAttachmentDto.setMediaUrl(s3Service.generatePresignedUrl(key));
+                ticketAttachmentDto.setMediaUrl(mediaService.generatePresignedUrl(ticketAttachmentDto.getMediaId()));
             }).toList());
             return supportTicketDto;
         }).toList();

@@ -2,6 +2,7 @@ package com.pesupal.server.dto.response.chat;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.pesupal.server.dto.response.UserPreviewDto;
+import com.pesupal.server.dto.response.chat.group_message.GroupDto;
 import com.pesupal.server.enums.ChatMode;
 import com.pesupal.server.enums.MessageType;
 import com.pesupal.server.enums.Reaction;
@@ -26,6 +27,10 @@ public class MessageDto {
     private LocalDateTime createdAt;
 
     private UserPreviewDto sender;
+
+    private UserPreviewDto receiver;
+
+    private GroupDto group;
 
     private String chatId;
 
@@ -52,7 +57,6 @@ public class MessageDto {
         if (!directMessage.getMessageStatus().equals(MessageStatus.DELETED)) {
             responseDto.setMessage(directMessage.getMessage()); // Only set message if not deleted
         }
-//        responseDto.setOrgId(directMessage.getOrg().getPublicId());
         responseDto.setCreatedAt(directMessage.getCreatedAt());
         DirectMessageChat directMessageChat = directMessage.getDirectMessageChat();
         responseDto.setChatId(directMessageChat.getPublicId());
@@ -60,7 +64,6 @@ public class MessageDto {
         responseDto.setReadReceipt(directMessage.getReadReceipt());
         responseDto.setChatMode(ChatMode.DIRECT_MESSAGE);
         responseDto.setMessageType(directMessage.getMessageType());
-        responseDto.setReceiverId(directMessageChat.getAnotherUser(directMessage.getSender()).getPublicId());
         return responseDto;
     }
 

@@ -6,11 +6,15 @@ export const postSlice = createSlice({
         list: [],
         activePostId: null,
         currentPostData: null,
-        isShowCreatePostModal: false
+        isShowCreatePostModal: false,
+        hasPrivilegeToCreatePost: false
     },
     reducers: {
         setPosts: (state, action) => {
             state.list = action.payload;
+        },
+        setHasPrivilegeToCreatePost: (state, action) => {
+            state.hasPrivilegeToCreatePost = action.payload;
         },
         appendPosts: (state, action) => {
             state.list = [...state.list, ...action.payload];
@@ -22,6 +26,12 @@ export const postSlice = createSlice({
             const index = state.list.findIndex(post => post.id === action.payload.id);
             if (index !== -1) {
                 state.list[index] = action.payload;
+            }
+        },
+        patchPost: (state, action) => {
+            const index = state.list.findIndex(post => post.id === action.payload.id);
+            if (index !== -1) {
+                state.list[index] = { ...state.list[index], ...action.payload };
             }
         },
         clearPosts: (state) => {
@@ -49,5 +59,5 @@ export const postSlice = createSlice({
     }
 });
 
-export const { setPosts, appendPosts, addPost, updatePost, clearPosts, deletePost, setActivePostId, setPostData, resetPostData, showCreatePostModal, hideCreatePostModal } = postSlice.actions;
+export const { setPosts, setHasPrivilegeToCreatePost, appendPosts, addPost, updatePost, patchPost, clearPosts, deletePost, setActivePostId, setPostData, resetPostData, showCreatePostModal, hideCreatePostModal } = postSlice.actions;
 export default postSlice.reducer;

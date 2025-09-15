@@ -401,6 +401,7 @@
   height: 20px;
   line-height: 20px;
   border-radius: 100%;
+  object-fit: cover;
 }
 
 .img_30_30 {
@@ -408,6 +409,7 @@
   height: 30px;
   line-height: 30px;
   border-radius: 100%;
+  object-fit: cover;
 }
 
 .img_40_40 {
@@ -415,6 +417,7 @@
   height: 40px;
   line-height: 40px;
   border-radius: 100%;
+  object-fit: cover;
 }
 
 .img_75_75 {
@@ -422,6 +425,7 @@
   height: 75px;
   line-height: 75px;
   border-radius: 100%;
+  object-fit: cover;
 }
 
 .alignCenter {

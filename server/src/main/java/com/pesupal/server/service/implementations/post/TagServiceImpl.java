@@ -1,13 +1,18 @@
 package com.pesupal.server.service.implementations.post;
 
+import com.pesupal.server.dto.response.post.TagDto;
 import com.pesupal.server.factory.TrendingTagsAnalyserFactory;
 import com.pesupal.server.helpers.CurrentValueRetriever;
 import com.pesupal.server.model.post.Tag;
 import com.pesupal.server.model.user.OrgMember;
+import com.pesupal.server.projections.PostTagProjection;
+import com.pesupal.server.repository.post.PostTagRepository;
 import com.pesupal.server.repository.post.TagRepository;
 import com.pesupal.server.service.interfaces.post.TagService;
 import com.pesupal.server.service.interfaces.post.TrendingTagsAnalyser;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -20,12 +25,13 @@ import java.util.List;
 public class TagServiceImpl extends CurrentValueRetriever implements TagService {
 
     private final TagRepository tagRepository;
+    private final PostTagRepository postTagRepository;
     private final RedisTemplate<String, Object> redisTemplate;
     private final TrendingTagsAnalyserFactory trendingTagsAnalyserFactory;
 
-    private final static Duration TRENDING_TAGS_CACHE_DURATION = Duration.ofHours(6);
-    private final static String TRENDING_TAGS_KEY = "trending_tags";
+    private final static String TRENDING_TAGS_KEY = "trending:tags";
     private final static String TRENDING_TAGS_ANALYSER_ALGORITHM = "MOST_POST";
+    private final static Duration TRENDING_TAGS_CACHE_DURATION = Duration.ofHours(6);
 
     /**
      * Creates or retrieves a tag by its name.
@@ -51,7 +57,7 @@ public class TagServiceImpl extends CurrentValueRetriever implements TagService 
         OrgMember orgMember = getCurrentOrgMember();
 
         // Fetch tag ids from redis.
-        String key = TRENDING_TAGS_KEY + "-" + orgMember.getOrg().getId();
+        String key = TRENDING_TAGS_KEY + ":{" + orgMember.getOrg().getId() + "}";
         List<Object> tagIds = redisTemplate.opsForList().range(key, 0, limit - 1);
         if (tagIds != null && !tagIds.isEmpty()) {
             List<String> tags = new ArrayList<>();
@@ -64,10 +70,39 @@ public class TagServiceImpl extends CurrentValueRetriever implements TagService 
         // If not found in redis, analyse and store in redis.
         TrendingTagsAnalyser trendingTagsAnalyser = trendingTagsAnalyserFactory.getTrendingTagsAnalyser(TRENDING_TAGS_ANALYSER_ALGORITHM);
         List<Tag> newTrendingTags = trendingTagsAnalyser.analyseTrendingTags(orgMember.getOrg(), limit);
-        List<Long> newTrendingTagIds = newTrendingTags.stream().map(Tag::getId).toList();
-        redisTemplate.delete(key);  // Clear existing key if any.
-        redisTemplate.opsForList().rightPushAll(key, newTrendingTagIds.toArray(new Long[0]));
-        redisTemplate.expire(key, TRENDING_TAGS_CACHE_DURATION);
+
+        if (newTrendingTags.isEmpty()) {
+            return List.of();
+        }
+
+        List<String> newTrendingTagIds = newTrendingTags.stream().map(tag -> tag.getId().toString()).toList();
+        try {
+            redisTemplate.delete(key);  // Clear existing key if exists.
+            redisTemplate.opsForList().rightPushAll(key, newTrendingTagIds.toArray(new String[0]));
+            redisTemplate.expire(key, TRENDING_TAGS_CACHE_DURATION);
+        } catch (Exception ignored) {
+        }
         return newTrendingTags.stream().map(Tag::getName).toList();
+    }
+
+    /**
+     * Get all tags with pagination.
+     *
+     * @param size
+     * @param page
+     * @return
+     */
+    @Override
+    public List<TagDto> getAllTags(int size, int page) {
+
+        OrgMember orgMember = getCurrentOrgMember();
+        Pageable pageable = Pageable.ofSize(size).withPage(page);
+        List<TagDto> tagDtos = new ArrayList<>();
+
+        Page<PostTagProjection> postTagPageable = postTagRepository.findAllByPost_OrgOrderByCount(orgMember.getOrg(), pageable);
+        for (PostTagProjection projection : postTagPageable.getContent()) {
+            tagDtos.add(TagDto.fromPostTagProjection(projection));
+        }
+        return tagDtos;
     }
 }

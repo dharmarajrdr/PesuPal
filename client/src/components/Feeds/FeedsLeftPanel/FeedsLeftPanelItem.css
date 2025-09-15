@@ -27,5 +27,5 @@
 
 #FeedsLeftPanelItem.active i,
 #FeedsLeftPanelItem.active span {
-  color: var(--pure-white);
+  color: var(--pure-white) !important;
 }

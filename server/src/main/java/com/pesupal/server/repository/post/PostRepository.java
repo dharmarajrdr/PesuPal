@@ -6,6 +6,7 @@ import com.pesupal.server.model.post.Post;
 import com.pesupal.server.model.user.OrgMember;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -48,4 +49,24 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             LIMIT :limit
             """)
     List<Post> getTrendingPostsByEngagement(Org org, int limit);
+
+    @Query(value = """
+            SELECT * FROM post
+            WHERE org_id = :orgId
+            AND to_tsvector('english', coalesce(title,'') || ' ' || coalesce(description,'')) 
+            @@ to_tsquery(:query)
+            ORDER BY created_at DESC
+            """,
+            countQuery = """
+                    SELECT count(*) FROM post
+                    WHERE org_id = :orgId
+                    AND to_tsvector('english', coalesce(title,'') || ' ' || coalesce(description,'')) 
+                    @@ to_tsquery(:query)
+                    """,
+            nativeQuery = true)
+    Slice<Post> searchPostsByOrg(@Param("orgId") Long orgId, @Param("query") String query, Pageable pageable);
+
+    List<Post> findAllByCreatorAndStatus(OrgMember orgMember, PostStatus postStatus);
+
+    List<Post> findAllByCreator_Org(Org creatorOrg);
 }

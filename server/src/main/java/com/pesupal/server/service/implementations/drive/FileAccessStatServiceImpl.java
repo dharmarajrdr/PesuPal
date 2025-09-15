@@ -8,6 +8,7 @@ import com.pesupal.server.helpers.CurrentValueRetriever;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.model.workdrive.File;
 import com.pesupal.server.repository.drive.FileAccessStatRepository;
+import com.pesupal.server.service.interfaces.MediaService;
 import com.pesupal.server.service.interfaces.drive.FileAccessStatService;
 import com.pesupal.server.service.interfaces.drive.FileService;
 import com.pesupal.server.service.interfaces.org.OrgMemberService;
@@ -23,6 +24,7 @@ import java.util.Map;
 public class FileAccessStatServiceImpl extends CurrentValueRetriever implements FileAccessStatService {
 
     private final FileService fileService;
+    private final MediaService mediaService;
     private final OrgMemberService orgMemberService;
     private final FileAccessStatRepository fileAccessStatRepository;
 
@@ -50,7 +52,9 @@ public class FileAccessStatServiceImpl extends CurrentValueRetriever implements 
         return fileAccessStatRepository.findAllByFileIdOrderByCreatedAtDesc(fileId).stream().map(fileAccessStat -> {
             Long accessedById = fileAccessStat.getAccessedBy().getId();
             OrgMember accessedByUser = memo.computeIfAbsent(accessedById, id -> orgMemberService.getOrgMemberByUserIdAndOrgId(id, orgId));
-            return FileAccessStatDto.fromFileAccessStatAndOrgMember(fileAccessStat, accessedByUser);
+            FileAccessStatDto fileAccessStatDto = FileAccessStatDto.fromFileAccessStatAndOrgMember(fileAccessStat, accessedByUser);
+            fileAccessStatDto.setDisplayPicture(mediaService.generatePresignedUrl(accessedByUser.getDisplayPicture()));
+            return fileAccessStatDto;
         }).toList();
 
     }
@@ -71,7 +75,7 @@ public class FileAccessStatServiceImpl extends CurrentValueRetriever implements 
         return fileAccessStatRepository.findRecentlyAccessedFilesByUserIdLimit(userId, StaticConfig.MAXIMUM_RECENTLY_ACCESSED_FILES).stream().map(fileAccessStat -> {
             Long accessedById = fileAccessStat.getAccessedBy().getId();
             OrgMember owner = memo.computeIfAbsent(accessedById, id -> orgMemberService.getOrgMemberByUserIdAndOrgId(id, orgId));
-            return FileDto.fromFileAndOrgMember(fileAccessStat.getFile(), owner);
+            return fileService.fromFileAndOrgMember(fileAccessStat.getFile(), owner);
         }).toList();
     }
 }

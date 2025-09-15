@@ -1,3 +1,7 @@
+#scheduled-posts-layout {
+    overflow-y: auto;
+}
+
 #scheduled-posts-layout #postsList {
     width: 60%;
 }

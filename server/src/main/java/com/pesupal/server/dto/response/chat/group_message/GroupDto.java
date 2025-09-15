@@ -7,6 +7,8 @@ import com.pesupal.server.model.chat.group_message.Group;
 import com.pesupal.server.model.user.OrgMember;
 import lombok.Data;
 
+import java.net.URL;
+
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class GroupDto {
@@ -17,7 +19,7 @@ public class GroupDto {
 
     private String description;
 
-    private String displayPicture;
+    private URL displayPicture;
 
     private UserPreviewDto owner;
 
@@ -42,7 +44,7 @@ public class GroupDto {
         return groupDto;
     }
 
-    public static GroupDto fromGroupAndOrgMemberAndDisplayPicture(Group group, OrgMember orgMember, String displayPicture) {
+    public static GroupDto fromGroupAndOrgMemberAndDisplayPicture(Group group, OrgMember orgMember, URL displayPicture) {
         GroupDto groupDto = fromGroupAndOrgMember(group, orgMember);
         groupDto.setDisplayPicture(displayPicture);
         return groupDto;

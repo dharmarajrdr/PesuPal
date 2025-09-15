@@ -26,6 +26,7 @@
     color: var(--primary-color);
     border-bottom: 1px solid #eee;
     width: 100%;
+    font-size: 17px;
 }
 
 .group-name-input,
