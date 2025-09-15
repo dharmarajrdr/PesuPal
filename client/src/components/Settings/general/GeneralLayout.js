@@ -6,7 +6,7 @@ import GeneralSection from './GeneralSection';
 const GeneralLayout = () => {
 
     return (
-        <div id='general-layout'>
+        <div id='general-layout' className='Layout'>
             <GeneralSection
                 title="My Email Addresses"
                 bgColor="#00aaff"
