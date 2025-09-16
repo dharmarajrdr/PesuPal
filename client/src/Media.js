@@ -1,9 +1,16 @@
 import { apiRequest } from "./http_request";
 
-async function uploadSingleMedia(file) {
+async function uploadSingleMedia(file, setFile) {
     const formData = new FormData();
+    if (setFile) {
+        setFile(prevFile => ({ ...prevFile, 'uploading': true }));
+    }
     formData.append("file", file.file, file.file.name);
-    return await apiRequest(`/api/v1/media/upload`, 'POST', formData);
+    const data = await apiRequest(`/api/v1/media/upload`, 'POST', formData);
+    if (setFile) {
+        setFile(prevFile => ({ ...prevFile, 'uploaded': true }));
+    }
+    return data;
 }
 
 async function uploadMultipleMedia(files, setFiles) {

@@ -79,6 +79,13 @@ public class GroupChatMessageController extends CurrentValueRetriever {
         return ResponseEntity.ok(new ApiResponseDto("Message unscheduled successfully"));
     }
 
+    @PatchMapping("/unschedule/all/{groupId}")
+    public ResponseEntity<ApiResponseDto> unscheduleAllGroupMessage(@PathVariable String groupId) {
+
+        groupChatMessageService.unscheduleAllMessagesInChat(groupId, new HashMap<>());
+        return ResponseEntity.ok(new ApiResponseDto("All messages unscheduled successfully"));
+    }
+
     @DeleteMapping("/schedule/{messageId}")
     public ResponseEntity<ApiResponseDto> deleteScheduleDirectMessage(@PathVariable Long messageId) {
 

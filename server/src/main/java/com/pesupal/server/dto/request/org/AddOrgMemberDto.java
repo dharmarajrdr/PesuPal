@@ -1,22 +1,19 @@
 package com.pesupal.server.dto.request.org;
 
-import com.pesupal.server.enums.Role;
+import com.pesupal.server.model.user.OrgMember;
 import lombok.Data;
 
 @Data
 public class AddOrgMemberDto {
 
-    Long userId;
-
-    String userName;
+    String email;
 
     String displayName;
 
-    Long designationId;
+    public void applyToOrgMember(OrgMember orgMember) {
 
-    Long departmentId;
-
-    String managerId;
-
-    Role role;
+        if (this.getDisplayName() != null) {
+            orgMember.setDisplayName(this.displayName);
+        }
+    }
 }

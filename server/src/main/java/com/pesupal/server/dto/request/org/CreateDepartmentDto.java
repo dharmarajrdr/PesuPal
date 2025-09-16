@@ -12,6 +12,8 @@ public class CreateDepartmentDto {
 
     private String headId;
 
+    private String parentId;
+
     public Department toDepartment() {
 
         Department department = new Department();

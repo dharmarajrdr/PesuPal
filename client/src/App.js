@@ -9,6 +9,7 @@ import InitialLoadLogoPage from './InitialLoadLogoPage';
 import AuthenticationRoutes from './AuthenticationRoutes';
 import CommonContainer from './components/CommonContainer';
 import { useLocation, useNavigate } from 'react-router-dom';
+import InternalServerError from './components/Auth/InternalServerError';
 
 function App() {
 
@@ -24,20 +25,22 @@ function App() {
         }
     }, [location.pathname, navigate]);
 
+    const [serverDown, setServerDown] = useState(false);
     const [authenticated, setAuthenticated] = useState(false);
     const [isSubscriptionExpired, setIsSubscriptionExpired] = useState(false);
 
     return (
         <Provider store={store}>
-            <div className="App FRCS">
+            <div className="App FRSS">
                 {isAuthPage ? <AuthenticationRoutes /> : <>
-                    <AuthModal setIsSubscriptionExpired={setIsSubscriptionExpired} setAuthenticated={setAuthenticated} />
+                    <AuthModal setServerDown={setServerDown} setIsSubscriptionExpired={setIsSubscriptionExpired} setAuthenticated={setAuthenticated} />
                     {authenticated ?
-                        <AuthenticatedRoutes isSubscriptionExpired={isSubscriptionExpired} inLobby={inLobby} />
-                        : <InitialLoadLogoPage />
+                        (serverDown ? <InternalServerError message='Server is down. Come back after having some coffee.' /> :
+                            <AuthenticatedRoutes isSubscriptionExpired={isSubscriptionExpired} inLobby={inLobby} />
+                        ) : <InitialLoadLogoPage />
                     }
-                    <CommonContainer />
                 </>}
+                <CommonContainer />
             </div>
         </Provider>
     );

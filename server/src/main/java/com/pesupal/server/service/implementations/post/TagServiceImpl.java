@@ -29,7 +29,7 @@ public class TagServiceImpl extends CurrentValueRetriever implements TagService 
     private final RedisTemplate<String, Object> redisTemplate;
     private final TrendingTagsAnalyserFactory trendingTagsAnalyserFactory;
 
-    private final static String TRENDING_TAGS_KEY = "trending_tags";
+    private final static String TRENDING_TAGS_KEY = "trending:tags";
     private final static String TRENDING_TAGS_ANALYSER_ALGORITHM = "MOST_POST";
     private final static Duration TRENDING_TAGS_CACHE_DURATION = Duration.ofHours(6);
 
@@ -57,7 +57,7 @@ public class TagServiceImpl extends CurrentValueRetriever implements TagService 
         OrgMember orgMember = getCurrentOrgMember();
 
         // Fetch tag ids from redis.
-        String key = TRENDING_TAGS_KEY + "-" + orgMember.getOrg().getId();
+        String key = TRENDING_TAGS_KEY + ":{" + orgMember.getOrg().getId() + "}";
         List<Object> tagIds = redisTemplate.opsForList().range(key, 0, limit - 1);
         if (tagIds != null && !tagIds.isEmpty()) {
             List<String> tags = new ArrayList<>();
@@ -70,10 +70,18 @@ public class TagServiceImpl extends CurrentValueRetriever implements TagService 
         // If not found in redis, analyse and store in redis.
         TrendingTagsAnalyser trendingTagsAnalyser = trendingTagsAnalyserFactory.getTrendingTagsAnalyser(TRENDING_TAGS_ANALYSER_ALGORITHM);
         List<Tag> newTrendingTags = trendingTagsAnalyser.analyseTrendingTags(orgMember.getOrg(), limit);
-        List<Long> newTrendingTagIds = newTrendingTags.stream().map(Tag::getId).toList();
-        redisTemplate.delete(key);  // Clear existing key if any.
-        redisTemplate.opsForList().rightPushAll(key, newTrendingTagIds.toArray(new Long[0]));
-        redisTemplate.expire(key, TRENDING_TAGS_CACHE_DURATION);
+
+        if (newTrendingTags.isEmpty()) {
+            return List.of();
+        }
+
+        List<String> newTrendingTagIds = newTrendingTags.stream().map(tag -> tag.getId().toString()).toList();
+        try {
+            redisTemplate.delete(key);  // Clear existing key if exists.
+            redisTemplate.opsForList().rightPushAll(key, newTrendingTagIds.toArray(new String[0]));
+            redisTemplate.expire(key, TRENDING_TAGS_CACHE_DURATION);
+        } catch (Exception ignored) {
+        }
         return newTrendingTags.stream().map(Tag::getName).toList();
     }
 

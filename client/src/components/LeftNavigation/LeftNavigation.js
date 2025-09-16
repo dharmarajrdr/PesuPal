@@ -1,11 +1,12 @@
-import { useEffect, useState } from 'react'
-import './LeftNavigation.css'
-import Nav from './Nav'
-import { useDispatch, useSelector } from 'react-redux';
+import Nav from './Nav';
+import './LeftNavigation.css';
 import OrgList from '../Org/OrgList';
-import { setMyProfile } from '../../store/reducers/MyProfileSlice';
+import { useEffect, useState } from 'react';
 import { apiRequest } from '../../http_request';
+import { useDispatch, useSelector } from 'react-redux';
 import { showPopup } from '../../store/reducers/PopupSlice';
+import { setMyProfile } from '../../store/reducers/MyProfileSlice';
+import { hideOrgList, showOrgList } from '../../store/reducers/OrgSlice';
 
 const LeftNavigation = () => {
 
@@ -26,7 +27,7 @@ const LeftNavigation = () => {
         }
     }, dispatch = useDispatch();
 
-    const [showOrgList, setShowOrgList] = useState(false);
+    const { showingOrgList } = useSelector((state) => state.org);
     const [orgId, setOrgId] = useState(sessionStorage.getItem('org-id'));
     const [profile, setProfile] = useState({ 'id': 8, 'title': 'Me', 'route': '/profile', 'icon': 'fa-regular fa-user', 'isActive': false });
 
@@ -50,19 +51,19 @@ const LeftNavigation = () => {
         if (clickedOrgList.classList.contains("org-preview")) {
             const isActive = clickedOrgList.classList.contains("active");
             if (!isActive) {
-                setShowOrgList(false);
+                dispatch(hideOrgList());
             }
         }
     };
 
     const showOrgListHandler = () => {
 
-        setShowOrgList(true);
+        dispatch(showOrgList());
     }
 
     const closeOrgList = () => {
 
-        setShowOrgList(false);
+        dispatch(hideOrgList());
     }
 
     useEffect(() => {
@@ -86,7 +87,7 @@ const LeftNavigation = () => {
                 <div className='w100'>
                     <Nav key={id} icon={icon} image={image} title={title} route={route} />
                     {ListOfNavigations.bottom.map((navigation, index) => <Nav key={index} icon={navigation.icon} fontWeight={navigation.fontWeight} image={navigation.image} title={navigation.title} route={navigation.route} showOrgListHandler={showOrgListHandler} />)}
-                    {showOrgList && <OrgList toggleOrgList={toggleOrgList} closeOrgList={closeOrgList} />}
+                    {showingOrgList && <OrgList toggleOrgList={toggleOrgList} closeOrgList={closeOrgList} />}
                 </div>
             </div>
         </div>

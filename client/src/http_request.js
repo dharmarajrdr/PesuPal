@@ -56,7 +56,7 @@ export async function apiRequest(endpoint, method = 'GET', data = null, customHe
         throw {
             message: error?.message || 'An error occurred while processing your request.',
             status: 'FAILURE',
-            statusCode: error?.statusCode || 500
+            statusCode: error?.statusCode
         };
     }
 }

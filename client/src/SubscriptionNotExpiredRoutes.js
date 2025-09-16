@@ -1,20 +1,51 @@
+import useWebSocket from './WebSocket';
+import { useEffect, useRef } from 'react';
+import { useSelector } from 'react-redux';
 import TeamLayout from './components/Team/TeamLayout';
 import ChatLayout from './components/Chat/ChatLayout';
+import AppBanner from './components/Banner/AppBanner';
 import FeedsLayout from './components/Feeds/FeedsLayout';
 import PageNotFound from './components/Auth/PageNotFound';
+import { Navigate, Route, Routes } from 'react-router-dom';
 import PeopleLayout from './components/People/PeopleLayout';
-import CreateOrgModal from './components/Org/CreateOrgModal';
+import usePresenceService from './hooks/usePresenceService';
 import DriveLayout from './components/Team/Drive/DriveLayout';
 import HomePageLayout from './components/Home/HomePageLayout';
 import SettingsLayout from './components/Settings/SettingsLayout';
 import MoreFeaturesLayout from './components/More/MoreFeaturesLayout';
+import CreateOrgModal from './components/Org/CreateOrg/CreateOrgModal';
 import ManageWorkLayout from './components/Team/ManageWork/ManageWorkLayout';
 import NewModuleLayout from './components/Team/ManageWork/CreateModule/NewModuleLayout';
 import ModuleBuilderLayout from './components/Team/ManageWork/ModuleBuilder/ModuleBuilderLayout';
-import { Navigate, Route, Routes } from 'react-router-dom';
 
 const SubscriptionNotExpiredRoutes = () => {
-    return (
+
+    const path = window.location.pathname;
+    const appBannerRef = useRef(null);
+    const INFORM_PRESENCE_EVERY_SECONDS = 15;
+    const presenceService = usePresenceService();
+    const { currentOrgId } = useSelector(state => state.org);
+
+    useWebSocket({ 'onPresenceUpdate': presenceService.onPresenceUpdate, 'orgId': currentOrgId });
+
+    useEffect(() => {
+        presenceService.informUserOnlineAtInterval(INFORM_PRESENCE_EVERY_SECONDS);
+    }, [currentOrgId]);
+
+    useEffect(() => {
+        if (appBannerRef.current) {
+            const appBannerHeight = appBannerRef.current.clientHeight;
+            const Layouts = document.getElementsByClassName('Layout') || [];
+            if (Layouts) {
+                for (const layout of Layouts) {
+                    layout.style.height = `calc(100vh - ${appBannerHeight}px)`;
+                }
+            }
+        }
+    }, [appBannerRef, path]);
+
+    return (<div className='FCSS' id='subscription-not-expired-routes'>
+        <AppBanner appBannerRef={appBannerRef} />
         <Routes>
             <Route path="/" element={<HomePageLayout />} />
             <Route path='/org/create' element={<CreateOrgModal />} />
@@ -31,7 +62,7 @@ const SubscriptionNotExpiredRoutes = () => {
             <Route path='/more/*' element={<MoreFeaturesLayout />} />
             <Route path="*" element={<PageNotFound />} />
         </Routes>
-    )
+    </div>)
 }
 
 export default SubscriptionNotExpiredRoutes
