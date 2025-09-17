@@ -1,8 +1,8 @@
-# 🚀 PesuPal
+# 🚀 CollabGen
 
 #### 🌟 Overview
 
-**PesuPal** is a dynamic platform designed to enhance collaboration within organizations. Featuring Feeds, Chat, and Team Management, it streamlines communication and project tracking in real-time, fostering productivity and teamwork.
+**CollabGen** is a dynamic platform designed to enhance collaboration within organizations. Featuring Feeds, Chat, and Team Management, it streamlines communication and project tracking in real-time, fostering productivity and teamwork.
 
 <br/>
 
@@ -13,6 +13,7 @@
 - **👥 Team Management**: Organize projects and members with ease.
 - **:file_folder: File Storage**: Store and access files securely.
 - **💥 Task Management**: Assign and manage tasks with ease.
+- **🏢 Multiple Organizations**: Manage and collaborate across different organizations.
 
 <br/>
 
@@ -32,12 +33,12 @@ Ensure you have the following installed:
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/dharmarajrdr/PesuPal.git
+   git clone https://github.com/dharmarajrdr/CollabGen.git
    ```
    
 2. **Navigate to the project directory**:
    ```bash
-   cd PesuPal/client
+   cd CollabGen/client
    ```
    
 3. **Install dependencies**:
@@ -59,7 +60,7 @@ Ensure you have the following installed:
 
 #### 📖 Documentation
 
-For detailed documentation and guides, visit our [Wiki](https://github.com/dharmarajrdr/PesuPal/wiki).
+For detailed documentation and guides, visit our [Wiki](https://github.com/dharmarajrdr/CollabGen/wiki).
 
 
 <br/>
@@ -108,4 +109,4 @@ Special thanks to all contributors and supporters. Let's make collaboration bett
 
 ---
 
-❤️ Thank you for checking out **PesuPal**! We hope you find it helpful and engaging.
+❤️ Thank you for checking out **CollabGen**! We hope you find it helpful and engaging.

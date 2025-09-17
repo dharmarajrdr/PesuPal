@@ -15,7 +15,7 @@ const NoOrgFound = () => {
         <div className='FCCC w100 h100P' id='no-data-found'>
             <p className='FRCC w100'>
                 <i className='fa fa-building mR5' />
-                Welcome to PesuPal!
+                Welcome to CollabGen!
             </p>
             <p className='w100 alignCenter'>Start creating a new org.</p>
         </div>

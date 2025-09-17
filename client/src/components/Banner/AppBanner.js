@@ -4,8 +4,8 @@ import { useEffect, useState } from 'react';
 const AppBanner = ({ appBannerRef }) => {
 
     const messages = [
-        // 'PesuPal will be down for maintenance on 15th October 2023 from 10:00 AM to 12:00 PM IST. We apologize for the inconvenience.',
-        // 'Warning: Please do not share your PesuPal login credentials with anyone. PesuPal will never ask for your password.',
+        // 'CollabGen will be down for maintenance on 15th October 2023 from 10:00 AM to 12:00 PM IST. We apologize for the inconvenience.',
+        // 'Warning: Please do not share your CollabGen login credentials with anyone. CollabGen will never ask for your password.',
     ];
 
     const slideInterval = 10000; // 10 seconds
