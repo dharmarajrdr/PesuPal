@@ -4,8 +4,7 @@
 
 # 🚀 CollabGen
 
-**CollabGen** is a next-gen collaboration platform designed to unify communication, teamwork, and productivity within organizations.  
-From real-time conversations to seamless project tracking, CollabGen empowers teams to work smarter, stay connected, and grow together — all in one platform.
+**CollabGen** is a next-gen collaboration platform designed to unify communication, teamwork, and productivity within organizations. From real-time conversations to seamless project tracking, CollabGen empowers teams to work smarter, stay connected, and grow together — all in one platform.
 
 #### Core Collaboration
 - **Feeds** – Share updates, announcements, and insights effortlessly.  
