@@ -538,6 +538,7 @@ span {
   cursor: pointer;
   padding: 10px;
   margin-bottom: 10px;
+  height: 40px;
 }
 
 #openCloseLeftNavigationContainer i:hover {
