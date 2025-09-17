@@ -15,17 +15,20 @@ import PeopleSlice from './store/reducers/PeopleSlice';
 import ProfileSlice from './store/reducers/ProfileSlice';
 import CreateOrgSlice from './store/reducers/CreateOrgSlice';
 import DepartmentSlice from './store/reducers/DepartmentSlice';
+import SinglePostSlice from './store/reducers/SinglePostSlice';
+import ManageUsersSlice from './store/reducers/ManageUsersSlice';
+import ConversationSlice from './store/reducers/ConversationSlice';
 import ModuleFilterSlice from './store/reducers/ModuleFilterSlice';
+import CurrentModuleSlice from './store/reducers/CurrentModuleSlice';
 import TrendingPostsSlice from './store/reducers/TrendingPostsSlice';
 import ActiveChatTabSlice from './store/reducers/ActiveChatTabSlice';
-import LeftNavigationSlice from './store/reducers/LeftNavigationSlice';
-import SinglePostSlice from './store/reducers/SinglePostSlice';
-import ConversationSlice from './store/reducers/ConversationSlice';
-import ConfirmationPopupSlice from './store/reducers/ConfirmationPopupSlice';
-import CurrentModuleSlice from './store/reducers/CurrentModuleSlice';
-import FullScreenImageSlice from './store/reducers/FullScreenImageSlice';
 import SupportTicketsSlice from './store/reducers/SupportTicketsSlice';
+import LeftNavigationSlice from './store/reducers/LeftNavigationSlice';
+import FullScreenImageSlice from './store/reducers/FullScreenImageSlice';
+import ConfirmationPopupSlice from './store/reducers/ConfirmationPopupSlice';
+import OrgRolePermissionsSlice from './store/reducers/OrgRolePermissionsSlice';
 import CurrentChatPreviewSlice from './store/reducers/CurrentChatPreviewSlice';
+import FileCategoryShortcutSlice from './store/reducers/FileCategoryShortcutSlice';
 import ShowChatHeaderOptionsModalSlice from './store/reducers/ShowChatHeaderOptionsModalSlice';
 
 const store = configureStore({
@@ -41,6 +44,7 @@ const store = configureStore({
         createOrg: CreateOrgSlice,
         singlePost: SinglePostSlice,
         department: DepartmentSlice,
+        manageUsers: ManageUsersSlice,
         recentChats: RecentChatsSlice,
         Navigation: NavigationReducers,
         moduleFilter: ModuleFilterSlice,
@@ -54,7 +58,9 @@ const store = configureStore({
         fullScreenImage: FullScreenImageSlice,
         activeRecentChat: ActiveRecentChatSlice,
         confirmationPopup: ConfirmationPopupSlice,
+        orgRolePermissions: OrgRolePermissionsSlice,
         pinnedDirectMessage: PinnedDirectMessageSlice,
+        fileCategoryShortcut: FileCategoryShortcutSlice,
         currentChatPreviewSlice: CurrentChatPreviewSlice,
         showChatHeaderOptionsModalSlice: ShowChatHeaderOptionsModalSlice
     }),

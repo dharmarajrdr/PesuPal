@@ -1,7 +1,7 @@
 package com.pesupal.server.repository.org;
 
-import com.pesupal.server.model.department.Department;
 import com.pesupal.server.model.org.Org;
+import com.pesupal.server.model.org.OrgRole;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.model.user.User;
 import org.springframework.data.domain.Page;
@@ -23,13 +23,13 @@ public interface OrgMemberRepository extends JpaRepository<OrgMember, Long> {
 
     Boolean existsByUserAndOrg(User user, Org org);
 
-    List<OrgMember> findByUser(User user);
+    List<OrgMember> findByUserAndArchivedAndOrg_Active(User user, boolean archived, boolean orgActive);
+
+    List<OrgMember> findAllByOrg(Org org);
 
     Boolean existsByUserIdAndOrgId(Long userId, Long orgId);
 
     List<OrgMember> findAllByOrgIdOrderByDisplayNameAsc(Long orgId);
-
-    List<OrgMember> findAllByOrgAndDepartmentOrderByDisplayName(Org org, Department department);
 
     Optional<OrgMember> findByUser_PublicIdAndOrg_PublicId(String publicUserId, String publicOrgId);
 
@@ -59,5 +59,13 @@ public interface OrgMemberRepository extends JpaRepository<OrgMember, Long> {
 
     void deleteAllByOrg(Org org);
 
-    boolean existsByUserNameAndOrg(String userName, Org org);
+    boolean existsByUser_EmailAndOrg(String userEmail, Org org);
+
+    List<OrgMember> findAllByRoleOrderByEmployeeId(OrgRole role);
+
+    List<OrgMember> findAllByOrgAndArchivedOrderByEmployeeId(Org org, boolean archived);
+
+    boolean existsByRole(OrgRole role);
+
+    Integer countByRole(OrgRole orgRole);
 }

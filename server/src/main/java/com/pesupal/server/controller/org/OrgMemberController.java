@@ -34,13 +34,6 @@ public class OrgMemberController extends OrgSubscriptionManager {
     private final OrgMemberService orgMemberService;
     private final OrgSubscriptionHistoryService orgSubscriptionHistoryService;
 
-    @PostMapping("/new_member")
-    public ResponseEntity<ApiResponseDto> addMemberToOrg(@RequestBody AddOrgMemberDto addOrgMemberDto) {
-
-        OrgMember orgMember = orgMemberService.addMemberToOrg(addOrgMemberDto, getCurrentOrgMember(), false);
-        return ResponseEntity.ok(new ApiResponseDto("Member added to organization successfully.", orgMember));
-    }
-
     @PatchMapping("/{orgMemberPublicId}")
     public ResponseEntity<ApiResponseDto> updateOrgMember(@PathVariable String orgMemberPublicId, @RequestBody AddOrgMemberDto addOrgMemberDto) {
 
@@ -60,6 +53,20 @@ public class OrgMemberController extends OrgSubscriptionManager {
 
         List<UserBasicInfoDto> orgMembers = orgMemberService.getAllOrgMembers(getCurrentOrgMember());
         return ResponseEntity.ok(new ApiResponseDto("List of organization members retrieved successfully.", orgMembers));
+    }
+
+    @GetMapping("/super-admins")
+    public ResponseEntity<ApiResponseDto> getAllSuperAdmins() {
+
+        List<UserBasicInfoDto> superAdmin = orgMemberService.getAllSuperAdmins(getCurrentOrgMember());
+        return ResponseEntity.ok(new ApiResponseDto("Super Admins fetched successfully.", superAdmin));
+    }
+
+    @GetMapping("/inactive-members")
+    public ResponseEntity<ApiResponseDto> getAllInactiveMembers() {
+
+        List<UserBasicInfoDto> inactiveMembers = orgMemberService.getAllInactiveMembers(getCurrentOrgMember());
+        return ResponseEntity.ok(new ApiResponseDto("Inactive members fetched successfully.", inactiveMembers));
     }
 
     @GetMapping("/search")

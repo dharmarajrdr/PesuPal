@@ -1,8 +1,9 @@
-import { useEffect } from 'react';
 import useWebSocket from './WebSocket';
+import { useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import TeamLayout from './components/Team/TeamLayout';
 import ChatLayout from './components/Chat/ChatLayout';
+import AppBanner from './components/Banner/AppBanner';
 import FeedsLayout from './components/Feeds/FeedsLayout';
 import PageNotFound from './components/Auth/PageNotFound';
 import { Navigate, Route, Routes } from 'react-router-dom';
@@ -19,16 +20,32 @@ import ModuleBuilderLayout from './components/Team/ManageWork/ModuleBuilder/Modu
 
 const SubscriptionNotExpiredRoutes = () => {
 
+    const path = window.location.pathname;
+    const appBannerRef = useRef(null);
+    const INFORM_PRESENCE_EVERY_SECONDS = 15;
     const presenceService = usePresenceService();
     const { currentOrgId } = useSelector(state => state.org);
 
     useWebSocket({ 'onPresenceUpdate': presenceService.onPresenceUpdate, 'orgId': currentOrgId });
 
     useEffect(() => {
-        presenceService.informUserOnlineAtInterval(15);
+        presenceService.informUserOnlineAtInterval(INFORM_PRESENCE_EVERY_SECONDS);
     }, [currentOrgId]);
 
-    return (
+    useEffect(() => {
+        if (appBannerRef.current) {
+            const appBannerHeight = appBannerRef.current.clientHeight;
+            const Layouts = document.getElementsByClassName('Layout') || [];
+            if (Layouts) {
+                for (const layout of Layouts) {
+                    layout.style.height = `calc(100vh - ${appBannerHeight}px)`;
+                }
+            }
+        }
+    }, [appBannerRef, path]);
+
+    return (<div className='FCSS' id='subscription-not-expired-routes'>
+        <AppBanner appBannerRef={appBannerRef} />
         <Routes>
             <Route path="/" element={<HomePageLayout />} />
             <Route path='/org/create' element={<CreateOrgModal />} />
@@ -45,7 +62,7 @@ const SubscriptionNotExpiredRoutes = () => {
             <Route path='/more/*' element={<MoreFeaturesLayout />} />
             <Route path="*" element={<PageNotFound />} />
         </Routes>
-    )
+    </div>)
 }
 
 export default SubscriptionNotExpiredRoutes

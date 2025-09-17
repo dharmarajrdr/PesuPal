@@ -6,6 +6,7 @@ import com.pesupal.server.dto.response.UserBasicInfoDto;
 import com.pesupal.server.dto.response.UserPreviewDto;
 import com.pesupal.server.dto.response.org.OrgDetailDto;
 import com.pesupal.server.model.org.Org;
+import com.pesupal.server.model.user.OrgInvitation;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.model.user.User;
 import org.springframework.data.domain.Pageable;
@@ -30,10 +31,6 @@ public interface OrgMemberService {
 
     List<OrgDetailDto> listOfOrgUserPartOf(Long userId);
 
-    OrgMember addMemberToOrg(AddOrgMemberDto addOrgMemberDto, OrgMember orgMember, boolean firstMember);
-
-    void validateUserIsOrgMember(User user, Org org);
-
     List<UserBasicInfoDto> getAllOrgMembers(OrgMember orgMember);
 
     List<UserBasicInfoDto> getSearchedOrgMembers(OrgMember orgMember, String search, Pageable pageable);
@@ -45,4 +42,16 @@ public interface OrgMemberService {
     void removeAllOrgMembers(Org org);
 
     void updateOrgMember(String orgMemberPublicId, AddOrgMemberDto addOrgMemberDto, OrgMember currentOrgMember);
+
+    void joinInOrg(OrgInvitation orgInvitation, User user);
+
+    void joinInAllInvitedOrgs(User user);
+
+    List<UserBasicInfoDto> getAllSuperAdmins(OrgMember currentOrgMember);
+
+    List<UserBasicInfoDto> getAllInactiveMembers(OrgMember currentOrgMember);
+
+    void removeOrgMember(OrgMember orgMember);
+
+    void stopAllSchedulesByOrgMember(OrgMember orgMember);
 }

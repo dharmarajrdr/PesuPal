@@ -48,11 +48,9 @@ public class FolderServiceImpl extends CurrentValueRetriever implements FolderSe
      */
     @Override
     @Transactional
-    public FolderDto createFolder(CreateFolderDto createFolderDto) {
+    public FolderDto createFolder(CreateFolderDto createFolderDto, OrgMember orgMember) {
 
-        OrgMember orgMember = getCurrentOrgMember();
-
-        if (folderRepository.existsByNameAndSpaceAndParentFolder_PublicIdAndDeleted(createFolderDto.getName(), createFolderDto.getSpace(), createFolderDto.getParentFolderId(), false)) {
+        if (folderRepository.existsByNameAndSpaceAndParentFolder_PublicIdAndCreatedBy_OrgAndDeleted(createFolderDto.getName(), createFolderDto.getSpace(), createFolderDto.getParentFolderId(), orgMember.getOrg(), false)) {
             throw new ActionProhibitedException("A folder with the name '" + createFolderDto.getName() + "' already exists.");
         }
 
@@ -77,18 +75,6 @@ public class FolderServiceImpl extends CurrentValueRetriever implements FolderSe
         folderDto.setSecurity(createFolderDto.getSecurity());
         folderDto.setOwner(orgMemberService.getUserBasicInfo(orgMember));
         return folderDto;
-    }
-
-    /**
-     * Retrieves a folder by its ID.
-     *
-     * @param folderId
-     * @return Folder
-     */
-    @Override
-    public Folder getFolderById(Long folderId) {
-
-        return folderRepository.findById(folderId).orElseThrow(() -> new DataNotFoundException("Folder with ID " + folderId + " not found."));
     }
 
     /**

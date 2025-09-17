@@ -1,61 +1,29 @@
 import './ManagePeople.css';
-import Loader from '../Loader';
-import { useDispatch } from "react-redux";
+import { useState } from 'react';
 import AddUserLayout from './AddUserLayout';
 import OrgMemberList from './OrgMemberList';
-import { apiRequest } from '../../http_request';
-import { useEffect, useRef, useState } from 'react';
+import PendingInvites from './PendingInvites';
+import SuperAdminsList from './SuperAdminsList';
 import ManagePeopleHeader from './ManagePeopleHeader';
-import { showPopup } from '../../store/reducers/PopupSlice';
-import { hideLoader, showLoader } from '../../store/reducers/VerticalLoaderSlice';
+import { Navigate, Route, Routes } from 'react-router';
 
 const ManagePeople = () => {
 
-    const sortOrder = 'ASC';
-    const sortBy = 'employeeId';
-    const dispatch = useDispatch();
-    const firstRender = useRef(true);
-    const [members, setMembers] = useState([]);
-    const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
     const [showAddUserLayout, setShowAddUserLayout] = useState(false);
 
-    const getUsers = () => {
-        apiRequest(`/api/v1/people/search?query=${searchQuery}&sortBy=${sortBy}&sortOrder=${sortOrder}`, 'GET').then(({ data }) => {
-            setMembers(data);
-        }).catch(({ message }) => {
-            dispatch(showPopup({ message, type: 'error' }));
-        }).finally(() => {
-            setLoading(false);
-            dispatch(hideLoader());
-        });
-    }
-
-    useEffect(() => {
-        setLoading(true);
-        getUsers();
-    }, []);
-
-    useEffect(() => {
-
-        if (firstRender.current) {
-            firstRender.current = false;
-            return;
-        }
-
-        const delayDebounceFn = setTimeout(() => {
-            dispatch(showLoader());
-            getUsers();
-        }, 1000);
-
-        return () => clearTimeout(delayDebounceFn);
-    }, [searchQuery]);
-
     return (
         <div className="manage-people-container w100 h100">
-            <ManagePeopleHeader setShowAddUserLayout={setShowAddUserLayout} searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
-            {loading ? <Loader /> : <OrgMemberList members={members} />}
             {showAddUserLayout && <AddUserLayout setShowAddUserLayout={setShowAddUserLayout} />}
+            <ManagePeopleHeader setShowAddUserLayout={setShowAddUserLayout} searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+
+            <Routes>
+                <Route path="/all-members" element={<OrgMemberList searchQuery={searchQuery} />} />
+                <Route path="/super-admins" element={<SuperAdminsList searchQuery={searchQuery} />} />
+                <Route path="/pending-invites" element={<PendingInvites searchQuery={searchQuery} />} />
+                <Route path="/all-members" element={<OrgMemberList searchQuery={searchQuery} />} />
+                <Route path='*' element={<Navigate to="/settings/manage-people/all-members" />} />
+            </Routes>
         </div>
     );
 };

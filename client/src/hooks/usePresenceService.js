@@ -9,6 +9,7 @@ export default function usePresenceService() {
 
     const dispatch = useDispatch();
     const setUserOnline = () => {
+        if (document.hidden) { return; }    // Don't inform if the tab is not active
         apiRequest(`/api/v1/presence/inform`, 'PATCH').catch(({ message }) => {
             console.error(message);
         });

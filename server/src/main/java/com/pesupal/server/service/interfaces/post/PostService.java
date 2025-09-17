@@ -4,6 +4,7 @@ import com.pesupal.server.dto.request.post.CreatePostDto;
 import com.pesupal.server.dto.response.post.PostDto;
 import com.pesupal.server.dto.response.post.PostsListDto;
 import com.pesupal.server.enums.SortOrder;
+import com.pesupal.server.model.org.Org;
 import com.pesupal.server.model.post.Post;
 import com.pesupal.server.model.user.OrgMember;
 
@@ -39,9 +40,11 @@ public interface PostService {
 
     PostsListDto getScheduledPosts(int page, int size, SortOrder sortOrder);
 
-    PostsListDto getFeeds(int page, int size, SortOrder sortOrder);
-
     List<PostDto> getTrendingPosts(int limit);
 
     PostsListDto searchPosts(String query, int page, int size);
+
+    void unscheduleAllPostsByOrgMember(OrgMember orgMember);
+
+    void deleteAllByOrg(Org deletedOrg);
 }

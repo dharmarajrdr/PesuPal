@@ -3,28 +3,37 @@ package com.pesupal.server.service.implementations.drive;
 import com.pesupal.server.dto.request.drive.CreateFileDto;
 import com.pesupal.server.dto.response.drive.FileDto;
 import com.pesupal.server.dto.response.drive.FileOrFolderDto;
+import com.pesupal.server.dto.response.drive.SpaceStatDto;
 import com.pesupal.server.enums.Arithmetic;
 import com.pesupal.server.enums.FileOrFolder;
+import com.pesupal.server.enums.Workspace;
 import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.helpers.CurrentValueRetriever;
+import com.pesupal.server.helpers.FileHelper;
+import com.pesupal.server.model.org.Org;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.model.workdrive.File;
 import com.pesupal.server.model.workdrive.Folder;
 import com.pesupal.server.repository.drive.FileRepository;
+import com.pesupal.server.service.interfaces.MediaService;
 import com.pesupal.server.service.interfaces.drive.FileService;
 import com.pesupal.server.service.interfaces.drive.FolderService;
 import com.pesupal.server.service.interfaces.org.OrgMemberService;
-import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Sort;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @AllArgsConstructor
 public class FileServiceImpl extends CurrentValueRetriever implements FileService {
 
+    private final MediaService mediaService;
     private final FolderService folderService;
     private final FileRepository fileRepository;
     private final OrgMemberService orgMemberService;
@@ -111,4 +120,80 @@ public class FileServiceImpl extends CurrentValueRetriever implements FileServic
         return fileRepository.findByPublicId(publicId).orElseThrow(() -> new DataNotFoundException("File with public ID " + publicId + " not found."));
     }
 
+    /**
+     * Retrieves space statistics for a given workspace.
+     *
+     * @param space
+     * @return
+     */
+    @Override
+    public Map<String, SpaceStatDto> getSpaceStats(Workspace space) {
+
+        Map<String, SpaceStatDto> statDtoMap = new HashMap<>();
+        List<File> files = fileRepository.findAllByCreator_OrgAndFolder_Space(getCurrentOrgMember().getOrg(), space);
+        for (File file : files) {
+            String extension = FileHelper.getExtensionGroup(file.getExtension());
+            SpaceStatDto spaceStatDto = statDtoMap.getOrDefault(extension, new SpaceStatDto());
+            if (!statDtoMap.containsKey(extension)) {
+                spaceStatDto.setCount(1);
+                spaceStatDto.setSize(file.getSize());
+                statDtoMap.put(extension, spaceStatDto);
+                continue;
+            }
+            spaceStatDto.setCount(spaceStatDto.getCount() + 1);
+            spaceStatDto.setSize(spaceStatDto.getSize() + file.getSize());
+        }
+        return statDtoMap;
+    }
+
+    /**
+     * Deletes a file by its ID.
+     *
+     * @param fileId
+     */
+    @Override
+    @Transactional
+    public void deleteFile(String fileId) {
+
+        File file = getFileByPublicId(fileId);
+        file.setDeleted(true);
+        fileRepository.save(file);
+        folderService.updateFolderSizeRecursively(file.getFolder(), file.getSize(), Arithmetic.MINUS);
+    }
+
+    /**
+     * Delete all file by org
+     *
+     * @param files
+     */
+    private void deleteAll(List<File> files) {
+
+        for (File file : files) {
+            mediaService.deleteFile(file.getMediaId());
+        }
+        fileRepository.deleteAll(files);
+    }
+
+    /**
+     * Deleted all file by org
+     *
+     * @param deletedOrg
+     */
+    @Override
+    public void deleteAllByOrg(Org deletedOrg) {
+
+        List<File> deleteFiles = fileRepository.findAllByCreator_Org(deletedOrg);
+        deleteAll(deleteFiles);
+    }
+
+    /**
+     * Performs garbage collection on media files that are no longer associated with any file records.
+     * This method removes orphaned media files from the repository and s3 storage.
+     */
+    @Scheduled(cron = "${aws.s3.garbage-collection.cron}")
+    public void garbageCollect() {
+
+        List<File> deleteFiles = fileRepository.findAllByDeleted(true);
+        deleteAll(deleteFiles);
+    }
 }

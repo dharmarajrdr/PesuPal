@@ -77,7 +77,8 @@ const Profile = () => {
         });
     }, [userId]);
 
-    const closeProfileOverlay = () => {
+    const closeProfileOverlay = (e) => {
+        if (e.target.id !== 'ProfileOverlay') return;
         dispatch(hideProfile());
     }
 
@@ -105,7 +106,7 @@ const Profile = () => {
                                     <p id='profile_dept' title='Department'>{department}</p>
                                 </div>
                                 <div className='row mT10'>
-                                    <i className='profile_contacts fa fa-comment' style={{ backgroundColor: 'blue' }} onClick={goToChat} />
+                                    <i className='profile_contacts fa fa-comment' style={{ backgroundColor: '#3591ff' }} onClick={goToChat} />
                                     <i className='profile_contacts fa fa-phone' style={{ backgroundColor: 'green' }} />
                                     <i className='profile_contacts fa fa-video' style={{ backgroundColor: 'red' }} />
                                 </div>

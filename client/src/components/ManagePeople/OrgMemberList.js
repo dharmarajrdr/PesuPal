@@ -1,56 +1,20 @@
+import Role from './Role'
 import './OrgMemberList.css'
-import { useState } from 'react'
-
-const FirstChar = ({ displayName }) => {
-
-    return <p className='first-char-of-name'>{displayName.charAt(0).toUpperCase()}</p>
-}
-
-const Person = ({ person }) => {
-
-    const { displayName, email, displayPicture } = person;
-    const [showDisplayPicture, setShowDisplayPicture] = useState(displayPicture !== null && displayPicture !== undefined);
-
-    return <div className='FRCS person-column'>
-        {showDisplayPicture ? (
-            <img src={displayPicture} onError={() => setShowDisplayPicture(false)} />
-        ) : <FirstChar displayName={displayName} />}
-        <div className='FCSS name-and-email'>
-            <p className='person-name'>{displayName}</p>
-            <p className='person-email'>{email}</p>
-        </div>
-    </div>
-}
-const MemberStatus = ({ archived }) => {
-
-    return <div className={`FRCS member-status ${archived ? 'inactive' : 'active'}`}>
-        <i className={`fa fa-circle pR5 w20`} />
-        <span>{archived ? 'Inactive' : 'Active'}</span>
-    </div>
-}
-
-const Role = ({ person }) => {
-
-    const { department, designation } = person || {};
-
-    return <div className='FCCC role-column'>
-        <p>{designation || 'N/A'}</p>
-        <p>{department || 'N/A'}</p>
-    </div>
-}
+import Person from './Person'
+import Loader from '../Loader'
+import EmployeeId from './EmployeeId'
+import MemberStatus from './MemberStatus'
+import { apiRequest } from '../../http_request'
+import { useEffect, useRef, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { showPopup } from '../../store/reducers/PopupSlice'
+import { setUsers } from '../../store/reducers/ManageUsersSlice'
+import { hideLoader, showLoader } from '../../store/reducers/VerticalLoaderSlice'
 
 const Actions = () => {
 
     return <div className='FRCE action-btns'>
         <span className='action-btn edit'><i className="fa fa-pencil w15" /> Edit</span>
-    </div>
-}
-
-const EmployeeId = ({ employeeId }) => {
-
-    return <div className='FRCS employee-id-column'>
-        <i className='fa fa-hashtag w15 fs12 color999' />
-        <p className='color999 fs14'>{employeeId}</p>
     </div>
 }
 
@@ -80,11 +44,49 @@ const NoMembersFound = () => {
     </div>
 }
 
-const OrgMemberList = ({ members }) => {
+const OrgMemberList = ({ searchQuery }) => {
 
-    return (
-        <div id='org-member-list'>
-            <div className='w100' id='org-member-table' cellPadding={0} cellSpacing={0}>
+    const sortOrder = 'ASC';
+    const sortBy = 'employeeId';
+    const dispatch = useDispatch();
+    const firstRender = useRef(true);
+    const [loading, setLoading] = useState(true);
+    const { members } = useSelector(state => state.manageUsers);
+
+    const getUsers = () => {
+        apiRequest(`/api/v1/people/search?query=${searchQuery}&sortBy=${sortBy}&sortOrder=${sortOrder}`, 'GET').then(({ data }) => {
+            dispatch(setUsers(data));
+        }).catch(({ message }) => {
+            dispatch(showPopup({ message, type: 'error' }));
+        }).finally(() => {
+            setLoading(false);
+            dispatch(hideLoader());
+        });
+    }
+
+    useEffect(() => {
+        setLoading(true);
+        getUsers();
+    }, []);
+
+    useEffect(() => {
+
+        if (firstRender.current) {
+            firstRender.current = false;
+            return;
+        }
+
+        const delayDebounceFn = setTimeout(() => {
+            dispatch(showLoader());
+            getUsers();
+        }, 1000);
+
+        return () => clearTimeout(delayDebounceFn);
+    }, [searchQuery]);
+
+    return loading ? <Loader /> : (
+        <div class='manage-people-body'>
+            <div className='w100 manage-people-table' cellPadding={0} cellSpacing={0}>
 
                 <div className='row header w100 FRCS'>
                     <div className='column'>ID</div>

@@ -2,10 +2,10 @@ package com.pesupal.server.model.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.pesupal.server.enums.MemberStatus;
-import com.pesupal.server.enums.Role;
 import com.pesupal.server.model.PublicAccessModel;
 import com.pesupal.server.model.department.Department;
 import com.pesupal.server.model.org.Org;
+import com.pesupal.server.model.org.OrgRole;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -29,16 +29,13 @@ public class OrgMember extends PublicAccessModel {
     private User user;
 
     @Column(nullable = false)
-    private String userName;
-
-    @Column(nullable = false)
     private String displayName;
 
-    @Column(nullable = false)
+    @Column(nullable = false, updatable = false)
     private Integer employeeId;
 
-    @Enumerated(EnumType.STRING)
-    private Role role;
+    @ManyToOne
+    private OrgRole role;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore

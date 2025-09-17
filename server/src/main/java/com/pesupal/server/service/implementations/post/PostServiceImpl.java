@@ -4,22 +4,23 @@ import com.pesupal.server.dto.request.post.CreatePostDto;
 import com.pesupal.server.dto.request.post.CreatePostMentionsDto;
 import com.pesupal.server.dto.response.UserPreviewDto;
 import com.pesupal.server.dto.response.post.*;
-import com.pesupal.server.enums.FeedRetriever;
+import com.pesupal.server.enums.OrgAction;
 import com.pesupal.server.enums.PostStatus;
 import com.pesupal.server.enums.SortOrder;
 import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.exceptions.MandatoryDataMissingException;
 import com.pesupal.server.exceptions.PermissionDeniedException;
-import com.pesupal.server.factory.FeedRetrieverServiceFactory;
 import com.pesupal.server.factory.TrendingPostsAnalyserFactory;
 import com.pesupal.server.helpers.CurrentValueRetriever;
 import com.pesupal.server.helpers.DateTimeUtil;
+import com.pesupal.server.model.org.Org;
 import com.pesupal.server.model.post.*;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.model.user.User;
 import com.pesupal.server.repository.post.PostRepository;
 import com.pesupal.server.service.interfaces.MediaService;
+import com.pesupal.server.service.interfaces.org.OrgConfigurationService;
 import com.pesupal.server.service.interfaces.org.OrgMemberService;
 import com.pesupal.server.service.interfaces.post.*;
 import jakarta.transaction.Transactional;
@@ -48,7 +49,7 @@ public class PostServiceImpl extends CurrentValueRetriever implements PostServic
     private final PostMediaService postMediaService;
     private final PostMentionService postMentionService;
     private final RedisTemplate<String, Object> redisTemplate;
-    private final FeedRetrieverServiceFactory feedRetrieverServiceFactory;
+    private final OrgConfigurationService orgConfigurationService;
     private final TrendingPostsAnalyserFactory trendingPostsAnalyserFactory;
 
     private final static int MAXIMUM_TAGS_PER_POST = 10;
@@ -56,7 +57,6 @@ public class PostServiceImpl extends CurrentValueRetriever implements PostServic
     private final static String TRENDING_POSTS_KEY = "trending:posts";
     private final static Duration TRENDING_POSTS_CACHE_DURATION = Duration.ofHours(6);
     private final static String TRENDING_POSTS_ANALYSER_ALGORITHM = "ENGAGEMENT_BASED";
-    private final static FeedRetriever feedRetrieverAlgorithm = FeedRetriever.SIMPLE_FEED_RETRIEVER_ALGORITHM;
 
     /**
      * To validate the CreatePostDto before performing any operations.
@@ -91,6 +91,14 @@ public class PostServiceImpl extends CurrentValueRetriever implements PostServic
     public Post createPostInternal(CreatePostDto createPostDto) {
 
         OrgMember creator = getCurrentOrgMember();
+
+        if (!orgConfigurationService.hasPrivilegeTo(OrgAction.CREATE_POST, creator.getRole())) {
+            throw new PermissionDeniedException("You don't have permission to create post.");
+        }
+
+        if (!createPostDto.getMediaIds().isEmpty() && orgConfigurationService.hasPrivilegeTo(OrgAction.ATTACH_MEDIA_IN_POST, creator.getRole())) {
+            throw new PermissionDeniedException("You don't have permission to attach media in post.");
+        }
 
         validateCreatePostDto(createPostDto, creator);
 
@@ -366,21 +374,6 @@ public class PostServiceImpl extends CurrentValueRetriever implements PostServic
     }
 
     /**
-     * Retrieves the feed for the current user.
-     *
-     * @param page
-     * @param size
-     * @param sortOrder
-     * @return
-     */
-    @Override
-    public PostsListDto getFeeds(int page, int size, SortOrder sortOrder) {
-
-        FeedRetrieverService feedRetrieverService = feedRetrieverServiceFactory.getFeedRetrieverService(feedRetrieverAlgorithm);
-        return feedRetrieverService.getFeeds(page, size, sortOrder, getCurrentOrgMember());
-    }
-
-    /**
      * Retrieves trending posts.
      *
      * @param limit
@@ -443,13 +436,44 @@ public class PostServiceImpl extends CurrentValueRetriever implements PostServic
                 .filter(word -> !word.isBlank())
                 .collect(Collectors.joining(" | "));
 
+        boolean hasPrivilegeToCreatePost = orgConfigurationService.hasPrivilegeTo(OrgAction.CREATE_POST, orgMember.getRole());
+
         Pageable pageable = PageRequest.of(page, size, Sort.by("created_at").descending());
         Slice<Post> posts = postRepository.searchPostsByOrg(orgMember.getOrg().getId(), tsQuery, pageable);
         List<PostDto> postDtos = new ArrayList<>(posts.getContent().stream().map(post -> getPostDtoFromPostAndOrgMember(post, orgMember)).toList());
         PostsListDto postsListDto = new PostsListDto();
-        postsListDto.setInfo(Map.of("hasMoreRecords", posts.hasNext()));
+        postsListDto.setInfo(Map.of("hasMoreRecords", posts.hasNext(), "hasPrivilegeToCreatePost", hasPrivilegeToCreatePost));
         postsListDto.setPosts(postDtos);
         return postsListDto;
+    }
+
+    /**
+     * Unschedules all posts created by a specific organization member.
+     *
+     * @param orgMember
+     */
+    @Override
+    public void unscheduleAllPostsByOrgMember(OrgMember orgMember) {
+
+        List<Post> scheduledPosts = postRepository.findAllByCreatorAndStatus(orgMember, PostStatus.SCHEDULED);
+        for (Post post : scheduledPosts) {
+            redisTemplate.opsForZSet().remove(SCHEDULED_POST_KEY, post.getId());
+        }
+        postRepository.deleteAll(scheduledPosts);
+    }
+
+    /**
+     * Deletes all posts associated with a specific organization.
+     *
+     * @param deletedOrg
+     */
+    @Override
+    public void deleteAllByOrg(Org deletedOrg) {
+
+        List<Post> posts = postRepository.findAllByCreator_Org(deletedOrg);
+        for (Post post : posts) {
+            deletePost(post.getPublicId());
+        }
     }
 
     /**
@@ -492,7 +516,6 @@ public class PostServiceImpl extends CurrentValueRetriever implements PostServic
         Page<PostTag> postPage = postTagService.findAllByTagAndOrgId(tag, orgId, pageable);
         List<PostDto> postDtos = new ArrayList<>(postPage.getContent().stream().map(postTag -> {
             Post post = postTag.getPost();
-            OrgMember postOwnerOrgMember = orgMemberService.getOrgMemberByUserIdAndOrgId(post.getCreator().getId(), orgId);
             PostDto postDto = getPostDtoFromPostAndOrgMember(post, orgMember);
             postDto.setCreator(post.getCreator().getId().equals(orgMemberId));
             postDto.setLiked(isLiked(post.getLikes(), orgMember.getUser()));

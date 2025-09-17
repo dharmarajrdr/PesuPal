@@ -1,11 +1,12 @@
 package com.pesupal.server.service.implementations.post;
 
 import com.pesupal.server.dto.response.MediaDto;
+import com.pesupal.server.model.org.Org;
 import com.pesupal.server.model.post.Post;
 import com.pesupal.server.model.post.PostMedia;
 import com.pesupal.server.repository.post.PostMediaRepository;
+import com.pesupal.server.service.interfaces.MediaService;
 import com.pesupal.server.service.interfaces.post.PostMediaService;
-import com.pesupal.server.strategies.media_storage.S3Service;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,7 +19,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class PostMediaServiceImpl implements PostMediaService {
 
-    private final S3Service s3Service;
+    private final MediaService mediaService;
     private final PostMediaRepository postMediaRepository;
 
     /**
@@ -28,7 +29,7 @@ public class PostMediaServiceImpl implements PostMediaService {
      */
     private void deletePostMedia(PostMedia postMedia) {
 
-        s3Service.deleteFile(postMedia.getMediaId());
+        mediaService.deleteFile(postMedia.getMediaId());
         postMedia.setPost(null);
         postMediaRepository.save(postMedia);
     }
@@ -95,5 +96,20 @@ public class PostMediaServiceImpl implements PostMediaService {
         }
 
         return existingMedia;
+    }
+
+    /**
+     * Delete all media associated with deleted org
+     *
+     * @param deletedOrg
+     */
+    @Override
+    public void deleteAllByOrg(Org deletedOrg) {
+
+        List<PostMedia> postMediaList = postMediaRepository.findAllByPost_Org(deletedOrg);
+        for (PostMedia postMedia : postMediaList) {
+            mediaService.deleteFile(postMedia.getMediaId());
+        }
+        postMediaRepository.deleteAll(postMediaList);
     }
 }

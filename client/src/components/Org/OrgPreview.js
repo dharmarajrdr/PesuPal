@@ -6,7 +6,8 @@ const OrgPreview = ({ org, setCurrentOrg }) => {
 
     const { id, displayName, role, displayPicture, members, subscription } = org;
     const { planName, expiresAt, status: subscriptionStatus } = subscription || {};
-    const isOwner = role === 'ADMIN';
+    const { name: roleName } = role || {};
+    const isOwner = roleName === 'Super Admin';
     const isTrial = planName == 'FREE_TRIAL';
     const { currentOrgId } = useSelector((state) => state.org);
     const active = org.publicId == currentOrgId;
@@ -39,8 +40,10 @@ const OrgPreview = ({ org, setCurrentOrg }) => {
                 </div>
                 <div className='FRCB w100'>
                     <span className='org-role'>
-                        <i className={`fa ${isOwner ? 'fa-user-shield' : 'fa-user'} w15`}></i>
-                        {role}
+                        {roleName ? <>
+                            <i className={`fa ${isOwner ? 'fa-user-shield' : 'fa-user'} w15`}></i>
+                            {roleName}
+                        </> : null}
                     </span>
                     <span className='org-members-count'>
                         <i className="fa-solid fa-users mR5"></i>

@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface DepartmentService {
 
-    Department getDepartmentById(Long departmentId);
+    Department getDepartmentById(String departmentId);
 
     Department createDepartment(CreateDepartmentDto createDepartmentDto);
 

@@ -1,5 +1,5 @@
-import ManagePeople from './ManagePeople'
 import './ManagePeopleLayout.css'
+import ManagePeople from './ManagePeople'
 
 const ManagePeopleLayout = () => {
 

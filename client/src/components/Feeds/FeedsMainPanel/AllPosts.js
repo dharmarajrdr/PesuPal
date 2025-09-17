@@ -6,7 +6,7 @@ import { apiRequest } from '../../../http_request';
 import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { showPopup } from '../../../store/reducers/PopupSlice';
-import { appendPosts, clearPosts } from '../../../store/reducers/PostSlice';
+import { appendPosts, clearPosts, setHasPrivilegeToCreatePost } from '../../../store/reducers/PostSlice';
 
 const NoPostsAvailable = () => {
 
@@ -37,10 +37,11 @@ const AllPosts = ({ searchText }) => {
     const loadMorePostsRef = useRef(null);
 
     const fetchPosts = async () => {
-        apiRequest(`/api/v1/post/feeds?search=${searchText}&page=${page}&size=${size}&sort_order=${sortOrder}`, 'GET').then(({ data, info }) => {
+        apiRequest(`/api/v1/feeds?search=${searchText}&page=${page}&size=${size}&sort_order=${sortOrder}`, 'GET').then(({ data, info }) => {
             setLoading(false);
             dispatch(appendPosts(data));
             setHasMore(info.hasMoreRecords);
+            dispatch(setHasPrivilegeToCreatePost(info.hasPrivilegeToCreatePost));
             setFetching(false);
         }).catch(({ message }) => {
             dispatch(showPopup({ message, type: 'error' }));
