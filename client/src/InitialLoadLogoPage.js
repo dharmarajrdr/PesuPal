@@ -3,7 +3,7 @@ import "./InitialLoadLogoPage.css";
 const InitialLoadLogoPage = () => {
     return (
         <div className="splash-container">
-            <span className="splash-text" id="brand-logo">Pesupal</span>
+            <span className="splash-text" id="brand-logo">CollabGen</span>
         </div>
     );
 };
