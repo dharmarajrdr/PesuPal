@@ -1,0 +1,11 @@
+#pending-invites-table .row .column:nth-child(1) {
+    width: 35%;
+}
+
+#pending-invites-table .row .column:nth-child(2) {
+    width: 35%;
+}
+
+#pending-invites-table .row .column:nth-child(3) {
+    width: 30%;
+}

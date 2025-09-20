@@ -4,6 +4,7 @@ import com.pesupal.server.dto.request.UserLoginDto;
 import com.pesupal.server.security.CustomUserDetails;
 import com.pesupal.server.security.JwtUtil;
 import com.pesupal.server.service.interfaces.AuthService;
+import com.pesupal.server.service.interfaces.org.UserOnboardingService;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -21,6 +22,7 @@ public class AuthServiceImpl implements AuthService {
     private final JwtUtil jwtUtil;
     private final UserDetailsService userDetailsService;
     private final AuthenticationManager authenticationManager;
+    private final UserOnboardingService userOnboardingService;
 
     /**
      * Handles user login by authenticating the provided credentials.
@@ -33,6 +35,7 @@ public class AuthServiceImpl implements AuthService {
 
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userLoginDto.getEmail(), userLoginDto.getPassword()));
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        userOnboardingService.hasDoneOnboardingVerification(userDetails.getUserPublicId());
         return jwtUtil.generateToken(userDetails);
     }
 

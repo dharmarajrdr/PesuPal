@@ -1,5 +1,6 @@
 import './FeedsHeader.css'
-import { useDispatch } from 'react-redux';
+import NotifyCount from '../NotifyCount';
+import { useDispatch, useSelector } from 'react-redux';
 import { resetPostData, showCreatePostModal } from '../../store/reducers/PostSlice';
 
 const FeedsSearchBar = ({ searchText, setSearchText }) => {
@@ -13,6 +14,7 @@ const FeedsSearchBar = ({ searchText, setSearchText }) => {
 const HeaderRight = () => {
 
     const dispatch = useDispatch();
+    const { hasPrivilegeToCreatePost } = useSelector(state => state.posts);
 
     const showCreatePostModalHandler = () => {
 
@@ -21,14 +23,14 @@ const HeaderRight = () => {
     }
 
     return <div className='FRCS pR' id='FeedsRightPanelHeader'>
-        <button id='create-post-button' onClick={showCreatePostModalHandler}>
+        <div className='pR' id='feeds-notifications'>
+            <i className="fa-solid fa-bell w15"></i>
+            <NotifyCount count={0} />
+        </div>
+        {hasPrivilegeToCreatePost && <button id='create-post-button' onClick={showCreatePostModalHandler} className='FRCC'>
             <i className="fa-solid fa-plus w15"></i>
-            Create Post
-        </button>
-        <button className='my-posts-button'>
-            <i className="fa-solid fa-book w15"></i>
-            My Posts
-        </button>
+            <span className='colorFFF'>Create Post</span>
+        </button>}
     </div>
 }
 

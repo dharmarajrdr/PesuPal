@@ -1,71 +1,76 @@
 package com.pesupal.server.model.org;
 
-import com.pesupal.server.enums.Role;
+import com.pesupal.server.enums.OrgAction;
+import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.model.BaseModel;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.ManyToOne;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @Entity
+@SuperBuilder
+@NoArgsConstructor
 public class OrgConfiguration extends BaseModel {
 
     @ManyToOne
-    private Org org;
+    private OrgRole role;
 
     @Enumerated(EnumType.STRING)
-    private Role role;
+    private OrgAction permittedAction;
 
-    private Boolean inviteMember;
+    /**
+     * All Actions are permitted
+     *
+     * @param orgRole
+     * @return
+     */
+    private static List<OrgConfiguration> superAdminConfigurations(OrgRole orgRole) {
 
-    private Boolean addMember;
-
-    private Boolean removeMember;
-
-    private Boolean updateMember;
-
-    private Boolean updateOrg;
-
-    private Boolean deleteOrg;
-
-    private Boolean leaveOrg;
-
-    private Boolean createGroup;
-
-    public static OrgConfiguration getInitialConfiguration(Role role) {
-
-        OrgConfiguration orgConfiguration = new OrgConfiguration();
-        orgConfiguration.setCreateGroup(true);
-        switch (role) {
-            case ADMIN: {
-                orgConfiguration.setRole(role);
-                orgConfiguration.setInviteMember(true);
-                orgConfiguration.setAddMember(true);
-                orgConfiguration.setRemoveMember(true);
-                orgConfiguration.setUpdateMember(true);
-                orgConfiguration.setUpdateOrg(true);
-                orgConfiguration.setDeleteOrg(true);
-                orgConfiguration.setLeaveOrg(true);
-                break;
-            }
-            case USER: {
-                orgConfiguration.setRole(role);
-                orgConfiguration.setInviteMember(false);
-                orgConfiguration.setAddMember(false);
-                orgConfiguration.setRemoveMember(false);
-                orgConfiguration.setUpdateMember(false);
-                orgConfiguration.setUpdateOrg(false);
-                orgConfiguration.setDeleteOrg(false);
-                orgConfiguration.setLeaveOrg(true);
-                break;
-            }
-            default: {
-                throw new IllegalArgumentException("Default configuration not found for role: " + role);
-            }
+        List<OrgConfiguration> superAdminConfigurations = new ArrayList<>();
+        for (OrgAction orgAction : OrgAction.values()) {
+            superAdminConfigurations.add(OrgConfiguration.builder().permittedAction(orgAction).role(orgRole).build());
         }
-        return orgConfiguration;
+        return superAdminConfigurations;
     }
 
+    /**
+     * Limited actions are permitted by default
+     *
+     * @param orgRole
+     * @return
+     */
+    private static List<OrgConfiguration> memberConfigurations(OrgRole orgRole) {
+
+        List<OrgConfiguration> memberConfigurations = new ArrayList<>();
+        List<OrgAction> memberDoableActions = List.of(
+                // Add member do-able actions here
+        );
+        for (OrgAction orgAction : memberDoableActions) {
+            memberConfigurations.add(OrgConfiguration.builder().permittedAction(orgAction).role(orgRole).build());
+        }
+        return memberConfigurations;
+    }
+
+    public static List<OrgConfiguration> getInitialConfiguration(OrgRole role) {
+
+        switch (role.getName()) {
+            case "Super Admin": {
+                return superAdminConfigurations(role);
+            }
+            case "Member": {
+                return memberConfigurations(role);
+            }
+            default: {
+                throw new DataNotFoundException(role.getName() + " is not a default role.");
+            }
+        }
+    }
 }

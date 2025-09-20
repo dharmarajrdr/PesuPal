@@ -3,11 +3,14 @@ import { createSlice } from "@reduxjs/toolkit";
 const SinglePostSlice = createSlice({
     name: "singlePost",
     initialState: {
-        post: null,
+        post: null
     },
     reducers: {
         showSinglePost: (state, action) => {
             state.post = action.payload;
+        },
+        updateSinglePost: (state, action) => {
+            state.post = { ...state.post, ...action.payload };
         },
         hideSinglePost: (state) => {
             state.post = null;
@@ -15,6 +18,6 @@ const SinglePostSlice = createSlice({
     }
 })
 
-export const { showSinglePost, hideSinglePost } = SinglePostSlice.actions;
+export const { showSinglePost, updateSinglePost, hideSinglePost } = SinglePostSlice.actions;
 
 export default SinglePostSlice.reducer;

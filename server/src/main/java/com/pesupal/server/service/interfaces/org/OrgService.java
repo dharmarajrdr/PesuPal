@@ -1,13 +1,21 @@
 package com.pesupal.server.service.interfaces.org;
 
 import com.pesupal.server.dto.request.org.CreateOrgDto;
+import com.pesupal.server.dto.response.org.OrgCreatedDto;
 import com.pesupal.server.model.org.Org;
+import com.pesupal.server.model.user.OrgMember;
+import org.springframework.transaction.annotation.Transactional;
 
 public interface OrgService {
 
     Org getOrgById(Long orgId);
 
-    Org createOrg(CreateOrgDto createOrgDto, String userPublicId);
+    OrgCreatedDto createOrg(CreateOrgDto createOrgDto, String userPublicId);
 
-    Org getOrgByPublicId(String orgId);
+    void deleteOrg(OrgMember orgMember);
+
+    @Transactional
+    void leaveOrg(OrgMember orgMember);
+
+    void updateOrg(String orgPublicId, CreateOrgDto createOrgDto, OrgMember currentOrgMember);
 }

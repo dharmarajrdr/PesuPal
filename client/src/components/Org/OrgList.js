@@ -1,11 +1,12 @@
-import { useEffect, useState } from 'react'
+import './OrgList.css';
+import Loader from '../Loader';
 import OrgPreview from './OrgPreview'
-import './OrgList.css'
 import { useDispatch } from "react-redux";
 import ErrorMessage from '../ErrorMessage';
-import { apiRequest } from '../../http_request';
-import Loader from '../Loader';
+import { useEffect, useState } from 'react';
 import { useNavigate } from "react-router-dom";
+import { apiRequest } from '../../http_request';
+import { hideOrgList, setCurrentOrgId } from '../../store/reducers/OrgSlice';
 import { showPopup } from '../../store/reducers/PopupSlice';
 
 const NoOrgFound = () => {
@@ -14,14 +15,14 @@ const NoOrgFound = () => {
         <div className='FCCC w100 h100P' id='no-data-found'>
             <p className='FRCC w100'>
                 <i className='fa fa-building mR5' />
-                Welcome to PesuPal!
+                Welcome to CollabGen!
             </p>
             <p className='w100 alignCenter'>Start creating a new org.</p>
         </div>
     )
 }
 
-const OrgList = ({ toggleOrgList, closeOrgList }) => {
+const OrgList = ({ closeOrgList }) => {
 
     const [orgListDetails, setOrgListDetails] = useState([]);
     const [error, setError] = useState(null);
@@ -40,6 +41,8 @@ const OrgList = ({ toggleOrgList, closeOrgList }) => {
             } else {
                 navigate("/feeds"); // Else, navigate
             }
+            dispatch(setCurrentOrgId(publicId));
+            dispatch(hideOrgList());
             dispatch(showPopup({ message: `Switched to '${displayName}' org.`, type: 'success' }));
         }).catch(({ message }) => {
             dispatch(showPopup({ message, type: 'error' }));
@@ -68,7 +71,7 @@ const OrgList = ({ toggleOrgList, closeOrgList }) => {
                     loading ? <Loader /> :
                         error ? <ErrorMessage message={error} /> : <>
                             {orgListDetails.length ? <div id='org-lists' className='w100 h100P FCCS'>
-                                {orgListDetails.map((org, index) => <OrgPreview org={org} setCurrentOrg={setCurrentOrg} key={index} toggleOrgList={toggleOrgList} />)}
+                                {orgListDetails.map((org, index) => <OrgPreview org={org} setCurrentOrg={setCurrentOrg} key={index} />)}
                             </div> : <NoOrgFound />
                             }
                             <button className='create-org-button w100 FRCC' onClick={createOrgHandler}>Create New Org</button>

@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.net.URL;
+import java.util.UUID;
 
 @RestController
 @AllArgsConstructor
@@ -52,7 +53,7 @@ public class MediaController {
     }
 
     @GetMapping("/download/presigned")
-    public ResponseEntity<ApiResponseDto> downloadFileWithPresignedUrl(@RequestParam String key) throws Exception {
+    public ResponseEntity<ApiResponseDto> downloadFileWithPresignedUrl(@RequestParam UUID key) throws Exception {
 
         URL presignedUrl = mediaService.generatePresignedUrl(key);
         return ResponseEntity.ok().body(new ApiResponseDto("Presigned URL generated successfully.", presignedUrl.toString()));

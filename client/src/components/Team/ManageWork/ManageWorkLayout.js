@@ -85,7 +85,7 @@ const ManageWorkLayout = () => {
         moduleNotFound ? <PageNotFound /> :
             permissionDenied ? <PermissionDenied /> :
                 error ? <InternalServerError /> : (
-                    <div id='ManageWorkLayout'>
+                    <div className='Layout' id='ManageWorkLayout'>
                         {!createRecordPage && <Header modules={modules} />}
 
                         <Routes>

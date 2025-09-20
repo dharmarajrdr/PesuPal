@@ -7,6 +7,7 @@ import com.pesupal.server.dto.request.chat.group_message.GetGroupConversationDto
 import com.pesupal.server.dto.response.UserPreviewDto;
 import com.pesupal.server.dto.response.chat.MediaFileDto;
 import com.pesupal.server.dto.response.chat.MessageDto;
+import com.pesupal.server.dto.response.chat.group_message.GroupDto;
 import com.pesupal.server.enums.MessageType;
 import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.exceptions.DataNotFoundException;
@@ -22,9 +23,9 @@ import com.pesupal.server.repository.chat.group_message.GroupChatMemberRepositor
 import com.pesupal.server.repository.chat.group_message.GroupChatMessageRepository;
 import com.pesupal.server.repository.chat.group_message.GroupMessageMediaFileRepository;
 import com.pesupal.server.security.JwtUtil;
+import com.pesupal.server.service.interfaces.MediaService;
 import com.pesupal.server.service.interfaces.chat.group_message.*;
 import com.pesupal.server.service.interfaces.org.OrgMemberService;
-import com.pesupal.server.strategies.media_storage.S3Service;
 import io.jsonwebtoken.Claims;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -49,8 +50,8 @@ public class GroupChatMessageServiceImpl extends CurrentValueRetriever implement
     private static final String SCHEDULED_MESSAGE_KEY = "scheduled_group_messages";
 
     private final JwtUtil jwtUtil;
-    private final S3Service s3Service;
     private final GroupService groupService;
+    private final MediaService mediaService;
     private final OrgMemberService orgMemberService;
     private final SimpMessagingTemplate messagingTemplate;
     private final RedisTemplate<String, Object> redisTemplate;
@@ -154,7 +155,7 @@ public class GroupChatMessageServiceImpl extends CurrentValueRetriever implement
             MessageDto messageDto = MessageDto.fromGroupMessage(gm);
             Long senderId = gm.getSender().getId();
             if (!memo.containsKey(senderId)) {
-                memo.put(senderId, UserPreviewDto.fromOrgMember(orgMemberService.getOrgMemberByUserIdAndOrgId(senderId, orgId)));
+                memo.put(senderId, orgMemberService.getUserPreview(gm.getSender()));
             }
             messageDto.setSender(memo.get(senderId));
             if (gm.isContainsMedia()) {
@@ -162,8 +163,7 @@ public class GroupChatMessageServiceImpl extends CurrentValueRetriever implement
                 if (optionalGroupMessageMediaFile.isPresent()) {
                     GroupMessageMediaFile groupMessageMediaFile = optionalGroupMessageMediaFile.get();
                     MediaFileDto mediaFileDto = MediaFileDto.fromGroupMessageMediaFile(groupMessageMediaFile);
-                    String key = groupMessageMediaFile.getMediaId() + "." + groupMessageMediaFile.getExtension();
-                    mediaFileDto.setMediaUrl(s3Service.generatePresignedUrl(key));
+                    mediaFileDto.setMediaUrl(mediaService.generatePresignedUrl(groupMessageMediaFile.getMediaId()));
                     messageDto.setMedia(mediaFileDto);
                 }
             }
@@ -253,16 +253,16 @@ public class GroupChatMessageServiceImpl extends CurrentValueRetriever implement
         MessageDto messageDto = MessageDto.fromGroupMessage(gm);
         Long senderId = gm.getSender().getId();
         if (!memo.containsKey(senderId)) {
-            memo.put(senderId, UserPreviewDto.fromOrgMember(orgMemberService.getOrgMemberByUserIdAndOrgId(senderId, orgId)));
+            memo.put(senderId, orgMemberService.getUserPreview(gm.getSender()));
         }
         messageDto.setSender(memo.get(senderId));
+        messageDto.setGroup(GroupDto.fromGroup(gm.getGroup()));
         if (gm.isContainsMedia()) {
             Optional<GroupMessageMediaFile> optionalGroupMessageMediaFile = groupMessageMediaFileRepository.findByGroupChatMessage(gm);
             if (optionalGroupMessageMediaFile.isPresent()) {
                 GroupMessageMediaFile groupMessageMediaFile = optionalGroupMessageMediaFile.get();
                 MediaFileDto groupMessageMediaFileDto = MediaFileDto.fromGroupMessageMediaFile(groupMessageMediaFile);
-                String key = groupMessageMediaFile.getMediaId() + "." + groupMessageMediaFile.getExtension();
-                groupMessageMediaFileDto.setMediaUrl(s3Service.generatePresignedUrl(key));
+                groupMessageMediaFileDto.setMediaUrl(mediaService.generatePresignedUrl(groupMessageMediaFile.getMediaId()));
                 messageDto.setMedia(groupMessageMediaFileDto);
             }
         }
@@ -357,7 +357,7 @@ public class GroupChatMessageServiceImpl extends CurrentValueRetriever implement
      */
     protected List<GroupChatMember> getActiveMembersOfGroup(String groupId) {
 
-        return groupChatMemberRepository.findAllByGroup_PublicId(groupId);
+        return groupChatMemberRepository.findAllByGroup_PublicIdAndActive(groupId, true);
     }
 
     /**
@@ -454,10 +454,12 @@ public class GroupChatMessageServiceImpl extends CurrentValueRetriever implement
         if (optionalGroupChatMessage.isEmpty()) {
             return;
         }
+
         GroupChatMessage groupChatMessage = optionalGroupChatMessage.get();
         if (!groupChatMessage.getMessageStatus().equals(MessageStatus.SCHEDULED)) {
             return;
         }
+
         if (triggeredBy != null && !triggeredBy.getPublicId().equals(groupChatMessage.getSender().getPublicId())) {
             throw new PermissionDeniedException("You do not have permission to unschedule this message.");
         }
@@ -481,6 +483,38 @@ public class GroupChatMessageServiceImpl extends CurrentValueRetriever implement
         groupChatMessageRepository.save(groupChatMessage);
         MessageDto messageDto = toMessageDto(groupChatMessage, groupChatMessage.getGroup().getOrg().getId(), memo);
         broadcastMessage(messageDto, messagingTemplate);
+    }
+
+    /**
+     * Unschedules all messages in a specific chat.
+     *
+     * @param groupId
+     * @param memo
+     */
+    @Override
+    public void unscheduleAllMessagesInChat(String groupId, Map<Long, UserPreviewDto> memo) {
+
+        OrgMember orgMember = getCurrentOrgMember();
+        Group group = groupService.getGroupByPublicId(groupId);
+
+        GroupChatMember groupChatMember = groupChatMemberService.getGroupMemberByGroupIdAndUserId(groupId, orgMember.getId());
+        if (!groupChatMember.isActive()) {
+            throw new PermissionDeniedException("You are no longer part of this group.");
+        }
+
+        if (!group.isActive()) {
+            throw new ActionProhibitedException("This group is no longer active.");
+        }
+
+        GroupChatConfiguration groupChatConfiguration = groupChatConfigurationService.getConfigurationByGroupAndRole(group, groupChatMember.getRole());
+        if (!groupChatConfiguration.isPostMessage()) {
+            throw new PermissionDeniedException("You do not have permission to post message in this group.");
+        }
+
+        List<GroupChatMessage> scheduledMessages = groupChatMessageRepository.findAllByGroup_PublicIdAndSenderAndMessageStatusAndCreatedAtIsAfter(groupId, orgMember, MessageStatus.SCHEDULED, LocalDateTime.now());
+        for (GroupChatMessage scheduledMessage : scheduledMessages) {
+            unschedule(scheduledMessage.getId(), memo, orgMember);
+        }
     }
 
     /**
@@ -540,6 +574,22 @@ public class GroupChatMessageServiceImpl extends CurrentValueRetriever implement
             groupChatMessageRepository.delete(scheduledMessage);
             redisTemplate.opsForZSet().remove(SCHEDULED_MESSAGE_KEY, scheduledMessage.getId());
         }
+    }
+
+    /**
+     * Unschedules all messages scheduled by a specific organization member.
+     *
+     * @param orgMember
+     */
+    @Override
+    public void unscheduleAllMessagesByOrgMember(OrgMember orgMember) {
+
+        List<GroupChatMessage> scheduledGroupMessages = groupChatMessageRepository.findAllBySenderAndMessageStatus(orgMember, MessageStatus.SCHEDULED);
+        for (GroupChatMessage scheduledGroupChatMessage : scheduledGroupMessages) {
+            redisTemplate.opsForZSet().remove(SCHEDULED_MESSAGE_KEY, scheduledGroupChatMessage.getId());
+            groupMessageMediaFileService.unlinkMediaFilesByGroupMessage(scheduledGroupChatMessage);
+        }
+        groupChatMessageRepository.deleteAll(scheduledGroupMessages);
     }
 
     /**

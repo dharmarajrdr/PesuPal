@@ -4,6 +4,38 @@ import { useEffect, useRef, useState } from 'react';
 import { showPopup } from '../store/reducers/PopupSlice';
 import { useDispatch } from 'react-redux';
 
+const FirstCharOfName = ({ string }) => {
+
+    return <p className='first-char-of-name'>{string.charAt(0).toUpperCase()}</p>
+}
+
+const Row = ({ user, selectedUsers, userClickedHandler }) => {
+
+    const { id, displayName, displayPicture } = user || {};
+    const [showDisplayPicture, setShowDisplayPicture] = useState(displayPicture != null);
+    const isUserSelected = selectedUsers.find(selectedUser => selectedUser.id === id);
+    return (
+        <div key={id} className={`user-suggestion w100 FRCS ${isUserSelected ? 'selected' : ''}`} onClick={(e) => userClickedHandler(e, user)}>
+            {showDisplayPicture ? <img src={displayPicture} alt={displayName} onError={() => setShowDisplayPicture(false)} /> : <FirstCharOfName string={displayName} />}
+            <span>{displayName}</span>
+        </div>
+    )
+}
+
+const SelectedUser = ({ user, unSelectUserHandler }) => {
+
+    const { id, displayName, displayPicture } = user || {};
+    const [showDisplayPicture, setShowDisplayPicture] = useState(displayPicture != null);
+    return (
+        <div key={id} className="selected-user FCCC" title={displayName} onClick={(e) => unSelectUserHandler(e, user)}>
+            <span className='remove-user-btn'>
+                <i className='fa fa-xmark'></i>
+            </span>
+            {showDisplayPicture ? <img src={displayPicture} alt={displayName} onError={() => setShowDisplayPicture(false)} /> : <FirstCharOfName string={displayName} />}
+        </div>
+    )
+}
+
 const SearchUser = ({ maxUsersSelectable, selectedUsers, setSelectedUsers }) => {
 
     const dispatch = useDispatch();
@@ -77,30 +109,13 @@ const SearchUser = ({ maxUsersSelectable, selectedUsers, setSelectedUsers }) => 
             {showSuggestions && <div id='user-suggestions-container' className='FCCE'>
                 <div id='suggestions' className='FCCS'>
                     <div id='user-suggestions-slider'>
-                        {users.length ? users.map(user => {
-                            const { id, displayName, displayPicture } = user || {};
-                            const isUserSelected = selectedUsers.find(selectedUser => selectedUser.id === id);
-                            return (
-                                <div key={id} className={`user-suggestion w100 FRCS ${isUserSelected ? 'selected' : ''}`} onClick={(e) => userClickedHandler(e, user)}>
-                                    <img src={displayPicture} alt={displayName} />
-                                    <span>{displayName}</span>
-                                </div>
-                            )
-                        }) : <p id='no-users-found' className='FRCC'>No users found</p>}
+                        {users.length ? users.map(user => <Row user={user} selectedUsers={selectedUsers} userClickedHandler={userClickedHandler} />) : <p id='no-users-found' className='FRCC'>No users found</p>}
                     </div>
                 </div>
                 {selectedUsers.length > 0 && <div id='selected-users' className='FRCS w100'>
                     <div id='selected-user-slider' className='FRCS noScrollbar'>
                         {selectedUsers.map(user => {
-                            const { id, displayName, displayPicture } = user || {};
-                            return (
-                                <div key={id} className="selected-user FCCC" title={displayName} onClick={(e) => unSelectUserHandler(e, user)}>
-                                    <span className='remove-user-btn'>
-                                        <i className='fa fa-xmark'></i>
-                                    </span>
-                                    <img src={displayPicture} alt={displayName} />
-                                </div>
-                            )
+                            <SelectedUser user={user} unSelectUserHandler={unSelectUserHandler} />
                         })}
                     </div>
                 </div>}

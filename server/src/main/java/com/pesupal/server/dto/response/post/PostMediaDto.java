@@ -19,7 +19,6 @@ public class PostMediaDto {
 
         PostMediaDto postMediaDto = new PostMediaDto();
         postMediaDto.setMediaId(postMedia.getMediaId());
-        postMediaDto.setExtension(postMedia.getExtension());
         return postMediaDto;
     }
 }

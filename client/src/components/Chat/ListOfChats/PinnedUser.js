@@ -8,7 +8,7 @@ const PinnedUser = ({ item }) => {
 
     const navigate = useNavigate();
 
-    const customStyle = { bottom: '0px', right: '-3px', fontSize: '9px', padding: '0px' };
+    const customStyle = { bottom: '0px', right: '0px', fontSize: '9px', padding: '3px' };
     const { displayName, displayPicture, status, chatId } = item || {};
     const { chatMode } = useSelector(state => state.activeChatTab);
 
