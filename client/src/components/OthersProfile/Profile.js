@@ -77,7 +77,8 @@ const Profile = () => {
         });
     }, [userId]);
 
-    const closeProfileOverlay = () => {
+    const closeProfileOverlay = (e) => {
+        if (e.target.id !== 'ProfileOverlay') return;
         dispatch(hideProfile());
     }
 

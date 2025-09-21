@@ -66,4 +66,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             nativeQuery = true)
     Slice<Post> searchPostsByOrg(@Param("orgId") Long orgId, @Param("query") String query, Pageable pageable);
 
+    List<Post> findAllByCreatorAndStatus(OrgMember orgMember, PostStatus postStatus);
+
+    List<Post> findAllByCreator_Org(Org creatorOrg);
 }

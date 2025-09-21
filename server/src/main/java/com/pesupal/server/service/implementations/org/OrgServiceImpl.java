@@ -7,16 +7,24 @@ import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.exceptions.DuplicateDataReceivedException;
 import com.pesupal.server.exceptions.PermissionDeniedException;
+import com.pesupal.server.helpers.OrgHelper;
 import com.pesupal.server.model.org.Org;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.model.user.User;
 import com.pesupal.server.repository.org.OrgRepository;
 import com.pesupal.server.service.interfaces.UserService;
+import com.pesupal.server.service.interfaces.chat.direct_message.DirectMessageMediaFileService;
+import com.pesupal.server.service.interfaces.chat.group_message.GroupMessageMediaFileService;
+import com.pesupal.server.service.interfaces.drive.FileService;
 import com.pesupal.server.service.interfaces.org.*;
+import com.pesupal.server.service.interfaces.post.PostMediaService;
+import com.pesupal.server.service.interfaces.post.PostService;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 public class OrgServiceImpl implements OrgService {
@@ -27,14 +35,24 @@ public class OrgServiceImpl implements OrgService {
     private final UserOnboardingService userOnboardingService;
     private final OrgConfigurationService orgConfigurationService;
     private final OrgSubscriptionHistoryService orgSubscriptionHistoryService;
+    private final DirectMessageMediaFileService directMessageMediaFileService;
+    private final GroupMessageMediaFileService groupMessageMediaFileService;
+    private final PostMediaService postMediaService;
+    private final FileService fileService;
+    private final PostService postService;
 
-    public OrgServiceImpl(@Lazy UserService userService, OrgRepository orgRepository, OrgConfigurationService orgConfigurationService, @Lazy OrgMemberService orgMemberService, @Lazy OrgSubscriptionHistoryService orgSubscriptionHistoryService, @Lazy UserOnboardingService userOnboardingService) {
+    public OrgServiceImpl(@Lazy UserService userService, OrgRepository orgRepository, OrgConfigurationService orgConfigurationService, @Lazy OrgMemberService orgMemberService, @Lazy OrgSubscriptionHistoryService orgSubscriptionHistoryService, @Lazy UserOnboardingService userOnboardingService, DirectMessageMediaFileService directMessageMediaFileService, GroupMessageMediaFileService groupMessageMediaFileService, PostMediaService postMediaService, FileService fileService, PostService postService) {
         this.userService = userService;
         this.orgRepository = orgRepository;
         this.orgMemberService = orgMemberService;
         this.userOnboardingService = userOnboardingService;
         this.orgConfigurationService = orgConfigurationService;
         this.orgSubscriptionHistoryService = orgSubscriptionHistoryService;
+        this.directMessageMediaFileService = directMessageMediaFileService;
+        this.groupMessageMediaFileService = groupMessageMediaFileService;
+        this.postMediaService = postMediaService;
+        this.fileService = fileService;
+        this.postService = postService;
     }
 
     /**
@@ -83,8 +101,8 @@ public class OrgServiceImpl implements OrgService {
         org.setActive(true);
         orgRepository.save(org);
 
-        orgConfigurationService.initializeOrgConfiguration(org);
         OrgMember orgMember = orgMemberService.joinOrgAsFirstMember(createOrgDto, org, owner);
+        orgConfigurationService.initializeOrgConfiguration(orgMember);
         orgSubscriptionHistoryService.addSubscription(org.getId(), "FREE_TRIAL", null);
         return OrgCreatedDto.fromOrgMember(orgMember);
     }
@@ -92,19 +110,15 @@ public class OrgServiceImpl implements OrgService {
     /**
      * Deletes an organization permanently.
      *
-     * @param orgPublicId
      * @param orgMember
      */
     @Override
     @Transactional
-    public void deleteOrg(String orgPublicId, OrgMember orgMember) {
+    public void deleteOrg(OrgMember orgMember) {
 
         Org org = orgMember.getOrg();
-        if (!org.getPublicId().equals(orgPublicId)) {
-            throw new ActionProhibitedException("You are not allowed to delete this organization.");
-        }
 
-        if (!org.getOwner().getId().equals(orgMember.getId())) {
+        if (!OrgHelper.isOrgOwner(orgMember.getUser().getPublicId(), orgMember.getOrg())) {
             throw new PermissionDeniedException("You do not have permission to delete this organization.");
         }
 
@@ -115,8 +129,38 @@ public class OrgServiceImpl implements OrgService {
         orgMemberService.removeAllOrgMembers(org);
 
         // Stop all schedules associated with the org
+        stopAllSchedulesByOrg(org);
 
         // Garbage collect all data associated with the org - Scheduled task
+    }
+
+    /**
+     * Stops all schedules associated with the organization.
+     *
+     * @param org
+     */
+    private void stopAllSchedulesByOrg(Org org) {
+    }
+
+    /**
+     * Allows an org member to leave the organization.
+     *
+     * @param orgMember
+     */
+    @Transactional
+    @Override
+    public void leaveOrg(OrgMember orgMember) {
+
+        Org org = orgMember.getOrg();
+
+        if (OrgHelper.isOrgOwner(orgMember.getPublicId(), org)) {
+            throw new ActionProhibitedException("You cannot leave the organization as you are the owner. Please transfer ownership or delete the organization.");
+        }
+
+        orgMemberService.removeOrgMember(orgMember);
+
+        // Stop all schedules associated with the user in the org
+        orgMemberService.stopAllSchedulesByOrgMember(orgMember);
     }
 
     /**
@@ -164,6 +208,14 @@ public class OrgServiceImpl implements OrgService {
     @Scheduled(cron = "0 0 0 * * *")
     public void clearAllDataInTheDeletedOrg() {
 
+        List<Org> deletedOrgs = orgRepository.findAllByActive(false);
+        for (Org deletedOrg : deletedOrgs) {
+            directMessageMediaFileService.deleteAllByOrg(deletedOrg);
+            groupMessageMediaFileService.deleteAllByOrg(deletedOrg);
+            postMediaService.deleteAllByOrg(deletedOrg);
+            fileService.deleteAllByOrg(deletedOrg);
+            postService.deleteAllByOrg(deletedOrg);
+        }
     }
 
 }

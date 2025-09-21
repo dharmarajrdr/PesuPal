@@ -3,9 +3,10 @@ package com.pesupal.server.service.implementations.chat.direct_message;
 import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.model.chat.direct_message.DirectMessage;
 import com.pesupal.server.model.chat.direct_message.DirectMessageMediaFile;
+import com.pesupal.server.model.org.Org;
 import com.pesupal.server.repository.chat.direct_message.DirectMessageMediaFileRepository;
+import com.pesupal.server.service.interfaces.MediaService;
 import com.pesupal.server.service.interfaces.chat.direct_message.DirectMessageMediaFileService;
-import com.pesupal.server.strategies.media_storage.S3Service;
 import lombok.AllArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -17,7 +18,7 @@ import java.util.Optional;
 @AllArgsConstructor
 public class DirectMessageMediaFileServiceImpl implements DirectMessageMediaFileService {
 
-    private final S3Service s3Service;
+    private final MediaService mediaService;
     private final DirectMessageMediaFileRepository directMessageMediaFileRepository;
 
     /**
@@ -54,6 +55,31 @@ public class DirectMessageMediaFileServiceImpl implements DirectMessageMediaFile
     }
 
     /**
+     * Delete all media files
+     *
+     * @param directMessageMediaFiles
+     */
+    private void deleteAll(List<DirectMessageMediaFile> directMessageMediaFiles) {
+
+        for (DirectMessageMediaFile directMessageMediaFile : directMessageMediaFiles) {
+            mediaService.deleteFile(directMessageMediaFile.getMediaId());
+        }
+        directMessageMediaFileRepository.deleteAll(directMessageMediaFiles);
+    }
+
+    /**
+     * Delete all media by org
+     *
+     * @param deletedOrg
+     */
+    @Override
+    public void deleteAllByOrg(Org deletedOrg) {
+
+        List<DirectMessageMediaFile> directMessageMediaFiles = directMessageMediaFileRepository.findAllByDirectMessage_Sender_Org(deletedOrg);
+        deleteAll(directMessageMediaFiles);
+    }
+
+    /**
      * Performs garbage collection on media files that are no longer associated with any direct messages.
      * This method removes orphaned media files from the repository and s3 storage.
      */
@@ -61,9 +87,6 @@ public class DirectMessageMediaFileServiceImpl implements DirectMessageMediaFile
     public void garbageCollect() {
 
         List<DirectMessageMediaFile> directMessageMediaFiles = directMessageMediaFileRepository.findAllByDirectMessageIsNull();
-        for (DirectMessageMediaFile directMessageMediaFile : directMessageMediaFiles) {
-            s3Service.deleteFile(directMessageMediaFile.getMediaId());
-        }
-        directMessageMediaFileRepository.deleteAll(directMessageMediaFiles);
+        deleteAll(directMessageMediaFiles);
     }
 }

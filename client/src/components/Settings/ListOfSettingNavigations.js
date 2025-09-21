@@ -35,9 +35,9 @@ export default [
         has_access: true
     },
     {
-        title: 'Configurations',
-        route: '/settings/configurations',
-        icon: 'fa fa-wrench',
+        title: 'Roles & Permissions',
+        route: '/settings/roles-permissions',
+        icon: 'fa fa-shield-alt',
         active: false,
         has_access: false
     }

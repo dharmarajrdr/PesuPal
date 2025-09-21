@@ -7,6 +7,7 @@ import com.pesupal.server.dto.response.chat.LastMessageDto;
 import com.pesupal.server.dto.response.chat.RecentChatDto;
 import com.pesupal.server.dto.response.chat.RecentChatPagedDto;
 import com.pesupal.server.dto.response.chat.group_message.GroupDto;
+import com.pesupal.server.enums.OrgAction;
 import com.pesupal.server.enums.Role;
 import com.pesupal.server.enums.Visibility;
 import com.pesupal.server.exceptions.ActionProhibitedException;
@@ -27,6 +28,7 @@ import com.pesupal.server.repository.chat.group_message.GroupRepository;
 import com.pesupal.server.service.interfaces.MediaService;
 import com.pesupal.server.service.interfaces.UserService;
 import com.pesupal.server.service.interfaces.chat.group_message.*;
+import com.pesupal.server.service.interfaces.org.OrgConfigurationService;
 import com.pesupal.server.service.interfaces.org.OrgMemberService;
 import jakarta.transaction.Transactional;
 import org.springframework.context.annotation.Lazy;
@@ -50,8 +52,9 @@ public class GroupServiceImpl extends CurrentValueRetriever implements GroupServ
     private final GroupChatMessageService groupChatMessageService;
     private final GroupChatMemberRepository groupChatMemberRepository;
     private final GroupChatConfigurationService groupChatConfigurationService;
+    private final OrgConfigurationService orgConfigurationService;
 
-    public GroupServiceImpl(UserService userService, GroupRepository groupRepository, OrgMemberService orgMemberService, GroupChatMemberService groupChatMemberService, GroupChatPinnedService groupchatPinnedService, @Lazy GroupChatMessageService groupChatMessageService, GroupChatMemberRepository groupChatMemberRepository, GroupChatConfigurationService groupChatConfigurationService, MediaService mediaService) {
+    public GroupServiceImpl(UserService userService, GroupRepository groupRepository, OrgMemberService orgMemberService, GroupChatMemberService groupChatMemberService, GroupChatPinnedService groupchatPinnedService, @Lazy GroupChatMessageService groupChatMessageService, GroupChatMemberRepository groupChatMemberRepository, GroupChatConfigurationService groupChatConfigurationService, MediaService mediaService, OrgConfigurationService orgConfigurationService) {
         this.userService = userService;
         this.mediaService = mediaService;
         this.groupRepository = groupRepository;
@@ -61,6 +64,7 @@ public class GroupServiceImpl extends CurrentValueRetriever implements GroupServ
         this.groupChatMessageService = groupChatMessageService;
         this.groupChatMemberRepository = groupChatMemberRepository;
         this.groupChatConfigurationService = groupChatConfigurationService;
+        this.orgConfigurationService = orgConfigurationService;
     }
 
     /**
@@ -90,6 +94,11 @@ public class GroupServiceImpl extends CurrentValueRetriever implements GroupServ
     public GroupDto createGroup(CreateGroupDto createGroupDto) {
 
         OrgMember owner = getCurrentOrgMember();
+
+        if (!orgConfigurationService.hasPrivilegeTo(OrgAction.CREATE_GROUP, owner.getRole())) {
+            throw new PermissionDeniedException("You do not have permission to create a group.");
+        }
+
         Group group = createGroupDto.toGroup();
         group.setOwner(owner);
         group.setOrg(owner.getOrg());
