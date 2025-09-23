@@ -22,4 +22,6 @@ public interface ModuleService {
     List<ModulePreviewDto> getModulesCreatedByMe();
 
     ModuleDto getModuleDtoById(String moduleId);
+
+    void updateModule(String moduleId, CreateModuleDto createModuleDto);
 }

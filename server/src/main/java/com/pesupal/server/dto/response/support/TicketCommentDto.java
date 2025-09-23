@@ -26,7 +26,7 @@ public class TicketCommentDto {
         if (ticketComment.isTicketOwner()) {
             dto.setCommentedBy(UserPreviewDto.fromOrgMember(ticketComment.getTicket().getTicketOwner()));
         } else {
-            dto.setCommentedBy(UserPreviewDto.builder().displayName("PesuPal Support").displayPicture("https://static.vecteezy.com/system/resources/previews/015/911/602/non_2x/customer-support-icon-outline-style-vector.jpg").build());
+            dto.setCommentedBy(UserPreviewDto.builder().displayName("PesuPal Support").build());
         }
         return dto;
     }

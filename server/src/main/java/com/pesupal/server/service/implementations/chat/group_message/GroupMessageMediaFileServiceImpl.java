@@ -5,24 +5,23 @@ import com.pesupal.server.model.chat.MessageStatus;
 import com.pesupal.server.model.chat.group_message.Group;
 import com.pesupal.server.model.chat.group_message.GroupChatMessage;
 import com.pesupal.server.model.chat.group_message.GroupMessageMediaFile;
+import com.pesupal.server.model.org.Org;
 import com.pesupal.server.repository.chat.group_message.GroupMessageMediaFileRepository;
+import com.pesupal.server.service.interfaces.MediaService;
 import com.pesupal.server.service.interfaces.chat.group_message.GroupMessageMediaFileService;
-import com.pesupal.server.strategies.media_storage.S3Service;
 import lombok.AllArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 @AllArgsConstructor
 public class GroupMessageMediaFileServiceImpl implements GroupMessageMediaFileService {
 
-    private final S3Service s3Service;
+    private final MediaService mediaService;
     private final GroupMessageMediaFileRepository groupMessageMediaFileRepository;
-
 
     /**
      * Unlinks media file associated with a given group message.
@@ -61,6 +60,30 @@ public class GroupMessageMediaFileServiceImpl implements GroupMessageMediaFileSe
     }
 
     /**
+     * Deletes all media file and it's records
+     *
+     * @param groupMessageMediaFiles
+     */
+    private void deleteAll(List<GroupMessageMediaFile> groupMessageMediaFiles) {
+        for (GroupMessageMediaFile groupMessageMediaFile : groupMessageMediaFiles) {
+            mediaService.deleteFile(groupMessageMediaFile.getMediaId());
+        }
+        groupMessageMediaFileRepository.deleteAll(groupMessageMediaFiles);
+    }
+
+    /**
+     * Delete all media files in an org after the org has been deleted
+     *
+     * @param deletedOrg
+     */
+    @Override
+    public void deleteAllByOrg(Org deletedOrg) {
+
+        List<GroupMessageMediaFile> groupMessageMediaFiles = groupMessageMediaFileRepository.findAllByGroupChatMessage_Group_Org(deletedOrg);
+        deleteAll(groupMessageMediaFiles);
+    }
+
+    /**
      * Performs garbage collection on media files that are no longer associated with any group messages.
      * This method removes orphaned media files from the repository and s3 storage.
      */
@@ -68,12 +91,6 @@ public class GroupMessageMediaFileServiceImpl implements GroupMessageMediaFileSe
     public void garbageCollect() {
 
         List<GroupMessageMediaFile> groupMessageMediaFiles = groupMessageMediaFileRepository.findAllByGroupChatMessageIsNull();
-        for (GroupMessageMediaFile groupMessageMediaFile : groupMessageMediaFiles) {
-            UUID mediaId = groupMessageMediaFile.getMediaId();
-            String extension = groupMessageMediaFile.getExtension();
-            String key = mediaId + "." + extension;
-            s3Service.deleteFile(key);
-        }
-        groupMessageMediaFileRepository.deleteAll(groupMessageMediaFiles);
+        deleteAll(groupMessageMediaFiles);
     }
 }

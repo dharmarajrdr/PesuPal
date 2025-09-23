@@ -18,6 +18,7 @@ public class ServerApplication {
         System.setProperty("AWS_S3_REGION", dotenv.get("AWS_S3_REGION"));
         System.setProperty("AWS_S3_BUCKET_NAME", dotenv.get("AWS_S3_BUCKET_NAME"));
         System.setProperty("STRIPE_API_KEY", dotenv.get("STRIPE_API_KEY"));
+        System.setProperty("NINJAS_API_KEY", dotenv.get("NINJAS_API_KEY"));
     }
 
     public static void main(String[] args) {
