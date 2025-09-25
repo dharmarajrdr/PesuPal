@@ -21,7 +21,8 @@
     line-height: 40px;
 }
 
-.chat-header div {
+#chat-header-left,
+#chat-header-right {
     position: relative;
 }
 
@@ -44,7 +45,7 @@
 #participants-count {
     background-color: var(--pure-white-hover);
     border: 1px solid #eee;
-    cursor: default;
+    cursor: pointer;
 }
 
 #participants-count i,
@@ -54,4 +55,5 @@
 
 #participants-count:hover {
     background-color: #eee;
+    border-color: #ddd;
 }

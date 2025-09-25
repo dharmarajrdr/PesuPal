@@ -1,5 +1,6 @@
 #subtab_container {
   padding: 5px 0px 15px 0px;
+  overflow: hidden;
 }
 
 .subtabs {
@@ -28,7 +29,7 @@
   color: #222;
 }
 
-.subtabs .notifyCount {
+.notifyCount {
   position: absolute;
   top: -5px;
   right: 2px;

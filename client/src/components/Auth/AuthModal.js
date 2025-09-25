@@ -1,10 +1,10 @@
-import React, { useEffect } from 'react'
+import { useEffect } from 'react'
+import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { apiRequest } from '../../http_request';
-import { useDispatch } from 'react-redux';
-import { showPopup } from '../../store/reducers/PopupSlice';
+import { setCurrentOrgId } from '../../store/reducers/OrgSlice';
 
-const AuthModal = () => {
+const AuthModal = ({ setIsSubscriptionExpired, setAuthenticated, setServerDown }) => {
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -20,16 +20,26 @@ const AuthModal = () => {
 
         // 2. If the token is present, check `who am I?` endpoint
         apiRequest(`/api/v1/people/who-am-i`, 'GET').then(({ data }) => {
-            const { orgMemberId, userId } = data || {};
+            const { orgMemberId, userId, orgStatus, orgId } = data || {};
             if (userId == null) {
                 throw new Error('Session expired');
+            } else if (orgStatus === 'Inactive') {
+                // navigate('/settings/pricing');
+                setIsSubscriptionExpired(true);
             } else if (orgMemberId == null) {
                 navigate('/');
+            } else {
+                dispatch(setCurrentOrgId(orgId));
             }
-        }).catch(({ message }) => {
+            setAuthenticated(true);
+        }).catch((data) => {
+            setAuthenticated(true);
+            const { statusCode } = data || {};
+            if (!statusCode) {
+                return setServerDown(true);
+            }
             sessionStorage.removeItem('token');
             navigate('/signin');
-            dispatch(showPopup({ message, type: 'error' }));
         });
     }, []);
 

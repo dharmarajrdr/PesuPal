@@ -1,0 +1,31 @@
+#app-banner {
+    width: 100%;
+    background-color: #cbd5de;
+    cursor: none;
+    user-select: none;
+}
+
+#app-banner span {
+    font-size: 12px;
+    color: #333;
+    padding: 10px;
+}
+
+#app-banner span i {
+    color: var(--secondary-color);
+}
+
+#app-banner .slider-icon {
+    width: 40px;
+    text-align: center;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+#app-banner .slider-icon i {
+    color: #999;
+}
+
+#app-banner .slider-icon:hover i {
+    color: #333;
+}

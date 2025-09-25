@@ -1,37 +1,26 @@
 import { useState } from "react";
 import './UserAvatar.css';
+import utils from "../../utils";
+import { useDispatch } from "react-redux";
+import { showProfile } from "../../store/reducers/ProfileSlice";
 
-const getAvatarColor = (name) => {
-    const colors = [
-        '#FF5733', '#330F57', '#30FE15', '#FF33A6', '#318E15',
-        '#A7AF45', '#8E44AD', '#3498DB', '#E67E22', '#2ECC71',
-        '#E74C3C', '#1ABC9C', '#9B59B6', '#34495E', '#7F8C8D',
-        '#F1C40F', '#D35400', '#C0392B', '#16A085', '#2980B9'
-    ];
+const UserAvatar = ({ displayPicture, displayName, userId }) => {
 
-    let hash = 0;
-    for (let i = 0; i < name.length; i++) {
-        hash = name.charCodeAt(i) + ((hash << 5) - hash);
-    }
-
-    const index = Math.abs(hash) % colors.length;
-    return colors[index];
-}
-
-const UserAvatar = ({ displayPicture, displayName, setShowProfile }) => {
-
+    const dispatch = useDispatch();
     const [imageError, setImageError] = useState(false);
+
+    const showUserProfile = () => { dispatch(showProfile(userId)); }
 
     return (imageError || !displayPicture) ? (
         displayName ? (
-            <p className="user-avatar-placeholder-first-character img_40_40" style={{ backgroundColor: getAvatarColor(displayName) }}>
+            <p className="user-avatar-placeholder-first-character cursP img_40_40" style={{ backgroundColor: utils.uniqueColorGenerator(displayName) }} onClick={showUserProfile}>
                 {displayName.charAt(0).toUpperCase()}
             </p>
         ) : (
             <i className="fa fa-user-circle user-avatar-placeholder" aria-hidden="true" />
         )
     ) : (
-        <img src={displayPicture} alt="User" className="img_40_40 cursP" onError={() => setImageError(true)} onClick={() => setShowProfile ? setShowProfile(true) : null} />
+        <img src={displayPicture} alt="User" className="img_40_40 cursP objectFitCover" onError={() => setImageError(true)} onClick={showUserProfile} />
     );
 };
 

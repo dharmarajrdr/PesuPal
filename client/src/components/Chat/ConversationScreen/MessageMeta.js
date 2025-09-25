@@ -24,7 +24,8 @@ const reactionsList = {
     }
 };
 
-const Reactions = ({ reactions }) => {
+const Reactions = ({ reactions, id }) => {
+
     return (
         <div className="message-reacted FRCC">
             {Object.entries(reactions).map(([name, count]) => {
@@ -40,13 +41,13 @@ const Reactions = ({ reactions }) => {
     );
 }
 
-const MessageMeta = ({ createdAt, readReceipt, isCurrentUser, reactions }) => {
+const MessageMeta = ({ id, createdAt, readReceipt, isCurrentUser, reactions, isScheduledMessage }) => {
     return (
         <div className="message-meta FRCB">
-            <Reactions reactions={reactions} />
+            <Reactions reactions={reactions} id={id} />
             <div className="FRCE">
-                <span className="time">{utils.convertTime(createdAt, 12)}</span>
-                {isCurrentUser && <ReadReceipt readReceipt={readReceipt} />}
+                <span className="time" title={isScheduledMessage ? utils.futureTimeCalculator(createdAt) : undefined}>{utils.convertTime(createdAt, 12)}</span>
+                {isCurrentUser && !isScheduledMessage && <ReadReceipt readReceipt={readReceipt} />}
             </div>
         </div>
     )

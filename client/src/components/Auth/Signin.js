@@ -27,6 +27,7 @@ const Signin = () => {
 
     const signinFormHandler = (e) => {
         e.preventDefault();
+        e.stopPropagation();
         apiRequest("/auth/login", 'POST', { email, password }).then(({ data }) => {
             const { token } = data || {};
             clearInputFields();
@@ -38,10 +39,9 @@ const Signin = () => {
             } else {
                 throw new Error("Server did not return a token. Please try again.");
             }
-        }).catch((error) => {
-            clearInputFields();
+        }).catch(({ message }) => {
             sessionStorage.removeItem('token');
-            setError(error.message || "An error occurred during login");
+            dispatch(showPopup({ message, type: 'error' }));
         });
     }
 
@@ -80,7 +80,7 @@ const Signin = () => {
                         <div className='FRCB w100 mT10 remember_me_forgot_password'>
                             <div className='FRCC'>
                                 <input type='checkbox' id='remember_me' />
-                                <label for="remember_me" className='pL10 color777 cursP'>Remember Me</label>
+                                <label htmlFor="remember_me" className='pL10 color777 cursP'>Remember Me</label>
                             </div>
                             <span className='color777 cursP'>Forgot Password?</span>
                         </div>

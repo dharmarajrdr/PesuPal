@@ -11,7 +11,7 @@
 .searchBox i {
   position: absolute;
   left: 15px;
-  top: 55%;
+  top: 50%;
   color: #888;
   font-size: 12px;
   transform: translateY(-50%);
@@ -37,6 +37,10 @@
   text-align: center;
   border-radius: 5px;
   color: #777;
+}
+
+.quickActions {
+  width: 35px;
 }
 
 .navbar {

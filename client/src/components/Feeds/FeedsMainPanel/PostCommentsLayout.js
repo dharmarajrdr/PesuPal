@@ -1,123 +1,153 @@
-import { useEffect, useState } from 'react';
 import './PostCommentsLayout.css';
-import { apiRequest } from '../../../http_request';
 import Loader from '../../Loader';
-import ErrorMessage from '../../ErrorMessage';
 import utils from '../../../utils';
-import Profile from '../../OthersProfile/Profile';
-import ConfirmationPopup from '../../Utils/ConfirmationPopup';
+import { useDispatch } from 'react-redux';
+import { useEffect, useState } from 'react';
+import ErrorMessage from '../../ErrorMessage';
+import { apiRequest } from '../../../http_request';
+import EditCommentContainer from './EditCommentContainer';
+import CreateCommentContainer from './CreateCommentContainer';
+import { showPopup } from '../../../store/reducers/PopupSlice';
+import { showProfile } from '../../../store/reducers/ProfileSlice';
+import { showConfirmationPopup } from '../../../store/reducers/ConfirmationPopupSlice';
 
 const NoCommentsFound = () => {
     return (
         <div className='FCCC w100 h100P' id='no-data-found'>
             <p className='FRCC w100'>
-                <i className='fa fa-comment-slash' /> No comments found
+                <i className='fa fa-comment-slash mR5 w20' /> No comments found
             </p>
             <p className='w100 alignCenter'>Create a comment to start the discussion</p>
         </div>
     )
 }
 
-const CreateCommentContainer = ({ postId, setComments, setCommentsCount }) => {
+const CommentHeader = ({ displayName, createdAt, isEditing }) => {
 
-    const [comment, setComment] = useState('');
-
-    const submitCommentHandler = () => {
-        if (!comment.trim()) { return; }
-        apiRequest(`/api/v1/post/comment`, "POST", { message: comment, postId }).then(({ data }) => {
-            setComment('');
-            setComments(prevComments => [data, ...prevComments]);
-            setCommentsCount(prevCount => prevCount + 1);
-        }).catch(({ message }) => {
-            console.error('Error creating comment:', message);
-        });
-    }
-
-    return (
-        <div id='create-comment' className='FRCC w100'>
-            <textarea className='create-comment-textarea' placeholder='Write a comment...' value={comment} onChange={(e) => setComment(e.target.value)} />
-            <button className='create-comment-button' onClick={submitCommentHandler}>
-                <i className='fa fa-paper-plane mR5' /> Post
-            </button>
-        </div>
-    );
-};
-
+    return <div className='comment-user FRCB w100'>
+        <h6 className='comment-user-name'>{displayName}</h6>
+        {!isEditing && <span className='comment-date fs10 color777'>{utils.convertDateAndTime(createdAt)}</span>}
+    </div>
+}
 
 const CommentContent = ({ html }) => <div className="comment-content html-content-renderer" dangerouslySetInnerHTML={{ __html: html }} />
 
-const Comment = ({ comment, setComments, setCommentsCount }) => {
+const CommentFooter = ({ comment, post, showCommentActionIcon, showReplies, setShowReplies, clickedEditPostHandler, clickedDeletePostHandler }) => {
 
-    const { id, userId, displayName, displayPicture, message, createdAt, replyCount, deleteable } = comment;
+    const { creator: isCreator } = post || {};
+    const { id, deletable, replyCount } = comment || {};
 
+    const showEditIcon = deletable && showCommentActionIcon;
+    const showDeleteIcon = (deletable || isCreator) && showCommentActionIcon;
+
+    return <div className='comment-footer FRCB w100 mT10'>
+        <div>
+            <span className='fs12 cursP add-new-reply color555'><i className='fa fa-reply mR5 fs10 color777' />Reply</span>
+            {replyCount > 0 && <>
+                <span className='comment-reply-toggle-button fs12 cursP mL10 pL10' onClick={() => setShowReplies(!showReplies)}>
+                    {/* {showReplies ? <i className='fa fa-chevron-up mR5' /> : <i className='fa fa-chevron-right mR5' />} */}
+                    {showReplies ? 'Hide' : 'Show'} {replyCount} replies
+                </span>
+            </>}
+        </div>
+        <div className='FRCE'>
+            {showEditIcon && <p className='fs12 cursP edit-comment color555 mL20' onClick={clickedEditPostHandler}><i className='fa fa-pencil w15 fs10 color777' />Edit</p>}
+            {showDeleteIcon && <p className='fs12 cursP delete-comment color555 mL20' onClick={clickedDeletePostHandler}><i className='fa fa-trash w15 fs10 color777' />Delete</p>}
+        </div>
+    </div>
+}
+
+const Comment = ({ comment, setComments, setCommentsCount, post }) => {
+
+    const dispatch = useDispatch();
+
+    const { id, userId, displayName, displayPicture, message, createdAt } = comment || {};
+
+    const [isEditing, setIsEditing] = useState(false);
     const [showReplies, setShowReplies] = useState(false);
-    const [showProfile, setShowProfile] = useState(false);
-    const [showDeleteIcon, setShowDeleteIcon] = useState(false);
-    const [clickedDelete, setClickedDelete] = useState(false);
+    const [showCommentActionIcon, setShowCommentActionIcon] = useState(false);
 
     const deleteCommentHandler = () => {
         apiRequest(`/api/v1/post/comment/${id}`, 'DELETE').then(() => {
             setComments(prevComments => prevComments.filter(c => c.id !== id));
             setCommentsCount(prevCount => prevCount - 1);
+            dispatch(showPopup({ message: 'Comment deleted successfully', type: 'success' }));
         }).catch(({ message }) => {
-            console.error('Error deleting comment:', message);
+            dispatch(showPopup({ message, type: 'error' }));
         });
     }
 
     const deletePopupOptions = [{
-        "title": "Yes",
+        "title": "Delete",
         "color": "#ff4d4d",
         "onClick": deleteCommentHandler
     }, {
-        "title": "No",
-        "color": "#4CAF50",
+        "title": "Cancel",
+        "color": "gray",
     }];
 
+    const clickedDeletePostHandler = () => {
+        dispatch(showConfirmationPopup({ message: "Are you sure you want to delete this comment?", options: deletePopupOptions }));
+    }
+
+    const clickedEditPostHandler = () => {
+        setIsEditing(true);
+        setShowReplies(false);
+        utils.autoFocusInput(`edit-comment-textarea-${id}`);
+    }
+
     return (
-        <div className='comment-item FRSS w100' onMouseEnter={() => setShowDeleteIcon(true)} onMouseLeave={() => setShowDeleteIcon(false)}>
+        <div className='comment-item FRSS w100'>
             <div className='FCCS'>
-                <img src={displayPicture} alt={displayName} className='comment-user-picture img_40_40 mR10' onClick={() => setShowProfile(true)} />
-                {showProfile && <Profile userId={userId} setShowProfile={() => { setShowProfile(false) }} />}
+                <img src={displayPicture} alt={displayName} className='comment-user-picture img_40_40 mR10' onClick={() => { dispatch(showProfile(userId)); }} />
             </div>
             <div className='FCSS comment-content-container'>
-                <div className='comment-user FCSS w100'>
-                    <div className='FRCB w100'>
-                        <h6 className='comment-user-name'>{displayName}</h6>
-                        <span className='comment-date fs10 color777'>{utils.convertDateAndTime(createdAt)}</span>
-                    </div>
-                    <CommentContent html={message} />
+                <div className='comment-content-content w100' onMouseEnter={() => setShowCommentActionIcon(true)} onMouseLeave={() => setShowCommentActionIcon(false)}>
+                    <CommentHeader displayName={displayName} createdAt={createdAt} isEditing={isEditing} />
+                    {isEditing ? <EditCommentContainer id={id} message={message} setComments={setComments} setIsEditing={setIsEditing} setShowCommentActionIcon={setShowCommentActionIcon} /> :
+                        <>
+                            <CommentContent html={message} />
+                            <CommentFooter post={post} comment={comment} showCommentActionIcon={showCommentActionIcon} showReplies={showReplies} setShowReplies={setShowReplies} clickedEditPostHandler={clickedEditPostHandler} clickedDeletePostHandler={clickedDeletePostHandler} />
+                        </>
+                    }
                 </div>
-                <div className='comment-footer FRCB w100 mT10'>
-                    <div>
-                        <span className='fs12 cursP add-new-reply color555'><i className='fa fa-reply mR5 fs10 color777' />Reply</span>
-                        {replyCount > 0 && <>
-                            <span className='comment-reply-toggle-button fs12 cursP mL10 pL10' onClick={() => setShowReplies(!showReplies)}>
-                                {/* {showReplies ? <i className='fa fa-chevron-up mR5' /> : <i className='fa fa-chevron-right mR5' />} */}
-                                {showReplies ? 'Hide' : 'Show'} {replyCount} replies
-                            </span>
-                            {showReplies && <CommentReply commentId={id} />}
-                        </>}
-                    </div>
-                    {deleteable && showDeleteIcon && <p className='fs12 cursP delete-comment color555' onClick={() => setClickedDelete(true)}><i className='fa fa-trash mR5 fs10 color777' />Delete</p>}
-                    {clickedDelete && <ConfirmationPopup message={"Are you sure you want to delete this comment?"} onClose={() => setClickedDelete(false)} options={deletePopupOptions} />}
-                </div>
+                {showReplies && <CommentReply commentId={id} />}
             </div>
         </div>
     )
 }
 
-const CommentsList = ({ comments, setComments, setCommentsCount }) => {
+const CommentsList = ({ comments, post, setComments, setCommentsCount }) => {
     return <>
-        {comments.map((comment, index) => <Comment key={index} comment={comment} setComments={setComments} setCommentsCount={setCommentsCount} />)}
+        {comments.map((comment, index) => <Comment key={index} comment={comment} setComments={setComments} setCommentsCount={setCommentsCount} post={post} />)}
     </>
 }
 
 const CommentReply = ({ commentId }) => {
-    return null;
+
+    const dispatch = useDispatch();
+    const [replies, setReplies] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        setLoading(true);
+        apiRequest(`/api/v1/post/comment/${commentId}/reply`, "GET").then(({ data }) => {
+            setLoading(false);
+            setReplies(data);
+        }).catch(({ message }) => {
+            setLoading(false);
+            dispatch(showPopup({ message, type: 'error' }));
+        });
+    }, []);
+
+    return loading ? <Loader /> : <div className='comment-replies-container mT10 bL1'>
+        {replies.map((reply, index) => <Comment key={index} comment={reply} post={{}} setComments={() => { }} setCommentsCount={() => { }} />)}
+    </div>;
 }
 
-const CommentsContainer = ({ postId, commentable, setCommentsCount }) => {
+const CommentsContainer = ({ post, setCommentsCount }) => {
 
+    const { id: postId, commentable } = post || {};
     const [comments, setComments] = useState([]);
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -133,27 +163,27 @@ const CommentsContainer = ({ postId, commentable, setCommentsCount }) => {
     }, [postId]);
 
     return (
-        <div id='comments-container' className='FCCS mT20'>
+        <div id='comments-container' className='FCCS mT20 centerMe'>
             {
                 loading ? <Loader />
                     : error ? <ErrorMessage message={error} />
                         : <>
                             <h5 className='w100 alignCenter'>Post Comments({comments.length})</h5>
                             <div className='w100' id='comments-list'>
-                                {comments.length ? <CommentsList comments={comments} setComments={setComments} setCommentsCount={setCommentsCount} /> : <NoCommentsFound />}
+                                {comments.length ? <CommentsList post={post} comments={comments} setComments={setComments} setCommentsCount={setCommentsCount} /> : <NoCommentsFound />}
                             </div>
-                            {commentable && <CreateCommentContainer setCommentsCount={setCommentsCount} postId={postId} setComments={setComments} />}
+                            {commentable && <CreateCommentContainer setCommentsCount={setCommentsCount} post={post} setComments={setComments} />}
                         </>
             }
         </div>
     );
 }
 
-const PostCommentsLayout = ({ postId, commentable, closeShowCommentsList, setCommentsCount }) => {
+const PostCommentsLayout = ({ post, closeShowCommentsList, setCommentsCount }) => {
 
     return (
         <div id='post-comments-layout' className='w100 h100 FRSC' onClick={closeShowCommentsList}>
-            <CommentsContainer postId={postId} commentable={commentable} setCommentsCount={setCommentsCount} />
+            <CommentsContainer post={post} setCommentsCount={setCommentsCount} />
         </div>
     )
 }

@@ -20,7 +20,7 @@ const subscribe = {
     }
 }
 
-const useWebSocket = ({ onPrivateMessage, onGroupMessage, onError, onMessageDelivery, onTyping, userId }) => {
+const useWebSocket = ({ onPrivateMessage, onGroupMessage, onError, onMessageDelivery, onTyping, userId, onPresenceUpdate, orgId }) => {
 
     const stompClientRef = useRef(null);
 
@@ -38,7 +38,8 @@ const useWebSocket = ({ onPrivateMessage, onGroupMessage, onError, onMessageDeli
                     { event: `/topic/group-message.${userId}`, callback: onGroupMessage },
                     { event: `/queue/errors.${userId}`, callback: onError },
                     { event: `/topic/message-delivery.${userId}`, callback: onMessageDelivery },
-                    { event: `/topic/typing.${userId}`, callback: onTyping }
+                    { event: `/topic/typing.${userId}`, callback: onTyping },
+                    { event: `/topic/presence.${orgId}`, callback: onPresenceUpdate }
                 ]);
 
             },
@@ -53,13 +54,18 @@ const useWebSocket = ({ onPrivateMessage, onGroupMessage, onError, onMessageDeli
 
     }, [userId]);
 
+    const attachTokenInPayload = (payload) => {
+        const token = sessionStorage.getItem('token');
+        return Object.assign(payload, { token });
+    };
+
     const DirectMessage = {
 
         send: (message) => {
             if (stompClientRef.current?.connected) {
                 stompClientRef.current.publish({
                     destination: `/app/chat.direct-message`,
-                    body: JSON.stringify(message),
+                    body: JSON.stringify(attachTokenInPayload(message)),
                 });
             }
         },
@@ -67,19 +73,19 @@ const useWebSocket = ({ onPrivateMessage, onGroupMessage, onError, onMessageDeli
             if (stompClientRef.current?.connected) {
                 stompClientRef.current.publish({
                     destination: `/app/chat.direct-message.typing`,
-                    body: JSON.stringify(message),
+                    body: JSON.stringify(attachTokenInPayload(message)),
                 });
             }
         }
     }
 
     const GroupMessage = {
-        
+
         send: (message) => {
             if (stompClientRef.current?.connected) {
                 stompClientRef.current.publish({
                     destination: `/app/chat.group-message`,
-                    body: JSON.stringify(message),
+                    body: JSON.stringify(attachTokenInPayload(message)),
                 });
             }
         },
@@ -87,7 +93,7 @@ const useWebSocket = ({ onPrivateMessage, onGroupMessage, onError, onMessageDeli
             if (stompClientRef.current?.connected) {
                 stompClientRef.current.publish({
                     destination: `/app/chat.group-message.typing`,
-                    body: JSON.stringify(message),
+                    body: JSON.stringify(attachTokenInPayload(message)),
                 });
             }
         }

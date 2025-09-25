@@ -1,12 +1,15 @@
-import { StatusIndicator } from '../Auth/utils';
-import UserAvatar from '../User/UserAvatar';
 import './OrgMembers.css';
+import { useDispatch } from 'react-redux';
+import UserAvatar from '../User/UserAvatar';
+import { useNavigate } from 'react-router-dom';
+import { StatusIndicator } from '../Auth/utils';
+import { showPopup } from '../../store/reducers/PopupSlice';
 
 const NoMembersAvailable = ({ message }) => {
     return (
         <div className='FCCC w100 h100P' id='no-data-found'>
             <p className='FRCC w100'>
-                <i className='fa fa-users mR5' />
+                <i className='fa fa-users mR5 w20' />
                 {message}
             </p>
         </div>
@@ -15,14 +18,25 @@ const NoMembersAvailable = ({ message }) => {
 
 const OrgMember = ({ member }) => {
 
-    const { userId, displayName, email, displayPicture, status } = member;
+    const { userId, displayName, email, displayPicture, status, chatId } = member;
+    const chatRoute = `/chat/messages/${chatId}`;
+    const dispatch = useDispatch();
+
+    const navigate = useNavigate();
+
+    const chatClickHandler = () => {
+        if (chatId === null || chatId === undefined) {
+            return dispatch(showPopup({ 'message': 'Chat is not available for this user', 'type': 'error' }));
+        }
+        navigate(chatRoute);
+    }
 
     return (
         <div className='org-member w100 FRCB'>
             <div className='FRCS' id='left'>
-                <div className='pR'>
-                    <UserAvatar displayPicture={displayPicture} />
-                    <StatusIndicator status={status} />
+                <div className='pR mR10'>
+                    <UserAvatar displayPicture={displayPicture} displayName={displayName} userId={userId} />
+                    <StatusIndicator status={status} style={{ bottom: '0px', right: '-2px', height: 'fit-content', padding: '3px', fontSize: '10px' }} />
                 </div>
                 <div className='FCSS org-member-details'>
                     <div className='FRCB w100'>
@@ -32,7 +46,7 @@ const OrgMember = ({ member }) => {
                 </div>
             </div>
             <div className='FRCE' id='right'>
-                <i className='profile_contacts fa fa-comment' style={{ backgroundColor: 'blue' }} />
+                <i className='profile_contacts fa fa-comment' style={{ backgroundColor: '#3591ff' }} onClick={chatClickHandler} />
                 <i className='profile_contacts fa fa-phone' style={{ backgroundColor: 'green' }} />
                 <i className='profile_contacts fa fa-video' style={{ backgroundColor: 'red' }} />
             </div>

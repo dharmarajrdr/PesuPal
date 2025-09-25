@@ -13,7 +13,7 @@ const SettingsLayout = () => {
     };
 
   return (
-    <div id='settings-layout' className='w100 h100 FRSS'>
+    <div id='settings-layout' className='w100 FRSS Layout'>
       <SettingsLeftContainer leftNavigationState={leftNavigationState} width={leftNavOpened ? width.leftNavOpened : width.leftNavClosed} />
       <SettingsMainContainer width={leftNavOpened ? `calc(100% - ${width.leftNavOpened})` : `calc(100% - ${width.leftNavClosed})`} />
     </div>

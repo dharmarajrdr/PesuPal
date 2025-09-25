@@ -4,7 +4,7 @@ import './auth.css'
 const ChatGifComponent = () => {
     return (
         <div className='ChatGifComponent FRCC'>
-            <img src='/images/auth_cartoon.gif' />
+            <img src='/images/Background/auth_cartoon.gif' />
         </div>
     )
 }

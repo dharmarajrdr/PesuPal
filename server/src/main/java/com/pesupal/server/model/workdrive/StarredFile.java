@@ -1,7 +1,7 @@
 package com.pesupal.server.model.workdrive;
 
 import com.pesupal.server.model.BaseModel;
-import com.pesupal.server.model.user.User;
+import com.pesupal.server.model.user.OrgMember;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
 import lombok.Data;
@@ -14,5 +14,5 @@ public class StarredFile extends BaseModel {
     private File file;
 
     @ManyToOne
-    private User user;
+    private OrgMember starredBy;
 }

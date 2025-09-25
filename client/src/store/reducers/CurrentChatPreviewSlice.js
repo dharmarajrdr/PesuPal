@@ -7,11 +7,24 @@ const CurrentChatPreviewSlice = createSlice({
         setCurrentChatPreview: (state, action) => {
             return action.payload;
         },
+        updateCurrentChatPreview: (state, action) => {
+            return { ...state, ...action.payload };
+        },
+        increaseParticipantsCount: (state) => {
+            if (state) {
+                state.participantsCount += 1;
+            }
+        },
+        decreaseParticipantsCount: (state) => {
+            if (state && state.participantsCount > 0) {
+                state.participantsCount -= 1;
+            }
+        },
         clearCurrentChatPreview: () => {
             return null;
         }
     }
 });
 
-export const { setCurrentChatPreview, clearCurrentChatPreview } = CurrentChatPreviewSlice.actions;
+export const { setCurrentChatPreview, updateCurrentChatPreview, increaseParticipantsCount, decreaseParticipantsCount, clearCurrentChatPreview } = CurrentChatPreviewSlice.actions;
 export default CurrentChatPreviewSlice.reducer;

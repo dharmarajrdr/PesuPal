@@ -1,7 +1,7 @@
 package com.pesupal.server.helpers;
 
 import com.pesupal.server.exceptions.SubscriptionNotActiveException;
-import com.pesupal.server.service.interfaces.OrgSubscriptionHistoryService;
+import com.pesupal.server.service.interfaces.org.OrgSubscriptionHistoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

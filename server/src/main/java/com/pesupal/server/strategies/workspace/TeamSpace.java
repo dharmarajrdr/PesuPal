@@ -1,8 +1,8 @@
 package com.pesupal.server.strategies.workspace;
 
-import com.pesupal.server.dto.request.CreateFolderDto;
-import com.pesupal.server.dto.response.FileOrFolderDto;
-import com.pesupal.server.dto.response.FolderDto;
+import com.pesupal.server.dto.request.drive.CreateFolderDto;
+import com.pesupal.server.dto.response.drive.FileOrFolderDto;
+import com.pesupal.server.dto.response.drive.FolderDto;
 import com.pesupal.server.enums.CRUD;
 import com.pesupal.server.enums.FileOrFolder;
 import com.pesupal.server.exceptions.DataNotFoundException;
@@ -13,14 +13,16 @@ import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.model.workdrive.Folder;
 import com.pesupal.server.model.workdrive.PublicFolder;
 import com.pesupal.server.model.workdrive.TeamFolder;
-import com.pesupal.server.repository.FolderRepository;
-import com.pesupal.server.repository.PublicFolderRepository;
-import com.pesupal.server.repository.TeamFolderRepository;
-import com.pesupal.server.service.interfaces.FileService;
-import com.pesupal.server.service.interfaces.PublicFolderService;
-import com.pesupal.server.service.interfaces.SecuredFolderPermissionService;
-import com.pesupal.server.service.interfaces.WorkdriveSpace;
+import com.pesupal.server.repository.drive.FolderRepository;
+import com.pesupal.server.repository.drive.PublicFolderRepository;
+import com.pesupal.server.repository.drive.TeamFolderRepository;
+import com.pesupal.server.service.interfaces.drive.FileService;
+import com.pesupal.server.service.interfaces.drive.PublicFolderService;
+import com.pesupal.server.service.interfaces.drive.SecuredFolderPermissionService;
+import com.pesupal.server.service.interfaces.drive.WorkdriveSpace;
+import com.pesupal.server.service.interfaces.org.OrgMemberService;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -32,6 +34,7 @@ public class TeamSpace extends WorkspaceSupportsPublicFolder implements Workdriv
 
     private final FileService fileService;
     private final FolderRepository folderRepository;
+    private final OrgMemberService orgMemberService;
     private final PublicFolderService publicFolderService;
     private final TeamFolderRepository teamFolderRepository;
     private final PublicFolderRepository publicFolderRepository;
@@ -78,11 +81,13 @@ public class TeamSpace extends WorkspaceSupportsPublicFolder implements Workdriv
 
         // 1. Retrieve all subfolders in the given folder in the team space
 
-        List<FileOrFolderDto> filesAndFolders = teamFolderRepository.findByDepartmentAndFolder_ParentFolder(department, parentFolder)
+        Sort sort = Sort.by(Sort.Order.asc("folder.name").ignoreCase());
+        List<FileOrFolderDto> filesAndFolders = teamFolderRepository.findByDepartmentAndFolder_ParentFolderAndFolder_Deleted(department, parentFolder, false, sort)
                 .stream()
                 .map(teamFolder -> {
                     Folder folder = teamFolder.getFolder();
-                    FolderDto folderDto = FolderDto.fromFolderAndOrgMember(folder, orgMember);
+                    FolderDto folderDto = FolderDto.fromFolder(folder);
+                    folderDto.setOwner(orgMemberService.getUserBasicInfo(folder.getCreatedBy()));
                     folderDto.setType(FileOrFolder.FOLDER);
                     folderDto.setSecurity(folder.getPublicFolder().getSecurity());
                     return folderDto;
@@ -90,7 +95,7 @@ public class TeamSpace extends WorkspaceSupportsPublicFolder implements Workdriv
 
         // 2. Retrieve all files in the given folder in the team space
 
-        filesAndFolders.addAll(fileService.findAllByFolderAndOrgMember(parentFolder, orgMember));
+        filesAndFolders.addAll(fileService.findAllByFolderAndOrgMemberAndDeleted(parentFolder, orgMember, false));
 
         return filesAndFolders;
     }

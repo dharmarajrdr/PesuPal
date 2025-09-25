@@ -24,7 +24,7 @@
 
 .post-container {
   width: 100%;
-  padding: 20px;
+  padding: 20px 25px;
   background-color: var(--pure-white);
   box-shadow: 0 4px 8px var(--box-shadow-color);
   border-radius: 12px;
@@ -38,13 +38,14 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+  margin: 0;
 }
 
 .post-label {
   font-size: 18px;
   font-weight: 500;
   color: var(--primary-color);
-  margin-bottom: 10px;
+  margin-bottom: 15px;
 }
 
 #expand-post-creation {
@@ -58,17 +59,97 @@
   color: var(--primary-color);
 }
 
-.post-input {
-  height: calc(100% - 50px);
-}
-
-.post-input-section {
+#post-input-section {
   gap: 15px;
+  height: calc(100% - 100px);
   margin-bottom: 15px;
+  overflow: hidden;
 }
 
-.fullscreen-post-creation .post-input-section {
-  height: calc(100% - 100px);
+#post-input-wrapper {
+  height: 100%;
+}
+
+#post-title-input {
+  width: 100%;
+  border: none;
+  outline: none;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 10px;
+  padding: 10px 15px;
+  border-radius: 8px;
+  height: 40px;
+  font-family: 'system-ui';
+  background-color: var(--pure-white);
+  border: 1px solid #ccc;
+}
+
+#post-title-input:focus {
+  transition-duration: 0.25s;
+  border-color: #007bff;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+#post-title-input:focus {
+  background-color: #fafafa;
+}
+
+#post-content-input-wrapper {
+  border: 1px solid #ccc;
+  position: relative;
+  border-radius: 8px;
+}
+
+.create-post-tag {
+  background-color: #eee;
+  color: var(--primary-color);
+  padding: 5px 8px 5px 10px;
+  border-radius: 5px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.create-post-tag i {
+  font-size: 10px;
+  color: #aaa;
+  width: 12px;
+  margin-left: 5px;
+  text-align: center;
+}
+
+.create-post-tag span {
+  font-size: 12px;
+  color: #555;
+}
+
+.create-post-tag:hover {
+  background-color: #eee;
+  color: var(--primary-color-active);
+}
+
+.create-post-tag i:hover {
+  color: #333;
+}
+
+#create-tag-input {
+  border: none;
+  outline: none;
+  padding: 3px 8px;
+  font-size: 12px;
+  max-width: max-content;
+}
+
+.remove-mention-member {
+  cursor: pointer;
+  color: #999;
+  transition-duration: 0.25s;
+  margin-right: 2px;
+  margin-left: 5px;
+}
+
+.remove-mention-member:hover {
+  color: #333;
 }
 
 .user-avatar {
@@ -105,13 +186,13 @@
   font-size: 14px;
   color: var(--primary-color);
   cursor: pointer;
-  padding: 5px;
-  background-color: var(--pure-white-hover);
+  padding: 5px 10px;
+  background-color: #eee;
   border-radius: 6px;
 }
 
 .actions_post_creation:hover {
-  background-color: #eee;
+  background-color: #ddd;
 }
 
 .actions_post_creation span {
@@ -124,18 +205,24 @@
   color: #555;
 }
 
-.share-wrapper {
+.create-post-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.update-post-wrapper {
   position: relative;
   display: inline-block;
 }
 
 #share-post-button-wrapper {
   background-color: var(--primary-color);
+  border-radius: 5px;
+  overflow: hidden;
 }
 
 .share-main,
 #share-chevron {
-  padding: 8px 8px 8px 16px;
   font-weight: 600;
   font-size: 12px;
   border: none;
@@ -149,6 +236,14 @@
 .share-main:hover,
 #share-chevron:hover {
   background-color: var(--primary-color-active);
+}
+
+.create-post-wrapper .share-main {
+  padding: 8px 8px 8px 16px;
+}
+
+.update-post-wrapper .share-main {
+  padding: 8px 16px;
 }
 
 #share-chevron {
@@ -186,6 +281,22 @@
 
 .schedule-btn:hover {
   background-color: var(--primary-color-active);
+}
+
+#cancel-post-button {
+  background-color: #eee;
+  border: none;
+  color: #333;
+  font-weight: 500;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 12px;
+  margin-right: 10px;
+}
+
+#cancel-post-button:hover {
+  background-color: #ddd;
 }
 
 @media screen and (max-width: 768px) {
