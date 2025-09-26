@@ -1,46 +1,98 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import './Profile.css'
 import { useEffect, useState } from 'react';
 import { apiRequest } from '../../http_request';
 import Loader from '../Loader';
 import ErrorMessage from '../ErrorMessage';
+import { useDispatch, useSelector } from 'react-redux';
+import { hideProfile } from '../../store/reducers/ProfileSlice';
 
-const Profile = ({ userId, setShowProfile }) => {
+const ContactInfo = ({ phone, email, Social }) => {
+    return <div id='contact_info'>
+        {/* <h4>User Information</h4> */}
+        <div className='FCSS w100 phone_email'>
+            <label>Phone</label>
+            <div className='FRCB w100'>
+                <b>{phone}</b>
+                <i className='fa-regular fa-copy copy_contact_info' title='Copy' />
+            </div>
+        </div>
+        <div className='FCSS w100 phone_email'>
+            <label>Email</label>
+            <div className='FRCB w100'>
+                <b>{email}</b>
+                <i className='fa-regular fa-copy copy_contact_info' title='Copy' />
+            </div>
+        </div>
+        {Social?.length && <div className='FCSS w100 phone_email'>
+            <label>Social</label>
+            <div className='FRCS w100'>
+                {Social.map(({ Name, icon, color, link }, index) =>
+                    <Link target='_blank' to={link} key={index} >
+                        <i title={Name} className={`social_accounts fa-brands ${icon}`} style={{ color }} />
+                    </Link>
+                )}
+            </div>
+        </div>}
+    </div>
+}
 
+const NavigationLink = ({ to, icon, label, count }) => {
+
+    return <Link to={to} className='FRCC p10 navlink' >
+        <i className={`fa ${icon} mR5`} />
+        <h5>{label}</h5>
+        {count !== undefined && <span className='fs12'>({count})</span>}
+    </Link>
+}
+
+const Profile = () => {
+
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const [error, setError] = useState(null);
     const [profile, setProfile] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+    const userId = useSelector(state => state.profile);
+
+    const { displayName, designation, department, displayPicture, Social, phone, email, employeeId, chatId } = profile || {};
+    const [displayPictureUrl, setShowDisplayPictureUrl] = useState('/images/anonymous.jpg');
 
     useEffect(() => {
         if (userId == null) {
-            setLoading(false);
-            setError("No user ID provided");
             return;
         }
-        apiRequest("/api/v1/people/" + userId, "GET").then(({ data }) => {
+        setProfile(null);
+        setLoading(true);
+        apiRequest("/api/v1/profile/" + userId, "GET").then(({ data }) => {
             setLoading(false);
             setProfile(data);
+            console.log(data);
+            if (data.displayPicture) {
+                setShowDisplayPictureUrl(data.displayPicture);
+            }
         }).catch(({ message }) => {
             setLoading(false);
             setError(message);
         });
-    }, []);
-
-    const { displayName, designation, department, displayPicture, Social, phone, email, employeeId } = profile || {};
+    }, [userId]);
 
     const closeProfileOverlay = (e) => {
-        if (e.target.id === 'ProfileOverlay') {
-            setShowProfile(false);
-        }
+        if (e.target.id !== 'ProfileOverlay') return;
+        dispatch(hideProfile());
     }
 
-    return (
+    const goToChat = () => {
+        navigate(`/chat/messages/${chatId}`);
+    }
+
+    return userId ? (
         <div id='ProfileOverlay' className='FRCE' onClick={closeProfileOverlay}>
             <div id='ProfileCard' className='noScrollbar'>
                 {loading ? <Loader /> :
                     error ? <ErrorMessage message={error} /> : <>
                         <div id='user_image_basic_info' className='FCCC'>
-                            <img src={displayPicture} id='user_photo' className='objectFitCover objectPositionCenter' />
+                            <img src={displayPictureUrl} id='user_photo' className='objectFitCover' onError={() => setShowDisplayPictureUrl('/images/anonymous.jpg')} />
                             <div id='user_basic_info' className='FCCC'>
                                 <div className='row'>
                                     <h4 id='profile_name'>{displayName}</h4>
@@ -54,47 +106,24 @@ const Profile = ({ userId, setShowProfile }) => {
                                     <p id='profile_dept' title='Department'>{department}</p>
                                 </div>
                                 <div className='row mT10'>
-                                    <i className='profile_contacts fa fa-comment' style={{ backgroundColor: 'blue' }} />
+                                    <i className='profile_contacts fa fa-comment' style={{ backgroundColor: '#3591ff' }} onClick={goToChat} />
                                     <i className='profile_contacts fa fa-phone' style={{ backgroundColor: 'green' }} />
                                     <i className='profile_contacts fa fa-video' style={{ backgroundColor: 'red' }} />
                                 </div>
                             </div>
                         </div>
-                        <div id='contact_info'>
-                            {/* <h4>User Information</h4> */}
-                            <div className='FCSS w100 phone_email'>
-                                <label>Phone</label>
-                                <div className='FRCB w100'>
-                                    <b>{phone}</b>
-                                    <i className='fa-regular fa-copy copy_contact_info' title='Copy' />
-                                </div>
-                            </div>
-                            <div className='FCSS w100 phone_email'>
-                                <label>Email</label>
-                                <div className='FRCB w100'>
-                                    <b>{email}</b>
-                                    <i className='fa-regular fa-copy copy_contact_info' title='Copy' />
-                                </div>
-                            </div>
-                            {Social?.length ?
-                                <div className='FCSS w100 phone_email'>
-                                    <label>Social</label>
-                                    <div className='FRCS w100'>
-                                        {Social.map(({ Name, icon, color, link }, index) =>
-                                            <Link target='_blank' to={link} key={index} >
-                                                <i title={Name} className={`social_accounts fa-brands ${icon}`} style={{ color }} />
-                                            </Link>
-                                        )}
-                                    </div>
-                                </div>
-                                : null}
 
+                        <ContactInfo phone={phone} email={email} Social={Social} />
+
+                        <div className='FRSS w100 navlinks'>
+                            <NavigationLink to={`/people/${userId}/posts`} icon='fa-newspaper' label='Posts' count={45} />
+                            <NavigationLink to={`/people/${userId}/file`} icon='fa-file' label='Files' count={12} />
                         </div>
                     </>
                 }
             </div>
         </div>
-    );
+    ) : null;
 }
 
 export default Profile

@@ -1,23 +1,23 @@
 package com.pesupal.server.model.post;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.pesupal.server.model.CreationTimeAuditable;
+import com.pesupal.server.model.PublicAccessModel;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.util.UUID;
 
-@Data
-@Builder
+@Getter
+@Setter
+@SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class PostMedia extends CreationTimeAuditable {
+@EqualsAndHashCode(callSuper = false)
+public class PostMedia extends PublicAccessModel {
 
     @ManyToOne
     @JsonIgnore

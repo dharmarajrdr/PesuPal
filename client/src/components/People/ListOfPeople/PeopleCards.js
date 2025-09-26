@@ -1,10 +1,11 @@
-import { useEffect, useState } from 'react';
-import PeopleCard from './PeopleCard';
 import './PeopleCards.css';
-import { apiRequest } from '../../../http_request';
 import Loader from '../../Loader';
+import PeopleCard from './PeopleCard';
 import ErrorMessage from '../../ErrorMessage';
-import Profile from '../../OthersProfile/Profile';
+import { useEffect, useRef, useState } from 'react';
+import { apiRequest } from '../../../http_request';
+import { useDispatch, useSelector } from 'react-redux';
+import { setPeople } from '../../../store/reducers/PeopleSlice';
 
 const NoPeopleFound = () => {
 
@@ -14,27 +15,46 @@ const NoPeopleFound = () => {
                 <i className='fa fa-users mR5' />
                 No members found
             </p>
-            <p className='w100 alignCenter'>Recruit some people to your organization</p>
         </div>
     )
 }
 
 const PeopleCards = () => {
 
-    const [people, setPeople] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const dispatch = useDispatch();
     const [error, setError] = useState(null);
-    const [selectedPerson, setSelectedPerson] = useState(null);
+    const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        apiRequest("/api/v1/people", "GET").then(({ data }) => {
+    const { people, searchUser } = useSelector(state => state.people);
+
+    const firstRender = useRef(true);
+
+    const getUsers = () => {
+        apiRequest(`/api/v1/people/search?query=${searchUser.trim()}&sortBy=displayName&sortOrder=ASC`, "GET").then(({ data }) => {
             setLoading(false);
-            setPeople(data);
+            dispatch(setPeople(data));
         }).catch(({ message }) => {
             setLoading(false);
             setError(message);
         });
-    }, []);
+    }
+
+    useEffect(getUsers, []);
+
+    useEffect(() => {
+
+        if (firstRender.current) {
+            firstRender.current = false;
+            return;
+        }
+
+        const timer = setTimeout(() => {
+            getUsers();
+        }, 500);
+        return () => clearTimeout(timer);
+
+    }, [searchUser]);
+
 
     return (
         <div className='FCSS custom-scrollbar' id='PeopleCards'>
@@ -42,12 +62,9 @@ const PeopleCards = () => {
                 {loading ? <Loader /> :
                     error ? <ErrorMessage message={error} /> :
                         people.length ? people.map((person, index) =>
-                            <PeopleCard key={index} person={person} setShowProfile={() => setSelectedPerson(person)} />
+                            <PeopleCard key={index} person={person} />
                         ) : <NoPeopleFound />
                 }
-                {selectedPerson && (
-                    <Profile userId={selectedPerson.userId} setShowProfile={() => setSelectedPerson(null)} />
-                )}
             </div>
 
         </div>

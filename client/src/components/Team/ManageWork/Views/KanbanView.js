@@ -1,44 +1,64 @@
-import React from 'react'
-import { Link } from 'react-router-dom';
+import { useEffect, useState } from 'react'
+import { Link, useParams } from 'react-router-dom';
 import utils from '../../../../utils';
 import './KanbanView.css'
+import { setCurrentModuleId, setCurrentModuleView } from '../../../../store/reducers/CurrentModuleSlice';
+import { useDispatch } from 'react-redux';
+import DetailView from './DetailView';
 
 const RowComponent = ({ item }) => {
 
-    const { title, route, tag, priority, owner, draggable } = item,
-        { icon_color: priority_color, icon } = utils.getPriortyColorAndIcon(priority),
-        { icon_color: tag_color } = utils.getIconForTagWithColor(tag),
-        { ownerImage, ownerName } = owner;
+    const { moduleId, recordId, fields } = item || {};
+    // const route = `/manage/module/${moduleId}/record/${recordId}`;
 
-    return <Link to={route} className='kanbanviewItem' draggable={draggable}>
-        {tag && <div className="tag" style={{ backgroundColor: tag_color }}>{tag}</div>}
-        <p className='mB10 kanbanviewItemTitle'>{title}</p>
+    const [subjectField, createdByField, createdAtField] = fields || [{}, {}, {}];
+    const { data: subject } = subjectField || {};
+    const { data: createdAt } = createdAtField || {};
+    const { data: createdBy } = createdByField || {};
+    const { id: userId, displayName, displayPicture } = createdBy || {};
+
+    const [showQuickDetailView, setShowQuickDetailView] = useState(false);
+
+    const showQuickDetailViewHandler = () => {
+        setShowQuickDetailView(true);
+    }
+
+    const QuickDetailViewRecord = ({ subject }) => {
+
+        return <div id='quick-create-record' className='entire-screen-overlay FRCE'>
+            <DetailView recordId={recordId} subject={subject} moduleId={moduleId} setShowQuickDetailView={setShowQuickDetailView} view='list' fieldsList={fields} />
+        </div>
+    }
+
+    return subjectField && createdBy && createdAt && <div className='kanbanviewItem' draggable={false} onClick={showQuickDetailViewHandler}>
+        {showQuickDetailView && <QuickDetailViewRecord subject={fields[0].data} />}
+        <p className='mB10 kanbanviewItemTitle'>{subject}</p>
         <div className='FRCB creator_owner_div'>
             <div className='FRCS ownerDiv'>
-                <img src={ownerImage} className='img_20_20' alt="edit" />
-                <span className='mL5 color777' style={{ fontSize: '13px' }}>{ownerName}</span>
+                <img src={displayPicture} className='img_20_20' alt="edit" />
+                <span className='mL5 color777' style={{ fontSize: '13px' }}>{displayName}</span>
             </div>
             <div className='priority FRCE'>
-                <i className={icon} style={{ color: priority_color }}></i>
-                <span className='mL5' >{priority}</span>
+                <span className='mL5 fs10 color777' >{utils.agoTimeCalculator(createdAt)}</span>
             </div>
         </div>
-    </Link>
+    </div>
 
 };
 
 const ColumnComponent = ({ column }) => {
-    const { status, items } = column,
-        itemCount = items?.length || 0;
-    return <div className='kanbanviewColumn FCSS'>
+    const { id, key, value } = column,
+        { name: transitionName } = key || {},
+        { data, info } = value || {},
+        { totalRecords } = info || {};
+    return transitionName && <div className='kanbanviewColumn FCSS'>
         <div className='kanbanviewStage FRCB'>
-            <span className='alignCenter'>{status}</span>
-            <span className='columnCount'>{itemCount}</span>
+            <span className='alignCenter w100'>{transitionName}</span>
+            <span className='columnCount' title='Total Records'>{totalRecords}</span>
         </div>
         <div className='FCSS kanbanviewItems noScrollbar'>
             {
-                items.length ?
-                    items.map((item, index) => <RowComponent item={item} key={index} />) :
+                data?.length ? data.map((item, index) => <RowComponent item={item} key={index} />) :
                     <div className='w100 alignCenter colorAAA selectNone h100 FRCC'>No records</div>
             }
         </div>
@@ -46,10 +66,19 @@ const ColumnComponent = ({ column }) => {
 
 }
 
-const KanbanView = ({ ManageWorkListKanban }) => {
-    return (
+const KanbanView = ({ records }) => {
+
+    const dispatch = useDispatch();
+    const { moduleId } = useParams();
+
+    useEffect(() => {
+        dispatch(setCurrentModuleView("kanban"));
+        dispatch(setCurrentModuleId(moduleId));
+    }, []);
+
+    return records.length && (
         <div id='KanbanviewFrame' className='FRSS'>
-            {ManageWorkListKanban.map((column, index) => <ColumnComponent column={column} key={index} />)}
+            {records.map((column, index) => <ColumnComponent column={column} key={index} />)}
         </div>
     )
 }

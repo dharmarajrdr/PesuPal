@@ -1,0 +1,110 @@
+package com.pesupal.server.service.implementations.module.relation;
+
+import com.pesupal.server.dto.request.module.AddModuleFieldDto;
+import com.pesupal.server.dto.response.module.ModuleFieldDto;
+import com.pesupal.server.dto.response.module.ModuleSelectOptionDto;
+import com.pesupal.server.model.module.Module;
+import com.pesupal.server.model.module.ModuleField;
+import com.pesupal.server.model.module.ModuleRecord;
+import com.pesupal.server.model.module.ModuleSelectOption;
+import com.pesupal.server.model.module.relation.RecordSelectRelation;
+import com.pesupal.server.repository.module.relation.RecordSelectRelationRepository;
+import com.pesupal.server.service.implementations.module.RecordRelationServiceImpl;
+import com.pesupal.server.service.interfaces.module.ModuleSelectOptionService;
+import com.pesupal.server.service.interfaces.module.relation.RecordSelectRelationService;
+import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+@AllArgsConstructor
+public class RecordSelectRelationServiceImpl extends RecordRelationServiceImpl implements RecordSelectRelationService {
+
+    private final ModuleSelectOptionService moduleSelectOptionService;
+    private final RecordSelectRelationRepository recordSelectRelationRepository;
+
+    /**
+     * Saves the relation data for a module record and field.
+     *
+     * @param record
+     * @param field
+     * @param data
+     */
+    @Override
+    public void save(ModuleRecord record, ModuleField field, Object data) {
+
+        RecordSelectRelation recordSelectRelation = new RecordSelectRelation();
+        recordSelectRelation.setRecord(record);
+        recordSelectRelation.setField(field);
+        Long selectOptionId = ((Number) data).longValue();
+        if (selectOptionId != null) {
+            ModuleSelectOption moduleSelectOption = moduleSelectOptionService.getModuleSelectOptionByModuleFieldAndId(field, selectOptionId);
+            recordSelectRelation.setSelectOption(moduleSelectOption);
+        }
+        recordSelectRelationRepository.save(recordSelectRelation);
+    }
+
+    /**
+     * Retrieves the relation data for a module record and field.
+     *
+     * @param moduleRecord
+     * @param moduleField
+     * @return
+     */
+    @Override
+    public ModuleFieldDto getByModuleRecordAndModuleField(ModuleRecord moduleRecord, ModuleField moduleField) {
+
+        ModuleFieldDto<List<ModuleSelectOptionDto>> moduleFieldDto = ModuleFieldDto.fromModuleField(moduleField);
+
+        // 1. Retrieve all selected options for the given field
+        List<RecordSelectRelation> recordSelectRelations = recordSelectRelationRepository.findAllByRecordAndField(moduleRecord, moduleField);
+        List<Long> selectedOptionIds = recordSelectRelations.stream().map(relation -> relation.getSelectOption().getId()).toList();
+
+        // 2. Select all options for the given field
+        List<ModuleSelectOption> moduleSelectOptions = moduleSelectOptionService.getAllByModuleField(moduleField);
+        List<ModuleSelectOptionDto> moduleSelectOptionDtos = moduleSelectOptions.stream().map(moduleSelectOption -> ModuleSelectOptionDto.fromModuleSelectOption(moduleSelectOption, selectedOptionIds.contains(moduleSelectOption.getId()))).toList();
+        moduleFieldDto.setData(moduleSelectOptionDtos);
+
+        return moduleFieldDto;
+    }
+
+    /**
+     * Deletes the relation data for a module record and field.
+     *
+     * @param moduleRecord
+     * @param moduleField
+     */
+    @Override
+    public void delete(ModuleRecord moduleRecord, ModuleField moduleField) {
+
+        recordSelectRelationRepository.deleteAllByRecordAndField(moduleRecord, moduleField);
+    }
+
+    /**
+     * Deletes all relation data associated with a specific module.
+     *
+     * @param module
+     */
+    @Override
+    public void deleteAllByModule(Module module) {
+
+        recordSelectRelationRepository.deleteAllByRecord_Module(module);
+    }
+
+    /**
+     * Stores initial values for fields when they are created, specifically for select fields.
+     *
+     * @param addModuleFieldDto
+     * @param moduleField
+     * @return
+     */
+    @Override
+    public ModuleFieldDto storeInitialValuesOnFieldsCreation(ModuleField moduleField, AddModuleFieldDto addModuleFieldDto) {
+
+        List<ModuleSelectOption> selectOptions = addModuleFieldDto.getOptions().stream().map(addModuleSelectOptionDto -> addModuleSelectOptionDto.toModuleSelectOption(moduleField)).toList();
+        moduleSelectOptionService.saveAll(selectOptions);
+        List<ModuleSelectOptionDto> moduleSelectOptionDtos = selectOptions.stream().map(ModuleSelectOptionDto::fromModuleSelectOption).toList();
+        return ModuleFieldDto.fromModuleFieldWithData(moduleField, moduleSelectOptionDtos);
+    }
+}

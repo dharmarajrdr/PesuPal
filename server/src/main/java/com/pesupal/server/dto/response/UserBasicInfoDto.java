@@ -1,24 +1,27 @@
 package com.pesupal.server.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.pesupal.server.enums.MemberStatus;
 import com.pesupal.server.model.user.OrgMember;
 import lombok.Data;
+
+import java.net.URL;
 
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class UserBasicInfoDto {
 
-    private Long userId;
+    private String userId;
 
     private String displayName;
 
-    private String displayPicture;
+    private URL displayPicture;
 
     private String designation;
 
     private String department;
 
-    private String status;
+    private MemberStatus status;
 
     private String email;
 
@@ -26,17 +29,19 @@ public class UserBasicInfoDto {
 
     private Integer employeeId;
 
+    private String chatId;
+
     public static UserBasicInfoDto fromOrgMember(OrgMember orgMember) {
 
         UserBasicInfoDto userBasicInfoDto = new UserBasicInfoDto();
-        userBasicInfoDto.setUserId(orgMember.getUser().getId());
+        userBasicInfoDto.setUserId(orgMember.getPublicId());
         userBasicInfoDto.setDisplayName(orgMember.getDisplayName());
-        userBasicInfoDto.setDisplayPicture(orgMember.getDisplayPicture());
         userBasicInfoDto.setDesignation(orgMember.getDesignation().getName());
         userBasicInfoDto.setDepartment(orgMember.getDepartment().getName());
         userBasicInfoDto.setStatus(orgMember.getStatus());
         userBasicInfoDto.setEmail(orgMember.getUser().getEmail());
         userBasicInfoDto.setPhone(orgMember.getUser().getPhone());
+        userBasicInfoDto.setEmployeeId(orgMember.getEmployeeId());
         if (orgMember.getOrg().isShowEmployeeId()) {
             userBasicInfoDto.setEmployeeId(orgMember.getEmployeeId());
         }

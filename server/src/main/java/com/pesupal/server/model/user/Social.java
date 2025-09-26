@@ -10,7 +10,7 @@ import lombok.Data;
 public class Social extends BaseModel {
 
     @OneToOne
-    private User user;
+    private OrgMember user;
 
     private String linkedin;
 

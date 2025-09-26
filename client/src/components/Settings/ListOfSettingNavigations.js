@@ -15,7 +15,7 @@ export default [
     },
     {
         title: 'Manage People',
-        route: '/settings/manage-admins',
+        route: '/settings/manage-people',
         icon: 'fa fa-users',
         active: false,
         has_access: true
@@ -35,9 +35,9 @@ export default [
         has_access: true
     },
     {
-        title: 'Configurations',
-        route: '/settings/configurations',
-        icon: 'fa fa-wrench',
+        title: 'Roles & Permissions',
+        route: '/settings/roles-permissions',
+        icon: 'fa fa-shield-alt',
         active: false,
         has_access: false
     }

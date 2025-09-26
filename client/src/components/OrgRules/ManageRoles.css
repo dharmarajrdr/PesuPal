@@ -1,0 +1,156 @@
+#manage-roles-content {
+    background-color: #fff;
+    box-shadow: 0px 4px 10px var(--box-shadow-color);
+    border-radius: 5px;
+    width: 700px;
+    padding: 20px;
+    height: 500px;
+}
+
+#manage-roles-content h3 {
+    font-size: 17px;
+    font-weight: 400;
+    margin-bottom: 15px;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 5px;
+}
+
+#manage-roles-body {
+    border: 1px solid #ddd;
+    height: calc(100% - 40px);
+    border-radius: 5px;
+}
+
+#manage-roles-body #roles-list {
+    height: 100%;
+    width: 150px;
+    overflow-y: auto;
+}
+
+#manage-roles-body #roles-list .role-item {
+    padding: 15px 10px;
+    border-bottom: 1px solid #eee;
+    width: 100%;
+    box-sizing: border-box;
+    font-size: 13px;
+    cursor: pointer;
+    color: #555;
+    text-wrap: nowrap;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    border-left: 3px solid transparent;
+}
+
+#manage-roles-body #roles-list .role-item.active {
+    color: var(--primary-color-active);
+    font-weight: 500;
+    cursor: default;
+    pointer-events: none;
+    border-left-color: var(--primary-color);
+}
+
+#manage-roles-body #roles-list .role-item:not(.active):hover {
+    background-color: #f9f9f9;
+    color: #555;
+}
+
+#manage-roles-body #role-detail {
+    border-left: 1px solid #ddd;
+    height: 100%;
+    padding: 20px;
+    width: calc(100% - 150px);
+}
+
+#manage-roles-body #role-detail .row {
+    margin-bottom: 15px;
+    height: 40px;
+}
+
+#manage-roles-body #role-detail label {
+    width: 100px;
+    font-size: 13px;
+    color: #555;
+}
+
+#manage-roles-body #role-detail .row-value {
+    font-size: 13px;
+    color: #555;
+    width: calc(100% - 100px);
+}
+
+#manage-roles-body #role-detail .row-value .first-char-placeholder {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: var(--primary-color);
+    color: #fff;
+    font-size: 16px;
+    font-weight: 500;
+    margin-right: 7px;
+}
+
+#manage-roles-body #role-detail .row-value .display-name {
+    font-size: 13px;
+    font-weight: 400;
+    color: #333;
+}
+
+#manage-roles-body #role-detail .row-value .email {
+    margin-top: 2px;
+    font-size: 10px;
+    color: #777;
+}
+
+#manage-roles-body #role-detail .row input {
+    padding: 7px 10px;
+    font-size: 12px;
+    box-sizing: border-box;
+    border: 1px solid #eee;
+    background-color: #fff;
+    border-radius: 3px;
+    color: #777;
+}
+
+#manage-roles-body #role-detail .row input:focus {
+    color: #555;
+    transition-duration: 0.25s;
+    box-shadow: 0px 0px 5px var(--primary-color);
+    border: 1px solid var(--primary-color);
+}
+
+#manage-roles-body #role-detail button {
+    color: #fff;
+    border: none;
+    padding: 8px 12px;
+    font-size: 12px;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+#manage-roles-body #role-detail button i {
+    color: #fff;
+    text-align: left;
+}
+
+#delete-role-button {
+    background-color: var(--error-color);
+}
+
+#delete-role-button:hover {
+    background-color: #c82333;
+}
+
+#save-role-button {
+    background-color: var(--primary-color);
+}
+
+#save-role-button:hover {
+    background-color: var(--primary-color-active);
+}
+
+#save-role-button.disabled {
+    opacity: 0.6;
+    cursor: default;
+    pointer-events: none;
+}

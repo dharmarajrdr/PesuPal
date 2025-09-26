@@ -1,12 +1,16 @@
-import React from 'react'
-import SearchPeople from './ListOfPeople/SearchPeople'
-import PeopleCards from './ListOfPeople/PeopleCards'
+import AllUsers from './ListOfPeople/AllUsers'
+import PageNotFound from '../Auth/PageNotFound'
+import { Route, Routes } from 'react-router-dom'
+import UserPostsLayout from './UserPosts/UserPostsLayout'
 
 const PeopleLayout = () => {
     return (
         <div className='Layout'>
-            <SearchPeople />
-            <PeopleCards />
+            <Routes>
+                <Route path='/' element={<AllUsers />} />
+                <Route path='/:userId/posts' element={<UserPostsLayout />} />
+                <Route path='*' element={<PageNotFound />} />
+            </Routes>
         </div>
     )
 }

@@ -1,0 +1,39 @@
+package com.pesupal.server.model.chat.group_message;
+
+import com.pesupal.server.enums.Visibility;
+import com.pesupal.server.model.PublicAccessModel;
+import com.pesupal.server.model.org.Org;
+import com.pesupal.server.model.user.OrgMember;
+import jakarta.persistence.*;
+import lombok.Data;
+
+import java.util.List;
+import java.util.UUID;
+
+@Data
+@Entity(name = "groups")
+public class Group extends PublicAccessModel {
+
+    @Column(nullable = false)
+    private String name;
+
+    @ManyToOne
+    private Org org;
+
+    private String description;
+
+    private UUID displayPicture;
+
+    @ManyToOne
+    private OrgMember owner;
+
+    @Enumerated(EnumType.STRING)
+    private Visibility visibility;
+
+    private boolean active;
+
+    private boolean showOldMessagesToNewJoiners;
+
+    @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<GroupChatMember> members;
+}

@@ -1,0 +1,55 @@
+#options-container {
+    background-color: var(--pure-white);
+    position: absolute;
+    top: 40px;
+    right: 30px;
+    border-radius: 5px;
+    overflow: hidden;
+    z-index: 2;
+    box-shadow: 0px 4px 8px var(--box-shadow-color);
+}
+
+#options-container .option {
+    padding: 10px 25px 10px 15px;
+    cursor: pointer;
+    color: var(--primary-color-active);
+    background-color: #fff;
+    border-bottom: 1px solid #eee;
+    user-select: none;
+    border-left: 5px solid transparent;
+}
+
+#options-container .option.selected {
+    background-color: #eee;
+    border-left: 5px solid var(--primary-color-active);
+    pointer-events: none;
+}
+
+#options-container .option:hover {
+    background-color: var(--pure-white-hover);
+}
+
+#options-container .option i {
+    margin-right: 10px;
+    width: 15px;
+    color: var(--primary-color-active);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+#options-container .option .option-name {
+    font-size: 14px;
+    line-height: 16px;
+}
+
+#options-container .option .option-count {
+    font-size: 8px;
+    background-color: red;
+    text-align: center;
+    width: 14px;
+    height: 14px;
+    line-height: 14px;
+    margin-left: 5px;
+    border-radius: 50%;
+    color: white;
+}

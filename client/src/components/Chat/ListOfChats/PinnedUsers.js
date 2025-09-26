@@ -1,35 +1,37 @@
 import './PinnedUsers.css'
 import { useEffect, useState } from 'react';
-import pinnedUsersList from './PinnedUsersList';
 import PinnedUser from './PinnedUser';
 import { apiRequest } from '../../../http_request';
-import Loader from '../../Loader';
 import ErrorMessage from '../../ErrorMessage';
+import { useDispatch, useSelector } from 'react-redux';
+import { setPinnedDirectMessages } from '../../../store/reducers/PinnedDirectMessageSlice';
 
-const NoPinnedUsers = () => {
-    return (
-        <div className='FCCC w100 h100' id='no-data-found'>
-            <p className='FRCC w100'>
-                <i className='fa fa-briefcase mR5' />
-                No job applications found.
-            </p>
-            <p className='w100 alignCenter'>Start creating a new job opening.</p>
-        </div>
-    )
-}
+const PinnedUsers = ({ recentChatsRef }) => {
 
-const PinnedUsers = () => {
-
-    const [pinnedUsers, setPinnedUsers] = useState([]);
     const [error, setError] = useState(null);
+    const pinnedUsers = useSelector(state => state.pinnedDirectMessage.pinnedDirectMessages);
+    const dispatch = useDispatch();
+    const { pinnedMessagesApi } = useSelector(state => state.activeChatTab);
 
     useEffect(() => {
-        apiRequest("/api/v1/pinned-direct-messages", "GET").then(({ data }) => {
-            setPinnedUsers(data);
+        if (pinnedUsers.length > 2) {
+            return; // No need to adjust height if there are more than 2 pinned users
+        }
+        if (pinnedUsers.length === 0) {
+            recentChatsRef.current.style.maxHeight = "calc(100% - 110px)";
+        } else {
+            recentChatsRef.current.style.maxHeight = "calc(100% - 190px)";
+        }
+    }, [pinnedUsers]);
+
+    useEffect(() => {
+        if (!pinnedMessagesApi) return;
+        apiRequest(pinnedMessagesApi, "GET").then(({ data }) => {
+            dispatch(setPinnedDirectMessages(data));
         }).catch(({ message }) => {
             setError(message);
         });
-    }, []);
+    }, [pinnedMessagesApi]);
 
     return (
         <div id='PinnedUsers' className='noScrollbar selectNone'>
