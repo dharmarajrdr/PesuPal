@@ -484,7 +484,7 @@
 }
 
 .Layout {
-  width: calc(100% - 75px);
+  width: 100%;
   height: 100vh;
   background-color: var(--bg-color);
   overflow: hidden;
@@ -538,6 +538,7 @@ span {
   cursor: pointer;
   padding: 10px;
   margin-bottom: 10px;
+  height: 40px;
 }
 
 #openCloseLeftNavigationContainer i:hover {

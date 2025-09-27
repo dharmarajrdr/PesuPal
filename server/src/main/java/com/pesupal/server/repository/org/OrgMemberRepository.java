@@ -23,7 +23,9 @@ public interface OrgMemberRepository extends JpaRepository<OrgMember, Long> {
 
     Boolean existsByUserAndOrg(User user, Org org);
 
-    List<OrgMember> findByUser(User user);
+    List<OrgMember> findByUserAndArchivedAndOrg_Active(User user, boolean archived, boolean orgActive);
+
+    List<OrgMember> findAllByOrg(Org org);
 
     Boolean existsByUserIdAndOrgId(Long userId, Long orgId);
 

@@ -1,9 +1,12 @@
+import './GeneralLayout.css';
+import LeaveOrg from './LeaveOrg';
+import DeleteOrg from './DeleteOrg';
 import GeneralSection from './GeneralSection';
 
 const GeneralLayout = () => {
 
     return (
-        <div style={{ padding: "20px" }}>
+        <div id='general-layout' className='Layout'>
             <GeneralSection
                 title="My Email Addresses"
                 bgColor="#00aaff"
@@ -57,6 +60,8 @@ const GeneralLayout = () => {
                     onClick: () => alert("Add Mobile Clicked")
                 }}
             />
+            <LeaveOrg />
+            <DeleteOrg />
         </div>
     );
 }

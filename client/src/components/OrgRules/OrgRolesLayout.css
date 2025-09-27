@@ -1,6 +1,7 @@
 #org-roles-layout {
     height: 100vh;
     padding: 20px;
+    width: calc(100% - 60px);
     box-sizing: border-box;
 }
 
@@ -100,7 +101,7 @@
 
 
 #org-roles-table-body .col:first-child {
-    background-color: #fff;
+    background-color: #fff !important;
 }
 
 #org-roles-table .col:not(:first-child) {
@@ -115,4 +116,8 @@
 
 #org-roles-table-body .row .col:not(:first-child) {
     cursor: pointer;
+}
+
+#org-roles-table .row:not(#org-roles-table-header):hover {
+    background-color: #f5f5f5;
 }

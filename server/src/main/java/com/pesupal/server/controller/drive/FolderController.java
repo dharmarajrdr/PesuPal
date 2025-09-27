@@ -24,7 +24,7 @@ public class FolderController extends CurrentValueRetriever {
     @PostMapping("/folder")
     public ResponseEntity<ApiResponseDto> createFolder(@RequestBody CreateFolderDto createFolderDto) {
 
-        FolderDto folderDto = folderService.createFolder(createFolderDto);
+        FolderDto folderDto = folderService.createFolder(createFolderDto, getCurrentOrgMember());
         return ResponseEntity.ok().body(new ApiResponseDto("Folder created successfully", folderDto));
     }
 

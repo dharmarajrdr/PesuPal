@@ -30,10 +30,17 @@ public class OrgController extends CurrentValueRetriever {
         return ResponseEntity.ok(new ApiResponseDto("Organization updated successfully."));
     }
 
-    @DeleteMapping("/{orgPublicId}")
-    public ResponseEntity<ApiResponseDto> deleteOrg(@PathVariable String orgPublicId) {
+    @DeleteMapping("")
+    public ResponseEntity<ApiResponseDto> deleteOrg() {
 
-        orgService.deleteOrg(orgPublicId, getCurrentOrgMember());
+        orgService.deleteOrg(getCurrentOrgMember());
         return ResponseEntity.ok(new ApiResponseDto("Organization deleted successfully."));
+    }
+
+    @PatchMapping("/leave")
+    public ResponseEntity<ApiResponseDto> leaveOrg() {
+
+        orgService.leaveOrg(getCurrentOrgMember());
+        return ResponseEntity.ok(new ApiResponseDto("You have left the organization successfully."));
     }
 }

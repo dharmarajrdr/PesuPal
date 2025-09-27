@@ -31,7 +31,7 @@ function App() {
 
     return (
         <Provider store={store}>
-            <div className="App FRCS">
+            <div className="App FRSS">
                 {isAuthPage ? <AuthenticationRoutes /> : <>
                     <AuthModal setServerDown={setServerDown} setIsSubscriptionExpired={setIsSubscriptionExpired} setAuthenticated={setAuthenticated} />
                     {authenticated ?
