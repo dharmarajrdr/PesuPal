@@ -1,8 +1,10 @@
 package com.pesupal.server.dto.request.chat.group_message;
 
 import com.pesupal.server.enums.Visibility;
-import com.pesupal.server.model.group.Group;
+import com.pesupal.server.model.chat.group_message.Group;
 import lombok.Data;
+
+import java.util.UUID;
 
 @Data
 public class CreateGroupDto {
@@ -11,6 +13,10 @@ public class CreateGroupDto {
 
     private String description;
 
+    private UUID displayPicture;
+
+    private Boolean displayPictureRemoved;
+
     private Visibility visibility;
 
     public Group toGroup() {
@@ -18,8 +24,33 @@ public class CreateGroupDto {
         group.setName(name);
         group.setDescription(description);
         group.setVisibility(visibility);
+        if (displayPictureRemoved != null && displayPictureRemoved) {
+            displayPicture = null;
+        }
+        group.setDisplayPicture(displayPicture);
         group.setActive(true);
         group.setShowOldMessagesToNewJoiners(true);
         return group;
+    }
+
+    public void applyToGroup(Group group) {
+
+        if (name != null) {
+            group.setName(name.trim());
+        }
+        if (description != null) {
+            group.setDescription(description.trim());
+        }
+        if (displayPicture != null) {
+            group.setDisplayPicture(displayPicture);
+        }
+        if (displayPictureRemoved != null) {
+            if (displayPictureRemoved) {
+                group.setDisplayPicture(null);
+            }
+        }
+        if (visibility != null) {
+            group.setVisibility(visibility);
+        }
     }
 }

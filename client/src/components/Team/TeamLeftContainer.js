@@ -1,5 +1,5 @@
-import ListOfTeamNavigations from './ListOfTeamNavigations';
 import './TeamLeftContainer.css'
+import ListOfTeamNavigations from './ListOfTeamNavigations';
 import TeamLeftContainerItem from './TeamLeftContainerItem';
 
 const TeamLeftContainer = ({ leftNavigationState, width }) => {

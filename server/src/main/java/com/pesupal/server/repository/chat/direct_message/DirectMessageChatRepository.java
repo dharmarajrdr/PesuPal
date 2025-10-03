@@ -1,19 +1,16 @@
 package com.pesupal.server.repository.chat.direct_message;
 
-import com.pesupal.server.model.chat.DirectMessageChat;
+import com.pesupal.server.model.chat.direct_message.DirectMessageChat;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface DirectMessageChatRepository extends JpaRepository<DirectMessageChat, Long> {
-
-    List<DirectMessageChat> findByUser1_PublicIdAndUser2_PublicId(String user1PublicId, String user2PublicId);
-
+    
     @Query("""
             SELECT d FROM DirectMessageChat d
             WHERE 

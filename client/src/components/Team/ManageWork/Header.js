@@ -1,8 +1,9 @@
-import { useState } from 'react'
 import './Header.css'
+import { useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux';
 import FilterComponentItem from './FilterComponentItem';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
+import CreateRecordLayout from './CreateRecord/CreateRecordLayout';
 import { toggleFilterBox } from '../../../store/reducers/ModuleFilterSlice';
 
 const GetParams = () => {
@@ -11,13 +12,21 @@ const GetParams = () => {
     return { moduleId, view };
 }
 
+const QuickCreateRecord = ({ moduleId, setShowQuickCreateRecord, view }) => {
+
+    return <div id='quick-create-record' className='entire-screen-overlay FRCE'>
+        <CreateRecordLayout moduleId={moduleId} setShowQuickCreateRecord={setShowQuickCreateRecord} view={view} />
+    </div>
+}
+
 const CreateButtons = () => {
 
     const navigate = useNavigate();
-    const { moduleId } = GetParams();
+    const { moduleId, view } = GetParams();
 
     const { data: currentModuleData } = useSelector((state) => state.currentModule);
     const { createRecord } = currentModuleData || { 'createRecord': false };
+    const [showQuickCreateRecord, setShowQuickCreateRecord] = useState(false);
 
     const createModuleHandler = (e) => {
         e.stopPropagation();
@@ -26,15 +35,17 @@ const CreateButtons = () => {
 
     const createRecordHandler = (e) => {
         e.stopPropagation();
-        navigate(`/manage/module/${moduleId}/create`);
+        setShowQuickCreateRecord(true);
     }
 
     return (
         <div className='FRCE' id='createButtons' onClick={createRecordHandler}>
-            {createRecord && <div className='FRCC mR10' id='createRecord'>
-                <i className='fa fa-plus pR5 w_20'></i>
-                <span>Create Record</span>
-            </div>}
+            {createRecord &&
+                <div className='FRCC mR10' id='createRecord'>
+                    {showQuickCreateRecord && <QuickCreateRecord view={view} moduleId={moduleId} setShowQuickCreateRecord={setShowQuickCreateRecord} />}
+                    <i className='fa fa-plus pR5 w_20'></i>
+                    <span>Create Record</span>
+                </div>}
             <div className='FRCC' id='createModule' onClick={createModuleHandler}>
                 <i className='fa fa-plus pR5 w_20'></i>
                 <span>Create Module</span>
@@ -57,7 +68,7 @@ const ModuleBuilder = () => {
     }
 
     return accessModuleBuilder && (
-        <div className="FRCC mL10" id='moduleBuilderIcon' title='Module Builder' onClick={clickHandler}>
+        <div className="FRCC mR10" id='moduleBuilderIcon' title='Module Builder' onClick={clickHandler}>
             <i className='fa fa-wrench'></i>
         </div>
     )
@@ -93,8 +104,6 @@ const ModulesList = ({ modules }) => {
         navigate(route);
     }
 
-    modules = modules.filter(module => module.active);  // Filter out inactive modules
-
     return <span className='mR10'>
         <FilterComponentItem item={{ id: 1, title: 'Module 1', icon: 'fa fa-chart-bar', options: modules }} onChange={onChange} selectedValue={moduleId} />
     </span>
@@ -124,6 +133,8 @@ const ViewsList = () => {
 
 const Header = ({ modules }) => {
 
+    const { records } = useSelector((state) => state.currentModule);
+
     return (
         <div id='task_header' className='FCSS w100'>
             <div className='FRCB w100 mB10'>
@@ -131,9 +142,8 @@ const Header = ({ modules }) => {
                 <div className='FRCS' id='modulesList-filter-view'>
                     {modules.length > 0 && <>
                         <ModulesList modules={modules} />
-                        <FilterIcon />
-                        <ViewsList />
                         <ModuleBuilder />
+                        {records.length > 0 && <><FilterIcon /><ViewsList /></>}
                     </>}
                 </div>
                 <CreateButtons />

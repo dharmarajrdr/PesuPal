@@ -131,6 +131,10 @@
   justify-content: flex-end;
 }
 
+.w15 {
+  width: 15px;
+}
+
 .w20 {
   width: 20px;
 }
@@ -157,6 +161,10 @@
 
 .pT10 {
   padding-top: 10px;
+}
+
+.mT2 {
+  margin-top: 2px;
 }
 
 .mT5 {
@@ -255,6 +263,10 @@
   color: #aaa;
 }
 
+.color999 {
+  color: #999;
+}
+
 .color555 {
   color: #555;
 }
@@ -324,6 +336,10 @@
   margin-left: 15px;
 }
 
+.mL20 {
+  margin-left: 20px;
+}
+
 .mB5 {
   margin-bottom: 5px;
 }
@@ -385,6 +401,7 @@
   height: 20px;
   line-height: 20px;
   border-radius: 100%;
+  object-fit: cover;
 }
 
 .img_30_30 {
@@ -392,6 +409,7 @@
   height: 30px;
   line-height: 30px;
   border-radius: 100%;
+  object-fit: cover;
 }
 
 .img_40_40 {
@@ -399,6 +417,7 @@
   height: 40px;
   line-height: 40px;
   border-radius: 100%;
+  object-fit: cover;
 }
 
 .img_75_75 {
@@ -406,6 +425,7 @@
   height: 75px;
   line-height: 75px;
   border-radius: 100%;
+  object-fit: cover;
 }
 
 .alignCenter {
@@ -464,9 +484,13 @@
 }
 
 .Layout {
-  width: calc(100% - 75px);
+  width: 100%;
   height: 100vh;
   background-color: var(--bg-color);
+  overflow: hidden;
+}
+
+.overflowHidden {
   overflow: hidden;
 }
 
@@ -514,6 +538,7 @@ span {
   cursor: pointer;
   padding: 10px;
   margin-bottom: 10px;
+  height: 40px;
 }
 
 #openCloseLeftNavigationContainer i:hover {
@@ -533,40 +558,6 @@ span {
   .Layout {
     width: 100%;
   }
-}
-
-.html-content-renderer b {
-  font-weight: 600;
-}
-
-.html-content-renderer u {
-  text-decoration: underline;
-}
-
-.html-content-renderer a,
-.html-content-renderer a * {
-  color: #007bff;
-  text-decoration: none;
-}
-
-.html-content-renderer a:hover {
-  text-decoration: underline;
-  color: #000bff;
-}
-
-.html-content-renderer em {
-  font-style: italic;
-}
-
-.html-content-renderer s,
-.html-content-renderer strike,
-.html-content-renderer del {
-  text-decoration: line-through;
-}
-
-.html-content-renderer ol,
-.html-content-renderer ul {
-  padding: 5px 20px;
 }
 
 /* Chrome, Safari, Edge, Opera */

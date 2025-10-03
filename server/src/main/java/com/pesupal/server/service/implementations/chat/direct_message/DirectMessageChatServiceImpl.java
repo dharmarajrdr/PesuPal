@@ -2,7 +2,7 @@ package com.pesupal.server.service.implementations.chat.direct_message;
 
 import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.exceptions.DataNotFoundException;
-import com.pesupal.server.model.chat.DirectMessageChat;
+import com.pesupal.server.model.chat.direct_message.DirectMessageChat;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.repository.chat.direct_message.DirectMessageChatRepository;
 import com.pesupal.server.service.interfaces.chat.direct_message.DirectMessageChatService;
@@ -17,17 +17,6 @@ import java.util.Optional;
 public class DirectMessageChatServiceImpl implements DirectMessageChatService {
 
     private final DirectMessageChatRepository directMessageChatRepository;
-
-    /**
-     * @param orgMemberPublicId1
-     * @param orgMemberPublicId2
-     * @return
-     */
-    @Override
-    public DirectMessageChat getDirectMessageChat(String orgMemberPublicId1, String orgMemberPublicId2) {
-
-        return directMessageChatRepository.findByParticipants(orgMemberPublicId1, orgMemberPublicId2).orElseThrow(() -> new DataNotFoundException("No chat found yet."));
-    }
 
     /**
      * Find or create the direct message between given users.

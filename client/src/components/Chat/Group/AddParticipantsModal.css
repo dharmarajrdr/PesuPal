@@ -1,0 +1,74 @@
+#add-participants-modal-content {
+    background-color: white;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px var(--box-shadow-color);
+    width: 30%;
+    height: 70%;
+}
+
+#add-participants-title {
+    font-size: 14px;
+    text-align: center;
+    font-weight: 400;
+    padding-bottom: 10px;
+    border: 1px solid #eee;
+    padding-top: 15px;
+    background-color: #fff;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+
+#search-users {
+    position: relative;
+    padding: 10px 20px;
+}
+
+#search-users #search-icon {
+    position: absolute;
+    left: 23px;
+    top: 50%;
+    transform: translateY(-50%);
+    padding: 10px;
+    font-size: 12px;
+    color: #aaa;
+    cursor: default;
+}
+
+#search-users input {
+    padding: 8px 10px 8px 35px;
+    border-radius: 5px;
+    font-size: 12px;
+    outline: none;
+    border: 1px solid #ddd;
+}
+
+#search-users input:focus {
+    border-color: #aaa;
+}
+
+#add-participants-users-list {
+    overflow-y: auto;
+    height: calc(100% - 80px);
+}
+
+#add-participants-users-list .user-preview {
+    padding: 10px 20px;
+}
+
+.user-preview:hover .remove-user-button,
+.user-preview:hover .add-user-button {
+    display: flex;
+}
+
+.remove-user-button,
+.add-user-button {
+    cursor: pointer;
+    padding: 5px 10px;
+    font-weight: 500;
+    display: none;
+}
+
+.remove-user-button:hover,
+.add-user-button:hover {
+    color: var(--primary-color);
+}

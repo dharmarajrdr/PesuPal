@@ -1,6 +1,10 @@
 package com.pesupal.server.projections;
 
+import com.pesupal.server.enums.MessageType;
+import com.pesupal.server.model.chat.MessageStatus;
+
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 public interface RecentGroupChatProjection {
 
@@ -10,7 +14,7 @@ public interface RecentGroupChatProjection {
 
     String getGroupVisibility();
 
-    String getSenderDisplayPicture();
+    UUID getSenderDisplayPicture();
 
     String getSenderName();
 
@@ -19,4 +23,8 @@ public interface RecentGroupChatProjection {
     Boolean getIncludedMedia();
 
     LocalDateTime getCreatedAt();
+
+    MessageStatus getMessageStatus();
+
+    MessageType getMessageType();
 }

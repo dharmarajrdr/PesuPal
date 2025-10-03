@@ -1,7 +1,7 @@
 package com.pesupal.server.repository.chat.direct_message;
 
-import com.pesupal.server.model.chat.DirectMessageChat;
-import com.pesupal.server.model.chat.PinnedDirectMessage;
+import com.pesupal.server.model.chat.direct_message.DirectMessageChat;
+import com.pesupal.server.model.chat.direct_message.PinnedDirectMessage;
 import com.pesupal.server.model.user.OrgMember;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

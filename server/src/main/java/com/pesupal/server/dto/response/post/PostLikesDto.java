@@ -16,7 +16,6 @@ public class PostLikesDto extends UserBasicInfoDto {
         PostLikesDto postLikesDto = new PostLikesDto();
         postLikesDto.setUserId(orgMember.getPublicId());
         postLikesDto.setDisplayName(orgMember.getDisplayName());
-        postLikesDto.setDisplayPicture(orgMember.getDisplayPicture());
         return postLikesDto;
     }
 }

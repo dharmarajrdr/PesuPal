@@ -1,0 +1,87 @@
+#create-ticket-container {
+    background-color: var(--pure-white);
+    width: 45%;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px var(--box-shadow-color);
+    padding: 20px;
+}
+
+#create-ticket-header h2 {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-color);
+    margin-bottom: 10px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+}
+
+#create-ticket-form .row {
+    padding: 5px 0px;
+}
+
+#create-ticket-form .row label {
+    font-size: 14px;
+    color: #888;
+    margin-bottom: 5px;
+    width: 130px;
+    height: 35px;
+    line-height: 32px;
+    font-weight: 500;
+}
+
+#create-ticket-form .row input,
+#create-ticket-form .row textarea {
+    width: calc(100% - 130px);
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    color: #333;
+
+}
+
+#create-ticket-form .row input:focus,
+#create-ticket-form .row textarea:focus {
+    border-color: var(--primary-color);
+    transition-duration: 0.5s;
+    outline: none;
+}
+
+#create-ticket-form .row textarea {
+    resize: vertical;
+    min-height: 35px;
+    height: 100px;
+}
+
+#create-ticket-form .row>button {
+    color: var(--pure-white);
+    border: none;
+    padding: 8px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+}
+
+#create-ticket-form .row #cancel-button {
+    background-color: gray;
+}
+
+#create-ticket-form .row #cancel-button:hover {
+    background-color: #666;
+}
+
+#create-ticket-form .row #create-button {
+    background-color: var(--primary-color);
+}
+
+#create-ticket-form .row #create-button:hover {
+    background-color: var(--primary-color-active);
+}
+
+#create-ticket-form .error-message {
+    color: red;
+    font-size: 12px;
+    text-align: center;
+    font-weight: 400;
+    height: 16px;
+}

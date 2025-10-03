@@ -32,6 +32,9 @@ const ManageWorkLayout = () => {
     const [permissionDenied, setPermissionDenied] = useState(false);
 
     const getModulesList = () => {
+        if (createRecordPage) {
+            return;
+        }
         apiRequest("/api/v1/module/all", "GET").then(({ data }) => {
             setModules(data);
             if (data.length > 0 && !moduleId?.length) {
@@ -82,14 +85,14 @@ const ManageWorkLayout = () => {
         moduleNotFound ? <PageNotFound /> :
             permissionDenied ? <PermissionDenied /> :
                 error ? <InternalServerError /> : (
-                    <div id='ManageWorkLayout'>
+                    <div className='Layout' id='ManageWorkLayout'>
                         {!createRecordPage && <Header modules={modules} />}
-                        {modules.length > 0 ?
-                            <Routes>
-                                <Route path='/:moduleId/create' element={<CreateRecordLayout />} />
-                                <Route path='/:moduleId/*' element={<ManageWorkBody />} />
-                            </Routes> : null
-                        }
+
+                        <Routes>
+                            <Route path='/:moduleId/create' element={<CreateRecordLayout />} />
+                            <Route path='/:moduleId/*' element={<ManageWorkBody />} />
+                        </Routes>
+
                     </div>
                 );
 }

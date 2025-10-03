@@ -6,10 +6,11 @@ import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.exceptions.PermissionDeniedException;
 import com.pesupal.server.helpers.CurrentValueRetriever;
-import com.pesupal.server.model.chat.DirectMessageChat;
-import com.pesupal.server.model.chat.PinnedDirectMessage;
+import com.pesupal.server.model.chat.direct_message.DirectMessageChat;
+import com.pesupal.server.model.chat.direct_message.PinnedDirectMessage;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.repository.chat.direct_message.PinnedDirectMessageRepository;
+import com.pesupal.server.service.interfaces.MediaService;
 import com.pesupal.server.service.interfaces.chat.direct_message.DirectMessageChatService;
 import com.pesupal.server.service.interfaces.chat.direct_message.PinnedDirectMessageService;
 import lombok.AllArgsConstructor;
@@ -22,6 +23,7 @@ import java.util.Optional;
 @AllArgsConstructor
 public class PinnedDirectMessageServiceImpl extends CurrentValueRetriever implements PinnedDirectMessageService {
 
+    private final MediaService mediaService;
     private final DirectMessageChatService directMessageChatService;
     private final PinnedDirectMessageRepository pinnedDirectMessageRepository;
 
@@ -44,7 +46,14 @@ public class PinnedDirectMessageServiceImpl extends CurrentValueRetriever implem
     public List<PinnedChatDto> getAllPinnedDirectMessages() {
 
         OrgMember orgMember = getCurrentOrgMember();
-        return pinnedDirectMessageRepository.findAllByPinnedByOrderByOrderIndexAsc(orgMember).stream().map(pinnedDirectMessage -> PinnedChatDto.fromPinnedDirectMessage(pinnedDirectMessage)).toList();
+        return pinnedDirectMessageRepository.findAllByPinnedByOrderByOrderIndexAsc(orgMember).stream().map(pinnedDirectMessage -> {
+            PinnedChatDto pinnedChatDto = PinnedChatDto.fromPinnedDirectMessage(pinnedDirectMessage);
+            DirectMessageChat pinnedChat = pinnedDirectMessage.getChat();
+            OrgMember pinnedByUser = pinnedDirectMessage.getPinnedBy();
+            OrgMember pinnedUser = pinnedChat.getAnotherUser(pinnedByUser);
+            pinnedChatDto.setDisplayPicture(mediaService.generatePresignedUrl(pinnedUser.getDisplayPicture()));
+            return pinnedChatDto;
+        }).toList();
     }
 
     /**
@@ -84,7 +93,12 @@ public class PinnedDirectMessageServiceImpl extends CurrentValueRetriever implem
         pinnedDirectMessage.setChat(directMessageChat);
         pinnedDirectMessage.setOrderIndex(createPinDirectMessageDto.getOrderIndex());
         pinnedDirectMessageRepository.save(pinnedDirectMessage);
-        return PinnedChatDto.fromPinnedDirectMessage(pinnedDirectMessage);
+        PinnedChatDto pinnedChatDto = PinnedChatDto.fromPinnedDirectMessage(pinnedDirectMessage);
+        DirectMessageChat pinnedChat = pinnedDirectMessage.getChat();
+        OrgMember pinnedByUser = pinnedDirectMessage.getPinnedBy();
+        OrgMember pinnedUser = pinnedChat.getAnotherUser(pinnedByUser);
+        pinnedChatDto.setDisplayPicture(mediaService.generatePresignedUrl(pinnedUser.getDisplayPicture()));
+        return pinnedChatDto;
     }
 
     /**

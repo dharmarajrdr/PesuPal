@@ -1,16 +1,18 @@
 import ChatInputGroupArchived from './ChatInputGroupArchived'
 import ChatInputUserArchived from './ChatInputUserArchived'
 import ChatInput from './ChatInput'
+import GroupChatInactiveUser from './GroupChatInactiveUser'
+import PostMessagePermissionDenied from './PostMessagePermissionDenied'
 
-const ChatFooter = ({ active, groupActive, currentTab, displayName, clickSendMessageHandler }) => {
+const ChatFooter = ({ active, messagePostable, groupActive, currentTab, displayName, clickSendMessageHandler }) => {
 
     if (currentTab === 'groupMessage') {
-        if (active) {
-            if (!groupActive) {
-                return <ChatInputGroupArchived />
-            }
-        } else {
-            return <ChatInputUserArchived message="You are no longer part of this conversation." />
+        if (!active) {
+            return <GroupChatInactiveUser />
+        } else if (!groupActive) {
+            return <ChatInputGroupArchived />
+        } else if (!messagePostable) {
+            return <PostMessagePermissionDenied />;
         }
     } else {
         if (!active) {

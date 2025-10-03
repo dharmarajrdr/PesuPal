@@ -23,8 +23,28 @@
   position: relative;
 }
 
+.profile_picture_container .first-char {
+  background-color: var(--primary-color);
+  color: var(--pure-white);
+  border-radius: 50%;
+  width: 75px;
+  height: 75px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+}
+
 .profile_picture_container img {
   object-fit: cover;
+}
+
+.img_name_dept .designation {
+  width: 75%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: center;
 }
 
 .PeopleCard .three_dots {
@@ -53,6 +73,11 @@
   line-height: 20px;
   font-weight: 600;
   color: var(--primary-color);
+}
+
+.PeopleCard .user_status {
+  right: -2%;
+  bottom: -2%;
 }
 
 .profile_contacts {

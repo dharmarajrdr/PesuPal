@@ -1,18 +1,18 @@
 package com.pesupal.server.service.interfaces.chat.direct_message;
 
 import com.pesupal.server.dto.request.chat.direct_message.GetConversationBetweenUsers;
-import com.pesupal.server.dto.response.MessageDto;
 import com.pesupal.server.dto.response.chat.ChatPreviewDto;
+import com.pesupal.server.dto.response.chat.MessageDto;
 import com.pesupal.server.dto.response.chat.RecentChatPagedDto;
-import com.pesupal.server.model.chat.DirectMessage;
-import com.pesupal.server.model.chat.DirectMessageChat;
-import com.pesupal.server.model.user.OrgMember;
+import com.pesupal.server.model.chat.direct_message.DirectMessage;
+import com.pesupal.server.model.chat.direct_message.DirectMessageChat;
 import com.pesupal.server.service.interfaces.chat.ChatService;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Scheduled;
 
 import java.util.List;
 
-public interface DirectMessageService extends ChatService {
+public interface DirectMessageService extends ChatService<DirectMessage> {
 
     List<MessageDto> getDirectMessagesBetweenUsers(GetConversationBetweenUsers getConversationBetweenUsers);
 
@@ -24,7 +24,10 @@ public interface DirectMessageService extends ChatService {
 
     void deleteMessage(Long messageId);
 
-    RecentChatPagedDto getRecentChatsPaged(OrgMember orgMember, Pageable pageable);
+    RecentChatPagedDto getRecentChatsPaged(String search, Pageable pageable);
 
     ChatPreviewDto getDirectMessagePreviewByChatId(String chatId);
+
+    @Scheduled(cron = "0 * * * * *")
+    void broadcastScheduledMessages();
 }

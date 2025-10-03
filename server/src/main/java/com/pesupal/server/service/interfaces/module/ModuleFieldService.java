@@ -24,7 +24,7 @@ public interface ModuleFieldService {
 
     void deleteAllFields(String moduleId);
 
-    void addSystemFieldsIntoModule(Module module);
+    void introduceDefaultAndSystemFields(Module module);
 
     Optional<ModuleField> getFieldByModuleAndType(Module module, FieldType fieldType);
 }

@@ -1,15 +1,21 @@
-#FeedsRightPanel{
+#FeedsRightPanel {
     width: 25%;
-    height: 80%;
+    height: calc(100vh - 100px);
     position: sticky;
-    top: 10%;
+    top: 80px;
     margin: 0px 10px;
     overflow-y: scroll;
+}
+
+#FeedsRightPanelContent {
+    height: calc(100% - 0px);
+    width: 100%;
+    overflow: auto;
 }
 
 @media screen and (max-width: 768px) {
     #FeedsRightPanel {
         display: none;
     }
-    
+
 }

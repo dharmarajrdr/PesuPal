@@ -2,8 +2,8 @@ package com.pesupal.server.service.interfaces.chat.direct_message;
 
 import com.pesupal.server.dto.response.chat.ReactMessageResponseDto;
 import com.pesupal.server.enums.Reaction;
-import com.pesupal.server.model.chat.DirectMessage;
-import com.pesupal.server.model.chat.DirectMessageReaction;
+import com.pesupal.server.model.chat.direct_message.DirectMessage;
+import com.pesupal.server.model.chat.direct_message.DirectMessageReaction;
 
 import java.util.Map;
 

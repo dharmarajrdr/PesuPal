@@ -6,12 +6,23 @@ import ErrorMessage from '../../ErrorMessage';
 import { useDispatch, useSelector } from 'react-redux';
 import { setPinnedDirectMessages } from '../../../store/reducers/PinnedDirectMessageSlice';
 
-const PinnedUsers = () => {
+const PinnedUsers = ({ recentChatsRef }) => {
 
     const [error, setError] = useState(null);
     const pinnedUsers = useSelector(state => state.pinnedDirectMessage.pinnedDirectMessages);
     const dispatch = useDispatch();
     const { pinnedMessagesApi } = useSelector(state => state.activeChatTab);
+
+    useEffect(() => {
+        if (pinnedUsers.length > 2) {
+            return; // No need to adjust height if there are more than 2 pinned users
+        }
+        if (pinnedUsers.length === 0) {
+            recentChatsRef.current.style.maxHeight = "calc(100% - 110px)";
+        } else {
+            recentChatsRef.current.style.maxHeight = "calc(100% - 190px)";
+        }
+    }, [pinnedUsers]);
 
     useEffect(() => {
         if (!pinnedMessagesApi) return;

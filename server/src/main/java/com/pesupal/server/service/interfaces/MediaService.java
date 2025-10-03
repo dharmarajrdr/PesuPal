@@ -4,6 +4,7 @@ import com.pesupal.server.dto.response.MediaUploadDto;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.net.URL;
+import java.util.UUID;
 
 public interface MediaService {
 
@@ -11,5 +12,7 @@ public interface MediaService {
 
     byte[] downloadFile(String key);
 
-    URL generatePresignedUrl(String key) throws Exception;
+    URL generatePresignedUrl(UUID key);
+
+    void deleteFile(UUID key);
 }

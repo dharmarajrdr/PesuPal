@@ -1,5 +1,6 @@
 import './SubTabs.css';
 import { Link } from 'react-router-dom'
+import NotifyCount from '../../NotifyCount';
 import { useDispatch, useSelector } from 'react-redux';
 import { setActiveChatTab } from '../../../store/reducers/ActiveChatTabSlice';
 import { setActiveRecentChat } from '../../../store/reducers/ActiveRecentChatSlice';
@@ -19,15 +20,15 @@ const SubTabs = () => {
         <div className='FRCC' id='subtab_container'>
             <Link to='/chat/messages' className='subtabs' onClick={() => tabsClickHandler('directMessage')}>
                 <span className={activeChatTabName === 'directMessage' ? 'active' : ''}>Messages</span>
-                <b className='notifyCount'>17</b>
+                <NotifyCount count={0} />
             </Link>
             <Link to='/chat/groups' className='subtabs' onClick={() => tabsClickHandler('groupMessage')}>
                 <span className={activeChatTabName === 'groupMessage' ? 'active' : ''}>Groups</span>
-                <b className='notifyCount'>12</b>
+                <NotifyCount count={0} />
             </Link>
-            <Link to='/chat/channels' className='subtabs' onClick={() => tabsClickHandler('channelMessage')}>
-                <span className={activeChatTabName === 'channelMessage' ? 'active' : ''}>Channels</span>
-                <b className='notifyCount'>15</b>
+            <Link to='/chat/bots' className='subtabs' onClick={() => tabsClickHandler('botMessage')}>
+                <span className={activeChatTabName === 'botMessage' ? 'active' : ''}>Bots</span>
+                <NotifyCount count={0} />
             </Link>
         </div>
     )

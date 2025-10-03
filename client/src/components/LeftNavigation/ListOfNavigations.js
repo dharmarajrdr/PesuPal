@@ -4,57 +4,57 @@ export default {
             'id': 1,
             'title': 'Feeds',
             'icon': 'fa-regular fa-newspaper',
+            "fontWeight": 300,
             'route': '/feeds',
-            'isActive': false,
-            'notifyCount': '99'
+            'isActive': false
         },
         {
             'id': 2,
             'title': 'Chat',
             'icon': 'fa-regular fa-comments',
+            "fontWeight": 300,
             'route': '/chat',
-            'isActive': false,
-            'notifyCount': '21'
+            'isActive': false
         },
         {
             'id': 3,
             'title': 'People',
             'icon': 'fa-regular fa-address-card',
+            "fontWeight": 300,
             'route': '/people',
-            'isActive': false,
-            'notifyCount': '0'
+            'isActive': false
         },
         {
             'id': 4,
             'title': 'Team',
             'icon': 'fa-regular fa-people-group',
+            "fontWeight": 600,
             'route': '/team',
-            'isActive': false,
-            'notifyCount': '5'
+            'isActive': false
         },
         {
             "id": 5,
             "title": "Manage",
             "icon": "fa-solid fa-chart-gantt",
+            "fontWeight": 600,
             "route": "/manage/module",
-            "isActive": false,
-            "notifyCount": "0"
+            "isActive": false
         },
         {
             'id': 6,
-            'title': 'Form',
-            'icon': 'fa-regular fa-file-alt',
-            'route': '/form',
-            'isActive': false,
-            'notifyCount': '0'
+            'title': 'Store',
+            'icon': 'fa-regular fa-folder-open',
+            "fontWeight": 300,
+            'route': '/store',
+            'isActive': false
         },
         {
             "id": 7,
             "title": "more",
             "icon": "fa-regular fa-ellipsis-h",
+            "fontWeight": 600,
             "route": "/more",
-            "isActive": false,
-            "notifyCount": "0"
+            "isActive": false
         }
     ],
     'bottom': [
@@ -63,13 +63,15 @@ export default {
             'id': 9,
             'title': 'Orgs',
             'icon': 'fa-solid fa-sitemap',
+            "fontWeight": 300,
             // 'route': '/organisations',
             'isActive': false
         },
         {
             'id': 10,
             'title': 'Settings',
-            'icon': 'fa-regular fa-gear',
+            'icon': 'fa fa-gear',
+            "fontWeight": 600,
             'route': '/settings',
             'isActive': false
         }

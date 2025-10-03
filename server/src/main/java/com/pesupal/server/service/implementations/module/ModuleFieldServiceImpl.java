@@ -3,7 +3,6 @@ package com.pesupal.server.service.implementations.module;
 import com.pesupal.server.dto.request.module.AddModuleFieldDto;
 import com.pesupal.server.dto.response.module.ModuleFieldDto;
 import com.pesupal.server.dto.response.module.ModuleSelectOptionDto;
-import com.pesupal.server.dto.response.module.SystemFieldDto;
 import com.pesupal.server.enums.FieldType;
 import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.exceptions.DataNotFoundException;
@@ -12,10 +11,8 @@ import com.pesupal.server.exceptions.PermissionDeniedException;
 import com.pesupal.server.factory.RecordRelationFactory;
 import com.pesupal.server.helpers.CurrentValueRetriever;
 import com.pesupal.server.helpers.ModuleHelper;
+import com.pesupal.server.model.module.*;
 import com.pesupal.server.model.module.Module;
-import com.pesupal.server.model.module.ModuleField;
-import com.pesupal.server.model.module.ModuleRecord;
-import com.pesupal.server.model.module.ModuleSelectOption;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.repository.module.ModuleFieldRepository;
 import com.pesupal.server.repository.module.ModuleSelectOptionRepository;
@@ -41,13 +38,16 @@ public class ModuleFieldServiceImpl extends CurrentValueRetriever implements Mod
     private final ModuleSelectOptionService moduleSelectOptionService;
     private final ModuleSelectOptionRepository moduleSelectOptionRepository;
 
-    private static final List<SystemFieldDto> SYSTEM_FIELDS = List.of(
-            SystemFieldDto.builder().name("Subject").fieldType(FieldType.STRING).required(true).showInList(true).showInDetail(true).sortable(true).filterable(true).editable(true).build(),
-            SystemFieldDto.builder().name("Created By").fieldType(FieldType.USER).required(true).showInList(true).showInDetail(true).sortable(false).filterable(true).build(),
-            SystemFieldDto.builder().name("Created At").fieldType(FieldType.DATE_TIME).required(true).showInList(true).showInDetail(true).sortable(true).filterable(true).build(),
-            SystemFieldDto.builder().name("Updated By").fieldType(FieldType.USER).showInDetail(true).sortable(true).filterable(true).build(),
-            SystemFieldDto.builder().name("Updated At").fieldType(FieldType.USER).showInDetail(true).sortable(true).filterable(true).build(),
-            SystemFieldDto.builder().name("Notes").fieldType(FieldType.TEXT).build()
+    private static final List<ModuleFieldDto> SYSTEM_FIELDS = List.of(
+            ModuleFieldDto.builder().fieldName("Created By").classification(FieldClassification.SYSTEM_FIELD).fieldType(FieldType.USER).required(true).showInList(true).showInDetail(true).filterable(true).build(),
+            ModuleFieldDto.builder().fieldName("Created At").classification(FieldClassification.SYSTEM_FIELD).fieldType(FieldType.DATE_TIME).required(true).showInList(true).showInDetail(true).sortable(true).filterable(true).build(),
+            ModuleFieldDto.builder().fieldName("Updated By").classification(FieldClassification.SYSTEM_FIELD).fieldType(FieldType.USER).showInDetail(true).sortable(true).filterable(true).build(),
+            ModuleFieldDto.builder().fieldName("Updated At").classification(FieldClassification.SYSTEM_FIELD).fieldType(FieldType.DATE_TIME).showInDetail(true).sortable(true).filterable(true).build(),
+            ModuleFieldDto.builder().fieldName("Notes").classification(FieldClassification.SYSTEM_FIELD).fieldType(FieldType.TEXT).build()
+    );
+
+    private static final List<ModuleFieldDto> DEFAULT_FIELDS = List.of(
+            ModuleFieldDto.builder().fieldName("Subject").classification(FieldClassification.SYSTEM_FIELD).fieldType(FieldType.STRING).required(true).showInList(true).showInDetail(true).sortable(true).filterable(true).editable(true).build()
     );
 
     /**
@@ -112,13 +112,14 @@ public class ModuleFieldServiceImpl extends CurrentValueRetriever implements Mod
      * @param module
      */
     @Override
-    public void addSystemFieldsIntoModule(Module module) {
+    public void introduceDefaultAndSystemFields(Module module) {
 
         if (moduleFieldRepository.countModuleFieldsByModule(module) > 0) {
             throw new ActionProhibitedException("Unable to add system fields. This module already has some fields.");
         }
 
-        moduleFieldRepository.saveAll(SYSTEM_FIELDS.stream().map(systemField -> systemField.toModuleField(module)).toList());
+        moduleFieldRepository.saveAll(DEFAULT_FIELDS.stream().map(moduleFieldDto -> moduleFieldDto.toModuleField(module)).toList());
+        moduleFieldRepository.saveAll(SYSTEM_FIELDS.stream().map(moduleFieldDto -> moduleFieldDto.toModuleField(module)).toList());
     }
 
     /**

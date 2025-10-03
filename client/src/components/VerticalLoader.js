@@ -5,15 +5,11 @@ const VerticalLoader = () => {
 
     const isLoading = useSelector((state) => state.VerticalLoader.isLoading);
 
-    if (!isLoading) {
-        return null; // Don't render anything if not loading
-    }
-
-    return (
-        <div className="vertical-loader-overlay">
+    return isLoading ? (
+        <div className='entire-screen-overlay' id='vertical-loader'>
             <div className="top-progress-loader-bar"></div>
         </div>
-    );
+    ) : null;
 };
 
 export default VerticalLoader;

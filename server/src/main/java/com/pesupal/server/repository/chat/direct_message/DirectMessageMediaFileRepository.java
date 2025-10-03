@@ -1,12 +1,20 @@
 package com.pesupal.server.repository.chat.direct_message;
 
-import com.pesupal.server.model.chat.DirectMessage;
-import com.pesupal.server.model.chat.DirectMessageMediaFile;
+import com.pesupal.server.model.chat.direct_message.DirectMessage;
+import com.pesupal.server.model.chat.direct_message.DirectMessageMediaFile;
+import com.pesupal.server.model.org.Org;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface DirectMessageMediaFileRepository extends JpaRepository<DirectMessageMediaFile, Long> {
 
-    DirectMessageMediaFile findByDirectMessage(DirectMessage dm);
+    Optional<DirectMessageMediaFile> findByDirectMessage(DirectMessage directMessage);
+
+    List<DirectMessageMediaFile> findAllByDirectMessageIsNull();
+
+    List<DirectMessageMediaFile> findAllByDirectMessage_Sender_Org(Org deletedOrg);
 }

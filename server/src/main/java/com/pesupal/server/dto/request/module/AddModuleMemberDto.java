@@ -13,11 +13,10 @@ public class AddModuleMemberDto {
 
     private ModuleRole role;
 
-    public ModuleMember toModuleMember() {
+    public void applyModuleMember(ModuleMember moduleMember) {
 
-        ModuleMember moduleMember = new ModuleMember();
-        moduleMember.setRole(role);
-        moduleMember.setActive(true);
-        return moduleMember;
+        if (role != null) {
+            moduleMember.setRole(role);
+        }
     }
 }

@@ -1,52 +1,71 @@
 package com.pesupal.server.service.implementations.chat.group_message;
 
 import com.pesupal.server.dto.request.chat.group_message.CreateGroupDto;
+import com.pesupal.server.dto.request.chat.group_message.UpdateGroupChatConfigurationDto;
 import com.pesupal.server.dto.response.chat.ChatPreviewDto;
 import com.pesupal.server.dto.response.chat.LastMessageDto;
 import com.pesupal.server.dto.response.chat.RecentChatDto;
 import com.pesupal.server.dto.response.chat.RecentChatPagedDto;
 import com.pesupal.server.dto.response.chat.group_message.GroupDto;
+import com.pesupal.server.enums.OrgAction;
 import com.pesupal.server.enums.Role;
+import com.pesupal.server.enums.Visibility;
 import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.exceptions.DataNotFoundException;
 import com.pesupal.server.exceptions.PermissionDeniedException;
 import com.pesupal.server.helpers.CurrentValueRetriever;
-import com.pesupal.server.helpers.TimeFormatterUtil;
-import com.pesupal.server.model.group.Group;
-import com.pesupal.server.model.group.GroupChatConfiguration;
-import com.pesupal.server.model.group.GroupChatMember;
-import com.pesupal.server.model.group.GroupChatPinned;
+import com.pesupal.server.helpers.DateTimeUtil;
+import com.pesupal.server.helpers.GroupHelper;
+import com.pesupal.server.model.chat.group_message.Group;
+import com.pesupal.server.model.chat.group_message.GroupChatConfiguration;
+import com.pesupal.server.model.chat.group_message.GroupChatMember;
+import com.pesupal.server.model.chat.group_message.GroupChatPinned;
 import com.pesupal.server.model.org.Org;
 import com.pesupal.server.model.user.OrgMember;
-import com.pesupal.server.model.user.User;
 import com.pesupal.server.projections.RecentGroupChatProjection;
 import com.pesupal.server.repository.chat.group_message.GroupChatMemberRepository;
 import com.pesupal.server.repository.chat.group_message.GroupRepository;
-import com.pesupal.server.service.interfaces.org.OrgMemberService;
+import com.pesupal.server.service.interfaces.MediaService;
 import com.pesupal.server.service.interfaces.UserService;
-import com.pesupal.server.service.interfaces.chat.group_message.GroupChatConfigurationService;
-import com.pesupal.server.service.interfaces.chat.group_message.GroupChatMemberService;
-import com.pesupal.server.service.interfaces.chat.group_message.GroupChatPinnedService;
-import com.pesupal.server.service.interfaces.chat.group_message.GroupService;
+import com.pesupal.server.service.interfaces.chat.group_message.*;
+import com.pesupal.server.service.interfaces.org.OrgConfigurationService;
+import com.pesupal.server.service.interfaces.org.OrgMemberService;
 import jakarta.transaction.Transactional;
-import lombok.AllArgsConstructor;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.net.URL;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
-@AllArgsConstructor
 public class GroupServiceImpl extends CurrentValueRetriever implements GroupService {
 
     private final UserService userService;
+    private final MediaService mediaService;
     private final GroupRepository groupRepository;
     private final OrgMemberService orgMemberService;
     private final GroupChatMemberService groupChatMemberService;
-    private final GroupChatMemberRepository groupChatMemberRepository;
     private final GroupChatPinnedService groupchatPinnedService;
+    private final GroupChatMessageService groupChatMessageService;
+    private final GroupChatMemberRepository groupChatMemberRepository;
     private final GroupChatConfigurationService groupChatConfigurationService;
+    private final OrgConfigurationService orgConfigurationService;
+
+    public GroupServiceImpl(UserService userService, GroupRepository groupRepository, OrgMemberService orgMemberService, GroupChatMemberService groupChatMemberService, GroupChatPinnedService groupchatPinnedService, @Lazy GroupChatMessageService groupChatMessageService, GroupChatMemberRepository groupChatMemberRepository, GroupChatConfigurationService groupChatConfigurationService, MediaService mediaService, OrgConfigurationService orgConfigurationService) {
+        this.userService = userService;
+        this.mediaService = mediaService;
+        this.groupRepository = groupRepository;
+        this.orgMemberService = orgMemberService;
+        this.groupChatMemberService = groupChatMemberService;
+        this.groupchatPinnedService = groupchatPinnedService;
+        this.groupChatMessageService = groupChatMessageService;
+        this.groupChatMemberRepository = groupChatMemberRepository;
+        this.groupChatConfigurationService = groupChatConfigurationService;
+        this.orgConfigurationService = orgConfigurationService;
+    }
 
     /**
      * Initializes the group chat member for a given group and organization member.
@@ -75,13 +94,24 @@ public class GroupServiceImpl extends CurrentValueRetriever implements GroupServ
     public GroupDto createGroup(CreateGroupDto createGroupDto) {
 
         OrgMember owner = getCurrentOrgMember();
+
+        if (!orgConfigurationService.hasPrivilegeTo(OrgAction.CREATE_GROUP, owner.getRole())) {
+            throw new PermissionDeniedException("You do not have permission to create a group.");
+        }
+
         Group group = createGroupDto.toGroup();
         group.setOwner(owner);
         group.setOrg(owner.getOrg());
         groupRepository.save(group);
         groupChatConfigurationService.initializeGroupChatConfiguration(group);
         initializeGroupChatMember(group, owner);
-        return GroupDto.fromGroupAndOrgMember(group, owner);
+        groupChatMessageService.addSystemMessage(group, owner.getDisplayName() + " has created the group.");
+        URL displayPicture = null;
+        try {
+            displayPicture = mediaService.generatePresignedUrl(createGroupDto.getDisplayPicture());
+        } catch (Exception ignored) {
+        }
+        return GroupDto.fromGroupAndOrgMemberAndDisplayPicture(group, owner, displayPicture);
     }
 
     /**
@@ -108,12 +138,13 @@ public class GroupServiceImpl extends CurrentValueRetriever implements GroupServ
         GroupChatMember groupChatMember = groupChatMemberService.getGroupMemberByGroupIdAndUserId(groupId, userId);
         Group group = getGroupByPublicId(groupId);
 
-
         Role role = groupChatMember.getRole();
 
-        GroupChatConfiguration groupChatConfiguration = groupChatConfigurationService.getConfigurationByGroupAndRole(group, role);
-        if (!groupChatConfiguration.isDeleteGroup()) {
-            throw new PermissionDeniedException("You do not have permission to delete this group.");
+        if (!group.getOwner().getId().equals(userId)) {
+            GroupChatConfiguration groupChatConfiguration = groupChatConfigurationService.getConfigurationByGroupAndRole(group, role);
+            if (!groupChatConfiguration.isDeleteGroup()) {
+                throw new PermissionDeniedException("You do not have permission to delete this group.");
+            }
         }
 
         if (!group.isActive()) {
@@ -122,6 +153,7 @@ public class GroupServiceImpl extends CurrentValueRetriever implements GroupServ
 
         group.setActive(false);
         groupRepository.save(group);
+        groupChatMessageService.addSystemMessage(group, orgMember.getDisplayName() + " has deleted the group.");
     }
 
     /**
@@ -130,41 +162,43 @@ public class GroupServiceImpl extends CurrentValueRetriever implements GroupServ
      * @return
      */
     @Override
-    public RecentChatPagedDto getAllGroups(Pageable pageable) {
+    public RecentChatPagedDto getRecentGroups(String search, Pageable pageable) {
 
         int page = pageable.getPageNumber();
         int size = pageable.getPageSize();
         int offset = page * size;
 
         OrgMember orgMember = getCurrentOrgMember();
-        Long userId = orgMember.getId();
+        Long orgMemberId = orgMember.getId();
 
-        User user = userService.getUserById(userId);
         Org org = orgMember.getOrg();
         Long orgId = org.getId();
 
-        orgMemberService.validateUserIsOrgMember(user, org);
-
-        List<RecentGroupChatProjection> rows = groupRepository.findRecentGroupChatsPaged(userId, orgId, size, offset);
+        List<RecentGroupChatProjection> rows = groupRepository.findRecentGroupChatsPaged(orgMemberId, orgId, search, size, offset);
 
         List<RecentChatDto> chats = rows.stream().map(proj -> {
             LastMessageDto lastMessage = new LastMessageDto();
             lastMessage.setSender(proj.getSenderName());
             lastMessage.setMessage(proj.getContent());
             lastMessage.setMedia(proj.getIncludedMedia());
-            lastMessage.setCreatedAt(TimeFormatterUtil.formatShort(proj.getCreatedAt()));
+            lastMessage.setCreatedAt(DateTimeUtil.formatShort(proj.getCreatedAt()));
+            lastMessage.setMessageStatus(proj.getMessageStatus());
+            lastMessage.setMessageType(proj.getMessageType());
 
             RecentChatDto dto = new RecentChatDto();
             dto.setChatId(proj.getGroupId());
             dto.setName(proj.getGroupName());
-            dto.setImage(proj.getSenderDisplayPicture());
+            try {
+                dto.setImage(mediaService.generatePresignedUrl(proj.getSenderDisplayPicture()));
+            } catch (Exception ignored) {
+            }
             dto.setStatus(proj.getGroupVisibility());
             dto.setRecentMessage(lastMessage);
 
             return dto;
         }).toList();
 
-        Long total = groupRepository.countRecentGroupChats(userId, orgId);
+        Long total = groupRepository.countRecentGroupChats(orgMemberId, orgId);
 
         return new RecentChatPagedDto(chats, pageable, total);
     }
@@ -186,22 +220,145 @@ public class GroupServiceImpl extends CurrentValueRetriever implements GroupServ
             throw new DataNotFoundException("Group with ID " + groupId + " does not exist");
         }
 
-        GroupChatMember groupChatMember = groupChatMemberService.getGroupMemberByGroupIdAndUserId(groupId, userId);
-        if (!groupChatMember.isActive() && !group.isInactiveMemberAccessChat()) {
+        Optional<GroupChatMember> optionalGroupChatMember = group.getMembers().stream().filter(gcm -> gcm.getParticipant().getId().equals(userId)).findFirst();
+        boolean isActiveGroupMember;
+        if (optionalGroupChatMember.isEmpty()) {
+            if (!group.getVisibility().equals(Visibility.PUBLIC)) {
+                throw new PermissionDeniedException("You do not have permission to access this chat.");
+            }
+            isActiveGroupMember = true;
+        } else {
+            isActiveGroupMember = optionalGroupChatMember.get().isActive();
+        }
+
+        if (!group.getVisibility().equals(Visibility.PUBLIC) && !isActiveGroupMember) {
             throw new PermissionDeniedException("You don't have permission to access this chat.");
         }
 
+        GroupChatMember groupChatMember = groupChatMemberService.getGroupMemberByGroupIdAndUserId(groupId, userId);
+        GroupChatConfiguration groupChatConfiguration = groupChatConfigurationService.getConfigurationByGroupAndRole(group, groupChatMember.getRole());
+
+        boolean groupActive = group.isActive();
         ChatPreviewDto chatPreviewDto = new ChatPreviewDto();
         chatPreviewDto.setChatId(groupId);
-        chatPreviewDto.setActive(groupChatMember.isActive());
+        chatPreviewDto.setGroupActive(groupActive);
+        chatPreviewDto.setReopenable(!groupActive && GroupHelper.isGroupOwner(group, orgMember));
+        chatPreviewDto.setActive(isActiveGroupMember && optionalGroupChatMember.isPresent());
         chatPreviewDto.setDisplayName(group.getName());
-        chatPreviewDto.setGroupActive(group.isActive());
-        chatPreviewDto.setDisplayPicture(group.getDisplayPicture());
+        chatPreviewDto.setVisibility(group.getVisibility());
+        chatPreviewDto.setDescription(group.getDescription());
+        try {
+            chatPreviewDto.setDisplayPicture(mediaService.generatePresignedUrl(group.getDisplayPicture()));
+        } catch (Exception ignored) {
+        }
+        chatPreviewDto.setGroupChatConfiguration(UpdateGroupChatConfigurationDto.fromGroupChatConfiguration(groupChatConfiguration));
         chatPreviewDto.setParticipantsCount(group.getMembers().stream().filter(GroupChatMember::isActive).toList().size());
         Optional<GroupChatPinned> pinnedGroupChat = groupchatPinnedService.getPinnedGroupByPinnedByAndGroup(orgMember, group);
-        if (pinnedGroupChat.isPresent()) {
-            chatPreviewDto.setPinnedId(pinnedGroupChat.get().getId());
-        }
+        pinnedGroupChat.ifPresent(groupChatPinned -> chatPreviewDto.setPinnedId(groupChatPinned.getId()));
         return chatPreviewDto;
+    }
+
+    /**
+     * Reopens a group by its ID if the current user is the owner of the group.
+     *
+     * @param groupId
+     */
+    @Override
+    public void reopenGroup(String groupId) {
+
+        OrgMember orgMember = getCurrentOrgMember();
+
+        Group group = getGroupByPublicId(groupId);
+        if (!GroupHelper.isGroupOwner(group, orgMember)) {
+            throw new PermissionDeniedException("You do not have permission to reopen this group.");
+        }
+
+        if (group.isActive()) {
+            throw new ActionProhibitedException("This group is already active.");
+        }
+
+        group.setActive(true);
+        groupRepository.save(group);
+        // initializeGroupChatMember(group, orgMember);
+        groupChatMessageService.addSystemMessage(group, orgMember.getDisplayName() + " has reopened the group.");
+    }
+
+    /**
+     * Updates an existing group with the provided CreateGroupDto.
+     *
+     * @param groupId
+     * @param updateGroupDto
+     * @return
+     */
+    @Override
+    public GroupDto updateGroup(String groupId, CreateGroupDto updateGroupDto) {
+
+        OrgMember orgMember = getCurrentOrgMember();
+        Group group = getGroupByPublicId(groupId);
+
+        if (!GroupHelper.isGroupOwner(group, orgMember)) {
+            throw new PermissionDeniedException("You do not have permission to update this group.");
+        }
+
+        GroupChatMember groupChatMember = groupChatMemberService.getGroupMemberByGroupIdAndUserId(groupId, orgMember.getId());
+        if (!groupChatMember.isActive()) {
+            throw new PermissionDeniedException("You do not have permission to update this group as you are not an active member.");
+        }
+
+        GroupChatConfiguration groupChatConfiguration = groupChatConfigurationService.getConfigurationByGroupAndRole(group, groupChatMember.getRole());
+
+        if (!updateGroupDto.getName().equals(group.getName()) && !groupChatConfiguration.isChangeName()) {
+            throw new PermissionDeniedException("You do not have permission to update the group name.");
+        }
+
+        if (!updateGroupDto.getDescription().equals(group.getDescription()) && !groupChatConfiguration.isChangeDescription()) {
+            throw new PermissionDeniedException("You do not have permission to update the group description.");
+        }
+
+        if (!groupChatConfiguration.isChangeProfilePicture()) {
+            if (updateGroupDto.getDisplayPicture() == null && group.getDisplayPicture() != null) {
+                throw new PermissionDeniedException("You do not have permission to update the group display picture.");
+            }
+            if (updateGroupDto.getDisplayPicture() != null && !updateGroupDto.getDisplayPicture().equals(group.getDisplayPicture())) {
+                throw new PermissionDeniedException("You do not have permission to update the group display picture.");
+            }
+        }
+
+        if (!updateGroupDto.getVisibility().equals(group.getVisibility()) && !groupChatConfiguration.isChangeVisibility()) {
+            throw new PermissionDeniedException("You do not have permission to update the group visibility.");
+        }
+
+        UUID previousDisplayPicture = group.getDisplayPicture();
+
+        updateGroupDto.applyToGroup(group);
+
+        UUID newDisplayPicture = group.getDisplayPicture();
+
+        if (group.getName().isBlank()) {
+            throw new PermissionDeniedException("Group name cannot be empty.");
+        }
+
+        if (group.getVisibility() == null) {
+            throw new PermissionDeniedException("Group visibility cannot be null.");
+        }
+
+        groupRepository.save(group);
+
+        if (newDisplayPicture == null) {
+            if (previousDisplayPicture != null) {
+                mediaService.deleteFile(previousDisplayPicture);
+            }
+        } else {
+            if (previousDisplayPicture != null && !previousDisplayPicture.equals(newDisplayPicture)) {
+                mediaService.deleteFile(previousDisplayPicture);
+            }
+        }
+
+        GroupDto groupDto = GroupDto.fromGroup(group);
+        try {
+            groupDto.setDisplayPicture(mediaService.generatePresignedUrl(group.getDisplayPicture()));
+        } catch (Exception ignored) {
+        }
+        return groupDto;
     }
 }

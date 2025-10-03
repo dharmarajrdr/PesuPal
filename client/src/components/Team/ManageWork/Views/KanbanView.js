@@ -1,14 +1,15 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom';
 import utils from '../../../../utils';
 import './KanbanView.css'
 import { setCurrentModuleId, setCurrentModuleView } from '../../../../store/reducers/CurrentModuleSlice';
 import { useDispatch } from 'react-redux';
+import DetailView from './DetailView';
 
 const RowComponent = ({ item }) => {
 
     const { moduleId, recordId, fields } = item || {};
-    const route = `/manage/module/${moduleId}/record/${recordId}`;
+    // const route = `/manage/module/${moduleId}/record/${recordId}`;
 
     const [subjectField, createdByField, createdAtField] = fields || [{}, {}, {}];
     const { data: subject } = subjectField || {};
@@ -16,7 +17,21 @@ const RowComponent = ({ item }) => {
     const { data: createdBy } = createdByField || {};
     const { id: userId, displayName, displayPicture } = createdBy || {};
 
-    return subjectField && createdBy && createdAt && <Link to={route} className='kanbanviewItem' draggable={false}>
+    const [showQuickDetailView, setShowQuickDetailView] = useState(false);
+
+    const showQuickDetailViewHandler = () => {
+        setShowQuickDetailView(true);
+    }
+
+    const QuickDetailViewRecord = ({ subject }) => {
+
+        return <div id='quick-create-record' className='entire-screen-overlay FRCE'>
+            <DetailView recordId={recordId} subject={subject} moduleId={moduleId} setShowQuickDetailView={setShowQuickDetailView} view='list' fieldsList={fields} />
+        </div>
+    }
+
+    return subjectField && createdBy && createdAt && <div className='kanbanviewItem' draggable={false} onClick={showQuickDetailViewHandler}>
+        {showQuickDetailView && <QuickDetailViewRecord subject={fields[0].data} />}
         <p className='mB10 kanbanviewItemTitle'>{subject}</p>
         <div className='FRCB creator_owner_div'>
             <div className='FRCS ownerDiv'>
@@ -27,7 +42,7 @@ const RowComponent = ({ item }) => {
                 <span className='mL5 fs10 color777' >{utils.agoTimeCalculator(createdAt)}</span>
             </div>
         </div>
-    </Link>
+    </div>
 
 };
 

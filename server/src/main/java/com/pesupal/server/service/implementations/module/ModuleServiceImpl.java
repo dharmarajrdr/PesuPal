@@ -51,7 +51,7 @@ public class ModuleServiceImpl extends CurrentValueRetriever implements ModuleSe
         module.setCreatedBy(orgMember);
         module.setActive(false);
         moduleRepository.save(module);
-        moduleFieldService.addSystemFieldsIntoModule(module);
+        moduleFieldService.introduceDefaultAndSystemFields(module);
         moduleMemberService.addOrgOwnerToModule(module, orgMember);
         modulePermissionService.initializeModulePermissions(module);
         return module;
@@ -156,5 +156,25 @@ public class ModuleServiceImpl extends CurrentValueRetriever implements ModuleSe
         moduleDto.setReadRecord(modulePermission.isReadRecord());
         moduleDto.setCreateRecord(modulePermission.isCreateRecord());
         return moduleDto;
+    }
+
+    /**
+     * Updates a module's details.
+     *
+     * @param moduleId
+     * @param createModuleDto
+     */
+    @Override
+    public void updateModule(String moduleId, CreateModuleDto createModuleDto) {
+
+        OrgMember orgMember = getCurrentOrgMember();
+        Module module = getModuleById(moduleId);
+
+        if (!ModuleHelper.isModuleOwner(module, orgMember)) {
+            throw new PermissionDeniedException("You do not have permission to update this module.");
+        }
+
+        createModuleDto.applyToModule(module);
+        moduleRepository.save(module);
     }
 }

@@ -41,6 +41,10 @@
     flex-direction: row;
 }
 
+.chat-messages .row.active-row {
+    background-color: rgba(0, 0, 0, 0.033);
+}
+
 .chat-messages .row .message-wrapper {
     max-width: 50%;
     min-width: 25%;
@@ -87,6 +91,9 @@
     border: 1px solid #eee;
 }
 
+.chat-messages .row .message.received .message-media .image-not-found p,
+.chat-messages .row .message.received .message-media.media-doc i,
+.chat-messages .row .message.received .message-media.media-doc span,
 .chat-messages .row .message.received .message-content div {
     color: var(--primary-color);
 }
@@ -97,14 +104,50 @@
 
 .chat-messages .row .message .message-media {
     width: 100%;
-    height: 300px;
     overflow: hidden;
 }
 
+.chat-messages .row .message .message-media .media-video,
 .chat-messages .row .message .message-media .media-image {
     width: 100%;
-    height: 100%;
+    height: 300px;
     object-fit: cover;
+    border-radius: 10px;
+}
+
+.chat-messages .row .message .message-media.media-doc {
+    width: 100%;
+    height: 100%;
+    border-radius: 5px;
+    padding: 10px 15px 0px 15px;
+}
+
+.chat-messages .row .message .message-media.media-doc .left-panel {
+    width: 75%;
+}
+
+.chat-messages .row .message .message-media.media-doc .right-panel {
+    width: 25%;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.chat-messages .row .message .message-media.media-doc .right-panel .download-link {
+    font-size: 14px;
+    padding: 2px 5px;
+    border-radius: 5px;
+}
+
+.chat-messages .row .message .message-media.media-doc span {
+    font-size: 13px;
+    font-weight: 500;
+    font-family: 'system-ui';
+}
+
+.chat-messages .row .message.sent .message-media.media-doc .media-doc-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .chat-messages .row .message-wrapper .sender-name {
@@ -130,6 +173,24 @@
     align-items: flex-start;
 }
 
+.system-message {
+    height: 40px;
+}
+
+.system-message span {
+    background-color: #ffffff99;
+    border-radius: 5px;
+    padding: 5px 10px;
+    font-size: 12px;
+    color: #888;
+    cursor: default;
+    box-shadow: 0 1px 8px var(--box-shadow-color);
+    border-left: 3px solid var(--primary-color);
+    border-right: 3px solid var(--primary-color);
+    border-top: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+}
+
 .message-content {
     padding: 8px 12px 5px 10px;
     position: relative;
@@ -143,7 +204,7 @@
 
 .message-actions {
     width: fit-content;
-    margin-top: 4px;
+    margin-top: 10px;
     display: flex;
     padding: 2px;
     position: absolute;
@@ -155,14 +216,20 @@
     display: none;
 }
 
-.row .message:hover .message-actions {
+.row:not(.active-row) .message:hover .message-actions {
+    display: flex;
+}
+
+.row.row.active-row .message-actions {
     display: flex;
 }
 
 .message-actions i {
     font-size: 13px;
     margin: 0px 2px;
-    padding: 3px 5px;
+    padding: 3px 0px;
+    width: 20px;
+    text-align: center;
     cursor: pointer;
     border-radius: 5px;
 }
@@ -172,12 +239,18 @@
 }
 
 .message-actions.sent {
-    left: -80px;
+    left: 0px;
 }
 
 .message-actions.received {
-    right: -80px;
+    right: 0px;
 }
+
+/* .message-actions .reactions {
+    border-left: 1px solid #ddd;
+    padding-left: 5px;
+    margin-left: 5px;
+} */
 
 .reaction-icon {
     cursor: pointer;
@@ -203,6 +276,8 @@
 
 .message-reacted p i {
     font-size: 10px;
+    width: 13px;
+    text-align: center;
     margin-right: 2px;
 }
 
@@ -218,6 +293,8 @@
     color: #eee;
 }
 
+.chat-messages .row .message.sent .message-media .image-not-found p,
+.chat-messages .row .message.sent .message-media.media-doc span,
 .chat-messages .row .message.sent .message-meta .delivery-status,
 .chat-messages .row .message.sent .message-meta .time {
     color: #ccc;
@@ -233,18 +310,20 @@
     margin-bottom: 10vh;
 }
 
+#start-new-conversation .user-avatar-placeholder-first-character,
 #start-new-conversation #users-avatars img {
     width: 50px;
     height: 50px;
+    line-height: 50px;
     margin: 0;
     position: relative;
 }
 
-#start-new-conversation #users-avatars img:first-of-type {
+#start-new-conversation #users-avatars *:first-child {
     left: 5px;
 }
 
-#start-new-conversation #users-avatars img:last-of-type {
+#start-new-conversation #users-avatars *:last-child {
     right: 5px;
 }
 
@@ -269,6 +348,16 @@
     animation: wave-hands 2s ease-in-out infinite;
     color: #eec66d;
     font-size: 17px;
+}
+
+.image-not-found {
+    width: 100%;
+    padding: 30px 0px 10px 0px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 13px;
+    font-weight: 300;
 }
 
 @keyframes wave-hands {

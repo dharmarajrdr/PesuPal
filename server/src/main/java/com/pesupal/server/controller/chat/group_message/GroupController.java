@@ -25,6 +25,13 @@ public class GroupController {
         return ResponseEntity.ok().body(new ApiResponseDto("Group message created successfully", groupDto));
     }
 
+    @PutMapping("/{groupId}")
+    public ResponseEntity<ApiResponseDto> updateGroup(@PathVariable String groupId, @RequestBody CreateGroupDto createGroupDto) {
+
+        GroupDto updatedGroup = groupService.updateGroup(groupId, createGroupDto);
+        return ResponseEntity.ok().body(new ApiResponseDto("Group updated successfully", updatedGroup));
+    }
+
     @DeleteMapping("/{groupId}")
     public ResponseEntity<ApiResponseDto> deleteGroup(@PathVariable String groupId) {
 
@@ -33,17 +40,24 @@ public class GroupController {
     }
 
     @GetMapping("/recent")
-    public ResponseEntity<ApiResponseDto> getAllGroups(@RequestParam Integer page, @RequestParam Integer size) {
+    public ResponseEntity<ApiResponseDto> getRecentGroups(@RequestParam(required = false, defaultValue = "") String search, @RequestParam Integer page, @RequestParam Integer size) {
 
         Pageable pageable = Pageable.ofSize(size).withPage(page);
-        RecentChatPagedDto recentChatPagedDto = groupService.getAllGroups(pageable);
+        RecentChatPagedDto recentChatPagedDto = groupService.getRecentGroups(search, pageable);
         return ResponseEntity.ok().body(new ApiResponseDto("Groups retrieved successfully", recentChatPagedDto.getChats(), recentChatPagedDto.getPageable()));
     }
 
     @GetMapping("/preview/{groupId}")
-    public ResponseEntity<ApiResponseDto> getgroupChatPreview(@PathVariable String groupId) {
+    public ResponseEntity<ApiResponseDto> getGroupChatPreview(@PathVariable String groupId) {
 
         ChatPreviewDto chatPreviewDto = groupService.getGroupChatPreviewByChatId(groupId);
         return ResponseEntity.ok(new ApiResponseDto("Group chat preview retrieved successfully", chatPreviewDto));
+    }
+
+    @PutMapping("/reopen/{groupId}")
+    public ResponseEntity<ApiResponseDto> reopenGroup(@PathVariable String groupId) {
+
+        groupService.reopenGroup(groupId);
+        return ResponseEntity.ok(new ApiResponseDto("Group reopened successfully"));
     }
 }

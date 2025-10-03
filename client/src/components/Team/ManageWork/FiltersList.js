@@ -67,7 +67,7 @@ export default [
             },
             {
                 "id": 1,
-                "title": "PesuPal"
+                "title": "CollabGen"
             },
             {
                 "id": 2,

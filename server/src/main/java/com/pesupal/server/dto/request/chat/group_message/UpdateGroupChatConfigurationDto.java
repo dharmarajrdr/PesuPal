@@ -2,7 +2,7 @@ package com.pesupal.server.dto.request.chat.group_message;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.pesupal.server.enums.Role;
-import com.pesupal.server.model.group.GroupChatConfiguration;
+import com.pesupal.server.model.chat.group_message.GroupChatConfiguration;
 import lombok.Data;
 
 @Data
@@ -21,6 +21,8 @@ public class UpdateGroupChatConfigurationDto {
 
     private Boolean changeDescription;
 
+    private Boolean changeVisibility;
+
     private Boolean deleteGroup;
 
     private Boolean leaveGroup;
@@ -33,11 +35,37 @@ public class UpdateGroupChatConfigurationDto {
 
     private Boolean pinMessage;
 
+    private Boolean editMessage;
+
     private Boolean deleteMessage;
 
     private Boolean clearChat;
 
     private Boolean roleUpdate;
+
+    private Boolean scheduleMessage;
+
+    public static UpdateGroupChatConfigurationDto fromGroupChatConfiguration(GroupChatConfiguration groupChatConfiguration) {
+
+        UpdateGroupChatConfigurationDto dto = new UpdateGroupChatConfigurationDto();
+        dto.setAddMember(groupChatConfiguration.isAddMember());
+        dto.setRemoveMember(groupChatConfiguration.isRemoveMember());
+        dto.setChangeName(groupChatConfiguration.isChangeName());
+        dto.setChangeDescription(groupChatConfiguration.isChangeDescription());
+        dto.setChangeVisibility(groupChatConfiguration.isChangeVisibility());
+        dto.setDeleteGroup(groupChatConfiguration.isDeleteGroup());
+        dto.setLeaveGroup(groupChatConfiguration.isLeaveGroup());
+        dto.setChangeProfilePicture(groupChatConfiguration.isChangeProfilePicture());
+        dto.setViewMembers(groupChatConfiguration.isViewMembers());
+        dto.setPostMessage(groupChatConfiguration.isPostMessage());
+        dto.setPinMessage(groupChatConfiguration.isPinMessage());
+        dto.setEditMessage(groupChatConfiguration.isEditMessage());
+        dto.setDeleteMessage(groupChatConfiguration.isDeleteMessage());
+        dto.setClearChat(groupChatConfiguration.isClearChat());
+        dto.setRoleUpdate(groupChatConfiguration.isRoleUpdate());
+        dto.setScheduleMessage(groupChatConfiguration.isScheduleMessage());
+        return dto;
+    }
 
     public void applyToGroupChatConfiguration(GroupChatConfiguration groupChatConfiguration) {
 
@@ -52,6 +80,9 @@ public class UpdateGroupChatConfigurationDto {
         }
         if (changeDescription != null) {
             groupChatConfiguration.setChangeDescription(changeDescription);
+        }
+        if (changeVisibility != null) {
+            groupChatConfiguration.setChangeVisibility(changeVisibility);
         }
         if (deleteGroup != null) {
             groupChatConfiguration.setDeleteGroup(deleteGroup);
@@ -71,6 +102,9 @@ public class UpdateGroupChatConfigurationDto {
         if (pinMessage != null) {
             groupChatConfiguration.setPinMessage(pinMessage);
         }
+        if (editMessage != null) {
+            groupChatConfiguration.setEditMessage(editMessage);
+        }
         if (deleteMessage != null) {
             groupChatConfiguration.setDeleteMessage(deleteMessage);
         }
@@ -79,6 +113,9 @@ public class UpdateGroupChatConfigurationDto {
         }
         if (roleUpdate != null) {
             groupChatConfiguration.setRoleUpdate(roleUpdate);
+        }
+        if (scheduleMessage != null) {
+            groupChatConfiguration.setScheduleMessage(scheduleMessage);
         }
     }
 }

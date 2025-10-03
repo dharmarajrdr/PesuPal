@@ -1,7 +1,7 @@
 package com.pesupal.server.service.implementations.drive;
 
 import com.pesupal.server.enums.CRUD;
-import com.pesupal.server.exceptions.DataNotFoundException;
+import com.pesupal.server.exceptions.PermissionDeniedException;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.model.workdrive.Folder;
 import com.pesupal.server.model.workdrive.PublicFolder;
@@ -44,7 +44,7 @@ public class SecuredFolderPermissionServiceImpl implements SecuredFolderPermissi
     public boolean hasNecessaryPermission(PublicFolder parentPublicFolder, OrgMember accessGrantedTo, CRUD crud) {
 
         SecuredFolderPermission securedFolderPermission = getSecuredFolderPermissionByFolderAndUser(parentPublicFolder.getFolder(), accessGrantedTo)
-                .orElseThrow(() -> new DataNotFoundException("User does not have " + crud.name().toLowerCase() + " access on this folder."));
+                .orElseThrow(() -> new PermissionDeniedException("User does not have " + crud.name().toLowerCase() + " access in this folder."));
         return switch (crud) {
             case CREATE, UPDATE, DELETE -> securedFolderPermission.isWritable();
             case READ -> securedFolderPermission.isReadable();
@@ -62,7 +62,7 @@ public class SecuredFolderPermissionServiceImpl implements SecuredFolderPermissi
     public boolean hasWritePermission(PublicFolder parentPublicFolder, OrgMember orgMember) {
 
         return getSecuredFolderPermissionByFolderAndUser(parentPublicFolder.getFolder(), orgMember)
-                .orElseThrow(() -> new DataNotFoundException("User does not have write access on this folder."))
+                .orElseThrow(() -> new PermissionDeniedException("User does not have write access on this folder."))
                 .isWritable();
     }
 
@@ -77,7 +77,7 @@ public class SecuredFolderPermissionServiceImpl implements SecuredFolderPermissi
     public boolean hasReadPermission(PublicFolder parentPublicFolder, OrgMember orgMember) {
 
         return getSecuredFolderPermissionByFolderAndUser(parentPublicFolder.getFolder(), orgMember)
-                .orElseThrow(() -> new DataNotFoundException("User does not have read access in this folder."))
+                .orElseThrow(() -> new PermissionDeniedException("User does not have read access in this folder."))
                 .isReadable();
     }
 }
