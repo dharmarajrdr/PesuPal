@@ -6,8 +6,9 @@ import ErrorMessage from '../ErrorMessage';
 import { useEffect, useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import { apiRequest } from '../../http_request';
-import { hideOrgList, setCurrentOrgId } from '../../store/reducers/OrgSlice';
 import { showPopup } from '../../store/reducers/PopupSlice';
+import { setMyProfile } from '../../store/reducers/MyProfileSlice';
+import { hideOrgList, setCurrentOrgId } from '../../store/reducers/OrgSlice';
 
 const NoOrgFound = () => {
 
@@ -44,6 +45,14 @@ const OrgList = ({ closeOrgList }) => {
             dispatch(setCurrentOrgId(publicId));
             dispatch(hideOrgList());
             dispatch(showPopup({ message: `Switched to '${displayName}' org.`, type: 'success' }));
+            apiRequest("/api/v1/people/profile", "GET").then(({ data }) => {
+                dispatch(setMyProfile(data));
+                // const updatedProfile = { ...profile, image: data.displayPicture, icon: null };
+                // setProfile(updatedProfile);
+            }).catch(({ message }) => {
+                dispatch(showPopup({ message, type: 'error' }));
+                console.error("Error fetching profile:", message);
+            });
         }).catch(({ message }) => {
             dispatch(showPopup({ message, type: 'error' }));
         });
