@@ -76,7 +76,7 @@ const LeftNavigation = () => {
         <div id='LeftNavigationOverlay' onClick={clickedOverlay}>
             <div id='LeftNavigation' className='FCCB'>
                 <div className='w100'>
-                    <div id='app_logo'>
+                    <div id='app_logo' className='FRCC'>
                         <img src='/logo512.png' />
                     </div>
                     <div>
