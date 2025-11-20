@@ -3,6 +3,8 @@ package com.pesupal.server.repository.post;
 import com.pesupal.server.model.post.Post;
 import com.pesupal.server.model.post.PostLike;
 import com.pesupal.server.model.user.OrgMember;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -17,4 +19,6 @@ public interface PostLikeRepository extends JpaRepository<PostLike, Long> {
     Optional<PostLike> findByPostAndLiker(Post post, OrgMember user);
 
     List<PostLike> findByPostPublicIdAndPost_OrgId(String postId, Long id);
+
+    Page<PostLike> findAllByLiker(OrgMember orgMember, Pageable pageable);
 }

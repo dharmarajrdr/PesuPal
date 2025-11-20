@@ -1,0 +1,7 @@
+#liked-posts-layout {
+    overflow-y: auto;
+}
+
+#liked-posts-layout #postsList {
+    width: 60%;
+}

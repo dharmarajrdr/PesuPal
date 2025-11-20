@@ -12,6 +12,12 @@ export default [
         'route': '/feeds/scheduled-posts'
     },
     {
+        'title': 'Liked Posts',
+        'icon': 'fa-regular fa-thumbs-up',
+        'color': '#b4158fff',
+        'route': '/feeds/liked-posts'
+    },
+    {
         'title': 'Bookmarks',
         'icon': 'fa-regular fa-bookmark',
         'color': '#008000',
