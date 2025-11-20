@@ -2,8 +2,10 @@ package com.pesupal.server.controller.post;
 
 import com.pesupal.server.dto.response.ApiResponseDto;
 import com.pesupal.server.dto.response.post.PostLikesDto;
+import com.pesupal.server.dto.response.post.PostsListDto;
 import com.pesupal.server.service.interfaces.post.PostLikeService;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,6 +23,14 @@ public class PostLikeController {
 
         List<PostLikesDto> likes = postLikeService.getPostLikes(postId);
         return ResponseEntity.ok().body(new ApiResponseDto("Post likes retrieved successfully", likes));
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<ApiResponseDto> getAllLikedPosts(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int size) {
+
+        Sort sort = Sort.by("createdAt").descending();
+        PostsListDto likedPosts = postLikeService.getAllLikedPosts(page, size, sort);
+        return ResponseEntity.ok().body(new ApiResponseDto("All liked posts retrieved successfully", likedPosts.getPosts(), likedPosts.getInfo()));
     }
 
     @PostMapping("/{postId}")
