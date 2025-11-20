@@ -1,6 +1,8 @@
 package com.pesupal.server.service.implementations.post;
 
+import com.pesupal.server.dto.response.post.PostDto;
 import com.pesupal.server.dto.response.post.PostLikesDto;
+import com.pesupal.server.dto.response.post.PostsListDto;
 import com.pesupal.server.enums.PostStatus;
 import com.pesupal.server.exceptions.ActionProhibitedException;
 import com.pesupal.server.helpers.CurrentValueRetriever;
@@ -9,13 +11,17 @@ import com.pesupal.server.model.post.PostLike;
 import com.pesupal.server.model.user.OrgMember;
 import com.pesupal.server.repository.post.PostLikeRepository;
 import com.pesupal.server.service.interfaces.MediaService;
-import com.pesupal.server.service.interfaces.org.OrgMemberService;
 import com.pesupal.server.service.interfaces.post.PostLikeService;
 import com.pesupal.server.service.interfaces.post.PostService;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 
 @Repository
 @AllArgsConstructor
@@ -23,7 +29,6 @@ public class PostLikeServiceImpl extends CurrentValueRetriever implements PostLi
 
     private final PostService postService;
     private final MediaService mediaService;
-    private final OrgMemberService orgMemberService;
     private final PostLikeRepository postLikeRepository;
 
     /**
@@ -82,5 +87,26 @@ public class PostLikeServiceImpl extends CurrentValueRetriever implements PostLi
             postLikesDto.setCreatedAt(postLike.getCreatedAt());
             return postLikesDto;
         }).toList();
+    }
+
+    /**
+     * Retrieves all posts liked by the current user in the current organization.
+     *
+     * @return
+     */
+    @Override
+    public PostsListDto getAllLikedPosts(int page, int size, Sort sort) {
+
+        PostsListDto postsListDto = new PostsListDto();
+        OrgMember orgMember = getCurrentOrgMember();
+        Pageable pageable = PageRequest.of(page, size, sort);
+        Page<PostLike> likes = postLikeRepository.findAllByLiker(orgMember, pageable);
+        postsListDto.setPosts(likes.getContent().stream().map(postLike -> {
+            PostDto postDto = postService.getPostDtoFromPostAndOrgMember(postLike.getPost(), orgMember);
+            postDto.setLiked(true);
+            return postDto;
+        }).toList());
+        postsListDto.setInfo(Map.of("hasMoreRecords", likes.hasNext()));
+        return postsListDto;
     }
 }
