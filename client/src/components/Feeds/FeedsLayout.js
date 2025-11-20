@@ -8,6 +8,7 @@ import { Route, Routes } from 'react-router-dom'
 import SinglePostLayout from './SinglePostLayout'
 import CreateNewPost from './FeedsMainPanel/CreateNewPost'
 import FeedsLeftPanel from './FeedsLeftPanel/FeedsLeftPanel'
+import LikedPostsLayout from './FeedsMainPanel/LikedPostsLayout'
 import BookmarkPostsLayout from './FeedsMainPanel/BookmarkPostsLayout'
 import ScheduledPostsLayout from './FeedsMainPanel/ScheduledPostsLayout'
 
@@ -29,6 +30,7 @@ const FeedsLayout = () => {
                 <Route path='/bookmarks' element={<BookmarkPostsLayout />} />
                 <Route path='/post/:postId' element={<SinglePostLayout />} />
                 <Route path='/scheduled-posts' element={<ScheduledPostsLayout />} />
+                <Route path='/liked-posts' element={<LikedPostsLayout />} />
                 <Route path='/tags' element={<TagsListLayout />} />
                 <Route path='/tags/:tag' element={<TagPostsLayout />} />
                 <Route path="*" element={<PageNotFound />} />
