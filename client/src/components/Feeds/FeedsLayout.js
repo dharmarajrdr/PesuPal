@@ -1,34 +1,36 @@
-import { useState } from 'react'
 import './FeedsLayout.css'
-import Popup from '../Popup'
-import { UsePopupFromSession } from '../../UsePopupFromSession'
 import Feeds from './Feeds'
-import { Route, Routes } from 'react-router-dom'
-import PageNotFound from '../Auth/PageNotFound'
+import { useState } from 'react'
 import TagPostsLayout from './TagPostsLayout'
+import TagsListLayout from './TagsListLayout'
+import PageNotFound from '../Auth/PageNotFound'
+import { Route, Routes } from 'react-router-dom'
+import SinglePostLayout from './SinglePostLayout'
+import CreateNewPost from './FeedsMainPanel/CreateNewPost'
+import FeedsLeftPanel from './FeedsLeftPanel/FeedsLeftPanel'
+import BookmarkPostsLayout from './FeedsMainPanel/BookmarkPostsLayout'
+import ScheduledPostsLayout from './FeedsMainPanel/ScheduledPostsLayout'
 
 const FeedsLayout = () => {
 
-    const [popupData, setPopupData] = useState(null);
+    const leftNavigationState = useState(true);
+    const [leftNavOpened,] = leftNavigationState;
+    const width = {
+        'leftNavOpened': "24.5%",
+        "leftNavClosed": "90px"
+    }
 
-    const showPopup = (message, type) => {
-        setPopupData({ message, type });
-    };
-
-    UsePopupFromSession(showPopup);
-
-    const leftNavigationState = useState(true),
-        [leftNavOpened,] = leftNavigationState,
-        width = {
-            'leftNavOpened': "24.5%",
-            "leftNavClosed": "85px"
-        }
     return (
-        <div id='FeedsLayout' className='Layout FRCS'>
-            {popupData && <Popup message={popupData.message} type={popupData.type} />}
+        <div id='FeedsLayout' className='Layout FRSS'>
+            <CreateNewPost />
+            <FeedsLeftPanel leftNavigationState={leftNavigationState} width={leftNavOpened ? width.leftNavOpened : width.leftNavClosed} />
             <Routes>
-                <Route path='/' element={<Feeds leftNavigationState={leftNavigationState} leftNavOpened={leftNavOpened} width={width} />} />
-                <Route path='/tag/:tag' element={<TagPostsLayout />} />
+                <Route index element={<Feeds leftNavOpened={leftNavOpened} width={width} />} />
+                <Route path='/bookmarks' element={<BookmarkPostsLayout />} />
+                <Route path='/post/:postId' element={<SinglePostLayout />} />
+                <Route path='/scheduled-posts' element={<ScheduledPostsLayout />} />
+                <Route path='/tags' element={<TagsListLayout />} />
+                <Route path='/tags/:tag' element={<TagPostsLayout />} />
                 <Route path="*" element={<PageNotFound />} />
             </Routes>
         </div>

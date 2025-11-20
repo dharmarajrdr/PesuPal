@@ -1,0 +1,162 @@
+#search-users-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 250px;
+    position: relative;
+}
+
+#user-suggestions-container {
+    position: absolute;
+    z-index: 10;
+    bottom: 30px;
+    width: 100%;
+    max-height: 250px;
+    background-color: #fff;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    border: 1px solid #ccc;
+    box-shadow: 0px -2px 6px rgba(0, 0, 0, 0.1);
+}
+
+#user-suggestions-container #suggestions {
+    width: 100%;
+    overflow-y: auto;
+    height: calc(100% - 50px);
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    background-color: #fff;
+}
+
+#user-suggestions-slider {
+    height: max-content;
+    width: 100%;
+}
+
+#user-suggestions-container #suggestions #no-users-found {
+    color: #aaa;
+    font-size: 10px;
+    user-select: none;
+    height: 42px;
+}
+
+.user-suggestion {
+    background-color: #fff;
+    padding: 8px 10px;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+}
+
+.user-suggestion:not(.selected):hover {
+    background-color: #f0f0f0;
+}
+
+.user-suggestion:not(.selected):hover span {
+    color: var(--secondary-color);
+}
+
+.user-suggestion.selected {
+    background-color: #f0f0f0;
+}
+
+.first-char-of-name,
+.user-suggestion img {
+    width: 25px;
+    height: 25px;
+    border-radius: 100%;
+    margin-right: 5px;
+}
+
+.first-char-of-name {
+    text-align: center;
+    line-height: 24px;
+    background-color: var(--primary-color);
+    color: #fff;
+}
+
+.user-suggestion span {
+    font-size: 12px;
+    color: #333;
+    width: calc(100% - 30px);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+#user-suggestions-container #selected-users {
+    padding: 5px 10px;
+    background-color: #eee;
+    overflow-x: scroll;
+    height: 50px;
+    width: 100%;
+}
+
+#selected-user-slider {
+    width: max-content;
+}
+
+#user-suggestions-container #selected-users .selected-user {
+    width: 25px;
+    height: 25px;
+    border-radius: 100%;
+    margin-right: 5px;
+    position: relative;
+}
+
+#user-suggestions-container #selected-users .selected-user img {
+    width: 100%;
+    height: 100%;
+    border-radius: 100%;
+}
+
+#user-suggestions-container #selected-users .selected-user .remove-user-btn {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: #fff;
+    border-radius: 100%;
+    display: none;
+    cursor: pointer;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    line-height: 20px;
+}
+
+#user-suggestions-container #selected-users .selected-user .remove-user-btn i {
+    font-size: 12px;
+    color: #fff;
+}
+
+#user-suggestions-container #selected-users .selected-user:hover .remove-user-btn {
+    display: flex;
+}
+
+#search-users-container #search-user-input-container {
+    position: relative;
+    width: 100%;
+    height: 30px;
+    background-color: #eee;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+#search-users-container #search-user-input-container.showing-suggestions {
+    border-top-left-radius: 0px;
+    border-top-right-radius: 0px;
+}
+
+#search-user-input-container #search-user-input {
+    width: 100%;
+    padding: 5px 10px;
+    font-size: 14px;
+    outline: none;
+    height: 100%;
+    font-size: 12px;
+    border: none;
+    outline: none;
+}

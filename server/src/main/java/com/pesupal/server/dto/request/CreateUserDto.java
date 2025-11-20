@@ -1,5 +1,6 @@
 package com.pesupal.server.dto.request;
 
+import com.pesupal.server.enums.Role;
 import com.pesupal.server.model.user.User;
 import lombok.Data;
 
@@ -18,6 +19,7 @@ public class CreateUserDto {
         user.setEmail(email);
         user.setPhone(phone);
         user.setPassword(password);
+        user.setRole(Role.USER);
         return user;
     }
 }

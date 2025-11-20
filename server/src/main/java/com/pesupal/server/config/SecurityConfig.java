@@ -42,9 +42,11 @@ public class SecurityConfig {
         httpSecurity.authorizeHttpRequests(authorize ->
                 authorize.requestMatchers(HttpMethod.POST, "/api/v1/user").permitAll()    // No authentication required for sign-up
                         .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()    // No authentication required for login
+                        .requestMatchers(HttpMethod.GET, "/api/v1/org-invitations/accept/**").permitAll() // No authentication required for accepting org invitations
                         .requestMatchers("/api/v1/user/**").permitAll()     // Allow all requests to user endpoints
                         .requestMatchers("/api/v1/media/**").permitAll()    // Allow all requests to media endpoints
                         .requestMatchers("/chat/**").permitAll()  // Allow all requests to the chat endpoint
+                        .requestMatchers("/ws/**").permitAll()    // Allow all requests to WebSocket endpoint
                         .anyRequest().authenticated()   // All other requests require authentication
         );
 

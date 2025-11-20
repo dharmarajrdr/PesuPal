@@ -6,7 +6,7 @@
 }
 
 #app_logo img {
-  width: 100%;
+  height: 40px;
 }
 
 #LeftNavigation {
@@ -48,6 +48,10 @@
 .activeNav {
   cursor: default;
   background-color: var(--primary-color-active);
+}
+
+.activeNav i {
+  font-weight: 600;
 }
 
 #closeLeftNav {

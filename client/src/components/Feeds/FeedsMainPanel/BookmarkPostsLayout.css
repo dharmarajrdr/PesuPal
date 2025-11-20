@@ -1,0 +1,7 @@
+#bookmarked-posts-layout {
+    overflow-x: auto;
+}
+
+#bookmarked-posts-layout #postsList {
+    width: 60%;
+}

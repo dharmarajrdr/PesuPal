@@ -1,22 +1,25 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import DepartmentHeader from './DepartmentHeader';
 import './DepartmentLayout.css';
 import DepartmentMain from './DepartmentMain';
 import { apiRequest } from '../../http_request';
 import Loader from '../Loader';
 import ErrorMessage from '../ErrorMessage';
+import { useDispatch } from 'react-redux';
+import { setCurrentDepartmentId, setCurrentDepartmentName } from '../../store/reducers/DepartmentSlice';
 
 const DepartmentLayout = () => {
 
-    const [departmentId, setDepartmentId] = useState(null);
-    const [loading, setLoading] = useState(true);
+    const dispatch = useDispatch();
     const [error, setError] = useState(null);
-    const [currentDepartment, setCurrentDepartment] = useState(null);
+    const [loading, setLoading] = useState(true);
 
-    useState(() => {
+    useEffect(() => {
         apiRequest("/api/v1/department", "GET").then(({ data }) => {
             setLoading(false);
-            setDepartmentId(data.id);
+            const { id, name } = data || {};
+            dispatch(setCurrentDepartmentId(id));
+            dispatch(setCurrentDepartmentName(name));
         }).catch(({ message }) => {
             setLoading(false);
             setError(message || "Failed to fetch department data.");
@@ -29,8 +32,8 @@ const DepartmentLayout = () => {
                 loading ? <Loader /> :
                     error ? <ErrorMessage message={error} /> :
                         <>
-                            <DepartmentHeader departmentId={departmentId} currentDepartment={currentDepartment} setCurrentDepartment={setCurrentDepartment} />
-                            <DepartmentMain departmentId={departmentId} currentDepartment={currentDepartment} />
+                            <DepartmentHeader />
+                            <DepartmentMain />
                         </>
             }
         </div>

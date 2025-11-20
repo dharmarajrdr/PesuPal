@@ -4,7 +4,7 @@ export default [
         displayName: "Help Center",
         description: "Browse FAQs and guides to get quick answers.",
         icon: "fa fa-question-circle",
-        link: "/help-center",
+        route: "/help-center",
         backgroundColor: "#20c997"
     },
     {
@@ -12,7 +12,7 @@ export default [
         displayName: "Reach Support",
         description: "Need help? Contact our support team for assistance.",
         icon: "fa fa-life-ring",
-        link: "/support",
+        route: "/reach-support",
         backgroundColor: "#007bff"
     },
     {
@@ -20,7 +20,7 @@ export default [
         displayName: "Report a Bug",
         description: "Found a bug? Let us know so we can fix it.",
         icon: "fa fa-bug",
-        link: "/report-bug",
+        route: "/report-bug",
         backgroundColor: "#dc3545"
     },
     {
@@ -28,7 +28,7 @@ export default [
         displayName: "Feedback",
         description: "Tell us how we're doing and what we can improve.",
         icon: "fa fa-comments",
-        link: "/feedback",
+        route: "/feedback",
         backgroundColor: "#17a2b8"
     },
     {
@@ -36,7 +36,7 @@ export default [
         displayName: "Suggest a Feature",
         description: "Have ideas? Share your feature suggestions with us.",
         icon: "fa fa-lightbulb",
-        link: "/suggest-feature",
+        route: "/suggest-feature",
         backgroundColor: "#ffc107"
     },
     {
@@ -44,7 +44,7 @@ export default [
         displayName: "Privacy Policy",
         description: "Learn how we handle and protect your personal data.",
         icon: "fa fa-shield",
-        link: "/privacy-policy",
+        route: "/privacy-policy",
         backgroundColor: "#6c757d"
     },
     {
@@ -52,7 +52,7 @@ export default [
         displayName: "Terms of Service",
         description: "Review the rules and conditions of using our app.",
         icon: "fa fa-file-text",
-        link: "/terms-of-service",
+        route: "/terms-of-service",
         backgroundColor: "#343a40"
     },
     {
@@ -60,7 +60,7 @@ export default [
         displayName: "Updates History",
         description: "Track all recent updates and version changes.",
         icon: "fa fa-history",
-        link: "/updates-history",
+        route: "/updates-history",
         backgroundColor: "#fd7e14"
     },
     {
@@ -68,7 +68,7 @@ export default [
         displayName: "About Us",
         description: "Get to know our mission and the team behind the app.",
         icon: "fa fa-info-circle",
-        link: "/about-us",
+        route: "/about-us",
         backgroundColor: "#6610f2"
     },
     {
@@ -76,7 +76,7 @@ export default [
         displayName: "Community Forum",
         description: "Join discussions, ask questions, and share knowledge.",
         icon: "fa fa-users-cog",
-        link: "/community",
+        route: "/community",
         backgroundColor: "#17a2b8"
     },
     {
@@ -84,7 +84,7 @@ export default [
         displayName: "Promote Us",
         description: "Love our app? Help spread the word!",
         icon: "fa fa-share-alt",
-        link: "/promote-us",
+        route: "/promote-us",
         backgroundColor: "#EE4BCC"
     },
     {
@@ -92,7 +92,7 @@ export default [
         displayName: "Developers",
         description: "Meet the developers who brought the app to life.",
         icon: "fa fa-users",
-        link: "/developers",
+        route: "/developers",
         backgroundColor: "#6f42c1"
     },
     {
@@ -100,7 +100,7 @@ export default [
         displayName: "Work with Us",
         description: "Explore career opportunities and join our team.",
         icon: "fa fa-briefcase",
-        link: "/work-with-us",
+        route: "/work-with-us",
         backgroundColor: "#343a40"
     },
     {
@@ -108,7 +108,7 @@ export default [
         displayName: "System Status",
         description: "Check the real-time operational status of our services.",
         icon: "fa fa-server",
-        link: "/system-status",
+        route: "/system-status",
         backgroundColor: "#007bff"
     }
 ];

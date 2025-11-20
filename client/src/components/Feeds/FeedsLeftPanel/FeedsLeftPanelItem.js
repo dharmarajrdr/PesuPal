@@ -1,15 +1,16 @@
-import React from 'react'
-import { Link } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import './FeedsLeftPanelItem.css'
 
 const FeedsLeftPanelItem = ({ item, leftNavOpened }) => {
-    const { icon, title, is_active, color, visibility, route, participants } = item;
+
+    const { icon, title, color, route, participants } = item;
+
     return (
-        <Link to={route} id='FeedsLeftPanelItem' className={`FRCS w100 ${is_active ? 'active' : ''}`} title={leftNavOpened ? null : title}>
-            <i className={icon} style={is_active ? null : { color }} ></i>
+        <NavLink end={route === "/feeds"} to={route} className={({ isActive }) => `FRCS w100${isActive ? ' active' : ''}`} id='FeedsLeftPanelItem' title={leftNavOpened ? null : title}>
+            <i className={icon} style={{ color }} ></i>
             <span className='noTextWrap'>{title}</span>
             {leftNavOpened && <span>{participants}</span>}
-        </Link>
+        </NavLink>
     )
 }
 

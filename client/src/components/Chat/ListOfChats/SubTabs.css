@@ -1,5 +1,6 @@
 #subtab_container {
   padding: 5px 0px 15px 0px;
+  overflow: hidden;
 }
 
 .subtabs {
@@ -16,12 +17,19 @@
   cursor: pointer;
 }
 
+#subtab_container .subtabs .active {
+  background-color: #ddd;
+  cursor: default;
+  color: #222;
+  border-color: #bbb;
+}
+
 .subtabs span:hover {
   background-color: var(--pure-white-hover);
   color: #222;
 }
 
-.subtabs .notifyCount {
+.notifyCount {
   position: absolute;
   top: -5px;
   right: 2px;

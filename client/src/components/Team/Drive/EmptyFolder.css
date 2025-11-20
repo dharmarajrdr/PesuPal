@@ -1,0 +1,34 @@
+#empty_folder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
+    text-align: center;
+    border-radius: 5px;
+    background-color: #fff;
+}
+
+#empty_folder img {
+    height: 300px;
+    animation: dropdown 0.25s ease-in 1 alternate;
+    user-select: none;
+}
+
+#empty_folder p {
+    color: var(--primary-color);
+    font-family: 'system-ui';
+    font-size: 14px;
+}
+
+@keyframes dropdown {
+    from {
+        transform: translateY(-20px);
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}

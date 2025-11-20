@@ -1,0 +1,37 @@
+#pinned-messages-container {
+    background-color: #fff;
+    width: 50%;
+    height: 100%;
+    position: absolute;
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+    animation: slideIn 0.3s ease-in-out forwards;
+}
+
+@keyframes slideIn {
+    from {
+        left: 100%;
+    }
+
+    to {
+        left: 50%;
+    }
+}
+
+#pinned-messages-header {
+    height: 50px;
+    line-height: 50px;
+    padding: 0px 20px;
+    box-shadow: 0 2px 4px var(--box-shadow-color);
+}
+
+#pinned-messages-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #555;
+}
+
+#pinned-messages-list {
+    height: calc(100% - 50px);
+    overflow-y: auto;
+}

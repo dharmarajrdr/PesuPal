@@ -4,31 +4,44 @@ import ChatGifComponent from './ChatGifComponent'
 import './auth.css'
 import { hasCookie } from './utils'
 import { apiRequest } from '../../http_request'
+import { clearMyProfile } from '../../store/reducers/MyProfileSlice'
+import { useDispatch } from 'react-redux'
+import { showPopup } from '../../store/reducers/PopupSlice'
 
 const Signin = () => {
 
     const navigate = useNavigate();
+    const dispatch = useDispatch();
+
+    const [loggedIn, setLoggedIn] = useState(false);
     const [email, setEmail] = useState("dharmaraj.171215@gmail.com");
     const [password, setPassword] = useState("123456789");
     const [error, setError] = useState("");
     const [passwordVisible, setPasswordVisible] = useState(false);
 
+    const clearInputFields = () => {
+        setEmail("");
+        setPassword("");
+        setError("");
+    }
+
     const signinFormHandler = (e) => {
         e.preventDefault();
-        apiRequest("/auth/login", 'POST', {
-            email,
-            password
-        }).then(({ data }) => {
+        e.stopPropagation();
+        apiRequest("/auth/login", 'POST', { email, password }).then(({ data }) => {
             const { token } = data || {};
+            clearInputFields();
             if (token) {
+                sessionStorage.setItem('token', token);
                 document.cookie = `token=${token}; path=/;`;
-                sessionStorage.setItem('org-id', '1');
-                navigate('/feeds');
+                setLoggedIn(true);
+                dispatch(showPopup({ message: "Login successful!", type: 'success' }));
             } else {
-                console.error("Login failed: No token received");
+                throw new Error("Server did not return a token. Please try again.");
             }
-        }).catch((error) => {
-            setError(error.message || "An error occurred during login");
+        }).catch(({ message }) => {
+            sessionStorage.removeItem('token');
+            dispatch(showPopup({ message, type: 'error' }));
         });
     }
 
@@ -37,10 +50,12 @@ const Signin = () => {
     }
 
     useEffect(() => {
-        if (hasCookie()) {
-            navigate('/feeds');
+        if (loggedIn && hasCookie()) {
+            navigate('/');
+        } else {
+            dispatch(clearMyProfile());
         }
-    }, []);
+    }, [loggedIn]);
 
     return (
         <div className='auth_component w100 FRCC'>
@@ -65,7 +80,7 @@ const Signin = () => {
                         <div className='FRCB w100 mT10 remember_me_forgot_password'>
                             <div className='FRCC'>
                                 <input type='checkbox' id='remember_me' />
-                                <label for="remember_me" className='pL10 color777 cursP'>Remember Me</label>
+                                <label htmlFor="remember_me" className='pL10 color777 cursP'>Remember Me</label>
                             </div>
                             <span className='color777 cursP'>Forgot Password?</span>
                         </div>

@@ -2,25 +2,30 @@ package com.pesupal.server.model.post;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.pesupal.server.enums.PostStatus;
-import com.pesupal.server.model.CreationTimeAuditable;
+import com.pesupal.server.model.PublicAccessModel;
 import com.pesupal.server.model.org.Org;
-import com.pesupal.server.model.user.User;
+import com.pesupal.server.model.user.OrgMember;
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Data
+@Getter
+@Setter
 @Entity
-public class Post extends CreationTimeAuditable {
+@EqualsAndHashCode(callSuper = false)
+public class Post extends PublicAccessModel {
 
     @ManyToOne
     @JsonIgnore
     private Org org;
 
     @ManyToOne
-    private User user;
+    @JsonIgnore
+    private OrgMember creator;
 
     private String title;
 
@@ -41,6 +46,14 @@ public class Post extends CreationTimeAuditable {
 
     private boolean bookmarkable;
 
+    private String postMentionLabel;
+
+    private boolean allowAnonymousComments;
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @JsonIgnore
+    private List<PostMention> mentions = new ArrayList<>();
+
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
     private List<PostLike> likes = new ArrayList<>();
@@ -49,11 +62,11 @@ public class Post extends CreationTimeAuditable {
     @JsonIgnore
     private List<PostComment> comments = new ArrayList<>();
 
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JsonIgnore
     private List<PostMedia> postMedia = new ArrayList<>();
 
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JsonIgnore
     private List<PostTag> tags = new ArrayList<>();
 }

@@ -1,0 +1,102 @@
+.manage-people-body {
+    background-color: #fff;
+    margin-top: 20px;
+    border-radius: 10px;
+    height: calc(100% - 65px);
+    overflow-y: auto;
+}
+
+.manage-people-table #no-data-found {
+    height: calc(100vh - 160px);
+}
+
+.manage-people-table .row.header {
+    border-bottom: 1px solid #ddd;
+    position: sticky;
+    top: 0;
+    padding: 15px 10px;
+    background-color: #fff;
+    z-index: 1;
+    box-shadow: 0px 1px 2px var(--box-shadow-color);
+}
+
+.manage-people-table .header div {
+    font-weight: bold;
+}
+
+.manage-people-table .header .column:last-child {
+    text-align: right;
+}
+
+.manage-people-table .row {
+    padding: 10px;
+    cursor: pointer;
+    border-bottom: 1px solid #ddd;
+}
+
+.manage-people-table .row:not(.header):hover {
+    background-color: #eee;
+}
+
+.manage-people-table .row .column {
+    height: 100%;
+    padding: 0px 10px;
+    color: #555;
+    font-weight: 400;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    text-wrap: nowrap;
+}
+
+.manage-people-table .row .column:nth-child(1) {
+    width: 10%;
+}
+
+.manage-people-table .row .column:nth-child(2) {
+    width: 30%;
+}
+
+.manage-people-table .row .column:nth-child(3) {
+    width: 10%;
+}
+
+.manage-people-table .row .column:nth-child(4) {
+    width: 40%;
+    text-align: center;
+}
+
+.manage-people-table .row .column:nth-child(5) {
+    width: 10%;
+}
+
+.manage-people-table .row .action-btns {
+    display: none;
+}
+
+.manage-people-table .row .action-btns.active {
+    display: flex;
+}
+
+.manage-people-table .row .action-btns .action-btn {
+    color: #999;
+    font-size: 13px;
+    margin-left: 10px;
+    padding: 7px 10px;
+    border-radius: 5px;
+}
+
+.manage-people-table .row .action-btns .action-btn i {
+    font-size: 12px;
+    color: #999;
+}
+
+.manage-people-table .row .action-btns .action-btn:hover,
+.manage-people-table .row .action-btns .action-btn:hover i {
+    background-color: var(--secondary-color);
+    color: #fff;
+}
+
+.manage-people-table .row:hover .action-btns {
+    display: flex;
+}

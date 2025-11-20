@@ -1,7 +1,8 @@
 package com.pesupal.server.model.post;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.pesupal.server.model.BaseModel;
-import com.pesupal.server.model.user.User;
+import com.pesupal.server.model.user.OrgMember;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
 import lombok.Data;
@@ -11,8 +12,10 @@ import lombok.Data;
 public class PollVoter extends BaseModel {
 
     @ManyToOne
-    private User voter;
+    @JsonIgnore
+    private OrgMember voter;
 
     @ManyToOne
+    @JsonIgnore
     private PollOption pollOption;
 }

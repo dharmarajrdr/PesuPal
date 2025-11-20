@@ -1,45 +1,23 @@
 import './App.css';
-import { useEffect, useState } from 'react';
-import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
-import { hasCookie } from './components/Auth/utils';
-import Signup from './components/Auth/Signup';
-import Signin from './components/Auth/Signin';
-import LeftNavigation from './components/LeftNavigation/LeftNavigation';
-import FeedsLayout from './components/Feeds/FeedsLayout';
-import ChatLayout from './components/Chat/ChatLayout';
-import PeopleLayout from './components/People/PeopleLayout';
-import TeamLayout from './components/Team/TeamLayout';
-import TrackerLayout from './components/Tracker/TrackerLayout';
-import { configureStore } from '@reduxjs/toolkit';
-import { combineReducers } from 'redux';
+import store from './store';
 import { Provider } from 'react-redux';
-import { VerticalLoaderReducer } from './store/reducers/VerticalLoader';
-import { NavigationReducers } from './store/reducers/Navigation';
-import PostReducer from './store/reducers/PostSlice';
-import PageNotFound from './components/Auth/PageNotFound';
-import SettingsLayout from './components/Settings/SettingsLayout';
-import MoreFeaturesLayout from './components/More/MoreFeaturesLayout';
-import VerticalLoader from './components/VerticalLoader';
-import { apiRequest } from './http_request';
-
-const store = configureStore({
-    reducer: combineReducers({
-        Navigation: NavigationReducers,
-        VerticalLoader: VerticalLoaderReducer,
-        posts: PostReducer
-    }),
-    devTools: true
-});
+import { useEffect, useState } from 'react';
+import { hasCookie } from './components/Auth/utils';
+import AuthModal from './components/Auth/AuthModal';
+import AuthenticatedRoutes from './AuthenticatedRoutes';
+import InitialLoadLogoPage from './InitialLoadLogoPage';
+import AuthenticationRoutes from './AuthenticationRoutes';
+import CommonContainer from './components/CommonContainer';
+import { useLocation, useNavigate } from 'react-router-dom';
+import InternalServerError from './components/Auth/InternalServerError';
 
 function App() {
 
     const location = useLocation();
     const navigate = useNavigate();
 
+    const inLobby = ['/', '/org/create'].includes(location.pathname);
     const isAuthPage = ['/signin', '/signup'].includes(location.pathname);
-
-    const [orgId, setOrgId] = useState(sessionStorage.getItem('org-id'));
-    const [profile, setProfile] = useState({ 'id': 8, 'title': 'Me', 'route': '/profile', 'icon': 'fa-regular fa-user', 'isActive': false });
 
     useEffect(() => {
         if (!hasCookie() && !isAuthPage) {
@@ -47,36 +25,22 @@ function App() {
         }
     }, [location.pathname, navigate]);
 
-    useEffect(() => {
-        if (!isAuthPage) {
-            apiRequest("/api/v1/people/display-picture", "GET").then(({ data }) => {
-                const updatedProfile = { ...profile, image: data, icon: null };
-                setProfile(updatedProfile);
-            }).catch(({ message }) => {
-                console.error("Error fetching profile image:", message);
-            });
-        }
-    }, [orgId]);
+    const [serverDown, setServerDown] = useState(false);
+    const [authenticated, setAuthenticated] = useState(false);
+    const [isSubscriptionExpired, setIsSubscriptionExpired] = useState(false);
 
     return (
         <Provider store={store}>
-            <div className="App FRCS">
-                {/* ✅ Only render LeftNavigation if not on /signin or /signup */}
-                {!isAuthPage && <LeftNavigation profile={profile} />}
-                <VerticalLoader />
-
-                <Routes>
-                    <Route path="/feeds/*" element={<FeedsLayout />} />
-                    <Route path="/chat" element={<ChatLayout />} />
-                    <Route path="/people/*" element={<PeopleLayout />} />
-                    <Route path="/team/*" element={<TeamLayout />} />
-                    <Route path="/tracker" element={<TrackerLayout />} />
-                    <Route path="/settings/*" element={<SettingsLayout />} />
-                    <Route path='/more/*' element={<MoreFeaturesLayout />} />
-                    <Route path="/signup" element={<Signup />} />
-                    <Route path="/signin" element={<Signin />} />
-                    <Route path="*" element={<PageNotFound />} />
-                </Routes>
+            <div className="App FRSS">
+                {isAuthPage ? <AuthenticationRoutes /> : <>
+                    <AuthModal setServerDown={setServerDown} setIsSubscriptionExpired={setIsSubscriptionExpired} setAuthenticated={setAuthenticated} />
+                    {authenticated ?
+                        (serverDown ? <InternalServerError message='Server is down. Come back after having some coffee.' /> :
+                            <AuthenticatedRoutes isSubscriptionExpired={isSubscriptionExpired} inLobby={inLobby} />
+                        ) : <InitialLoadLogoPage />
+                    }
+                </>}
+                <CommonContainer />
             </div>
         </Provider>
     );

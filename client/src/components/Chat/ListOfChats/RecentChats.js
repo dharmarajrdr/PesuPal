@@ -1,16 +1,20 @@
-import { useEffect, useState } from 'react'
 import './RecentChats.css'
-import RecentChat from './RecentChat'
-import { apiRequest } from '../../../http_request'
 import Loader from '../../Loader'
+import RecentChat from './RecentChat'
+import { useEffect, useState } from 'react'
 import ErrorMessage from '../../ErrorMessage'
+import { useNavigate } from 'react-router-dom'
+import { apiRequest } from '../../../http_request'
+import { useDispatch, useSelector } from 'react-redux'
+import { setActiveRecentChat } from '../../../store/reducers/ActiveRecentChatSlice'
+import { setRecentChats, updateRecentChat } from '../../../store/reducers/RecentChatsSlice'
 
 const NoChatsFound = () => {
 
     return (
         <div className='FCCC w100 h100' id='no-data-found'>
             <p className='FRCC w100'>
-                <i className='fa fa-comments mR5' aria-hidden='true' />
+                <i className='fa fa-comments mR5 w15' aria-hidden='true' />
                 No chats found
             </p>
             <p className='w100 alignCenter'>Create a new chat to get started.</p>
@@ -18,35 +22,51 @@ const NoChatsFound = () => {
     )
 }
 
+const RecentChats = ({ searchChat, recentChatsRef }) => {
 
-const RecentChats = () => {
-
-    const [recentChat, setRecentChat] = useState([]);
+    const [page, setPage] = useState(0);
+    const [size, setSize] = useState(25);
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(true);
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const recentChats = useSelector(state => state.recentChats);
+    const activeChatTab = useSelector(state => state.activeChatTab);
 
     useEffect(() => {
-        apiRequest('/api/v1/direct-messages/recent?page=0&size=10', 'GET').then(({ data }) => {
-            setRecentChat(data);
+        const { recentChatsApi } = activeChatTab;
+        if (!recentChatsApi) { return; }
+        apiRequest(`${recentChatsApi}?search=${searchChat}&page=${page}&size=${size}`, 'GET').then(({ data }) => {
+            dispatch(setRecentChats(data));
             setLoading(false);
         }).catch(({ message }) => {
             setError(message);
             setLoading(false);
         });
-    }, []);
+    }, [activeChatTab]);
 
-    return (
-        <div id='RecentChats' className='FCCS w100'>
+    const openChatHandler = (chat) => {
+        navigate(`${activeChatTab.route}/${chat.chatId}`);
+        dispatch(setActiveRecentChat(chat));
+        const recentMessage = {
+            'number_of_unread_messages': 0
+        };
+        dispatch(updateRecentChat({ 'chatId': chat.chatId, recentMessage }));  // Reset unread messages count
+    }
+
+    return activeChatTab ? (
+        <div id='RecentChats' className='FCCS w100 pT5' ref={recentChatsRef}>
             {
                 loading ? <Loader /> :
                     error ? <ErrorMessage message={error} /> :
-                        recentChat.length ?
-                            recentChat.map(({ name, status, image, recentMessage }, index) =>
-                                <RecentChat key={index} name={name} image={image} status={status} recentMessage={recentMessage} />
-                            ) : <NoChatsFound />
+                        recentChats?.length ? <div id='recent-chats-list'>
+                            {recentChats.map((recentChat, index) =>
+                                <RecentChat key={index} recentChat={recentChat} openChatHandler={openChatHandler} />
+                            )}
+                        </div> : <NoChatsFound />
             }
         </div>
-    )
+    ) : null;
 }
 
 export default RecentChats

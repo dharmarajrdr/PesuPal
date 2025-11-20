@@ -1,20 +1,25 @@
+import utils from "../../utils";
+
 export const hasCookie = () => {
-    return document.cookie.split(';').some((item) => item.trim().startsWith('token='));
+    return sessionStorage.getItem('token') !== null || utils.parseCookie().get('token') !== null;
 }, StatusIndicator = ({ status, style }) => {
     let color = '#aaa', icon = 'fa-circle';
     switch (status) {
-        case 'available':
+        case 'AVAILABLE': {
             color = 'green';
             icon = 'fa-circle';
             break;
-        case 'offline':
+        }
+        case 'OFFLINE': {
             color = '#aaa';
             icon = 'fa-circle';
             break;
-        case 'call':
+        }
+        case 'CALL': {
             color = 'red';
             icon = 'fa-phone';
             break;
+        }
     }
-    return <i className={`fa-solid ${icon} user_status`} style={{ ...style, color, backgroundColor: '#fff', 'borderRadius': '50%', padding: '5px' }}></i>;
+    return <i className={`fa-solid ${icon} user_status`} style={{ color, backgroundColor: '#fff', 'borderRadius': '50%', padding: '5px', ...style }}></i>;
 }

@@ -12,11 +12,36 @@
     position: absolute;
     height: 400px;
     width: 410px;
-    overflow: auto;
+    overflow: hidden;
     background-color: var(--pure-white);
     box-shadow: 4px 4px 8px rgba(43, 42, 42, 0.2);
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     border-radius: 5px;
+}
+
+#org-lists {
+    height: 360px;
+    overflow: auto;
+    position: relative;
+}
+
+.create-org-button {
+    background-color: var(--primary-color);
+    position: sticky;
+    bottom: 0;
+    left: 0;
+    height: 40px;
+    z-index: 10;
+    padding: 10px;
+    cursor: pointer;
+    outline: none;
+    border: none;
+    color: var(--pure-white-hover);
+}
+
+.create-org-button:hover {
+    background-color: var(--primary-color-active);
+    color: var(--pure-white);
 }

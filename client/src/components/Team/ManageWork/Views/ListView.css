@@ -3,14 +3,20 @@
   height: 100%;
 }
 
-#ListviewHeader #total_records {
+#ListviewHeader #total_records,
+#ListviewHeader #records_per_page {
   font-size: 14px;
   color: #333;
 }
 
-#ListviewHeader #total_records b {
+#ListviewHeader #total_records b,
+#ListviewHeader #records_per_page b {
   padding-left: 5px;
   color: #555;
+}
+
+#ListviewHeader #records_per_page {
+  border-left: 1px solid #ddd;
 }
 
 .paginationIcon {
@@ -41,7 +47,7 @@
 }
 
 #ListView #listview_table #listview_table_header {
-  background-color: rgb(83, 133, 83);
+  background-color: var(--tertiary-color);
   width: max-content;
   position: sticky;
   top: 0;
@@ -62,7 +68,7 @@
   display: flex;
   flex-direction: row;
   align-items: stretch;
-  justify-content: space-between;
+  justify-content: flex-start;
 }
 
 #ListView #listview_table .rows:hover {
@@ -77,6 +83,7 @@
   text-overflow: ellipsis;
 }
 
+#ListView #listview_table .rows .col a,
 #ListView #listview_table .rows .col i,
 #ListView #listview_table .rows .col b,
 #ListView #listview_table .rows .col span {
@@ -88,6 +95,16 @@
   font-weight: 500;
 }
 
+#ListView #listview_table .rows .col .link-wrapper span {
+  color: #65b0ff;
+  text-decoration: none;
+}
+
+#ListView #listview_table .rows .col .link-wrapper span:hover {
+  color: #007bff;
+  text-decoration: underline;
+}
+
 #ListView #listview_table .rows .col span {
   color: #333;
 }
@@ -95,4 +112,18 @@
 #ListView #listview_table .rows .col .sortIcon {
   color: #555;
   margin-left: 10px;
+}
+
+#ListView #listview_table .rows .col .typeSELECT {
+  width: fit-content;
+  padding: 3px 5px;
+  border-radius: 5px;
+  color: #fff;
+  font-size: 13px;
+}
+
+#ListView #listview_table .rows .col span {
+  width: 100%;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
